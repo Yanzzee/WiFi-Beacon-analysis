@@ -1,0 +1,96 @@
+from concurrent.futures import ProcessPoolExecutor
+import subprocess
+
+import pandas as pd
+import os
+
+PCAPNG_DIR = "/media/philipbl/Vargas/Classroom Captures/"
+OUTPUT_DIR = "/media/philipbl/Vargas/processed_data"
+CHUNK_SIZE = 10000
+TSHARK_FIELDS = [
+    "aruba_erm.time",
+    "wlan.ta",
+    "wlan.vs.aruba.ap_name",
+    "wlan.ssid",
+    "wlan.qbss.scount",
+    "wlan.qbss.cu",
+    "wlan.qbss.adc",
+]
+
+
+# Function to parse and save pcapng file
+def process_pcapng(file_path, output_dir):
+    output_file = os.path.join(output_dir, f"{os.path.basename(file_path)}.parquet")
+
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    print(f"Processing {file_path}...")
+
+    tshark_command = [
+        "tshark",
+        "-r",
+        file_path,
+        "-M",
+        "100000",
+        "-T",
+        "fields",
+        "-E",
+        "header=y",
+        "-E",
+        "separator=,",
+        "-E",
+        "quote=d",
+    ]
+
+    for field in TSHARK_FIELDS:
+        tshark_command.extend(["-e", field])
+
+    # Start the subprocess and stream the output line-by-line
+    with subprocess.Popen(tshark_command, stdout=subprocess.PIPE, text=True) as proc:
+        df = pd.read_csv(
+            proc.stdout,
+            sep=",",
+            quotechar='"',
+            index_col="aruba_erm.time",
+            parse_dates=True,
+        )
+
+    print("Finished reading pcapng file. Saving to Parquet...")
+    df.to_parquet(output_file, engine="pyarrow")
+    print(f"Finished processing {file_path}")
+    return output_file
+
+
+def process_all_pcapngs(pcapng_dir, output_dir):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    pcapng_files = [
+        os.path.join(pcapng_dir, f)
+        for f in os.listdir(pcapng_dir)
+        if f.endswith(".pcapng")
+    ]
+    print(f"Found {len(pcapng_files)} pcapng files. Starting processing...")
+
+    # Process files in parallel
+    with ProcessPoolExecutor(max_workers=32) as executor:
+        futures = [
+            executor.submit(process_pcapng, file, output_dir) for file in pcapng_files
+        ]
+        for future in futures:
+            future.result()
+
+    # Create a list of delayed tasks for each pcapng file
+    # delayed_tasks = [process_pcapng(file, output_dir) for file in pcapng_files]
+
+    # Compute the tasks in parallel across available cores
+    # client.compute(delayed_tasks, sync=True)
+
+    print("All files processed.")
+
+
+# Main Execution with Dask Distributed
+if __name__ == "__main__":
+    print("Starting pcapng processing...")
+    process_all_pcapngs(PCAPNG_DIR, OUTPUT_DIR)
