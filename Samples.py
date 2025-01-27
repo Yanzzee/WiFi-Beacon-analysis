@@ -188,7 +188,7 @@ sample_classes_df.columns = sample_classes_df.columns.str.strip()
 sample_aps_df.columns = sample_aps_df.columns.str.strip()
 
 # sort by class time
-sample_classes_df = sample_classes_df.sort_values(by=['start_time', 'location']).reset_index(drop=True)
+sample_classes_df = sample_classes_df.sort_values(by=['location', 'start_time']).reset_index(drop=True)
 print(sample_classes_df.head())
 
 # Create the new 'ap_count' column in sample_classes_df
