@@ -84,20 +84,6 @@ ESC-C396, GEOL 230  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a ,�
 ESC-C396, GEOL 530  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TTh ," LeMonte, Joshua James ", 24 , 2 , C , Geological Sciences ,  ,  ,ESC-C396
 ESC-C396, GEOL 351  , 001 ,  , N ,  , 4.0 ,  , 10:00a - 10:50a , MWF ," Bickmore, Barry R ", 24 , 14 , C , Geological Sciences ,  ,  ,ESC-C396
 ESC-C396, GEOL 531  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Bickmore, Barry R ", 24 , 7 , C , Geological Sciences ,  ,  ,ESC-C396
-HBLL-3710, IHUM 201  , 016 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , TTh ," Nielson, Natalie Thompson ", 39 , 35 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, IHUM 202  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Easterling, Michael H ", 40 , 50 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, IHUM 202  , 008 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TTh ," Ballif, Sydney Anne ", 40 , 42 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, IHUM 241  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Yamada, Marc T ", 40 , 40 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, IHUM 390 R , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Yamada, Marc T ", 5 , 3 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, JAPAN 352  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Yamada, Marc T ", 30 , 23 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, IHUM 202  , 005 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Parry, Joseph D ", 40 , 39 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, IHUM 202  , 014 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TTh ," Stirling, Katherine May ", 40 , 39 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, IHUM 201  , 020 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Cunningham, Douglas A ", 40 , 47 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, IHUM 201  , 021 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , MWF ," Cunningham, Douglas A ", 40 , 39 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, HIST 205  , 011 ,  , N ,  , 2.0 ,  , 2:00p - 2:50p , TTh ," Allen, Kelli Sue ", 47 , 46 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, IHUM 202  , 003 ,  , N ,  , 3.0 ,  , 3:00p - 3:50p , MWF ," Isaak, Kathryn Lewis ", 40 , 38 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, CL CV 110  , 001 ,  , N ,  , 3.0 , EVENING , 4:00p - 5:15p , TTh ," Francis, Nicole ", 50 , 46 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
-HBLL-3710, LATIN 123  , 001 ,  , N ,  , 2.0 , EVENING , 4:00p - 5:50p , W ," Macfarlane, Roger T ", 57 , 53 , C , Comparative Arts and Letters *** ,  ,  ,HBLL-3710
 HRCB-116, WRTG 316  , 002 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Fullmer, Stephen B ", 25 , 21 , C , English *** ,  ,  ,HRCB-116
 HRCB-116, ENGL 303  , 004 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TTh ," Greenwood, Ansalee Morrison ", 20 , 15 , C , English *** ,  ,  ,HRCB-116
 HRCB-116, WRTG 311  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Gurley, Texanna Greyson ", 25 , 22 , C , English *** ,  ,  ,HRCB-116
@@ -721,13 +707,6 @@ TNRB-W308, MPA 625  , 002 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , 
 TNRB-W308, UNIV 101  , 346 ,  , N ,  , 2.0 ,  , 4:00p - 4:50p , TTh ," Liddle, Stephen Wallace ", 25 , 17 , C , Business ,  ,  ,TNRB-W308
 TNRB-W308, ACC 200  , 003 ,  , N ,  , 3.0 , EVENING , 5:30p - 6:45p , W ," Skousen, Hazel Dejlig ", 35 , 39 , C , Business ,  ,  ,TNRB-W308
 TNRB-W308, ACC 200  , 004 ,  , N ,  , 3.0 , EVENING , 7:00p - 8:15p , Th ," Woodbury, Lauren Jane ", 35 , 41 , C , Business ,  ,  ,TNRB-W308
-WCCB-2350, TMA 258  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 10:50a , MW ," Weeks, Milinda ", 8 , 6 , C , Theatre and Media Arts ,  ,  ,WCCB-2350
-WCCB-2350, TMA 259  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 10:50a , TTh ," Wright, Kimberly Sue ", 16 , 10 , C , Theatre and Media Arts ,  ,  ,WCCB-2350
-WCCB-2350, TMA 362  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 12:50p , MWF ," Wright, Dennis M ", 16 , 7 , C , Theatre and Media Arts ,  ,  ,WCCB-2350
-WCCB-2350, TMA 460  , 001 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , TTh ," Kraczek, Michael S ", 15 , 3 , C , Theatre and Media Arts ,  ,  ,WCCB-2350
-WCCB-2350, TMA 489 R , 001 ,  , N ,  , 4.0 ,  , 1:00p - 2:50p , MF ," Weeks, Milinda ", 6 , 1 , C , Theatre and Media Arts ,  ,  ,WCCB-2350
-WCCB-2350, TMA 369 R , 001 ,  , N ,  , 4.0 ,  , 1:00p - 2:50p , MF ," Weeks, Milinda ", 6 , 4 , C , Theatre and Media Arts ,  ,  ,WCCB-2350
-WCCB-2350, TMA 364  , 001 ,  , N ,  , 3.0 ,  , 3:00p - 4:50p , MWF ," Kraczek, Michael S ", 16 , 2 , C , Theatre and Media Arts ,  ,  ,WCCB-2350
 WVB-1166, STAT 536  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TTh ," Fisher, Jared Dale ", 24 , 16 , C , Statistics ,  ,  ,WVB-1166
 WVB-1166, STAT 666  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Christensen, William F ", 24 , 10 , C , Statistics ,  ,  ,WVB-1166
 WVB-1166, STAT 537  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TTh ," Fellingham, Gilbert W ", 18 , 10 , C , Statistics ,  ,  ,WVB-1166
