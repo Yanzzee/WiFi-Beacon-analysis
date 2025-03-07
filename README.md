@@ -7,7 +7,7 @@ processing 802.11 wireless captures from .pcapng to .parquet for analysis of cha
 
 Files are listed in general order that they are run.
 
-process_data.py - process raw capture files to .parquet files
+process_data.py - process raw pcap capture files to .parquet files
 group_data.py - group data by AP name, one file per hostname
 explore_data.ipynb - further processes and analyzes data within scope in the sample files
     saves output files for each class session

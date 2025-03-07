@@ -1,7 +1,8 @@
 ###
 # Input sample information for classrooms, APs and class periods
 # See example files for input format
-# clean up the data and export .pkl files that can be easily imported for analysis later
+# clean up the data and export .parquet files that can be easily imported for analysis later
+# creates sample_classes_df and saves it for analysis - includes every class session
 ###
 
 import pandas as pd
@@ -19,9 +20,9 @@ def clean_cell(value):
 
 
 #Import sample files
-sample_aps_df = pd.read_csv("Sample_APs.csv")
-sample_classrooms_df = pd.read_csv("Sample_classrooms.csv")
-sample_schedule_df = pd.read_csv("Sample_schedule.csv")
+sample_aps_df = pd.read_csv("Sample/Sample_APs.csv")
+sample_classrooms_df = pd.read_csv("Sample/Sample_classrooms.csv")
+sample_schedule_df = pd.read_csv("Sample/Sample_schedule.csv")
 
 
 #build sample_df with each class period for the 2 weeks as a record
@@ -205,6 +206,6 @@ sample_classrooms_df['ap_count'] = sample_classrooms_df['Location'].apply(
 
 
 # write sample dataframes to files so they don't have to be cleaned again
-sample_classrooms_df.to_pickle('sample_classrooms.pkl')
-sample_aps_df.to_pickle('sample_aps.pkl')
-sample_classes_df.to_pickle('sample_classes.pkl')
+sample_classrooms_df.to_parquet('Sample/sample_classrooms.parquet')
+sample_aps_df.to_parquet('Sample/sample_aps.parquet')
+sample_classes_df.to_parquet('Sample/sample_classes.parquet')
