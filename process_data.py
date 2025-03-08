@@ -4,8 +4,8 @@ import subprocess
 import pandas as pd
 import os
 
-PCAPNG_DIR = "/media/philipbl/Vargas/Classroom Captures/"
-OUTPUT_DIR = "/media/philipbl/Vargas/processed_data"
+PCAPNG_DIR = "Data/captures/"
+OUTPUT_DIR = "Data/processed_data"
 CHUNK_SIZE = 10000
 TSHARK_FIELDS = [
     "aruba_erm.time",
