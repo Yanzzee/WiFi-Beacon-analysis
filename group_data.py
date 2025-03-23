@@ -1,8 +1,8 @@
 import dask.dataframe as dd
 from tqdm import tqdm
 
-INPUT_DIR = "/media/philipbl/Vargas/processed_data/"
-OUTPUT_DIR = "/media/philipbl/Vargas/grouped_data/"
+INPUT_DIR = "Data/processed_data/"
+OUTPUT_DIR = "Data/grouped_data/"
 
 df = dd.read_parquet(INPUT_DIR, engine="pyarrow")
 

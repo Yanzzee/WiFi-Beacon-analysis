@@ -2,15 +2,15 @@
 802.11 beacon analysis with python
 Doug Hales
 
-processing 802.11 wireless captures from .pcapng to .parquet for analysis of channel utilization, client count and other information elements in the 802.11e protocol
+processing 802.11 wireless captures from .pcapng to .parquet for analysis of 802.11e channel utilization, station count, frequency of beacons, and other information observable from captured beacons
 
 
 Files are listed in general order that they are run.
 beacon_capture.sh - bash script to capture using tshark on a raspberry pi or other linux device. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
 Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
 process_data.py - process raw pcap capture files to .parquet files
-group_data.py - group data by AP name, one file per hostname
-samples.py - used to process sample files from CSV to dataframe/pickle below
+group_data.py - group data by AP name, one file per hostname for entire date range
+samples.py - used to process sample files from CSV to dataframe/pickle below. Uses sample aps, classrooms, and schedule inputs.
     sample_aps.pkl - saved dataframe file with information about all sampled APs
     sample_classrooms.pkl - saved dataframe file with information about sampled classroom locations
     sample_classes.pkl - saved dataframe file with information about sampled class periods

@@ -91,12 +91,12 @@ for column, value in first_record.items():
 # build the sample_classes_df
 # Define the two-week schedule
 # This is the sample dates
-start_date = datetime(2024, 11, 4)
-end_date = datetime(2024, 11, 18)
+start_date = datetime(2024, 11, 4) # update to use env file
+end_date = datetime(2024, 11, 18) # update to use env file
 schedule_days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
 
 # Mapping of day abbreviations to Python weekday indices
-day_mapping = {"M": 0, "T": 1, "W": 2, "Th": 3, "F": 4}
+day_mapping = {"M": 0, "T": 1, "W": 2, "H": 3, "F": 4}
 
 # Iterate through sample_schedule_df
 for _, row in sample_schedule_df.iterrows():
@@ -172,8 +172,8 @@ print(sample_classes_df[['location', 'capacity']].head())
 sample_classes_df['start_time'] = pd.to_datetime(sample_classes_df['start_time'], errors='coerce')
 sample_classes_df['end_time'] = pd.to_datetime(sample_classes_df['end_time'], errors='coerce')
 # Convert the start_time and end_time columns to 'Etc/GMT+7' timezone
-sample_classes_df['start_time'] = sample_classes_df['start_time'].dt.tz_localize('Etc/GMT+7', ambiguous='NaT')
-sample_classes_df['end_time'] = sample_classes_df['end_time'].dt.tz_localize('Etc/GMT+7', ambiguous='NaT')
+sample_classes_df['start_time'] = sample_classes_df['start_time'].dt.tz_localize('Etc/GMT+7', ambiguous='NaT') # update to use env file
+sample_classes_df['end_time'] = sample_classes_df['end_time'].dt.tz_localize('Etc/GMT+7', ambiguous='NaT') # update to use env file
 
 
 #change datatypes
