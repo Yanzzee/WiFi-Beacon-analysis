@@ -8,6 +8,8 @@
 import pandas as pd
 from datetime import datetime, timedelta
 import re
+from dotenv import load_dotenv
+import os
 
 
 # Define a function to clean a single cell
@@ -91,8 +93,19 @@ for column, value in first_record.items():
 # build the sample_classes_df
 # Define the two-week schedule
 # This is the sample dates
-start_date = datetime(2024, 11, 4) # update to use env file
-end_date = datetime(2024, 11, 18) # update to use env file
+#start_date = datetime(2024, 11, 4) # update to use env file
+#end_date = datetime(2024, 11, 18) # update to use env file
+load_dotenv(dotenv_path="config.env")
+
+start_date_str = os.getenv("START_DATE")
+end_date_str = os.getenv("END_DATE")
+
+# # Convert strings to datetime objects
+start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+print("Start:", start_date)
+print("End:", end_date)
 schedule_days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
 
 # Mapping of day abbreviations to Python weekday indices
