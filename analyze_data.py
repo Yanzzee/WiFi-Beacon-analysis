@@ -11,6 +11,19 @@ import pyarrow as pa
 from dotenv import load_dotenv
 from tqdm import tqdm
 
+#debug tkinter error
+#import sys
+#print("Python executable:", sys.executable)
+#import os
+#print("TCL_LIBRARY:", os.environ.get("TCL_LIBRARY"))
+#!!!
+#!!!
+#!!!
+#CURRENTLY HAS A FATAL BUG IN THE .py VERSION NOT EVIDENT IN THE ipynb VERSION
+#!!!
+#!!!
+#!!!
+
 # Initialize the global DataFrame for aggregate analysis
 all_class_beacons_df = pd.DataFrame()
 
@@ -91,8 +104,8 @@ def calculate_total_scount(df):
 def plot_channel_stations(radio_df, eduroam_df, byu_wifi_df, AP_name, start_time, end_time):
     #print("plot_channel_stations")
     plt.figure(figsize=(14, 7))  # Example size: 12 inches wide, 6 inches tall
-    # Add a horizontal line at value 70 with 20% opacity
-    plt.axhline(y=75, color='red', linestyle='-', alpha=0.2, zorder=-1)
+    # Add a horizontal line at value 75 with 20% opacity
+    #plt.axhline(y=75, color='red', linestyle='-', alpha=0.2, zorder=-1)
 
     # Access the first record and get the value of 'radio_number'
     plot_radio_number = radio_df.iloc[0]["radio_number"]
@@ -150,10 +163,11 @@ def plot_channel_stations(radio_df, eduroam_df, byu_wifi_df, AP_name, start_time
 
     #save to a file
     plt.savefig(plot_file)
-    
+
     #print(plot_file)
     # Display the plot
     #plt.show()
+    plt.close()
     return plot_file
 
 
@@ -411,8 +425,10 @@ def graph(ap_name, start_time, end_time, location, course, enrolled, capacity, a
     # Filter the DataFrame for records where radio_number is 1
     filtered_radio_1_df = filtered_df[filtered_df["radio_number"] == 1]
     # Filter the data for "eduroam" and "BYU-WiFi" SSIDs
-    eduroam_radio_1_df = filtered_df[(filtered_df["wlan.ssid"] == "eduroam") & (filtered_df["radio_number"] == 1)]
-    byu_wifi_radio_1_df = filtered_df[(filtered_df["wlan.ssid"] == "BYU-WiFi") & (filtered_df["radio_number"] == 1)]
+    #eduroam_radio_1_df = filtered_df[(filtered_df["wlan.ssid"] == "eduroam") & (filtered_df["radio_number"] == 1)]
+    #byu_wifi_radio_1_df = filtered_df[(filtered_df["wlan.ssid"] == "BYU-WiFi") & (filtered_df["radio_number"] == 1)]
+    eduroam_radio_1_df = None   # temp because this is not used
+    byu_wifi_radio_1_df = None  # temp because this is not used
 
     #  Filter the DataFrame for records where radio_number is 2
     filtered_radio_2_df = filtered_df[filtered_df["radio_number"] == 2]
@@ -439,8 +455,10 @@ def graph(ap_name, start_time, end_time, location, course, enrolled, capacity, a
 
 
         # Filter the data for "eduroam" and "BYU-WiFi" SSIDs
-        eduroam_radio_2_df = filtered_df[(filtered_df["wlan.ssid"] == "eduroam") & (filtered_df["radio_number"] == 2)] #update to use env file
-        byu_wifi_radio_2_df = filtered_df[(filtered_df["wlan.ssid"] == "BYU-WiFi") & (filtered_df["radio_number"] == 2)] #update to use env file
+        #eduroam_radio_2_df = filtered_df[(filtered_df["wlan.ssid"] == "eduroam") & (filtered_df["radio_number"] == 2)] #update to use env file
+        #byu_wifi_radio_2_df = filtered_df[(filtered_df["wlan.ssid"] == "BYU-WiFi") & (filtered_df["radio_number"] == 2)] #update to use env file
+        eduroam_radio_2_df = None # temp for performance, this is not used
+        byu_wifi_radio_2_df = None # temp for performance, this is not used
         # Plot for the second radio
         #temp remove for performance
         #plot_file = ""

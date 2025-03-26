@@ -85,8 +85,8 @@ sample_schedule_df = sample_schedule_df.apply(lambda col: col.map(clean_cell))
 first_record = sample_schedule_df.iloc[10]
 
 # Print the first record, including hidden characters
-for column, value in first_record.items():
-    print(f"{column}: {repr(value)}")
+#for column, value in first_record.items():
+#    print(f"{column}: {repr(value)}")
 
 
 
@@ -104,12 +104,12 @@ end_date_str = os.getenv("END_DATE")
 start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
 end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
 
-print("Start:", start_date)
-print("End:", end_date)
+print("Start Date:", start_date)
+print("End Date:", end_date)
 schedule_days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
 
 # Mapping of day abbreviations to Python weekday indices
-day_mapping = {"M": 0, "T": 1, "W": 2, "H": 3, "F": 4}
+day_mapping = {"M": 0, "T": 1, "W": 2, "R": 3, "F": 4}
 
 # Iterate through sample_schedule_df
 for _, row in sample_schedule_df.iterrows():
@@ -160,7 +160,7 @@ for _, row in sample_schedule_df.iterrows():
                         )
 
 # Print the result
-print(sample_classes_df.head())
+#print(sample_classes_df.head())
 
 
 #find room capacity values and add to sample_classes_df
@@ -178,7 +178,7 @@ for index, row in sample_classes_df.iterrows():
         sample_classes_df.at[index, 'capacity'] = location_capacity_dict[location]
 
 # Now the 'capacity' column in sample_classes_df is filled with the corresponding values from sample_classrooms_df
-print(sample_classes_df[['location', 'capacity']].head())
+#print(sample_classes_df[['location', 'capacity']].head())
 
 
 # Ensure start_time and end_time are datetime objects
@@ -201,7 +201,7 @@ sample_classes_df = sample_classes_df.astype({
 })
 
 # Print the updated data types to verify
-print(sample_classes_df.dtypes)
+#print(sample_classes_df.dtypes)
 
 
 # Clean up column names for consistency (strip spaces)
@@ -210,7 +210,7 @@ sample_aps_df.columns = sample_aps_df.columns.str.strip()
 
 # sort by class time
 sample_classes_df = sample_classes_df.sort_values(by=['location', 'start_time']).reset_index(drop=True)
-print(sample_classes_df.head())
+#print(sample_classes_df.head())
 
 # Create the new 'ap_count' column in sample_classes_df
 sample_classrooms_df['ap_count'] = sample_classrooms_df['Location'].apply(
@@ -222,3 +222,5 @@ sample_classrooms_df['ap_count'] = sample_classrooms_df['Location'].apply(
 sample_classrooms_df.to_parquet('Sample/sample_classrooms.parquet')
 sample_aps_df.to_parquet('Sample/sample_aps.parquet')
 sample_classes_df.to_parquet('Sample/sample_classes.parquet')
+
+print("Sample data cleaned and saved in the Sample folder.")

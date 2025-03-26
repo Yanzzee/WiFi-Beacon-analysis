@@ -10,15 +10,15 @@ beacon_capture.sh - bash script to capture using tshark on a raspberry pi or oth
 Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
 process_data.py - process raw pcap capture files to .parquet files
 group_data.py - group data by AP name, one file per hostname for entire date range
-samples.py - used to process sample files from CSV to dataframe/pickle below. Uses sample aps, classrooms, and schedule inputs.
-    sample_aps.pkl - saved dataframe file with information about all sampled APs
-    sample_classrooms.pkl - saved dataframe file with information about sampled classroom locations
-    sample_classes.pkl - saved dataframe file with information about sampled class periods
+samples.py - used to process sample files from CSV to dataframe/parquet below. Uses sample aps, classrooms, and schedule inputs.
+    sample_aps.parquet - saved dataframe file with information about all sampled APs
+    sample_classrooms.parquet - saved dataframe file with information about sampled classroom locations
+    sample_classes.parquet - saved dataframe file with information about sampled class periods
 analyze_data.ipynb - further processes and analyzes data within scope in the sample files
     saves output files for each class session
     creates and saves all_class_beacons_df which has data from all beacons within the scope and not others
-    creates class_summary_df and saves a local pkl file, which has summary information for each radio/session (csv for convenience only)
-analyze_all_class_beacons.ipynb - performs aggregate analysis on the all_class_beacons as a single dataset
+    creates class_summary_df and saves a local parquet file, which has summary information for each radio/session (csv for convenience only)
+analyze_all_class_beacons.ipynb - performs aggregate analysis on the all_class_beacons as a single dataset, required for analyze_class_sessions
 analyze_radio_summary.ipynb - analyze the class_summary data that includes one row per radio per class session
 analyze_class_sessions.ipynb - analyze each class session as a single row, combining multiple radios in the location
 
