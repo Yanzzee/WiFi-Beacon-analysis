@@ -4,22 +4,36 @@ Doug Hales
 
 processing 802.11 wireless captures from .pcapng to .parquet for analysis of 802.11e channel utilization, station count, frequency of beacons, and other information observable from captured beacons
 
+Data requirements
+capture files in pcap format that include beacons from classroom APs
+    APs must include 802.11e information elements of channel utilization, station count, and admission capacity, which are optional
+    beacons probably also need advertise AP Name enabled
+Sample_APs.csv - list of AP hostnames and locations, see example
+Sample_classrooms.csv - list of classroom location, see example
+Sample_schedule.csv - course schedule with location, Days of the week, start/end times, and enrolled count
+
 
 Files are listed in general order that they are run.
 beacon_capture.sh - bash script to capture using tshark on a raspberry pi or other linux device. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
 Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
 process_data.py - process raw pcap capture files to .parquet files
-group_data.py - group data by AP name, one file per hostname for entire date range
-samples.py - used to process sample files from CSV to dataframe/parquet below. Uses sample aps, classrooms, and schedule inputs.
+group_data.py - group data by AP name instead of time, one file per hostname for entire date range
+samples.py - process sample files from CSV to dataframe/parquet listed below. Uses sample aps, classrooms, and schedule input files.
     sample_aps.parquet - saved dataframe file with information about all sampled APs
     sample_classrooms.parquet - saved dataframe file with information about sampled classroom locations
     sample_classes.parquet - saved dataframe file with information about sampled class periods
-analyze_data.ipynb - further processes and analyzes data within scope in the sample files
-    saves output files for each class session
-    creates and saves all_class_beacons_df which has data from all beacons within the scope and not others
-    creates class_summary_df and saves a local parquet file, which has summary information for each radio/session (csv for convenience only)
+analyze_data.ipynb - further processes and begins to analyze data within scope in the sample files
+    saves plots for each class session in Output/plots/
+    all_class_beacons.parquet -  all beacon data within the scope of class sessions
+    radio_summary.parquet - summary information for each radio/session
+    analyze_data_log - detailed information for each radio/session
 analyze_all_class_beacons.ipynb - performs aggregate analysis on the all_class_beacons as a single dataset, required for analyze_class_sessions
+    all_class_beacons_processed.parquet - includes location and room station count
+    analyze_all_class_beacons_log - output and analysis results
+    Output/all_class_beacons/ - includes plot files saved as png
 analyze_radio_summary.ipynb - analyze the class_summary data that includes one row per radio per class session
+    radio_summary/ - includes plots
+    analyze_radio_summary_log - text output
 analyze_class_sessions.ipynb - analyze each class session as a single row, combining multiple radios in the location
 
 
@@ -28,9 +42,11 @@ Data - the beacon data
     /captures - put pcapng files here
     /processed_data - pcapng files are converted to parquet files here
     /grouped_data - files are saved per AP in this location
-    /sampled - files are saved here after processing to remove duplicates and only representing the sampled scope
+    /sampled - AP beacon files are saved here after processing to remove duplicates and only representing the sampled scope
 Output - the output of processing including graphs, logs etc
-    /plots - plotted graphs etc.
+    /plots - plotted graphs for radio/class sessions
+    /all_class_beacons - output from analyze_all_class_beacons
+    /radio_summary - output from analyze_radio_summary    
 Sample - files representing the sampled courses, locations, and APs CSV files are converted to parquet files with Samples.py
 
 

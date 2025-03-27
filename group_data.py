@@ -6,7 +6,7 @@ OUTPUT_DIR = "Data/grouped_data/"
 
 df = dd.read_parquet(INPUT_DIR, engine="pyarrow")
 
-unique_ap_names = df["wlan.vs.aruba.ap_name"].unique().compute()
+unique_ap_names = df["wlan.vs.aruba.ap_name"].unique().compute()    # this needs to be modified to account for multi-vendor
 
 for ap_name in tqdm(unique_ap_names, desc="Processing AP Groups"):
     pandas_df = df[df["wlan.vs.aruba.ap_name"] == ap_name].compute()

@@ -74,7 +74,7 @@ def process_all_pcapngs(pcapng_dir, output_dir):
     print(f"Found {len(pcapng_files)} pcapng files. Starting processing...")
 
     # Process files in parallel
-    with ProcessPoolExecutor(max_workers=32) as executor:
+    with ProcessPoolExecutor(max_workers=32) as executor:   # add env variable
         futures = [
             executor.submit(process_pcapng, file, output_dir) for file in pcapng_files
         ]
