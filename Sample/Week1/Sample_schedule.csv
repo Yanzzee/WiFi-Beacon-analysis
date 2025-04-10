@@ -1,0 +1,642 @@
+﻿Location,Course , Sec , LQ , H , S , Cr Hr , Sec Type , Class Period , Days , Instructor , Size , Enrl , Status , Assign To , Begin Date , End Date ,sample
+BNSN-W003, CHEM 105  , 002 ,  , N ,  , 4.0 ,  , 8:00a - 8:50a , R ," Sorensen, Jason Joshua ", 25 , 21 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, NURS 296  , 009 , L , N ,  , 0.0 ,  , 8:30a - 9:50a , M ,  , 9 , 8 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, CHEM 105  , 004 ,  , N ,  , 4.0 ,  , 9:00a - 9:50a , R ," Sorensen, Jason Joshua ", 25 , 22 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, CHEM 101  , 003 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , W ," Watt, Richard Kent ", 25 , 26 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, A HTG 100  , 043 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , F ," Patterson, Kelly D ", 15 , 6 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, CHEM 105  , 006 ,  , N ,  , 4.0 ,  , 10:00a - 10:50a , R ," Sorensen, Jason Joshua ", 25 , 21 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, PHSCS 106  , 002 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , W ," Ireland, Laralee Gordon ", 20 , 9 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, PHSCS 106  , 003 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , W ," Ireland, Laralee Gordon ", 25 , 15 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, CHEM 106  , 008 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , T ," Macedone, Jeffrey Harris ", 25 , 14 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, PHSCS 106  , 004 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , W ," Ireland, Laralee Gordon ", 25 , 19 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, CHEM 106  , 016 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , R ," Paxton, Walter F ", 25 , 22 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, CHEM 105  , 034 ,  , N ,  , 4.0 ,  , 1:00p - 1:50p , R ," Smith, Stacey Janel ", 25 , 25 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, CHEM 101  , 006 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , W ," Watt, Richard Kent ", 25 , 25 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, CHEM 105  , 028 ,  , N ,  , 4.0 ,  , 2:00p - 2:50p , R ," Hansen, Jaron C ", 25 , 23 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, CHEM 101  , 018 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , F ," Watt, Richard Kent ", 25 , 18 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, CHEM 105  , 047 ,  , N ,  , 4.0 ,  , 3:00p - 3:50p , R ," Smith, Stacey Janel ", 25 , 22 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+BNSN-W003, PHSCS 106  , 012 ,  , N ,  , 3.0 ,  , 4:00p - 4:50p , W ," Ireland, Laralee Gordon ", 20 , 11 , C , Chemistry and Biochemistry *** ,  ,  ,BNSN-W003
+CB-369, CH EN 535  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , R ," Lewis, Randy S ", 25 , 13 , C , Engineering *** ,  ,  ,CB-369
+CB-369, CE 560  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Sonntag, Darrell B ", 20 , 6 , C , Engineering *** ,  ,  ,CB-369
+CB-369, CE 580  , 001 ,  , N ,  , 1.5 ,  , 10:00a - 10:50a , MWF ," Guthrie, William S ", 12 , 8 , C , Engineering *** , 22 Oct 24 ,  ,CB-369
+CB-369, CH EN 481  , 001 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , R ," Nickerson, Stella Day ", 20 , 17 , C , Engineering *** ,  ,  ,CB-369
+CB-369, EC EN 667  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Mazzeo, Brian A ", 20 , 12 , C , Engineering *** ,  ,  ,CB-369
+CB-369, STDEV 141 R , 005 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , MW ," Kanuch, Ofa Hafoka ", 25 , 24 , C , Engineering *** ,  ,  ,CB-369
+CB-369, CHEM 105  , 032 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , R ," Smith, Stacey Janel ", 25 , 27 , C , Engineering *** ,  ,  ,CB-369
+CB-369, IHUM 280 R , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Call, Michael Josiah ", 20 , 9 , C , Engineering *** ,  ,  ,CB-369
+CB-369, CE 555  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 2:50p , R ," Williams, Gus P ", 15 , 6 , C , Engineering *** ,  ,  ,CB-369
+CB-369, PHY S 100  , 036 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , W ," Carling, Gregory T ", 35 , 33 , C , Engineering *** ,  ,  ,CB-369
+CB-369, PHSCS 105  , 006 ,  , N ,  , 3.0 ,  , 3:00p - 3:50p , R ," Francis, Gregory Evan ", 31 , 32 , C , Engineering *** ,  ,  ,CB-369
+CB-369, STDEV 150  , 001 ,  , N ,  , 3.0 , EVENING , 4:00p - 6:50p , M ," Hanson, Kristy ", 22 , 20 , C , Civil and Construction Engineering *** ,  ,  ,CB-369
+CB-369, STDEV 150  , 006 ,  , N ,  , 3.0 , EVENING , 4:00p - 6:50p , R ," Allred, G Dane ", 22 , 21 , C , Civil and Construction Engineering *** ,  ,  ,CB-369
+CB-369, STDEV 317  , 001 ,  , N ,  , 2.0 , EVENING , 5:00p - 6:50p , W ," Elrod, Michael R ", 25 , 18 , C , Civil and Construction Engineering *** ,  ,  ,CB-369
+CB-392, STDEV 143  , 009 ,  , N ,  , 2.0 ,  , 9:00a - 9:50a , MW ," Hee, Cameron W H ", 25 , 25 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 117  , 007 ,  , N ,  , 2.0 ,  , 9:00a - 9:50a , R ," Richards, Marilyn ", 25 , 24 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 141 R , 004 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , MW ," Griner, Derek ", 25 , 26 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 117  , 006 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , R ," Puertas, T Alberto ", 25 , 22 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 117  , 013 ,  , N ,  , 2.0 ,  , 10:00a - 11:50a , F ," Whitaker Howell, Marie Rachel ", 25 , 23 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 141 R , 007 ,  , N ,  , 2.0 ,  , 11:00a - 11:50a , MW ," Diopulos, Madeline Jane Cope ", 25 , 31 , C , Student Development *** ,  ,  ,CB-392
+CB-392, UNIV 101  , 158 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , MW ," Pedersen, Tyler R ", 25 , 25 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 109  , 005 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , R ," Porter, Noelani Noelette Stone ", 25 , 20 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 109  , 003 ,  , N ,  , 2.0 ,  , 1:00p - 1:50p , MW ," Hammock, Walter Kerry ", 25 , 29 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 109  , 006 ,  , N ,  , 2.0 ,  , 1:00p - 1:50p , R ," Porter, Noelani Noelette Stone ", 25 , 24 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 143  , 011 ,  , N ,  , 2.0 ,  , 2:00p - 2:50p , MW ," Chun, Samuel Mischa ", 25 , 27 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 140  , 002 ,  , N ,  , 2.0 ,  , 3:00p - 3:50p , R ," Kirtley, Natalie Ann ", 25 , 23 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 278 R , 002 ,  , N ,  , 1.0 ,  , 3:00p - 3:50p , W ," Barnett, Karolyn Zoe ", 40 , 32 , C , Student Development *** ,  ,  ,CB-392
+CB-392, UNIV 101  , 268 ,  , N ,  , 2.0 ,  , 4:00p - 4:50p , R ," Beard, Randal Winston ", 25 , 15 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 117  , 010 ,  , N ,  , 2.0 , EVENING , 5:00p - 6:50p , T ," Puertas, T Alberto ", 25 , 20 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 117  , 011 ,  , N ,  , 2.0 , EVENING , 5:00p - 6:50p , W ," Soto, Amy Raquel ", 25 , 24 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 109  , 007 ,  , N ,  , 2.0 , EVENING , 5:00p - 6:50p , R ," Hosford, Scott D ", 25 , 27 , C , Student Development *** ,  ,  ,CB-392
+CB-392, STDEV 145  , 001 ,  , N ,  , 1.0 , EVENING , 5:30p - 6:20p , M ," Hinton, Darren Robert ", 35 , 38 , C , Student Development *** ,  ,  ,CB-392
+CTB-385, MFGEN 431  , 002 ,  , N ,  , 3.0 ,  , 10:00a - 11:50a , F ," McKell, Eric Kent ", 15 , 9 , C , Electrical and Computer Engineering ,  ,  ,CTB-385
+CTB-385, IT&C 562  , 001 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , MW ," Clawson, John K ", 25 , 17 , C , Electrical and Computer Engineering ,  ,  ,CTB-385
+ESC-C261, NDFS 201  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , R ," LeCheminant, James Derek ", 42 , 26 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,ESC-C261
+ESC-C261, NDFS 405  , 001 ,  , N ,  , 0.5 ,  , 8:00a - 10:50a , F ," Bowden, Jennifer A ", 22 , 21 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,ESC-C261
+ESC-C261, NDFS 405  , 002 ,  , N ,  , 0.5 ,  , 8:00a - 10:50a , F ," Bowden, Jennifer A ", 20 , 20 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,ESC-C261
+ESC-C261, NDFS 458  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , MW ," Patten, Emily Kay Vaterlaus ", 45 , 43 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,ESC-C261
+ESC-C261, NDFS 410  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," LeCheminant, James Derek ", 35 , 18 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,ESC-C261
+ESC-C261, NDFS 361  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MW ," Ahlborn, Eugene Joseph ", 16 , 10 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,ESC-C261
+ESC-C261, NDFS 361  , 002 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MW ," Ahlborn, Eugene Joseph ", 16 , 5 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,ESC-C261
+ESC-C261, NDFS 150  , 001 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Ahlborn, Eugene Joseph ", 48 , 30 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,ESC-C261
+ESC-C261, NDFS 191  , 001 ,  , N ,  , 1.0 ,  , 12:00p - 12:50p , T ," Dunn, Mike L ", 45 , 38 , C ," Nutrition, Dietetics, and Food Science **UNIV ",  ,  ,ESC-C261
+ESC-C261, UNIV 101  , 212 ,  , N ,  , 2.0 ,  , 1:00p - 1:50p , MW ," Fullmer, Susan ", 25 , 25 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,ESC-C261
+ESC-C261, NDFS 374  , 001 ,  , N ,  , 2.0 ,  , 2:00p - 3:50p , MW ," Duncan, Julie Anne *** ", 43 , 40 , C ," Nutrition, Dietetics, and Food Science **PHY S ",  ,  ,ESC-C261
+ESC-C261, PHY S 100  , 050 ,  , N ,  , 3.0 , EVENING , 5:30p - 6:20p , R ," Skinner, Malcolm R ", 35 , 27 , C ," Nutrition, Dietetics, and Food Science *** ",  ,  ,ESC-C261
+ESC-C396, GEOL 230  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," LeMonte, Joshua James ", 24 , 19 , C , Geological Sciences ,  ,  ,ESC-C396
+ESC-C396, GEOL 351  , 001 ,  , N ,  , 4.0 ,  , 10:00a - 10:50a , MWF ," Bickmore, Barry R ", 24 , 14 , C , Geological Sciences ,  ,  ,ESC-C396
+ESC-C396, GEOL 531  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Bickmore, Barry R ", 24 , 7 , C , Geological Sciences ,  ,  ,ESC-C396
+HRCB-116, WRTG 316  , 002 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Fullmer, Stephen B ", 25 , 21 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, ENGL 303  , 004 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Greenwood, Ansalee Morrison ", 20 , 15 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, WRTG 311  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Gurley, Texanna Greyson ", 25 , 22 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, WRTG 311  , 002 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Gurley, Texanna Greyson ", 25 , 23 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, WRTG 311  , 003 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Hedengren, Mary L ", 25 , 23 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, UNIV 101  , 280 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , R ," Crowe, Christopher E ", 20 , 20 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, WRTG 311  , 004 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Hedengren, Mary L ", 25 , 18 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, UNIV 101  , 281 ,  , N ,  , 2.0 ,  , 1:00p - 1:50p , R ," Cutler, Edward Smith ", 20 , 21 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, KOREA 201  , 002 ,  , N ,  , 4.0 ,  , 2:00p - 2:50p , MWF ," Lee, Jueun ", 20 , 21 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, ENGL 302  , 004 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , R ," Johnson, Lisa April Bernotski ", 20 , 17 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, WRTG 311  , 006 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , R ," Nield, Maren Noel ", 25 , 20 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, IAS 351 R , 001 ,  , N ,  , 3.0 , EVENING , 5:00p - 7:50p , T ," Leonard, Cory W *** ", 90 , 75 , C , English *** ,  ,  ,HRCB-116
+HRCB-116, ENGL 394 R , 001 ,  , N ,  , 3.0 ,  , 5:00p - 5:50p , R ," Earl, Cheri P ", 30 , 18 , C , English *** ,  ,  ,HRCB-116
+JFSB-B042, PHIL 110  , 015 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , MW ," Burton, Judson D ", 35 , 31 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, ARTHC 304  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , MW ," Yingling, Erik Odin ", 25 , 23 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, ARTHC 201  , 006 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Allred, Melanie Kathleen ", 40 , 44 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, ARTHC 201  , 005 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Yingling, Erik Odin ", 40 , 43 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, IHUM 243  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , F ," Easterling, Michael H ", 44 , 35 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, IHUM 260  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , MW ," Esplin, Marlene Hansen ", 40 , 41 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, IHUM 262  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , R ," Christenson, Allen J ", 40 , 30 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, IHUM 201  , 004 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Stanford, Charlotte Alighieria ", 44 , 39 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, CMLIT 201  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , R ," Peer, Larry Howard ", 44 , 39 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, ARTHC 202  , 006 ,  , N ,  , 3.0 , EVENING , 4:00p - 6:50p , M ," Wescott, Angela Archibald ", 30 , 32 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, HIST 221  , 003 ,  , N ,  , 3.0 , EVENING , 4:00p - 5:15p , R ," Cannon, Brian Q ", 44 , 41 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, ARTHC 111  , 001 ,  , N ,  , 3.0 , EVENING , 4:00p - 6:50p , W ," Pitcher, Cheri Eppich ", 40 , 33 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, THAI 101  , 001 ,  , N ,  , 4.0 , EVENING , 6:00p - 7:50p , R ," Chanthaphuang, Chaleurn ", 15 , 6 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B042, LAO 330  , 001 ,  , N ,  , 3.0 , EVENING , 8:00p - 9:15p , R ," Chanthaphuang, Chaleurn ", 15 , 5 , C , Comparative Arts and Letters *** ,  ,  ,JFSB-B042
+JFSB-B160, ASL 101  , 001 ,  , N ,  , 4.0 ,  , 8:00a - 8:50a , MTWR ," Bishara, Samond Byung ", 20 , 17 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B160, ASL 101  , 002 ,  , N ,  , 4.0 ,  , 9:00a - 9:50a , MTWR ," McDougal, Emily Elise ", 20 , 21 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B160, ASL 101  , 003 ,  , N ,  , 4.0 ,  , 10:00a - 10:50a , MTWR ," McDougal, Emily Elise ", 20 , 19 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B160, ASL 210  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Wakeland, Jennifer Burt ", 25 , 8 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B160, ASL 311 R , 001 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , R ," Bleazard, Emilynn Aretta ", 25 , 13 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B160, ASL 305  , 001 ,  , N ,  , 2.0 ,  , 1:00p - 1:50p , MW ," Wakeland, Jennifer Burt ", 25 , 7 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B160, ASL 101  , 004 ,  , N ,  , 4.0 ,  , 1:00p - 2:50p , R ," Harding, Charity A ", 20 , 22 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B160, ASL 202  , 001 ,  , N ,  , 4.0 ,  , 3:00p - 3:50p , MTWR ," Malm, Marlene ", 20 , 12 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B160, ASL 101  , 007 ,  , N ,  , 4.0 , EVENING , 4:00p - 5:50p , MW ," Erwin, Paul Hadfield ", 20 , 19 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B160, ASL 102  , 003 ,  , N ,  , 4.0 , EVENING , 4:00p - 5:50p , R ," Erwin, Paul Hadfield ", 20 , 13 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B160, ASL 111 R , 001 ,  , N ,  , 2.0 , EVENING , 6:00p - 7:50p , T ," Fertig, Kurt ", 25 , 13 , C , Humanities ,  ,  ,JFSB-B160
+JFSB-B164, SPAN 673 R , 003 ,  , N ,  , 1.0 ,  , 11:00a - 11:50a , M ," Thompson, Gregory L ", 15 , 6 , C , Humanities ,  ,  ,JFSB-B164
+JFSB-B164, SPAN 673 R , 001 ,  , N ,  , 1.0 ,  , 11:00a - 11:50a , W ," Knapp, Nieves Perez ", 18 , 7 , C , Humanities ,  ,  ,JFSB-B164
+JFSB-B164, SPAN 673 R , 002 ,  , N ,  , 1.0 ,  , 11:00a - 11:50a , F ," Martinsen, Rob Alan ", 15 , 5 , C , Humanities ,  ,  ,JFSB-B164
+JFSB-B164, UNIV 101  , 296 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , R ," Martinsen, Rob Alan ", 25 , 25 , C , Humanities ,  ,  ,JFSB-B164
+JFSB-B164, SWED 101  , 001 ,  , N ,  , 4.0 ,  , 1:00p - 1:50p , MTWR ," Osguthorpe, Emmaline Rose ", 18 , 15 , C , Humanities ,  ,  ,JFSB-B164
+JFSB-B164, SPAN 377  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , R ," Hemsath, Dustin J ", 30 , 11 , C , Humanities ,  ,  ,JFSB-B164
+JFSB-B164, UNIV 101  , 177 ,  , N ,  , 2.0 ,  , 3:00p - 4:50p , W ," Cox, Troy L ", 21 , 21 , C , Humanities ,  ,  ,JFSB-B164
+JFSB-B164, SLAT 604  , 001 ,  , N ,  , 3.0 ,  , 4:00p - 5:15p , R ," Montgomery, Cherice Michelle ", 15 , 7 , C , Humanities ,  ,  ,JFSB-B164
+JKB-1005, WRTG 313  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 8:50a , MWF ," Hale, Lisa A ", 25 , 23 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, WRTG 313  , 002 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Fleming, Anne ", 25 , 25 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, ENGL 384 R , 003 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Steiner, Makayla Camille ", 20 , 10 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, UNIV 101  , 286 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , MW ," Roberts, Brian R ", 20 , 20 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, WRTG 150  , 016 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , F ," Stimpson, Shannon Melee *** ", 20 , 20 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, WRTG 316  , 012 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Brough, Alisa ", 25 , 25 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, WRTG 313  , 003 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Davis, Natalie A ", 25 , 25 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, ENGL 218  , 002 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , R ," Tuttle, Stephen B ", 20 , 21 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, WRTG 313  , 004 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Davis, Natalie A ", 25 , 25 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, WRTG 316  , 013 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , MWF ," Earl, Carol Chanel ", 25 , 22 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, WRTG 313  , 005 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , R ," Laubaugh, Rebecca Cecilia ", 25 , 24 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, MUSIC 203  , 001 ,  , N ,  , 3.0 , EVENING , 4:00p - 5:15p , MW ," Reed, Heidi ", 28 , 28 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, WRTG 313  , 006 ,  , N ,  , 3.0 , EVENING , 4:00p - 5:15p , R ," Laubaugh, Rebecca Cecilia ", 25 , 24 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, MUSIC 203  , 002 ,  , N ,  , 3.0 , EVENING , 5:30p - 6:45p , MW ," Reed, Heidi ", 28 , 28 , C , English *** ,  ,  ,JKB-1005
+JKB-1005, PORT 321  , 008 ,  , N ,  , 3.0 , EVENING , 5:30p - 6:45p , R ," McLane, Rubia Nara ", 25 , 23 , C , English *** ,  ,  ,JKB-1005
+JKB-1006, SPAN 321  , 003 ,  , N ,  , 3.0 ,  , 8:00a - 8:50a , MWF ," Blackwell, Lilia Mena ", 25 , 28 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, PORT 355  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , R ," Jones, Jordan Benjamin ", 25 , 24 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, SPAN 321  , 007 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Villalobos, Gina Aurora ", 25 , 30 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, PORT 355  , 002 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Jones, Jordan Benjamin ", 25 , 20 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, UNIV 101  , 297 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , MW ," Sherman, Alvin F ", 25 , 24 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, ASL 201  , 029 , L , N ,  , 0.0 ,  , 10:00a - 10:50a , F ,  , 8 , 5 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, SPAN 322  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Villalobos, Gina Aurora ", 20 , 19 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, SPAN 106  , 003 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p ,MTWRF," Schnebly, Silke McKay ", 22 , 8 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, SPAN 321  , 019 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Hawkins, Michelle Emily ", 25 , 24 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, C S 110  , 022 , L , N ,  , 0.0 ,  , 1:00p - 1:50p , R ,  , 40 , 39 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, SPAN 321  , 020 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , MWF ," Hawkins, Michelle Emily ", 25 , 25 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, SPAN 330  , 012 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , R ," Larson, Erik Matthew ", 25 , 24 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, SPAN 321  , 022 ,  , N ,  , 3.0 ,  , 3:00p - 3:50p , MWF ," Hawkins, Michelle Emily ", 25 , 25 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, SPAN 206  , 005 ,  , N ,  , 4.0 , EVENING , 4:00p - 4:50p , MTWRF ," Osborn, Annalyn Beus ", 22 , 21 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1006, MALAG 330  , 001 ,  , N ,  , 3.0 , EVENING , 5:30p - 6:45p , MW ," Peters, Jacob Ryan ", 15 , 6 , C , Humanities *** ,  ,  ,JKB-1006
+JKB-1010, SPAN 321  , 029 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , R ," Prescott, Iris Anabela ", 25 , 25 , C , Humanities *** ,  ,  ,JKB-1010
+JKB-1010, ELING 350  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Hammari, Kimiko Mae ", 30 , 9 , C , Humanities *** ,  ,  ,JKB-1010
+JKB-1010, SPAN 322  , 003 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Morales, Brigitte Lily ", 20 , 5 , C , Humanities *** ,  ,  ,JKB-1010
+JKB-1010, ELING 325  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Christensen, Jacquelyn Youd ", 30 , 15 , C , Humanities *** ,  ,  ,JKB-1010
+JKB-1010, ELING 223  , 002 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Oaks, Dallin Dixon ", 42 , 40 , C , Humanities *** ,  ,  ,JKB-1010
+JKB-1010, PHIL 110  , 013 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Packer, Brent Logan ", 35 , 37 , C , Humanities *** ,  ,  ,JKB-1010
+JKB-1010, SPAN 351  , 004 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , R ," Wilson, Mac John ", 25 , 22 , C , Humanities *** ,  ,  ,JKB-1010
+JKB-1010, LING 581  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , R ," Dougal, Duane K ", 26 , 10 , C , Humanities *** ,  ,  ,JKB-1010
+JKB-1010, ASL 201  , 001 ,  , N ,  , 4.0 , EVENING , 4:00p - 5:50p , R ," Bleazard, Emilynn Aretta ", 20 , 19 , C , Humanities *** ,  ,  ,JKB-1010
+JKB-1117, SPAN 205  , 001 ,  , N ,  , 4.0 ,  , 8:00a - 8:50a , MTWRF ," Tartaglia, Diana V ", 22 , 9 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1117, SPAN 206  , 001 ,  , N ,  , 4.0 ,  , 9:00a - 9:50a , MTWRF ," Spencer, Daniel Damaso ", 22 , 19 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1117, SPAN 206  , 002 ,  , N ,  , 4.0 ,  , 10:00a - 10:50a , MTWRF ," Zuniga, Isabella G ", 22 , 22 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1117, ELING 375  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Tanner, Mark W ", 20 , 10 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1117, PORT 201  , 001 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , MWF ," Hirtle, Sophie Elisabeth ", 20 , 6 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1117, SPAN 321  , 030 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , R ," McWhorter, Rory David ", 25 , 26 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1117, SPAN 659 R , 002 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Price, Brian Lee ", 10 , 5 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1117, SPAN 351  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , MWF ," Price, Brian Lee ", 25 , 23 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1117, C S 110  , 023 , L , N ,  , 0.0 ,  , 2:00p - 2:50p , R ,  , 36 , 37 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1117, SPAN 206  , 004 ,  , N ,  , 4.0 ,  , 3:00p - 3:50p , MTWRF ," Koncurat, Rachel Emily ", 22 , 12 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1117, WELSH 330  , 001 ,  , N ,  , 3.0 , EVENING , 5:00p - 7:50p , W ," Taylor, Thomas Green ", 15 , 7 , C , Spanish and Portuguese *** ,  ,  ,JKB-1117
+JKB-1121, WRTG 150  , 088 ,  , N ,  , 3.0 ,  , 8:00a - 8:50a , MWF ," Hancey, Madison Brooke ", 20 , 20 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 094 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , R ," Terry, Rachel Marie ", 20 , 20 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 089 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Dunn, Samuel James ", 20 , 19 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 095 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Terry, Rachel Marie ", 20 , 20 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 090 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Dunn, Samuel James ", 20 , 20 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 091 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Gillins, Ammon Timothy ", 20 , 19 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 092 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Hickman, Noah Trenton ", 20 , 20 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 096 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , R ," Wood, Holly Rose ", 20 , 20 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 093 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Hickman, Noah Trenton ", 20 , 20 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 098 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Leinenbach, Trenton Robert ", 20 , 20 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 097 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , R ," Rudy, Matthew William ", 20 , 22 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 029 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , F ," Reed, Meridith *** ", 20 , 20 , C , English *** ,  ,  ,JKB-1121
+JKB-1121, WRTG 150  , 119 ,  , N ,  , 3.0 , EVENING , 4:00p - 5:15p , R ," Rudy, Matthew William ", 20 , 21 , C , English *** ,  ,  ,JKB-1121
+JKB-1125, PHSCS 571  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Bergeson, Scott D ", 20 , 5 , C , French and Italian *** ,  ,  ,JKB-1125
+JKB-1125, ITAL 101  , 002 ,  , N ,  , 4.0 ,  , 10:00a - 10:50a , MTWRF ," Hunter, Karlie Ina ", 26 , 15 , C , French and Italian *** ,  ,  ,JKB-1125
+JKB-1125, ITAL 322  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Orton, Marie ", 25 , 6 , C , French and Italian *** ,  ,  ,JKB-1125
+JKB-1125, ITAL 361  , 001 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Orton, Marie ", 18 , 11 , C , French and Italian *** ,  ,  ,JKB-1125
+JKB-1125, SPAN 321  , 032 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , R ," Stallings, Gloria Berenice ", 25 , 28 , C , French and Italian *** ,  ,  ,JKB-1125
+JKB-1125, LING 110  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Whiting, Miriam ", 30 , 23 , C , French and Italian *** ,  ,  ,JKB-1125
+JKB-1125, TAGAL 101  , 002 ,  , N ,  , 4.0 ,  , 2:00p - 3:50p , T ," Aitken, Cherry Rose ", 15 , 7 , C , French and Italian *** ,  ,  ,JKB-1125
+JKB-1125, WRTG 150  , 032 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , F ," Reed, Meridith *** ", 20 , 20 , C , French and Italian *** ,  ,  ,JKB-1125
+JKB-1125, PHY S 100  , 032 ,  , N ,  , 3.0 ,  , 3:00p - 3:50p , R ," Ware, Michael J ", 28 , 23 , C , French and Italian *** ,  ,  ,JKB-1125
+JKB-1125, TAGAL 330  , 002 ,  , N ,  , 3.0 , EVENING , 4:00p - 5:15p , T ," Aitken, Cherry Rose ", 17 , 18 , C , Humanities *** ,  ,  ,JKB-1125
+JKB-1125, WELSH 305  , 001 ,  , N ,  , 1.0 , EVENING , 4:00p - 4:50p , W ," Taylor, Thomas Green ", 25 , 8 , C , Humanities *** ,  ,  ,JKB-1125
+JKB-1125, WELSH 201  , 001 ,  , N ,  , 4.0 , EVENING , 5:00p - 6:50p , MW ," Schoedel, Ronald Conrad ", 15 , 6 , C , Humanities *** ,  ,  ,JKB-1125
+JKB-2111, HIST 220  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Reeder, Tyson Frank ", 85 , 76 , C ," Family, Home, and Social Sciences *** ",  ,  ,JKB-2111
+JKB-2111, COMD 450  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Schow, Julie Mary ", 60 , 37 , C , Nursing *** ,  ,  ,JKB-2111
+JKB-2111, MUSIC 101  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Reesor, Keenan Allred ", 85 , 86 , C ," Family, Home, and Social Sciences *** ",  ,  ,JKB-2111
+JKB-2111, ANTHR 201  , 001 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Schulthies, Becky Lyn ", 70 , 37 , C ," Family, Home, and Social Sciences *** ",  ,  ,JKB-2111
+JKB-2111, NURS 301  , 001 ,  , N ,  , 3.0 ,  , 12:00p - 2:50p , T ," Beckstrand, Renea Lindstrom ", 71 , 64 , C , Nursing *** ,  ,  ,JKB-2111
+JKB-2111, CPSE 442  , 001 ,  , N ,  , 3.0 ,  , 12:00p - 2:50p , R ," Sabey, Christian Vance ", 32 , 18 , C , Communication Disorders ,  ,  ,JKB-2111
+JKB-2111, HIST 220  , 002 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Fluhman, John Spencer ", 85 , 81 , C ," Family, Home, and Social Sciences *** ",  ,  ,JKB-2111
+JKB-2111, SOC 323  , 002 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Rugh, Jacob S ", 85 , 70 , C ," Family, Home, and Social Sciences *** ",  ,  ,JKB-2111
+JKB-2111, NURS 339  , 003 ,  , N ,  , 2.0 ,  , 3:00p - 4:50p , T ," Watson, Adrianna Lorraine ", 22 , 22 , C , Nursing *** ,  ,  ,JKB-2111
+JKB-2111, HIST 220  , 005 ,  , N ,  , 3.0 , EVENING , 4:00p - 5:15p , MW ," Reeder, Tyson Frank ", 85 , 83 , C ," Family, Home, and Social Sciences *** ",  ,  ,JKB-2111
+JKB-3104, MATH 334  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Halverson, Denise Marie ", 70 , 35 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 213  , 001 ,  , N ,  , 2.0 ,  , 9:00a - 9:50a , R ," McKay, Steven M ", 73 , 69 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 314  , 002 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Culver, Eric David ", 70 , 67 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 213  , 002 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , R ," Parry, Alan R ", 75 , 74 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 213  , 007 ,  , N ,  , 2.0 ,  , 11:00a - 11:50a , MW ," Conner, Greg ", 75 , 68 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 314  , 003 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Villamizar Gonzalez, Vianey Roman ", 70 , 70 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 213  , 003 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , R ," Parry, Alan R ", 75 , 74 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 334  , 003 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Dos Anjos Obata, Davi Joel ", 70 , 49 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 213  , 004 ,  , N ,  , 2.0 ,  , 1:00p - 1:50p , R ," McKay, Steven M ", 75 , 71 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 213  , 008 ,  , N ,  , 2.0 ,  , 2:00p - 2:50p , MW ," Webb, Benjamin Zachary ", 50 , 50 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 213  , 005 ,  , N ,  , 2.0 ,  , 2:00p - 2:50p , R ," McKay, Steven M ", 75 , 73 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 215  , 002 ,  , N ,  , 1.0 ,  , 2:00p - 2:50p , F ," Webb, Benjamin Zachary ", 50 , 50 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MATH 303  , 002 ,  , N ,  , 4.0 ,  , 3:00p - 3:50p , MTWRF ," Soloviev, Vladimir Petrovich ", 60 , 20 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, MUSIC 204  , 001 ,  , N ,  , 3.0 , EVENING , 4:00p - 5:15p , MW ," Woodbury, Brian William ", 80 , 76 , C , Mathematics *** ,  ,  ,JKB-3104
+JKB-3104, ARTHC 202  , 005 ,  , N ,  , 3.0 , EVENING , 4:00p - 6:50p , R ," Hale, Christine Heathcote ", 40 , 43 , C , Mathematics *** ,  ,  ,JKB-3104
+JRCB-267, LAW 545  , 002 ,  , N ,  , 3.0 ,  , 8:50a - 9:45a , TWR ," Staheli, Kory D *** ", 25 , 20 , C , Law School ,  ,  ,JRCB-267
+JRCB-267, LAW 788 R , 009 ,  , N ,  , 3.0 ,  , 9:00a - 10:50a , F ," Hafen, Nicholas Daines ", 10 , 7 , C , Law School ,  ,  ,JRCB-267
+JRCB-267, LAW 545  , 005 ,  , N ,  , 3.0 ,  , 9:55a - 10:50a , R ," Staheli, Kory D *** ", 25 , 20 , C , Law School ,  ,  ,JRCB-267
+JRCB-267, UNIV 101  , 262 ,  , N ,  , 2.0 ,  , 11:00a - 11:50a , MW ," Nevers, Shawn G ", 25 , 25 , C , Law School ,  ,  ,JRCB-267
+JRCB-267, LAW 605  , 001 ,  , N ,  , 3.0 ,  , 1:10p - 2:35p , R ," Owen, Stanford Browning ", 18 , 8 , C , Law School ,  ,  ,JRCB-267
+JRCB-267, LAW 545  , 005 ,  , N ,  , 3.0 ,  , 1:10p - 2:05p , W ," Staheli, Kory D *** ", 25 , 20 , C , Law School ,  ,  ,JRCB-267
+JRCB-267, LAW 795 R , 019 ,  , N ,  , 2.0 ,  , 4:20p - 6:10p , T ," Scharffs, Brett Gilbert ", 24 , 12 , C , Law School ,  ,  ,JRCB-267
+JRCB-267, LAW 795 R , 020 ,  , N ,  , 2.0 ,  , 4:20p - 6:10p , W ," Scharffs, Brett Gilbert ", 24 , 16 , C , Law School ,  ,  ,JRCB-267
+JRCB-271, LAW 788 R , 007 ,  , N ,  , 2.0 ,  , 9:00a - 10:50a , F ," Vogeler, Eric B *** ", 10 , 5 , C , Law School ,  ,  ,JRCB-271
+JRCB-271, LAW 659  , 001 ,  , N ,  , 3.0 ,  , 9:25a - 10:50a , R ," Jensen, Eric Talbot ", 24 , 14 , C , Law School ,  ,  ,JRCB-271
+JRCB-271, LAW 659  , 002 ,  , N ,  , 3.0 ,  , 9:25a - 10:50a , R ," Jensen, Eric Talbot ", 24 , 23 , C , Law School ,  ,  ,JRCB-271
+JRCB-271, UNIV 101  , 259 ,  , N ,  , 2.0 ,  , 11:00a - 11:50a , MW ," Clayton, William Weatherford ", 25 , 25 , C , Law School ,  ,  ,JRCB-271
+JRCB-271, LAW 795 R , 004 ,  , N ,  , 3.0 ,  , 1:10p - 2:35p , MW ," Augustine-Adams, Kif ", 24 , 24 , C , Law School ,  ,  ,JRCB-271
+JRCB-271, LAW 698 R , 003 ,  , N ,  , 3.0 ,  , 1:10p - 2:35p , R ," Elieson, Dayle Ann ", 20 , 7 , C , Law School ,  ,  ,JRCB-271
+JRCB-271, LAW 723  , 001 ,  , N ,  , 3.0 ,  , 2:45p - 5:45p , M ," Jensen, Eric Talbot ", 25 , 16 , C , Law School ,  ,  ,JRCB-271
+JRCB-271, LAW 723  , 002 ,  , N ,  , 3.0 ,  , 2:45p - 5:45p , M ," Jensen, Eric Talbot ", 24 , 24 , C , Law School ,  ,  ,JRCB-271
+JRCB-271, LAW 613  , 001 ,  , N ,  , 3.0 ,  , 2:45p - 4:10p , R ," Bazzelle, Suchada P ", 20 , 17 , C , Law School ,  ,  ,JRCB-271
+JRCB-271, LAW 724  , 001 ,  , N ,  , 3.0 ,  , 2:45p - 5:30p , W ," Gallacher, Leslie Ann ", 24 , 21 , C , Law School ,  ,  ,JRCB-271
+JRCB-271, LAW 795 R , 002 ,  , N ,  , 3.0 ,  , 4:20p - 5:45p , R ," Jones, Cree L *** ", 8 , 14 , C , Law School ,  ,  ,JRCB-271
+JRCB-306, LAW 795 R , 013 ,  , N ,  , 3.0 ,  , 9:00a - 10:25a , MW ," Bramble, Catherine Emily ", 25 , 19 , C , Law School ,  ,  ,JRCB-306
+JRCB-306, LAW 660  , 001 ,  , N ,  , 3.0 ,  , 9:25a - 10:50a , R ," Cantarero-Martinez, Jose Simon ", 60 , 54 , C , Law School ,  ,  ,JRCB-306
+JRCB-306, LAW 795 R , 007 ,  , N ,  , 1.0 ,  , 10:35a - 11:30a , M ," Bramble, Catherine Emily ", 40 , 31 , C , Law School ,  ,  ,JRCB-306
+JRCB-306, LAW 552  , 001 ,  , N ,  , 0.5 ,  , 1:05p - 2:00p , T ," Grandy, Shannon Ruth ", 125 , 119 , C , Law School ,  ,  ,JRCB-306
+JRCB-306, LAW 662  , 001 ,  , N ,  , 3.0 ,  , 1:10p - 2:35p , MW ," Jennejohn, Matthew Christopher ", 50 , 13 , C , Law School ,  ,  ,JRCB-306
+JRCB-306, LAW 505  , 001 ,  , N ,  , 4.0 ,  , 2:45p - 4:35p , MW ," Nunez, Debra Carolina ", 70 , 39 , C , Law School ,  ,  ,JRCB-306
+JRCB-306, LAW 520  , 002 ,  , N ,  , 4.0 ,  , 2:45p - 4:35p , R ," Fee, John Elven ", 65 , 59 , C , Law School ,  ,  ,JRCB-306
+JSB-175, REL C 225  , 026 ,  , N ,  , 2.0 ,  , 8:00a - 8:50a , MW ," Watkins, Jordan T ", 42 , 41 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, REL C 225  , 003 ,  , N ,  , 2.0 ,  , 8:00a - 8:50a , T ," Alford, Kenneth Lowell ", 42 , 42 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, REL C 225  , 004 ,  , N ,  , 2.0 ,  , 8:00a - 8:50a , R ," Alford, Kenneth Lowell ", 42 , 42 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, REL C 225  , 031 ,  , N ,  , 2.0 ,  , 9:00a - 9:50a , MW ," Watkins, Jordan T ", 42 , 42 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, REL C 225  , 005 ,  , N ,  , 2.0 ,  , 9:00a - 9:50a , T ," Alford, Kenneth Lowell ", 42 , 42 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, A HTG 100  , 056 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , F ," Karpowitz, Christopher F ", 30 , 15 , C ," Family, Home, and Social Sciences ",  ,  ,JSB-175
+JSB-175, REL C 320  , 001 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , MW ," Farnes, Sherilyn ", 42 , 40 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, REL C 225  , 024 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , R ," Eaton, Robert Irvin ", 42 , 42 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, ANTHR 101  , 013 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , F ," Thompson, Gregory A ", 30 , 23 , C ," Family, Home, and Social Sciences ",  ,  ,JSB-175
+JSB-175, REL C 320  , 002 ,  , N ,  , 2.0 ,  , 11:00a - 11:50a , MW ," Farnes, Sherilyn ", 42 , 38 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, A HTG 100  , 055 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , F ," Karpowitz, Christopher F ", 30 , 30 , C ," Family, Home, and Social Sciences ",  ,  ,JSB-175
+JSB-175, REL C 358  , 001 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , R ," Wilkinson, Gregory Ernest ", 42 , 41 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, A HTG 100  , 092 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , F ," Karpowitz, Christopher F ", 30 , 22 , C ," Family, Home, and Social Sciences ",  ,  ,JSB-175
+JSB-175, REL C 358  , 002 ,  , N ,  , 2.0 ,  , 1:00p - 1:50p , R ," Wilkinson, Gregory Ernest ", 42 , 41 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, A HTG 100  , 073 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , F ," Karpowitz, Christopher F ", 30 , 16 , C ," Family, Home, and Social Sciences ",  ,  ,JSB-175
+JSB-175, REL C 130  , 012 ,  , N ,  , 2.0 ,  , 2:00p - 2:50p , MW ," Smith, Bob T ", 42 , 17 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, PHY S 100  , 016 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , R ," Hirschmann, Eric W ", 35 , 29 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+JSB-175, REL C 225  , 408 ,  , N ,  , 2.0 , EVENING , 5:00p - 6:50p , M ," Dirkmaat, Gerrit J ", 42 , 38 , C , Church History and Doctrine *** ,  ,  ,JSB-175
+KMBL-102, SOC W 603  , 002 ,  , N ,  , 2.0 ,  , 8:00a - 9:50a , M ," Limb, Gordon E ", 20 , 20 , C ," Family, Home, and Social Sciences ",  ,  ,KMBL-102
+KMBL-102, MFHD 605  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 10:50a , R ," Yorgason, Jeremy B ", 20 , 18 , C ," Family, Home, and Social Sciences ",  ,  ,KMBL-102
+KMBL-102, PSYCH 501  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 11:50a , W ," Baldwin, Scott A ", 20 , 15 , C ," Family, Home, and Social Sciences ",  ,  ,KMBL-102
+KMBL-102, POLI 300  , 005 ,  , N ,  , 4.0 ,  , 9:00a - 9:50a , F ," Romney, David Alexander ", 15 , 14 , C ," Family, Home, and Social Sciences ",  ,  ,KMBL-102
+KMBL-102, POLI 300  , 006 ,  , N ,  , 4.0 ,  , 10:00a - 10:50a , F ," Romney, David Alexander ", 15 , 10 , C ," Family, Home, and Social Sciences ",  ,  ,KMBL-102
+KMBL-102, POLI 300  , 007 ,  , N ,  , 4.0 ,  , 11:00a - 11:50a , F ," Romney, David Alexander ", 15 , 9 , C ," Family, Home, and Social Sciences ",  ,  ,KMBL-102
+KMBL-102, FHSS 251 R , 001 ,  , N ,  , 1.0 ,  , 12:00p - 12:50p , T ," Archibald, Corinne Yoonjoo ", 25 , 18 , C ," Family, Home, and Social Sciences ",  ,  ,KMBL-102
+KMBL-102, SOC W 606  , 001 ,  , N ,  , 2.0 ,  , 12:00p - 1:50p , R ," Hoffman, Steven Gregory ", 22 , 22 , C ," Family, Home, and Social Sciences ",  ,  ,KMBL-102
+KMBL-102, FHSS 251 R , 002 ,  , N ,  , 1.0 ,  , 2:00p - 2:50p , W ," Cardoza, Khiara Nicole Almeida ", 25 , 15 , C ," Family, Home, and Social Sciences ",  ,  ,KMBL-102
+KMBL-102, SOC W 606  , 002 ,  , N ,  , 2.0 ,  , 2:00p - 3:50p , R ," Hoffman, Steven Gregory ", 22 , 22 , C ," Family, Home, and Social Sciences ",  ,  ,KMBL-102
+KMBL-240, GEOG 424  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Simpson, David Michael ", 38 , 16 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-240, GEOG 280  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Monson, Clark S ", 38 , 16 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-240, LING 201  , 002 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Eckstein, Grant Taylor ", 35 , 15 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-240, A HTG 100  , 057 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , R ," Karpowitz, Christopher F ", 30 , 26 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-240, GEOG 305  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , MW ," Kerry, Ruth ", 30 , 6 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-240, PSYCH 354  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , R ," Eyestone, Lynn Lambert ", 28 , 10 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-240, ANTHR 543  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , MWF ," Thomas, Elizabeth Bingham ", 29 , 16 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-240, FHSS 300  , 001 ,  , N ,  , 2.0 ,  , 2:00p - 3:50p , R ," Skabelund, Aaron H ", 24 , 20 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-240, UNIV 101  , 039 ,  , N ,  , 2.0 ,  , 5:00p - 6:50p , M ," Reed, Shelly J ", 25 , 25 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-240, GEOG 120  , 003 ,  , N ,  , 3.0 , EVENING , 5:00p - 7:50p , W ," Olsen, Daniel Howard ", 76 , 20 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-240, GEOG 101  , 002 ,  , N ,  , 3.0 , EVENING , 6:00p - 8:50p , T ," Monson, Clark S ", 38 , 18 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-240
+KMBL-280, POLI 475  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , R ," Dudley, Rebecca Ellen ", 38 , 28 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, WRTG 312  , 014 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Harding, Trina Hansen ", 25 , 21 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 312  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Krewson, Christopher Newell ", 38 , 34 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 376  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Cooper, Scott B ", 38 , 32 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 367  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Hancock, Ralph C ", 38 , 13 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 270  , 002 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , MW ," Atkinson, Douglas B ", 30 , 27 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 379 R , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , R ," Kartchner, Kerry Marlo ", 38 , 20 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 200  , 008 ,  , N ,  , 4.0 ,  , 1:00p - 1:50p , F ," Argyle, Lisa Pfost ", 20 , 10 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 210  , 002 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Pope, Jeremy Clayne ", 30 , 30 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 421  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , R ," Krewson, Christopher Newell ", 38 , 22 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 200  , 009 ,  , N ,  , 4.0 ,  , 2:00p - 2:50p , F ," Argyle, Lisa Pfost ", 20 , 13 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 250  , 001 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , MW ," Self, Darin Sanders ", 30 , 26 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-280, POLI 315  , 001 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , R ," Barber, Michael Jay ", 38 , 18 , C ," Family, Home, and Social Sciences *** ",  ,  ,KMBL-280
+KMBL-660, GEOG 347  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Olsen, Daniel Howard ", 45 , 16 , C , Geography ,  ,  ,KMBL-660
+KMBL-660, GEOG 331  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Shumway, J Matthew ", 40 , 13 , C , Geography ,  ,  ,KMBL-660
+KMBL-660, GEOG 421  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 12:50p , F ," McGinn, Gary A ", 20 , 14 , C , Geography ,  ,  ,KMBL-660
+KMBL-660, A HTG 100  , 016 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , R ," Patterson, Kelly D ", 30 , 29 , C , Geography ,  ,  ,KMBL-660
+KMBL-660, GEOG 250  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , R ," Shumway, J Matthew ", 45 , 20 , C , Geography ,  ,  ,KMBL-660
+KMBL-660, GEOG 210  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Simpson, David Michael ", 45 , 24 , C , Geography ,  ,  ,KMBL-660
+KMBL-660, UNIV 101  , 253 ,  , N ,  , 2.0 ,  , 2:00p - 2:50p , R ," Jensen, Ryan Russell ", 25 , 25 , C , Geography ,  ,  ,KMBL-660
+KMBL-660, GEOG 510  , 001 ,  , N ,  , 4.0 ,  , 3:00p - 4:50p , R ," Simpson, David Michael ", 45 , 11 , C , Geography ,  ,  ,KMBL-660
+KMBL-660, GEOG 422  , 001 ,  , N ,  , 2.0 , EVENING , 4:00p - 5:50p , W ," Haws, Gregory E ", 40 , 17 , C , Geography ,  ,  ,KMBL-660
+KMBL-660, GEOG 350  , 001 ,  , N ,  , 3.0 ,  , 5:00p - 7:50p , T ," Forsyth, Calli Marie ", 45 , 8 , C , Geography ,  ,  ,KMBL-660
+LSB-2102, CH EN 476  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 8:50a , MWF ," Argyle, Morris Dee ", 80 , 69 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, CELL 305  , 002 ,  , N ,  , 4.0 ,  , 8:00a - 9:50a , R ," Bikman, Benjamin Thomas ", 190 , 158 , C , Public Health *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 004 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MW ," Adams, Marcella Shaver ", 32 , 28 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 005 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MW ," Adams, Marcella Shaver ", 32 , 31 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 006 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MW ," Adams, Marcella Shaver ", 30 , 29 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 007 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MW ," Adams, Marcella Shaver ", 32 , 30 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 008 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MW ," Adams, Marcella Shaver ", 30 , 27 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 009 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MW ," Adams, Marcella Shaver ", 32 , 32 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 011 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MW ," Adams, Marcella Shaver ", 30 , 28 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 012 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MW ," Adams, Marcella Shaver ", 30 , 29 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 013 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MW ," Adams, Marcella Shaver ", 30 , 25 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 014 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MW ," Adams, Marcella Shaver ", 32 , 32 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 015 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MW ," Adams, Marcella Shaver ", 32 , 28 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 100  , 016 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MW ," Adams, Marcella Shaver ", 32 , 28 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, PWS 112  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , TR ," Hall, Brianna ", 49 , 54 , C , Public Health *** ,  ,  ,LSB-2102
+LSB-2102, PWS 112  , 002 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , TR ," Hall, Brianna ", 49 , 51 , C , Public Health *** ,  ,  ,LSB-2102
+LSB-2102, PWS 112  , 003 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , TR ," Hall, Brianna ", 49 , 50 , C , Public Health *** ,  ,  ,LSB-2102
+LSB-2102, PWS 150  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Aanderud, Zachary Thomas ", 192 , 190 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 691 R , 001 ,  , N ,  , 0.5 ,  , 11:00a - 11:50a , R ," Glaittli, Gentri Rose ", 30 , 16 , C , Public Health *** ,  ,  ,LSB-2102
+LSB-2102, BIO 130  , 006 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , MWF ," Jensen, Jamie L ", 32 , 30 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 130  , 007 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , MWF ," Jensen, Jamie L ", 32 , 13 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 130  , 008 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , MWF ," Jensen, Jamie L ", 32 , 18 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 130  , 009 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , MWF ," Jensen, Jamie L ", 32 , 32 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, BIO 130  , 010 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , MWF ," Jensen, Jamie L ", 28 , 22 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, CELL 365  , 001 ,  , N ,  , 4.0 ,  , 1:00p - 2:50p , TR ," Mizrachi, Dario ", 190 , 30 , C , Public Health *** ,  ,  ,LSB-2102
+LSB-2102, PWS 340  , 002 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Maughan, Peter J ", 150 , 148 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, CELL 305  , 003 ,  , N ,  , 4.0 ,  , 3:00p - 4:50p , TR ," Bikman, Benjamin Thomas ", 175 , 144 , C , Public Health *** ,  ,  ,LSB-2102
+LSB-2102, PWS 340  , 003 ,  , N ,  , 3.0 , EVENING , 4:00p - 5:15p , MW ," Maughan, Peter J ", 120 , 125 , C , Plant and Wildlife Sciences *** ,  ,  ,LSB-2102
+LSB-2102, CELL 120  , 005 ,  , N ,  , 3.0 , EVENING , 5:30p - 6:45p , TR ," Reynolds, Stephanie Beth ", 175 , 86 , C , Public Health *** ,  ,  ,LSB-2102
+LSB-2113, MMBIO 241  , 003 ,  , N ,  , 1.0 ,  , 8:00a - 10:50a , T ," Avery, Staci Woolley ", 24 , 23 , C , Microbiology and Molecular Biology ,  ,  ,LSB-2113
+LSB-2113, MMBIO 241  , 010 ,  , N ,  , 1.0 ,  , 8:00a - 10:50a , R ," Avery, Staci Woolley ", 24 , 13 , C , Microbiology and Molecular Biology ,  ,  ,LSB-2113
+LSB-2113, MMBIO 241  , 015 ,  , N ,  , 1.0 ,  , 9:00a - 11:50a , F ," Avery, Staci Woolley ", 24 , 18 , C , Microbiology and Molecular Biology ,  ,  ,LSB-2113
+LSB-2113, MMBIO 241  , 005 ,  , N ,  , 1.0 ,  , 12:00p - 2:50p , T ," Avery, Staci Woolley ", 24 , 22 , C , Microbiology and Molecular Biology ,  ,  ,LSB-2113
+LSB-2113, MMBIO 241  , 012 ,  , N ,  , 1.0 ,  , 12:00p - 2:50p , R ," Avery, Staci Woolley ", 24 , 19 , C , Microbiology and Molecular Biology ,  ,  ,LSB-2113
+LSB-2113, MMBIO 122  , 003 ,  , N ,  , 1.0 ,  , 2:00p - 4:50p , W ," Black, Robert P ", 24 , 24 , C , Microbiology and Molecular Biology ,  ,  ,LSB-2113
+LSB-2113, MMBIO 122  , 001 ,  , N ,  , 1.0 ,  , 3:00p - 5:50p , M ," Black, Robert P ", 24 , 23 , C , Microbiology and Molecular Biology ,  ,  ,LSB-2113
+LSB-2113, MMBIO 122  , 002 ,  , N ,  , 1.0 ,  , 3:00p - 5:50p , T ," Black, Robert P ", 24 , 21 , C , Microbiology and Molecular Biology ,  ,  ,LSB-2113
+LSB-2145, PWS 419  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MW ," Petersen, Steven L ", 36 , 38 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, PWS 554  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Smith, Thomas Scott ", 32 , 21 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, UNIV 101  , 333 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , MW ," Jellen, Eric N ", 25 , 26 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, PWS 481  , 001 ,  , N ,  , 2.0 ,  , 10:00a - 11:50a , F ," Allen, Phil S ", 49 , 23 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, PWS 357  , 001 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MW ," Smith, Thomas Scott ", 36 , 29 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, PWS 112  , 001 ,  , N ,  , 3.0 ,  , 12:00p - 1:50p , T ," Hall, Brianna ", 49 , 54 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, PWS 112  , 002 ,  , N ,  , 3.0 ,  , 2:00p - 3:50p , T ," Hall, Brianna ", 49 , 51 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, PWS 324  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 4:50p , W ," Anderson, Val Jo ", 25 , 20 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, PWS 357  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 4:50p , R ," Smith, Thomas Scott ", 36 , 29 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, PWS 447  , 001 ,  , N ,  , 3.0 ,  , 3:00p - 4:50p , M ," McMillan, Brock R ", 31 , 31 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, PWS 112  , 003 ,  , N ,  , 3.0 ,  , 4:00p - 5:50p , T ," Hall, Brianna ", 49 , 50 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+LSB-2145, PWS 447  , 002 ,  , N ,  , 3.0 ,  , 5:00p - 6:50p , M ," McMillan, Brock R ", 30 , 24 , C , Plant and Wildlife Sciences ,  ,  ,LSB-2145
+MARB-128, HIST 252  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Ward, Evan R ", 40 , 32 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-128
+MARB-128, HIST 330  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Hardy, Jeffrey S ", 40 , 16 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-128
+MARB-128, HIST 217  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Stuart, Joseph Rulon ", 30 , 10 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-128
+MARB-128, HIST 217  , 002 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Stuart, Joseph Rulon ", 30 , 7 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-128
+MARB-128, REL A 250  , 042 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , MW ," Frederick, Julie Ann Parker ", 40 , 41 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-128
+MARB-128, HIST 314  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Choate, Mark Irvan ", 30 , 18 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-128
+MARB-128, HIST 350  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Jones, Christopher C ", 30 , 12 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-128
+MARB-128, HIST 341  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , MWF ," Duan, Zhidan ", 30 , 8 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-128
+MARB-128, HIST 289 R , 001 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Doxey, Gary B ", 30 , 5 , C ," Family, Home, and Social Sciences *** ",  ,,MARB-128
+MARB-221, GEOL 100  , 002 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Britt, Brooks Bradley ", 267 , 222 , C , Microbiology and Molecular Biology *** ,  ,  ,MARB-221
+MARB-221, BIO 130  , 001 ,  , N ,  , 4.0 ,  , 9:30a - 10:45a , TR ," Johnson, Jerald B *** ", 32 , 31 , C , Biology *** ,  ,  ,MARB-221
+MARB-221, BIO 130  , 002 ,  , N ,  , 4.0 ,  , 9:30a - 10:45a , TR ," Johnson, Jerald B *** ", 32 , 30 , C , Biology *** ,  ,  ,MARB-221
+MARB-221, BIO 130  , 003 ,  , N ,  , 4.0 ,  , 9:30a - 10:45a , TR ," Johnson, Jerald B *** ", 32 , 32 , C , Biology *** ,  ,  ,MARB-221
+MARB-221, BIO 130  , 004 ,  , N ,  , 4.0 ,  , 9:30a - 10:45a , TR ," Johnson, Jerald B *** ", 32 , 31 , C , Biology *** ,  ,  ,MARB-221
+MARB-221, BIO 130  , 005 ,  , N ,  , 4.0 ,  , 9:30a - 10:45a , TR ," Johnson, Jerald B *** ", 28 , 15 , C , Biology *** ,  ,  ,MARB-221
+MARB-221, MMBIO 121  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," O'Neill, Kim Leslie ", 200 , 123 , C , Microbiology and Molecular Biology *** ,  ,  ,MARB-221
+MARB-221, MMBIO 240  , 002 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Pickett, Brett Earl ", 267 , 257 , C , Microbiology and Molecular Biology *** ,  ,  ,MARB-221
+MARB-221, EC EN 380  , 001 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , MWF ," Jeffs, Brian D *** ", 72 , 69 , C , Microbiology and Molecular Biology *** ,  ,  ,MARB-221
+MARB-221, EC EN 380  , 002 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , MWF ," Jeffs, Brian D *** ", 72 , 53 , C , Microbiology and Molecular Biology *** ,  ,  ,MARB-221
+MARB-221, MMBIO 240  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Johnson, Steven M ", 250 , 188 , C , Microbiology and Molecular Biology *** ,  ,  ,MARB-221
+MARB-221, PWS 103  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , TR ," Jolley, Greg V ", 32 , 25 , C , Biology *** ,  ,  ,MARB-221
+MARB-221, PWS 103  , 002 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , TR ," Jolley, Greg V ", 32 , 30 , C , Biology *** ,  ,  ,MARB-221
+MARB-221, PWS 103  , 003 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , TR ," Jolley, Greg V ", 32 , 27 , C , Biology *** ,  ,  ,MARB-221
+MARB-221, BIO 250  , 001 ,  , N ,  , 2.0 ,  , 2:00p - 2:50p , TR ," Sproul, John S *** ", 200 , 108 , C , Biology *** ,  ,  ,MARB-221
+MARB-221, BIO 100  , 019 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , TR ," Hemming, Kyle Engle ", 250 , 83 , C , Biology *** ,  ,  ,MARB-221
+MARB-221, MMBIO 240  , 005 ,  , N ,  , 3.0 , EVENING , 4:00p - 5:15p , MW ," Berges, Bradford K ", 200 , 64 , C , Microbiology and Molecular Biology *** ,  ,  ,MARB-221
+MARB-221, MMBIO 221  , 002 ,  , N ,  , 3.0 , EVENING , 5:00p - 7:50p , T ," Robison, Richard A ", 192 , 59 , C , Biology *** ,  ,  ,MARB-221
+MARB-B105, NDFS 362  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MW ," Jefferies, Laura Kahealani ", 32 , 16 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, PWS 325  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Robinson, Todd Fergus ", 36 , 20 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, PSYCH 350  , 005 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Elggren, Hannah Elaine ", 35 , 32 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, PWS 110  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MW ," Stewart, J Ryan ", 50 , 49 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, PWS 110  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , F ," Stewart, J Ryan ", 50 , 49 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, MUSIC 201  , 001 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Howard, Luke Benjamin ", 45 , 54 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, PWS 368  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Jarvis, David ", 60 , 44 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, PWS 350  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Flinders, Loreen Allphin ", 60 , 47 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, PWS 316  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Jellen, Eric N ", 30 , 9 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, PWS 191  , 001 ,  , N ,  , 1.0 ,  , 2:00p - 2:50p , R ," Stewart, J Ryan ", 60 , 23 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, PWS 155  , 001 ,  , N ,  , 1.0 ,  , 3:00p - 3:50p , R ," Hansen, Neil C ", 60 , 50 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, LFSCI 190 R , 001 ,  , N ,  , 1.0 ,  , 4:00p - 4:50p , R ," Eastman, Monica Clarissa ", 60 , 19 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B105, HLTH 330  , 002 ,  , N ,  , 3.0 , EVENING , 5:00p - 7:50p , W ," Fletcher, Linnea L ", 35 , 20 , C , Plant and Wildlife Sciences *** ,  ,  ,MARB-B105
+MARB-B106, HLTH 315  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , MW ," Sloan, Chantel D ", 60 , 54 , C , Public Health *** ,  ,  ,MARB-B106
+MARB-B106, HLTH 322  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Beard, John D ", 45 , 33 , C , Public Health *** ,  ,  ,MARB-B106
+MARB-B106, HLTH 611  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Magnusson, Brianna Michele ", 35 , 29 , C , Public Health *** ,  ,  ,MARB-B106
+MARB-B106, HLTH 447  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , MW ," Merrill, Ray M ", 60 , 33 , C , Public Health *** ,  ,  ,MARB-B106
+MARB-B106, HLTH 314  , 002 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Thacker, Evan L ", 60 , 60 , C , Public Health *** ,  ,  ,MARB-B106
+MARB-B106, HLTH 447  , 002 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Merrill, Ray M ", 30 , 9 , C , Public Health *** ,  ,  ,MARB-B106
+MARB-B106, HLTH 431  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Redelfs, Alisha Hayden ", 30 , 19 , C , Public Health *** ,  ,  ,MARB-B106
+MARB-B106, HLTH 466  , 001 ,  , N ,  , 3.0 , EVENING , 5:30p - 6:45p , MW ," Merrill, Ray M ", 30 , 13 , C , Public Health *** ,  ,  ,MARB-B106
+MARB-B107, NDFS 250  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Pang, Shintaro ", 40 , 32 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,MARB-B107
+MARB-B107, NDFS 462  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Dunn, Mike L ", 30 , 19 , C ," Nutrition, Dietetics, and Food Science **C S ",  ,  ,MARB-B107
+MARB-B107, C S 236  , 004 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Mercer, Eric G ", 86 , 76 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,MARB-B107
+MARB-B107, NDFS 400  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Richards, Rickelle ", 60 , 55 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,MARB-B107
+MARB-B107, NDFS 491  , 001 ,  , N ,  , 1.0 ,  , 11:00a - 11:50a , R ," Bellini, Sarah Gunnell ", 43 , 46 , C ," Nutrition, Dietetics, and Food Science **SFL ",  ,  ,MARB-B107
+MARB-B107, SFL 336  , 002 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , MW ," Marks, Loren Dean ", 70 , 66 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,MARB-B107
+MARB-B107, NDFS 200  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Kenealey, Jason Donald ", 60 , 31 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,MARB-B107
+MARB-B107, NDFS 691 R , 001 ,  , N ,  , 0.5 ,  , 1:00p - 2:50p , F ," LeCheminant, James Derek *** ", 80 , 19 , C ," Nutrition, Dietetics, and Food Science **C S ",  ,  ,MARB-B107
+MARB-B107, C S 110  , 019 , L , N ,  , 0.0 ,  , 2:00p - 2:50p , MW ,  , 30 , 30 , C ," Nutrition, Dietetics, and Food Science **NDFS ",  ,  ,MARB-B107
+MARB-B107, NDFS 300  , 001 ,  , N ,  , 4.0 ,  , 2:00p - 3:50p , TR ," Bellini, Sarah Gunnell ", 65 , 41 , C ," Nutrition, Dietetics, and Food Science *** ",  ,  ,MARB-B107
+MARB-B113, REL C 333  , 001 ,  , N ,  , 2.0 ,  , 8:00a - 8:50a , MW ," Allred, Philip A ", 88 , 80 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL C 333  , 005 ,  , N ,  , 2.0 ,  , 9:00a - 9:50a , MW ," Allred, Philip A ", 88 , 76 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL A 211  , 017 ,  , N ,  , 2.0 ,  , 9:00a - 9:50a , T ," Sharp, Ryan Hugh ", 88 , 80 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL A 250  , 026 ,  , N ,  , 2.0 ,  , 9:00a - 10:50a , R ," Wilcox, Bradley Ray ", 88 , 87 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL C 130  , 019 ,  , N ,  , 2.0 ,  , 9:00a - 10:50a , F ," Howell, Scott L ", 85 , 41 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL C 333  , 008 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , MW ," Allred, Philip A ", 88 , 86 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL A 211  , 019 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , T ," Sharp, Ryan Hugh ", 88 , 87 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL C 225  , 043 ,  , N ,  , 2.0 ,  , 11:00a - 11:50a , MW ," Eaton, Robert Irvin ", 88 , 88 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL C 225  , 044 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , MW ," Eaton, Robert Irvin ", 88 , 88 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL A 122  , 024 ,  , N ,  , 2.0 ,  , 12:00p - 1:50p , T ," Nelson, Kaylen Myrl ", 88 , 85 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL A 250  , 027 ,  , N ,  , 2.0 ,  , 12:00p - 1:50p , R ," Wilcox, Bradley Ray ", 88 , 88 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL C 225  , 045 ,  , N ,  , 2.0 ,  , 1:00p - 1:50p , MW ," Eaton, Robert Irvin ", 88 , 87 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL C 225  , 041 ,  , N ,  , 2.0 ,  , 2:00p - 2:50p , MW ," Gardner, Norman William ", 70 , 67 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL A 122  , 025 ,  , N ,  , 2.0 ,  , 2:00p - 2:50p , TR ," Nelson, Kaylen Myrl ", 88 , 86 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL C 225  , 037 ,  , N ,  , 2.0 ,  , 3:00p - 3:50p , MW ," Gardner, Norman William ", 70 , 66 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B113, REL A 122  , 026 ,  , N ,  , 2.0 ,  , 3:00p - 3:50p , TR ," Nelson, Kaylen Myrl ", 88 , 85 , C , Life Sciences *** ,  ,  ,MARB-B113
+MARB-B124, ECON 380  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , MW ," Waters, Steven M ", 30 , 32 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-B124
+MARB-B124, POLI 373  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , TR ," Stiles, Kendall Wayne ", 45 , 19 , C , Political Science *** ,  ,  ,MARB-B124
+MARB-B124, ECON 440  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , MW ," Pope, Clive Arden ", 40 , 40 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-B124
+MARB-B124, HIST 221  , 002 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Johns, Andrew L ", 50 , 30 , C , Political Science *** ,  ,  ,MARB-B124
+MARB-B124, ANTHR 101  , 011 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , F ," Thompson, Gregory A ", 30 , 25 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-B124
+MARB-B124, ECON 450  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Condie, Scott S ", 30 , 15 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-B124
+MARB-B124, ECON 580  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , MW ," Condie, Scott S ", 30 , 13 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-B124
+MARB-B124, HIST 345  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Ray, Daren E ", 30 , 10 , C , Political Science *** ,  ,  ,MARB-B124
+MARB-B124, ECON 382  , 003 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Price, Joshua Averett ", 25 , 14 , C ," Family, Home, and Social Sciences *** ",  ,  ,MARB-B124
+MARB-B124, POLI 300  , 001 ,  , N ,  , 4.0 ,  , 2:00p - 3:15p , TR ," Romney, David Alexander ", 15 , 15 , C , Political Science *** ,  ,  ,MARB-B124
+MARB-B124, POLI 300  , 002 ,  , N ,  , 4.0 ,  , 2:00p - 3:15p , TR ," Romney, David Alexander ", 15 , 14 , C , Political Science *** ,  ,  ,MARB-B124
+MARB-B124, POLI 300  , 003 ,  , N ,  , 4.0 ,  , 2:00p - 3:15p , TR ," Romney, David Alexander ", 15 , 14 , C , Political Science *** ,  ,  ,MARB-B124
+MARB-B124, POLI 300  , 004 ,  , N ,  , 4.0 ,  , 2:00p - 3:15p , TR ," Romney, David Alexander ", 15 , 15 , C , Political Science *** ,  ,  ,MARB-B124
+MARB-B124, POLI 300  , 005 ,  , N ,  , 4.0 ,  , 3:30p - 4:45p , TR ," Romney, David Alexander ", 15 , 14 , C , Political Science *** ,  ,  ,MARB-B124
+MARB-B124, POLI 300  , 006 ,  , N ,  , 4.0 ,  , 3:30p - 4:45p , TR ," Romney, David Alexander ", 15 , 10 , C , Political Science *** ,  ,  ,MARB-B124
+MARB-B124, POLI 300  , 007 ,  , N ,  , 4.0 ,  , 3:30p - 4:45p , TR ," Romney, David Alexander ", 15 , 9 , C , Political Science *** ,  ,  ,MARB-B124
+MB-1111, MUSIC 380 C , 001 ,  , N ,  , 1.0 ,  , 9:00a - 9:50a , MW ," Hinckley, Jaren Smith *** ", 15 , 14 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 380 B , 001 ,  , N ,  , 1.0 ,  , 10:00a - 10:50a , MW ," Kimball, Wilford W *** ", 15 , 15 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 284  , 001 ,  , N ,  , 2.0 ,  , 10:00a - 10:50a , TR ," Woodbury, Brian William ", 25 , 15 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 282  , 001 ,  , N ,  , 2.0 ,  , 11:00a - 11:50a , MWF ," Bailey, Erin Noel ", 35 , 28 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 283  , 001 ,  , N ,  , 2.0 ,  , 12:00p - 12:50p , MWF ," Seamons, Nathan *** ", 35 , 29 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 346 R , 001 ,  , N ,  , 1.0 ,  , 12:00p - 12:50p , T ," Holden, Scott L *** ", 30 , 14 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 346 R , 001 ,  , N ,  , 1.0 ,  , 12:00p - 12:50p , R ," Holden, Scott L *** ", 30 , 14 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 337 R , 001 ,  , N ,  , 1.0 ,  , 1:00p - 2:50p , MW ," Smith, Christian B ", 100 , 94 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 326 R , 001 ,  , N ,  , 1.0 ,  , 1:00p - 2:50p , TR ," Smith, Shawn ", 50 , 49 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 334 R , 001 ,  , N ,  , 1.0 ,  , 3:00p - 4:50p , MW ," Nichols, Benjamin E ", 21 , 18 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 260 R , 001 ,  , N ,  , 2.0 ,  , 5:00p - 6:50p , M ," Kimball, Wilford W *** ", 20 , 8 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 333 R , 001 ,  , N ,  , 1.0 ,  , 5:00p - 6:50p , TR ," Ammons, James Mark ", 20 , 18 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 260 R , 001 ,  , N ,  , 1.5 ,  , 5:00p - 5:50p , W ," Brandt, Robert David *** ", 65 , 51 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 660 R , 001 ,  , N ,  , 1.5 ,  , 5:00p - 5:50p , W ," Brandt, Robert David *** ", 8 , 5 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 360 R , 001 ,  , N ,  , 1.5 ,  , 5:00p - 5:50p , W ," Brandt, Robert David *** ", 25 , 17 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 262 R , 001 ,  , N ,  , 0.5 ,  , 6:00p - 6:50p , W ," Owens, Shea M ", 14 , 13 , C , Music ,  ,  ,MB-1111
+MB-1111, MUSIC 333 R , 001 ,  , N ,  , 1.0 , EVENING , 7:00p - 8:50p , T ," Campbell, Todd Henry ", 20 , 19 , C , Music ,  ,  ,MB-1111
+MB-3041, UNIV 101  , 144 ,  , N ,  , 2.0 ,  , 8:00a - 8:50a , TR ," Fellingham, Gilbert W ", 20 , 19 , C , Music *** ,  ,  ,MB-3041
+MB-3041, MUSIC 395  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Thornock, Neil S ", 22 , 23 , C , Music *** ,  ,  ,MB-3041
+MB-3041, MUSIC 197  , 002 ,  , N ,  , 0.5 ,  , 9:00a - 9:50a , TR ," Jorgensen Frame, Jennifer Bailey ", 22 , 14 , C , Music *** ,  ,  ,MB-3041
+MB-3041, MUSIC 293  , 003 ,  , N ,  , 1.0 ,  , 10:00a - 10:50a , MW ," Chamberlain, Evan James ", 22 , 23 , C , Music *** ,  ,  ,MB-3041
+MB-3041, MUSIC 293  , 002 ,  , N ,  , 1.0 ,  , 10:00a - 10:50a , TR ," Wilson, James Matthew ", 22 , 21 , C , Music *** ,  ,  ,MB-3041
+MB-3041, UNIV 101  , 218 ,  , N ,  , 2.0 ,  , 10:00a - 11:50a , F ," Anderson, Richard B ", 20 , 20 , C , Music *** ,  ,  ,MB-3041
+MB-3041, UNIV 101  , 122 ,  , N ,  , 2.0 ,  , 11:00a - 11:50a , MW ," Priddis, Nathan C ", 20 , 20 , C , Music *** ,  ,  ,MB-3041
+MB-3041, MUSIC 297  , 003 ,  , N ,  , 0.5 ,  , 12:00p - 12:50p , MW ," Snyder, Kelsey Noelle ", 22 , 18 , C , Music *** ,  ,  ,MB-3041
+MB-3041, UNIV 101  , 198 ,  , N ,  , 2.0 ,  , 1:00p - 1:50p , MW ," vom Lehn, John Christian ", 20 , 20 , C , Music *** ,  ,  ,MB-3041
+MB-3041, MUSIC 135  , 001 ,  , N ,  , 2.0 , EVENING , 5:00p - 6:50p , W ," Gordon, Samantha Jane ", 15 , 14 , C , Music *** ,  ,  ,MB-3041
+MCKB-277, EL ED 333  , 006 ,  , N ,  , 3.0 ,  , 9:00a - 10:50a , TR ," Brandt, Lorilynn Bastian ", 25 , 17 , C , Education *** ,  ,  ,MCKB-277
+MCKB-277, ECE 446  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 10:50a , WF ," Oveson, Janae J ", 20 , 13 , C , Education *** ,  ,  ,MCKB-277
+MCKB-277, EL ED 203  , 004 ,  , N ,  , 2.0 ,  , 10:00a - 11:50a , M ," Lay, Celina Marie ", 29 , 29 , C , Education *** ,  ,  ,MCKB-277
+MCKB-277, HONRS 120  , 014 ,  , Y ,  , 2.0 ,  , 11:00a - 11:50a , W ," Allen, Brian Gregory ", 15 , 12 , C , Education *** ,  ,  ,MCKB-277
+MCKB-277, EL ED 203  , 003 ,  , N ,  , 2.0 ,  , 12:00p - 1:50p , M ," Jensen, Bryant Troy ", 29 , 28 , C , Education *** ,  ,  ,MCKB-277
+MCKB-277, EL ED 447  , 001 ,  , N ,  , 3.0 ,  , 12:00p - 1:50p , TR ," McMillan, Brandon G ", 28 , 28 , C , Education *** ,  ,  ,MCKB-277
+MCKB-277, EL ED 310  , 002 ,  , N ,  , 2.0 ,  , 12:00p - 2:50p , W ," Cowan, Michael B ", 25 , 25 , C , Education *** ,  ,  ,MCKB-277
+MCKB-277, EL ED 447  , 002 ,  , N ,  , 3.0 ,  , 2:00p - 3:50p , TR ," Fuentes, Debra Smith ", 28 , 26 , C , Education *** ,  ,  ,MCKB-277
+MCKB-277, ECE 355  , 001 ,  , N ,  , 3.0 ,  , 3:45p - 5:00p , MW ," Pruett, Kristin Michelle ", 25 , 21 , C , Education *** ,  ,  ,MCKB-277
+MCKB-277, ECE 430  , 001 ,  , N ,  , 2.0 ,  , 4:30p - 6:20p , R ," Oliver, Abigail Marie ", 20 , 14 , C , Education *** ,  ,  ,MCKB-277
+MCKB-359, UNIV 101  , 202 ,  , N ,  , 2.0 ,  , 8:00a - 8:50a , MW ," Gee, Kent L ", 25 , 24 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, CPSE 420  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 10:50a , R ," Langford, Megan Sue ", 20 , 18 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, UNIV 101  , 205 ,  , N ,  , 2.0 ,  , 8:00a - 9:50a , F ," Piccolo, Stephen R ", 25 , 25 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, CPSE 744  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 11:50a , W ," Allen, Gerald Kawika ", 20 , 7 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, NURS 296  , 004 , L , N ,  , 0.0 ,  , 11:00a - 12:20p , M ,  , 8 , 8 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, UNIV 101  , 225 ,  , N ,  , 2.0 ,  , 11:00a - 12:50p , R ," Widmer, Mark Alan ", 25 , 25 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, CPSE 646  , 002 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , W ," Winters, Rebecca Rose ", 20 , 20 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, UNIV 101  , 137 ,  , N ,  , 2.0 ,  , 12:00p - 1:50p , F ," Howell, Scott L ", 25 , 24 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, UNIV 101  , 233 ,  , N ,  , 2.0 ,  , 1:00p - 1:50p , TR ," Bunting, Bryce D ", 25 , 20 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, WRTG 316  , 028 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Roper, Amy Doris ", 25 , 24 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, SFL 315  , 003 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Stout, Cortney Evans ", 25 , 18 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, UNIV 101  , 241 ,  , N ,  , 2.0 ,  , 4:00p - 4:50p , MW ," Vogeler, Heidi A ", 25 , 21 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, EDLF 411  , 002 ,  , N ,  , 1.0 ,  , 5:00p - 5:50p , M ," Hilton, Sterling Clint ", 25 , 11 , C , Education *** ,  ,  ,MCKB-359
+MCKB-359, CPSE 300  , 003 ,  , N ,  , 2.0 ,  , 5:00p - 6:50p , W ," Raby, Shauna Rae ", 38 , 14 , C , Education *** ,  ,  ,MCKB-359
+MSRB-321, HONRS 120  , 001 ,  , Y ,  , 2.0 ,  , 9:00a - 9:50a , M ," Allen, Brian Gregory ", 15 , 15 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 002 ,  , Y ,  , 2.0 ,  , 9:00a - 9:50a , M ," Allen, Brian Gregory ", 15 , 15 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 003 ,  , Y ,  , 2.0 ,  , 9:00a - 9:50a , M ," Allen, Brian Gregory ", 15 , 15 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 004 ,  , Y ,  , 2.0 ,  , 9:00a - 9:50a , M ," Allen, Brian Gregory ", 15 , 15 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 005 ,  , Y ,  , 2.0 ,  , 9:00a - 9:50a , M ," Allen, Brian Gregory ", 15 , 15 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 007 ,  , Y ,  , 2.0 ,  , 9:00a - 9:50a , M ," Allen, Brian Gregory ", 15 , 15 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 001 ,  , Y ,  , 2.0 ,  , 9:00a - 9:50a , W ," Allen, Brian Gregory ", 15 , 15 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 110  , 001 ,  , N ,  , 0.5 ,  , 9:00a - 9:50a , F ," Filimoeatu, Vika Sanft ", 163 , 138 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HIST 202  , 005 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Larsen, Kirk Wayne ", 150 , 140 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, CL CV 110  , 004 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Drake, Robert Lucas ", 121 , 107 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 008 ,  , Y ,  , 2.0 ,  , 11:00a - 11:50a , M ," Allen, Brian Gregory ", 15 , 14 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 009 ,  , Y ,  , 2.0 ,  , 11:00a - 11:50a , M ," Allen, Brian Gregory ", 15 , 15 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 010 ,  , Y ,  , 2.0 ,  , 11:00a - 11:50a , M ," Allen, Brian Gregory ", 15 , 14 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 011 ,  , Y ,  , 2.0 ,  , 11:00a - 11:50a , M ," Allen, Brian Gregory ", 15 , 14 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 012 ,  , Y ,  , 2.0 ,  , 11:00a - 11:50a , M ," Allen, Brian Gregory ", 15 , 15 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 013 ,  , Y ,  , 2.0 ,  , 11:00a - 11:50a , M ," Allen, Brian Gregory ", 15 , 11 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 014 ,  , Y ,  , 2.0 ,  , 11:00a - 11:50a , M ," Allen, Brian Gregory ", 15 , 12 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 120  , 012 ,  , Y ,  , 2.0 ,  , 11:00a - 11:50a , W ," Allen, Brian Gregory ", 15 , 15 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, ANTHR 450  , 001 ,  , N ,  , 1.0 ,  , 11:00a - 12:15p , R ," Hickman, Jacob Randall ", 70 , 11 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HONRS 110  , 002 ,  , N ,  , 0.5 ,  , 11:00a - 11:50a , F ," Filimoeatu, Vika Sanft ", 163 , 153 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, PSYCH 381  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Gale, Shawn D ", 85 , 57 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, HIST 202  , 003 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Shumway, Jeffrey Merrill ", 150 , 44 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+MSRB-321, PSYCH 111  , 010 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Nelson, Jenae Marie ", 125 , 71 , C , Undergraduate Education *** ,  ,  ,MSRB-321
+TMCB-112, MATH 113  , 001 ,  , N ,  , 4.0 ,  , 8:00a - 8:50a , TR ," Kempton, Mark Condie ", 40 , 38 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, MATH 402  , 001 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Evans, Emily Jennings ", 25 , 27 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, MATH 113  , 002 ,  , N ,  , 4.0 ,  , 9:00a - 9:50a , TR ," Kempton, Mark Condie ", 40 , 39 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, MATH 436  , 001 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Jarvis, Tyler J ", 25 , 27 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, MATH 113  , 003 ,  , N ,  , 4.0 ,  , 10:00a - 10:50a , TR ," Kempton, Mark Condie ", 40 , 37 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, MATH 522  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Whitehead, Jared P ", 40 , 29 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, WRTG 150  , 034 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Allen, Carolyn Packard ", 20 , 20 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, MATH 113  , 004 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , TR ," Kempton, Mark Condie ", 40 , 39 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, MATH 541  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Brooks, Jennifer Lynn ", 40 , 19 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, MATH 113  , 005 ,  , N ,  , 4.0 ,  , 1:00p - 1:50p , TR ," Kempton, Mark Condie ", 40 , 38 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, MATH 352  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , MWF ," Li, Xianjin ", 40 , 9 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, MATH 113  , 006 ,  , N ,  , 4.0 ,  , 2:00p - 2:50p , TR ," Kempton, Mark Condie ", 40 , 33 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, PHSCS 220  , 003 ,  , N ,  , 3.0 ,  , 3:00p - 3:50p , MWF ," Campbell, Branton J ", 28 , 27 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-112, PHY S 100  , 008 ,  , N ,  , 3.0 ,  , 3:00p - 3:50p , R ," Hirschmann, Eric W ", 30 , 26 , C , Mathematics *** ,  ,  ,TMCB-112
+TMCB-121, MATH 113  , 013 ,  , N ,  , 4.0 ,  , 8:00a - 8:50a , TR ," Jones, Steven R ", 35 , 12 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, MATH 320  , 002 ,  , N ,  , 3.0 ,  , 9:00a - 9:50a , MWF ," Whitehead, Jared P *** ", 39 , 36 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, MATH 113  , 014 ,  , N ,  , 4.0 ,  , 9:00a - 9:50a , TR ," Jones, Steven R ", 35 , 15 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, MATH 344  , 002 ,  , N ,  , 3.0 ,  , 10:00a - 10:50a , MWF ," Bakker, Lennard Frank ", 39 , 36 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, MATH 113  , 015 ,  , N ,  , 4.0 ,  , 10:00a - 10:50a , TR ," Jones, Steven R ", 35 , 23 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, MATH 290  , 004 ,  , N ,  , 3.0 ,  , 12:00p - 12:50p , MWF ," Cardon, David Alan ", 33 , 24 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, MATH 113  , 016 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , TR ," Jones, Steven R ", 35 , 22 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, MATH 342  , 001 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Swenson, Eric L ", 42 , 6 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, MATH 113  , 017 ,  , N ,  , 4.0 ,  , 1:00p - 1:50p , TR ," Jones, Steven R ", 35 , 19 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, MATH 553  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , MWF ," Kent, Curtis Andrew ", 24 , 7 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, MATH 113  , 018 ,  , N ,  , 4.0 ,  , 2:00p - 2:50p , TR ," Jones, Steven R ", 35 , 32 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, PHY S 100  , 023 ,  , N ,  , 3.0 ,  , 3:00p - 3:50p , R ," Ware, Michael J ", 30 , 25 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, PHY S 100  , 027 ,  , N ,  , 3.0 ,  , 4:00p - 4:50p , W ," Ware, Michael J ", 35 , 32 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, PHY S 100  , 024 ,  , N ,  , 3.0 ,  , 4:00p - 4:50p , R ," Ware, Michael J ", 25 , 21 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, PHY S 100  , 033 ,  , N ,  , 3.0 ,  , 4:00p - 4:50p , R ," Ware, Michael J ", 11 , 9 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, PHY S 100  , 028 ,  , N ,  , 3.0 ,  , 5:00p - 5:50p , W ," Ware, Michael J ", 13 , 9 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-121, PHY S 100  , 038 ,  , N ,  , 3.0 ,  , 5:00p - 5:50p , W ," Carling, Gregory T ", 15 , 8 , C , Mathematics *** ,  ,  ,TMCB-121
+TMCB-135, MATH 303  , 001 ,  , N ,  , 4.0 ,  , 9:00a - 9:50a , MTWRF ," Lawlor, Gary R ", 60 , 39 , C ," Computational, Mathematical, & Physical SMATH ",  ,  ,TMCB-135
+TMCB-135, MATH 302  , 001 ,  , N ,  , 4.0 ,  , 10:00a - 10:50a , MTWRF ," Halverson, Denise Marie ", 68 , 32 , C ," Computational, Mathematical, & Physical SMATH ",  ,  ,TMCB-135
+TMCB-135, MATH 334  , 004 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Dixon, Megan Gorringe ", 65 , 65 , C ," Computational, Mathematical, & Physical SMATH ",  ,  ,TMCB-135
+TMCB-135, MATH 302  , 002 ,  , N ,  , 4.0 ,  , 12:00p - 12:50p , MTWRF ," Culver, Eric David ", 60 , 55 , C ," Computational, Mathematical, & Physical SMATH ",  ,  ,TMCB-135
+TMCB-135, MATH 112  , 030 ,  , N ,  , 4.0 ,  , 1:00p - 1:50p , MTWRF ," Rosen, Mary Ellen Furner ", 40 , 16 , C ," Computational, Mathematical, & Physical SMATH ",  ,  ,TMCB-135
+TMCB-135, MATH 112  , 029 ,  , N ,  , 4.0 ,  , 2:00p - 2:50p , MTWRF ," Tanner, Amy Jeppsen ", 40 , 32 , C ," Computational, Mathematical, & Physical SMATH ",  ,  ,TMCB-135
+TMCB-135, MATH 113  , 019 ,  , N ,  , 4.0 ,  , 3:00p - 3:50p , MTWRF ," Williams, Steven R ", 35 , 26 , C ," Computational, Mathematical, & Physical SPHSCS ",  ,  ,TMCB-135
+TMCB-135, PHSCS 220  , 005 ,  , N ,  , 3.0 ,  , 4:00p - 4:50p , MWF ," Campbell, Branton J ", 28 , 24 , C ," Computational, Mathematical, & Physical SMATH ",  ,  ,TMCB-135
+TMCB-135, MATH 112  , 031 ,  , N ,  , 4.0 , EVENING , 5:00p - 6:50p , TR ," Hirz, Shaughn Devin Scott ", 46 , 40 , C ," Computational, Mathematical, & Physical SENGL ",  ,  ,TMCB-135
+TMCB-135, ENGL 230  , 001 ,  , N ,  , 3.0 , EVENING , 5:00p - 7:50p , W ," Garrett, Christopher E ", 35 , 27 , C ," Computational, Mathematical, & Physical Sciences *** ",  ,  ,TMCB-135
+TMCB-155A, UNIV 101  , 318 ,  , N ,  , 2.0 ,  , 9:00a - 9:50a , MW ," Jenkins, Paul M ", 25 , 25 , C , Mathematics ,  ,  ,TMCB-155A
+TNRB-164, MBA 595  , 002 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , MW ," Widmer, Mark Alan ", 15 , 13 , C , Business *** ,  ,  ,TNRB-164
+TNRB-164, MSB 432  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Greathead, Simon Paul ", 37 , 7 , C , Business *** ,  ,  ,TNRB-164
+TNRB-164, MBA 595  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Widmer, Mark Alan ", 15 , 12 , C , Business *** ,  ,  ,TNRB-164
+TNRB-164, MPA 676  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 1:45p , R ," Walker, Jason S L ", 30 , 18 , C , Business *** ,  ,  ,TNRB-164
+TNRB-164, MBA 631  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 3:15p , M ," DeTienne, Kristen Bell ", 25 , 24 , C , Business *** ,  ,  ,TNRB-164
+TNRB-164, MPA 659 R , 001 ,  , N ,  , 1.5 ,  , 12:30p - 1:45p , T ," Heist, Harry Daniel ", 25 , 19 , C , Business *** ,  ,  ,TNRB-164
+TNRB-164, M COM 320  , 023 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , W ," Hodgman, Megan Rose ", 24 , 24 , C , Business *** ,  ,  ,TNRB-164
+TNRB-164, M COM 320  , 020 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Dixon, Elizabeth Ann ", 24 , 24 , C , Business *** ,  ,  ,TNRB-164
+TNRB-164, M COM 320  , 024 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , W ," Hodgman, Megan Rose ", 24 , 23 , C , Business *** ,  ,  ,TNRB-164
+TNRB-164, UNIV 101  , 013 ,  , N ,  , 2.0 ,  , 4:00p - 4:50p , MW ," Merrill, Craig B ", 25 , 21 , C , Business *** ,  ,  ,TNRB-164
+TNRB-164, EXDM 301  , 001 ,  , N ,  , 3.0 , EVENING , 4:00p - 6:50p , R ," Johnson, Heather Ann ", 30 , 10 , C , Business *** ,  ,  ,TNRB-164
+TNRB-210, MSB 390  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , MW ," Agle, Bradley Roy ", 65 , 25 , C , Business ,  ,  ,TNRB-210
+TNRB-210, MSB 375  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , TR ," Ruddle, Travis Baxter ", 56 , 49 , C , Business ,  ,  ,TNRB-210
+TNRB-210, MSB 390  , 002 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , MW ," Agle, Bradley Roy ", 65 , 64 , C , Business ,  ,  ,TNRB-210
+TNRB-210, FIN 520  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Diether, Karl Brandon ", 66 , 66 , C , Business ,  ,  ,TNRB-210
+TNRB-210, GSCM 201  , 006 ,  , N ,  , 1.5 ,  , 9:30a - 10:45a , F ," Greathead, Simon Paul ", 70 , 70 , C , Business , 22 Oct 24 ,  ,TNRB-210
+TNRB-210, MSB 390  , 003 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Vernon, Eric E ", 60 , 58 , C , Business ,  ,  ,TNRB-210
+TNRB-210, GSCM 201  , 007 ,  , N ,  , 1.5 ,  , 11:00a - 12:15p , F ," Greathead, Simon Paul ", 70 , 71 , C , Business , 22 Oct 24 ,  ,TNRB-210
+TNRB-210, MSB 390  , 008 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Owens, Bradley Paul ", 65 , 67 , C , Business ,  ,  ,TNRB-210
+TNRB-210, EXDM 423  , 003 ,  , N ,  , 3.0 ,  , 1:00p - 1:50p , MWF ," Freeman, Patti Ann ", 35 , 33 , C , Business ,  ,  ,TNRB-210
+TNRB-210, EXDM 423  , 004 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , MWF ," Freeman, Patti Ann ", 35 , 23 , C , Business ,  ,  ,TNRB-210
+TNRB-210, MSB 390  , 009 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Owens, Bradley Paul ", 65 , 63 , C , Business ,  ,  ,TNRB-210
+TNRB-210, STRAT 402  , 002 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , MW ," Hansen, Mark Hillam ", 50 , 50 , C , Business ,  ,  ,TNRB-210
+TNRB-210, HRM 413  , 001 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , TR ," Galvin, Benjamin M ", 60 , 51 , C , Business ,  ,  ,TNRB-210
+TNRB-210, FIN 315 R , 001 ,  , N ,  , 3.0 ,  , 5:00p - 6:15p , MW ," Wright, Ian Joseph *** ", 50 , 37 , C , Business ,  ,  ,TNRB-210
+TNRB-484, GSCM 402  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , MW ," Gardner, John Wallace ", 45 , 45 , C , Business ,  ,  ,TNRB-484
+TNRB-484, GSCM 404  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , TR ," Webb, Gregory Scott ", 45 , 45 , C , Business ,  ,  ,TNRB-484
+TNRB-484, M COM 320  , 031 ,  , N ,  , 3.0 ,  , 9:00a - 11:50a , F ," Tanner, Abigail Newell ", 24 , 23 , C , Business ,  ,  ,TNRB-484
+TNRB-484, GSCM 402  , 002 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , MW ," Gardner, John Wallace ", 45 , 45 , C , Business ,  ,  ,TNRB-484
+TNRB-484, GSCM 403  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Blair, Cynthia Joyce ", 45 , 45 , C , Business ,  ,  ,TNRB-484
+TNRB-484, EXDM 404  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Duerden, Mathew David ", 48 , 47 , C , Business ,  ,  ,TNRB-484
+TNRB-484, EXDM 404  , 002 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , MW ," Duerden, Mathew David ", 48 , 39 , C , Business ,  ,  ,TNRB-484
+TNRB-484, GSCM 403  , 003 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Blair, Cynthia Joyce ", 46 , 46 , C , Business ,  ,  ,TNRB-484
+TNRB-484, GSCM 402  , 003 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Gardner, John Wallace ", 46 , 46 , C , Business ,  ,  ,TNRB-484
+TNRB-484, GSCM 404  , 003 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Webb, Gregory Scott ", 46 , 46 , C , Business ,  ,  ,TNRB-484
+TNRB-484, MBA 678  , 001 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , MW ," Peterson, Thomas L ", 20 , 8 , C , Business ,  ,  ,TNRB-484
+TNRB-484, MBA 679 R , 001 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , MW ," Peterson, Thomas L ", 24 , 6 , C , Business ,  ,  ,TNRB-484
+TNRB-484, ENT 490 R , 021 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , TR ," Jones, Lisa Mali ", 25 , 6 , C , Business ,  ,  ,TNRB-484
+TNRB-484, ENT 490 R , 020 ,  , N ,  , 1.5 ,  , 3:30p - 4:45p , R ," Jones, Lisa Mali *** ", 25 , 17 , C , Business ,  ,  ,TNRB-484
+TNRB-484, M COM 320  , 013 ,  , N ,  , 3.0 , EVENING , 5:30p - 6:45p , MW ," Jarvis, Kirsi E ", 24 , 18 , C , Business ,  ,  ,TNRB-484
+TNRB-W108, ACC 522  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , MW ," Kerr, Jon Nathan ", 32 , 28 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, MBA 693 R , 002 ,  , N ,  , 1.0 ,  , 8:00a - 9:15a , F ," Hopper, Lisbeth M ", 35 , 8 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, ACC 522  , 002 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , MW ," Kerr, Jon Nathan ", 32 , 33 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, EXDM 490 R , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Hodge, Camilla J ", 25 , 10 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, ENT 401  , 003 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Dyer, Jeffrey Hansen *** ", 40 , 24 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, ACC 522  , 003 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , MW ," Kerr, Jon Nathan ", 32 , 34 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, MBA 625  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Nielson, Troy R ", 25 , 21 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, ACC 522  , 004 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Kerr, Jon Nathan ", 32 , 30 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, MBA 669  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Williams, Gary P ", 12 , 8 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, MBA 629 R , 001 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , MW ," Boyer, Brian Howard *** ", 30 , 19 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, MBA 665 A , 001 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , TR ," Williams, Gary P ", 14 , 14 , C , Business ,  ,  ,TNRB-W108
+TNRB-W108, EXDM 431  , 001 ,  , N ,  , 1.5 ,  , 5:00p - 6:15p , W ," Burton, John Andrew ", 30 , 21 , C , Business ,  ,  ,TNRB-W108
+TNRB-W308, IS 403  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , MW ," Anderson, Gregory S ", 60 , 61 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, IS 404  , 001 ,  , N ,  , 3.0 ,  , 8:00a - 9:15a , TR ," Schuetzler, Ryan M ", 60 , 61 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, IS 402  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , MW ," Hilton, Spencer Leonard ", 60 , 61 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, IS 415  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Skousen, Tanner Karl ", 60 , 61 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, IS 515  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 12:15p , MW ," Meservy, Thomas O ", 70 , 33 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, MPA 646  , 001 ,  , N ,  , 1.0 ,  , 11:00a - 12:15p , R ," Carroll, Staci Marie Valentine *** ", 65 , 33 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, MBA 593 R , 001 ,  , N ,  , 0.5 ,  , 11:00a - 12:50p , F ," Roundy, Christine Delane ", 150 , 80 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, IS 403  , 003 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , MW ," Anderson, Gregory S ", 60 , 60 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, IS 404  , 003 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Schuetzler, Ryan M ", 60 , 60 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, IS 402  , 003 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Hilton, Spencer Leonard ", 60 , 60 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, IS 415  , 003 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Skousen, Tanner Karl ", 60 , 60 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, MPA 625  , 002 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , MW ," Ward, Johnathan T ", 60 , 5 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, UNIV 101  , 346 ,  , N ,  , 2.0 ,  , 4:00p - 4:50p , TR ," Liddle, Stephen Wallace ", 25 , 17 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, ACC 200  , 003 ,  , N ,  , 3.0 , EVENING , 5:30p - 6:45p , W ," Skousen, Hazel Dejlig ", 35 , 39 , C , Business ,  ,  ,TNRB-W308
+TNRB-W308, ACC 200  , 004 ,  , N ,  , 3.0 , EVENING , 7:00p - 8:15p , R ," Woodbury, Lauren Jane ", 35 , 41 , C , Business ,  ,  ,TNRB-W308
+WVB-1166, STAT 536  , 001 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , TR ," Fisher, Jared Dale ", 24 , 16 , C , Statistics ,  ,  ,WVB-1166
+WVB-1166, STAT 666  , 001 ,  , N ,  , 3.0 ,  , 11:00a - 11:50a , MWF ," Christensen, William F ", 24 , 10 , C , Statistics ,  ,  ,WVB-1166
+WVB-1166, STAT 537  , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , TR ," Fellingham, Gilbert W ", 18 , 10 , C , Statistics ,  ,  ,WVB-1166
+WVB-1166, STAT 624  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 2:50p , MWF ," Richardson, Robert Alan ", 24 , 16 , C , Statistics ,  ,  ,WVB-1166
+WVB-1166, STAT 641  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Page, Garritt L ", 20 , 16 , C , Statistics ,  ,  ,WVB-1166
+BRMB-380, COMMS 330  , 001,  , N ,  , 3.0 ,  , 9:30a - 10:45a , MW ," Isaacson, Bryce Fletcher ", 20 , 20 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, EL ED 410  , 003 ,  , N ,  , 1.0 ,  , 9:30a - 10:45a , T ," Oveson, Janae J ", 25 , 24 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, COMMS 307  , 002 ,  , N ,  , 3.0 ,  , 9:30a - 10:45a , R ," Owens, Camilla Marie ", 48 , 39 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, COMMS 498 R , 005 ,  , N ,  , 4.0 ,  , 11:00a - 12:15p , MW ," Plowman, Kenneth Dean ", 48 , 17 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, COMMS 498 R , 006 ,  , N ,  , 4.0 ,  , 11:00a - 12:15p , MW ," Plowman, Kenneth Dean ", 48 , 14 , C , Chemistry and Biochemistry *** , 22 Oct 24 ,  ,BRMB-380
+BRMB-380, COMMS 371 R , 001 ,  , N ,  , 3.0 ,  , 12:30p - 1:45p , MW ," Randle, Quint B ", 48 , 15 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, CHEM 105  , 020 ,  , N ,  , 4.0 ,  , 1:00p - 1:50p , TR ," Sorensen, Jason Joshua ", 25 , 25 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, COMMS 238  , 002 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , MW ," Campbell, Joel Jay ", 48 , 23 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, COMMS 302  , 001 ,  , N ,  , 3.0 ,  , 2:00p - 3:15p , TR ," Church, Scott H ", 48 , 48 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, ANTHR 341  , 001 ,  , N ,  , 3.0 ,  , 3:30p - 4:45p , TR ," Hickman, Jacob Randall ", 38 , 11 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, COMMS 239  , 002 ,  , N ,  , 3.0 , EVENING , 4:00p - 6:50p , M ," Richards, Othello Lennox ", 48 , 45 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, COMMS 320  , 003 ,  , N ,  , 3.0 , EVENING , 5:00p - 7:50p , T ," Hollingshead, Michael Todd ", 20 , 20 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, COMMS 350  , 003 ,  , N ,  , 3.0 , EVENING , 5:00p - 7:50p , W ," Sanders, Adam Patrick ", 20 , 15 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
+BRMB-380, COMMS 481  , 001 ,  , N ,  , 3.0 , EVENING , 5:00p - 7:50p , R ," Cudworth, Tracie Dette Cayford ", 48 , 23 , C , Chemistry and Biochemistry *** ,  ,  ,BRMB-380
