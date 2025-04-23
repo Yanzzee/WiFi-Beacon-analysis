@@ -54,6 +54,7 @@ def process_pcapng(file_path, output_dir):
             quotechar='"',
             index_col="aruba_erm.time",
             parse_dates=True,
+            date_format="%b %e, %Y %H:%M:%S.%f %Z",
         )
 
     print("Finished reading pcapng file. Saving to Parquet...")
