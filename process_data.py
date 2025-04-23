@@ -1,9 +1,10 @@
 import argparse
 from concurrent.futures import ProcessPoolExecutor
 import subprocess
+import os
 
 import pandas as pd
-import os
+
 
 CHUNK_SIZE = 10000
 TSHARK_FIELDS = [
@@ -86,10 +87,30 @@ def process_all_pcapngs(pcapng_dir, output_dir, num_processes):
 
 # Main Execution with argparse
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process pcapng files and save as Parquet.")
-    parser.add_argument("-i", "--pcapng_dir", type=str, required=True, help="Directory containing pcapng files.")
-    parser.add_argument("-o", "--output_dir", type=str, required=True, help="Directory to save processed Parquet files.")
-    parser.add_argument("-n", "--num_processes", type=int, default=1, help="Number of processes to use for parallel processing.")
+    parser = argparse.ArgumentParser(
+        description="Process pcapng files and save as Parquet."
+    )
+    parser.add_argument(
+        "-i",
+        "--pcapng_dir",
+        type=str,
+        required=True,
+        help="Directory containing pcapng files.",
+    )
+    parser.add_argument(
+        "-o",
+        "--output_dir",
+        type=str,
+        required=True,
+        help="Directory to save processed Parquet files.",
+    )
+    parser.add_argument(
+        "-n",
+        "--num_processes",
+        type=int,
+        default=1,
+        help="Number of processes to use for parallel processing.",
+    )
 
     args = parser.parse_args()
 
