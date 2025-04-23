@@ -62,7 +62,7 @@ def process_pcapng(file_path, output_dir):
     return output_file
 
 
-def process_all_pcapngs(pcapng_dir, output_dir):
+def process_all_pcapngs(pcapng_dir, output_dir, num_processes):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -74,7 +74,7 @@ def process_all_pcapngs(pcapng_dir, output_dir):
     print(f"Found {len(pcapng_files)} pcapng files. Starting processing...")
 
     # Process files in parallel
-    with ProcessPoolExecutor(max_workers=32) as executor:   # add env variable
+    with ProcessPoolExecutor(max_workers=num_processes) as executor:
         futures = [
             executor.submit(process_pcapng, file, output_dir) for file in pcapng_files
         ]
@@ -89,8 +89,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process pcapng files and save as Parquet.")
     parser.add_argument("--pcapng_dir", type=str, required=True, help="Directory containing pcapng files.")
     parser.add_argument("--output_dir", type=str, required=True, help="Directory to save processed Parquet files.")
+    parser.add_argument("--num_processes", type=int, default=1, help="Number of processes to use for parallel processing.")
 
     args = parser.parse_args()
 
     print("Starting pcapng processing...")
-    process_all_pcapngs(args.pcapng_dir, args.output_dir)
+    process_all_pcapngs(args.pcapng_dir, args.output_dir, args.num_processes)
