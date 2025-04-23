@@ -1,11 +1,10 @@
+import argparse
 from concurrent.futures import ProcessPoolExecutor
 import subprocess
 
 import pandas as pd
 import os
 
-PCAPNG_DIR = "Data/captures/"
-OUTPUT_DIR = "Data/processed_data"
 CHUNK_SIZE = 10000
 TSHARK_FIELDS = [
     "aruba_erm.time",
@@ -82,16 +81,16 @@ def process_all_pcapngs(pcapng_dir, output_dir):
         for future in futures:
             future.result()
 
-    # Create a list of delayed tasks for each pcapng file
-    # delayed_tasks = [process_pcapng(file, output_dir) for file in pcapng_files]
-
-    # Compute the tasks in parallel across available cores
-    # client.compute(delayed_tasks, sync=True)
-
     print("All files processed.")
 
 
-# Main Execution with Dask Distributed
+# Main Execution with argparse
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Process pcapng files and save as Parquet.")
+    parser.add_argument("--pcapng_dir", type=str, required=True, help="Directory containing pcapng files.")
+    parser.add_argument("--output_dir", type=str, required=True, help="Directory to save processed Parquet files.")
+
+    args = parser.parse_args()
+
     print("Starting pcapng processing...")
-    process_all_pcapngs(PCAPNG_DIR, OUTPUT_DIR)
+    process_all_pcapngs(args.pcapng_dir, args.output_dir)
