@@ -16,7 +16,8 @@ Sample_schedule.csv - course schedule with location, Days of the week, start/end
 Files are listed in general order that they are run.
 beacon_capture.sh - bash script to capture using tshark on a raspberry pi or other linux device. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
 Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
-process_data.py - process raw pcap capture files to .parquet files
+process_data.py - process raw .pcapng capture files to .parquet files
+    requires tshark on linux
 group_data.py - group data by AP name instead of time, one file per hostname for entire date range
 samples.py - process sample files from CSV to dataframe/parquet listed below. Uses sample aps, classrooms, and schedule input files.
     sample_aps.parquet - saved dataframe file with information about all sampled APs
