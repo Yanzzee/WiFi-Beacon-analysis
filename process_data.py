@@ -1,11 +1,11 @@
+import argparse
 from concurrent.futures import ProcessPoolExecutor
 import subprocess
-
-import pandas as pd
 import os
 
-PCAPNG_DIR = "Data/captures/"
-OUTPUT_DIR = "Data/processed_data"
+import pandas as pd
+
+
 CHUNK_SIZE = 10000
 TSHARK_FIELDS = [
     "aruba_erm.time",
@@ -54,6 +54,7 @@ def process_pcapng(file_path, output_dir):
             quotechar='"',
             index_col="aruba_erm.time",
             parse_dates=True,
+            date_format="%b %e, %Y %H:%M:%S.%f %Z",
         )
 
     print("Finished reading pcapng file. Saving to Parquet...")
@@ -62,7 +63,7 @@ def process_pcapng(file_path, output_dir):
     return output_file
 
 
-def process_all_pcapngs(pcapng_dir, output_dir):
+def process_all_pcapngs(pcapng_dir, output_dir, num_processes):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
@@ -74,23 +75,44 @@ def process_all_pcapngs(pcapng_dir, output_dir):
     print(f"Found {len(pcapng_files)} pcapng files. Starting processing...")
 
     # Process files in parallel
-    with ProcessPoolExecutor(max_workers=32) as executor:   # add env variable
+    with ProcessPoolExecutor(max_workers=num_processes) as executor:
         futures = [
             executor.submit(process_pcapng, file, output_dir) for file in pcapng_files
         ]
         for future in futures:
             future.result()
 
-    # Create a list of delayed tasks for each pcapng file
-    # delayed_tasks = [process_pcapng(file, output_dir) for file in pcapng_files]
-
-    # Compute the tasks in parallel across available cores
-    # client.compute(delayed_tasks, sync=True)
-
     print("All files processed.")
 
 
-# Main Execution with Dask Distributed
+# Main Execution with argparse
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Process pcapng files and save as Parquet."
+    )
+    parser.add_argument(
+        "-i",
+        "--pcapng_dir",
+        type=str,
+        required=True,
+        help="Directory containing pcapng files.",
+    )
+    parser.add_argument(
+        "-o",
+        "--output_dir",
+        type=str,
+        required=True,
+        help="Directory to save processed Parquet files.",
+    )
+    parser.add_argument(
+        "-n",
+        "--num_processes",
+        type=int,
+        default=1,
+        help="Number of processes to use for parallel processing.",
+    )
+
+    args = parser.parse_args()
+
     print("Starting pcapng processing...")
-    process_all_pcapngs(PCAPNG_DIR, OUTPUT_DIR)
+    process_all_pcapngs(args.pcapng_dir, args.output_dir, args.num_processes)
