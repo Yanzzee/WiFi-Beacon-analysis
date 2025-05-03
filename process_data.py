@@ -2,9 +2,11 @@ import argparse
 from concurrent.futures import ProcessPoolExecutor
 import subprocess
 import os
-
+from dotenv import load_dotenv
 import pandas as pd
 
+PROCESSED_DATA_FOLDER = os.getenv("PROCESSED_DATA_FOLDER")
+CAPTURES_FOLDER = os.getenv("CAPTURES_FOLDER")
 
 CHUNK_SIZE = 10000
 TSHARK_FIELDS = [
@@ -15,6 +17,7 @@ TSHARK_FIELDS = [
     "wlan.qbss.scount",
     "wlan.qbss.cu",
     "wlan.qbss.adc",
+#    "wlan.ds.current_channel", # add for channel number in output # add this in later
 ]
 
 
@@ -94,14 +97,14 @@ if __name__ == "__main__":
         "-i",
         "--pcapng_dir",
         type=str,
-        required=True,
+        default=CAPTURES_FOLDER,
         help="Directory containing pcapng files.",
     )
     parser.add_argument(
         "-o",
         "--output_dir",
         type=str,
-        required=True,
+        default=PROCESSED_DATA_FOLDER,
         help="Directory to save processed Parquet files.",
     )
     parser.add_argument(

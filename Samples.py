@@ -11,6 +11,18 @@ import re
 from dotenv import load_dotenv
 import os
 
+load_dotenv(dotenv_path="config.env")
+
+TIMEZONE = os.getenv("TIMEZONE")
+SAMPLE_FOLDER = os.getenv("SAMPLE_FOLDER")
+
+if TIMEZONE is None:
+    raise ValueError("TIMEZONE is not set in config.env")
+if SAMPLE_FOLDER is None:
+    raise ValueError("SAMPLE_FOLDER is not set in config.env")
+
+if not os.path.exists(SAMPLE_FOLDER):
+    os.makedirs(SAMPLE_FOLDER)
 
 # Define a function to clean a single cell
 def clean_cell(value):
@@ -22,9 +34,9 @@ def clean_cell(value):
 
 
 #Import sample files
-sample_aps_df = pd.read_csv("Sample/Sample_APs.csv")
-sample_classrooms_df = pd.read_csv("Sample/Sample_classrooms.csv")
-sample_schedule_df = pd.read_csv("Sample/Sample_schedule.csv")
+sample_aps_df = pd.read_csv(f"{SAMPLE_FOLDER}/Sample_APs.csv")
+sample_classrooms_df = pd.read_csv(f"{SAMPLE_FOLDER}/Sample_classrooms.csv")
+sample_schedule_df = pd.read_csv(f"{SAMPLE_FOLDER}/Sample_schedule.csv")
 
 
 #build sample_df with each class period for the 2 weeks as a record
@@ -32,11 +44,12 @@ sample_schedule_df = pd.read_csv("Sample/Sample_schedule.csv")
 sample_classes_df = pd.DataFrame({
     "location": pd.Series(dtype="string"),
     "course": pd.Series(dtype="string"),
-    "start_time": pd.Series(dtype="datetime64[us, Etc/GMT+7]"),
-    "end_time": pd.Series(dtype="datetime64[us, Etc/GMT+7]"),
+    "start_time": pd.Series(dtype=f"datetime64[us, {TIMEZONE}]"),
+    "end_time": pd.Series(dtype=f"datetime64[us, {TIMEZONE}]"),
     "enrolled": pd.Series(dtype="int"),
     "capacity": pd.Series(dtype="int")
 })
+
 
 
 # Strip extra spaces from column names
@@ -127,6 +140,9 @@ for _, row in sample_schedule_df.iterrows():
         start_time_dt = datetime.strptime(start_time_str, "%I:%M%p").time()
         end_time_dt = datetime.strptime(end_time_str, "%I:%M%p").time()
     except ValueError:
+        print(f"Malformed Class Period: {class_period} for Course: {course} in Location: {location}")
+        print("Check the format of the Class Period.")
+        # Handle the case where class_period is malformed
         continue  # Skip if Class Period is malformed
 
     # Determine which days the class meets and create entries for each valid day
@@ -185,8 +201,11 @@ for index, row in sample_classes_df.iterrows():
 sample_classes_df['start_time'] = pd.to_datetime(sample_classes_df['start_time'], errors='coerce')
 sample_classes_df['end_time'] = pd.to_datetime(sample_classes_df['end_time'], errors='coerce')
 # Convert the start_time and end_time columns to 'Etc/GMT+7' timezone
-sample_classes_df['start_time'] = sample_classes_df['start_time'].dt.tz_localize('Etc/GMT+7', ambiguous='NaT') # update to use env file
-sample_classes_df['end_time'] = sample_classes_df['end_time'].dt.tz_localize('Etc/GMT+7', ambiguous='NaT') # update to use env file
+
+
+
+sample_classes_df["start_time"] = sample_classes_df["start_time"].dt.tz_localize(TIMEZONE, ambiguous="NaT")
+sample_classes_df["end_time"] = sample_classes_df["end_time"].dt.tz_localize(TIMEZONE, ambiguous="NaT")
 
 
 #change datatypes
@@ -219,8 +238,8 @@ sample_classrooms_df['ap_count'] = sample_classrooms_df['Location'].apply(
 
 
 # write sample dataframes to files so they don't have to be cleaned again
-sample_classrooms_df.to_parquet('Sample/sample_classrooms.parquet')
-sample_aps_df.to_parquet('Sample/sample_aps.parquet')
-sample_classes_df.to_parquet('Sample/sample_classes.parquet')
+sample_classrooms_df.to_parquet(f"{SAMPLE_FOLDER}/sample_classrooms.parquet")
+sample_aps_df.to_parquet(f"{SAMPLE_FOLDER}/sample_aps.parquet")
+sample_classes_df.to_parquet(f"{SAMPLE_FOLDER}/sample_classes.parquet")
 
-print("Sample data cleaned and saved in the Sample folder.")
+print(f"Sample data cleaned and saved in {SAMPLE_FOLDER}/.")
