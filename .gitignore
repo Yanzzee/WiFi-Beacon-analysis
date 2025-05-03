@@ -3,6 +3,9 @@
 # Output folder
 /Output/
 
+# Sample folder
+/Sample/
+
 #vscode issues
 /.vscode/
 
