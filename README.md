@@ -19,6 +19,7 @@ Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons
 process_data.py - process raw .pcapng capture files to .parquet files
     requires tshark on linux
 group_data.py - group data by AP name instead of time, one file per hostname for entire date range
+group_data_cleanup.py - adds an index and moves aruba_erm.time to a regular column, if needed
 samples.py - process sample files from CSV to dataframe/parquet listed below. Uses sample aps, classrooms, and schedule input files.
     sample_aps.parquet - saved dataframe file with information about all sampled APs
     sample_classrooms.parquet - saved dataframe file with information about sampled classroom locations
