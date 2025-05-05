@@ -15,6 +15,7 @@ TSHARK_FIELDS = [
     "wlan.qbss.scount",
     "wlan.qbss.cu",
     "wlan.qbss.adc",
+#    "wlan.ds.current_channel", # add for channel number in output # add this in later
 ]
 
 
