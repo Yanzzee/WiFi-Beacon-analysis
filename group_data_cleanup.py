@@ -4,6 +4,8 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 
+load_dotenv("config.env")
+
 PLOT_TIMEZONE = os.getenv("PLOT_TIMEZONE")
 
 if PLOT_TIMEZONE is None:

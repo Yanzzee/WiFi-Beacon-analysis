@@ -3,6 +3,8 @@ from tqdm import tqdm
 from dotenv import load_dotenv
 import os
 
+load_dotenv("config.env")
+
 PROCESSED_DATA_FOLDER = os.getenv("PROCESSED_DATA_FOLDER")
 
 if PROCESSED_DATA_FOLDER is None:

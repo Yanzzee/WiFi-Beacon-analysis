@@ -5,6 +5,8 @@ import os
 from dotenv import load_dotenv
 import pandas as pd
 
+load_dotenv("config.env")
+
 PROCESSED_DATA_FOLDER = os.getenv("PROCESSED_DATA_FOLDER")
 CAPTURES_FOLDER = os.getenv("CAPTURES_FOLDER")
 
@@ -61,6 +63,13 @@ def process_pcapng(file_path, output_dir):
         )
 
     print("Finished reading pcapng file. Saving to Parquet...")
+    
+    # Try to force convert specific columns to numeric, coercing errors to NaN
+    numeric_columns = ["wlan.qbss.scount", "wlan.qbss.cu", "wlan.qbss.adc"]
+    for col in numeric_columns:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+
     df.to_parquet(output_file, engine="pyarrow")
     print(f"Finished processing {file_path}")
     return output_file
