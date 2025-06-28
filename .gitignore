@@ -183,3 +183,13 @@ cython_debug/
 .DS_Store
 .DS_Store
 /bin
+.DS_Store
+.DS_Store
+.DS_Store
+pyvenv.cfg
+share/jupyter/kernels/python3/kernel.json
+share/jupyter/kernels/python3/logo-32x32.png
+.gitignore
+share/jupyter/kernels/python3/logo-svg.svg
+share/man/man1/ipython.1
+share/man/man1/ttx.1
