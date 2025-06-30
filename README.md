@@ -1,6 +1,5 @@
 # Beacon-analysis
 802.11 beacon analysis with python
-Doug Hales
 
 processing 802.11 wireless captures from .pcapng to .parquet for analysis of 802.11e channel utilization, station count, frequency of beacons, and other information observable from captured beacons
 
@@ -13,7 +12,7 @@ Sample_classrooms.csv - list of classroom location, see example
 Sample_schedule.csv - course schedule with location, Days of the week, start/end times, and enrolled count
 
 
-Run Files
+### Run Files
 Files are listed in the general order that they are run.
 
 beacon_capture.sh (optional) - bash script to capture using tshark on a raspberry pi or other linux device. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
@@ -50,7 +49,7 @@ analyze_radio_summary.ipynb - analyze the class_summary data that includes one r
 analyze_class_sessions.ipynb - analyze each class session as a single row, combining multiple radios in the location
 
 
-Folders
+### Folders
 Data - input and working files
     /captures - put pcapng files here
     /processed_data - pcapng files are converted to parquet files and saved here
