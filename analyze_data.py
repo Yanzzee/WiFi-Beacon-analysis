@@ -20,6 +20,7 @@ from tqdm import tqdm
 #!!!
 #!!!
 #CURRENTLY HAS A FATAL BUG IN THE .py VERSION NOT EVIDENT IN THE ipynb VERSION
+# Need to convert ipynb file to py, this file is outdated
 #!!!
 #!!!
 #!!!
@@ -208,8 +209,8 @@ def analyze_radio_group(radio_df, radio_number):
     log_and_print("")
     log_and_print(f"--- Radio Number {radio_number} ---")
     log_and_print(f"Total beacons: {total_data_points}")
-    log_and_print(f"Number of beacons with high channel utilization: {greater_than_191_count}")
-    log_and_print(f"Percentage of beacons with high channel utilization: {percentage_greater_than_191:.2f}%")
+    log_and_print(f"Quantity with very high channel utilization: {greater_than_191_count}")
+    log_and_print(f"Percentage with very high channel utilization: {percentage_greater_than_191:.2f}%")
     log_and_print(f"Highest channel utilization: {greatest_cutil:.2f}%")
     log_and_print(f"Median channel utilization: {median_cutil:.2f}%")
     log_and_print(f"Lowest channel utilization: {least_cutil:.2f}%")
@@ -255,7 +256,7 @@ def analyze_radio_group(radio_df, radio_number):
         longest_end_time = longest_row["end_time"]
 
         # Print results for the specific radio_number
-        log_and_print(f"Longest consecutive duration of high channel use: {longest_duration:.2f} seconds")
+        log_and_print(f"Longest duration of very high channel use: {longest_duration:.2f} seconds")
         log_and_print(f"First beacon of sequence: {longest_start_time}")
         log_and_print(f"Last beacon of sequence: {longest_end_time}")
 

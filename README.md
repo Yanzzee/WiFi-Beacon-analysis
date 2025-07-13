@@ -29,7 +29,7 @@ samples.py - process sample files from CSV to dataframe/parquet listed below. Us
 sample_schedule.csv input files.
     sample_aps.parquet - saved dataframe file with information about all sampled APs
     sample_classrooms.parquet - saved dataframe file with information about sampled classroom locations
-    sample_classes.parquet - saved dataframe file with information about sampled class periods
+    sample_classes.parquet - saved dataframe file with information about sampled class periods. Sections in the same location must be combined.
 
 analyze_data.ipynb - further processes and begins to analyze data within scope in the sample files
     saves plots for each class session in Output/plots/
