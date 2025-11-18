@@ -1,5 +1,6 @@
 # Beacon-analysis
 802.11 beacon analysis with python
+Working repository - not published publicly
 
 processing 802.11 wireless captures from .pcapng to .parquet for analysis of 802.11e channel utilization, station count, frequency of beacons, and other information observable from captured beacons
 
