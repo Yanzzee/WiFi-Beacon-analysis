@@ -27,7 +27,7 @@ group_data_bssid.py - group data by AP name (BSSID) instead of time, one file pe
 group_data_cleanup.py (optional) - adds an index and moves aruba_erm.time to a regular column, if needed
 
 samples.py - process sample files from CSV to dataframe/parquet listed below. Uses config.env for date range, sample_aps.csv, sample_classrooms.csv, and 
-sample_schedule.csv input files.
+sample_schedule.csv input files. These should be UTF-8 encoded, sections in the same class should be combined, Day of week uses M T W R F.
     sample_aps.parquet - saved dataframe file with information about all sampled APs
     sample_classrooms.parquet - saved dataframe file with information about sampled classroom locations
     sample_classes.parquet - saved dataframe file with information about sampled class periods. Sections in the same location must be combined.

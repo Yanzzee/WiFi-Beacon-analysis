@@ -9,6 +9,7 @@ load_dotenv("config.env")
 
 PROCESSED_DATA_FOLDER = os.getenv("PROCESSED_DATA_FOLDER")
 CAPTURES_FOLDER = os.getenv("CAPTURES_FOLDER")
+THREAD_COUNT = os.getenv("THREAD_COUNT")
 
 ERM_UDP_PORT = int(os.getenv("ERM_UDP_PORT", "5555"))
 ERM_TYPE = os.getenv("ERM_TYPE", "aruba_erm_type0")
@@ -114,7 +115,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Process pcapng files and save as Parquet.")
     parser.add_argument("-i", "--pcapng_dir", type=str, default=CAPTURES_FOLDER)
     parser.add_argument("-o", "--output_dir", type=str, default=PROCESSED_DATA_FOLDER)
-    parser.add_argument("-n", "--num_processes", type=int, default=1)
+    parser.add_argument("-n", "--num_processes", type=int, default=THREAD_COUNT)
     parser.add_argument("--no-erm", action="store_true", help="Process non-Aruba ERM captures.")
     args = parser.parse_args()
 

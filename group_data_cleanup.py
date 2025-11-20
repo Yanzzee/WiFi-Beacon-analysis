@@ -1,57 +1,65 @@
 # This code is for cleaning up the grouped_data parquet files that do not have a separate index, and have the aruba_erm.time as the index
-
+# also makes sure the time is in the right format
+# group_data_cleanup.py (multithreaded)
 import os
 import pandas as pd
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dotenv import load_dotenv
 
 load_dotenv("config.env")
 
 PLOT_TIMEZONE = os.getenv("PLOT_TIMEZONE")
-
-if PLOT_TIMEZONE is None:
-    raise ValueError("PLOT_TIMEZONE is not set in config.env")
-
 GROUPED_DATA_FOLDER = os.getenv("GROUPED_DATA_FOLDER")
+THREAD_COUNT = int(os.getenv("THREAD_COUNT", "4"))
 
-if GROUPED_DATA_FOLDER is None:
+if not PLOT_TIMEZONE:
+    raise ValueError("PLOT_TIMEZONE is not set in config.env")
+if not GROUPED_DATA_FOLDER:
     raise ValueError("GROUPED_DATA_FOLDER is not set in config.env")
 
-# Set the folder containing your parquet files
 folder_path = GROUPED_DATA_FOLDER
 
-# Process each .parquet file in the folder
-for filename in os.listdir(folder_path):
-    if filename.endswith(".parquet"):
-        full_path = os.path.join(folder_path, filename)
-        print(f"Processing {filename}...")
+def fix_one(full_path: str) -> str:
+    try:
+        df = pd.read_parquet(full_path, engine="pyarrow")
 
-        try:
-            df = pd.read_parquet(full_path)
+        # 1) Ensure time is a column, not index
+        if df.index.name == "aruba_erm.time":
+            df = df.reset_index()
 
-            # Reset index if it's aruba_erm.time
-            if df.index.name == "aruba_erm.time":
-                df.reset_index(inplace=True)
+        if "aruba_erm.time" not in df.columns:
+            return f"[skip] No 'aruba_erm.time' column in {os.path.basename(full_path)}"
 
-            # Ensure aruba_erm.time is a datetime column
-            if "aruba_erm.time" in df.columns:
-                df["aruba_erm.time"] = (
-                    df["aruba_erm.time"]
-                    .astype(str)
-                    .str.replace("MDT", "", regex=False)
-                    .str.strip()
-                )
-                df["aruba_erm.time"] = pd.to_datetime(
-                    df["aruba_erm.time"], errors="coerce"
-                )
-                df["aruba_erm.time"] = df["aruba_erm.time"].dt.tz_localize(
-                    PLOT_TIMEZONE, ambiguous="NaT", nonexistent="NaT"
-                )
+        ts = df["aruba_erm.time"]
 
+        # 2) Normalize to datetime
+        if not pd.api.types.is_datetime64_any_dtype(ts):
+            ts = pd.to_datetime(ts, errors="coerce", utc=True)
 
+        # 3) Localize or convert
+        if getattr(ts.dt, "tz", None) is None:
+            ts = ts.dt.tz_localize(PLOT_TIMEZONE, ambiguous="NaT", nonexistent="NaT")
+        else:
+            ts = ts.dt.tz_convert(PLOT_TIMEZONE)
 
-            # Save it back
-            df.to_parquet(full_path, index=False)
-            print(f"✔️ Fixed and saved: {filename}")
+        df["aruba_erm.time"] = ts
 
-        except Exception as e:
-            print(f"❌ Error processing {filename}: {e}")
+        # 4) Save back
+        df.to_parquet(full_path, index=False, engine="pyarrow")
+        return f"[ok] {os.path.basename(full_path)}"
+    except Exception as e:
+        return f"[err] {os.path.basename(full_path)}: {e}"
+
+# collect files first
+files = [
+    os.path.join(folder_path, fn)
+    for fn in os.listdir(folder_path)
+    if fn.endswith(".parquet")
+]
+
+print(f"Processing {len(files)} files with {THREAD_COUNT} threads…")
+
+with ThreadPoolExecutor(max_workers=THREAD_COUNT) as ex:
+    futures = [ex.submit(fix_one, p) for p in files]
+    for fut in as_completed(futures):
+        print(fut.result())
