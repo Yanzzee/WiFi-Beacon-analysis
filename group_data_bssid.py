@@ -2,7 +2,8 @@ import dask.dataframe as dd
 from tqdm import tqdm
 from dotenv import load_dotenv
 import os, re
-import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
 
 load_dotenv("config.env")
 
@@ -17,68 +18,50 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 df = dd.read_parquet(INPUT_DIR, engine="pyarrow")
 
-AP_COL = "wlan.vs.aruba.ap_name"
-BSSID_COL = "wlan.bssid"
-
-if BSSID_COL not in df.columns:
-    raise ValueError("Input data must include wlan.bssid column")
+if "wlan.bssid" not in df.columns:
+    raise ValueError("Input data must include wlan.bssid")
 
 def sanitize(name: str) -> str:
-    s = str(name)
-    s = re.sub(r'[<>:"/\\|?*\x00-\x1F]', "_", s).strip().rstrip(".")
+    s = str(name or "").strip()
+    s = re.sub(r'[<>:"/\\|?*\x00-\x1F]', "_", s).rstrip(".")
     return s[:100] or "UNKNOWN"
 
-# --- 1) Write one file per AP NAME (combines all BSSIDs with that name) ---
-# Consider non-empty strings as valid AP names
-ap_names = (
-    df[AP_COL]
-    .dropna()
-    .map_partitions(lambda s: s.astype(str).str.strip())
-    .replace({"": pd.NA})
-    .dropna()
-    .unique()
-    .compute()
-)
+# One pass over partitions; keep open Parquet writers per output file
+writers: dict[str, pq.ParquetWriter] = {}
+schemas: dict[str, pa.Schema] = {}
 
-# --- 2) Rows with NO AP NAME -> fallback to per-BSSID files ---
-mask_no_ap = (df[AP_COL].isna()) | (df[AP_COL].astype(str).str.strip() == "")
-unknown_bssids = (
-    df[mask_no_ap][BSSID_COL]
-    .dropna()
-    .map_partitions(lambda s: s.astype(str).str.strip())
-    .replace({"": pd.NA})
-    .dropna()
-    .unique()
-    .compute()
-)
-
-total_groups = len(ap_names) + len(unknown_bssids)
-
-with tqdm(total=total_groups, desc="Writing grouped Parquet") as pbar:
-    # Per-AP files (combine all BSSIDs for that AP)
-    for ap_name in ap_names:
-        part = df[df[AP_COL] == ap_name].compute()
-        if part.empty:
-            pbar.update(1)
+try:
+    n_parts = df.npartitions
+    for i in tqdm(range(n_parts), desc="Processing partitions"):
+        pdf = df.get_partition(i).compute()  # small, localized compute
+        if pdf.empty:
             continue
-        out_name = sanitize(ap_name)
-        output_path = os.path.join(OUTPUT_DIR, f"{out_name}.parquet")
-        part.to_parquet(output_path, engine="pyarrow")
-        pbar.update(1)
 
-    # Fallback: per-BSSID files for rows with no AP name
-    for bssid in unknown_bssids:
-        if not bssid or str(bssid).lower() in {"nan", "<na>", "none"}:
-            print("[WARN] Encountered row with missing BSSID and no AP name; skipping.")
-            pbar.update(1)
-            continue
-        part = df[mask_no_ap & (df[BSSID_COL] == bssid)].compute()
-        if part.empty:
-            pbar.update(1)
-            continue
-        out_name = sanitize(bssid)
-        output_path = os.path.join(OUTPUT_DIR, f"{out_name}.parquet")
-        part.to_parquet(output_path, engine="pyarrow")
-        pbar.update(1)
+        # Group within the partition by BSSID
+        for bssid, g in pdf.groupby("wlan.bssid", dropna=False):
+            if not isinstance(bssid, str) or not bssid or bssid.lower() in {"nan", "<na>", "none"}:
+                print("[WARN] Missing BSSID in some rows; skipping those rows.")
+                continue
 
-print("Finished grouping: one file per AP name, fallback to BSSID when AP name is missing.")
+            # Choose filename: AP name (first non-null) else BSSID
+            ap_name = next((x for x in g["wlan.vs.aruba.ap_name"].dropna().unique() if str(x).strip()), None) \
+                      if "wlan.vs.aruba.ap_name" in g.columns else None
+            out_name = sanitize(ap_name if ap_name else bssid)
+            out_path = os.path.join(OUTPUT_DIR, f"{out_name}.parquet")
+
+            # Write/append with PyArrow (single file per BSSID/AP)
+            table = pa.Table.from_pandas(g, preserve_index=True)
+            if out_path not in writers:
+                writers[out_path] = pq.ParquetWriter(out_path, table.schema)
+                schemas[out_path] = table.schema
+            else:
+                # If schema drift occurs, align columns (rare but safer)
+                if table.schema != schemas[out_path]:
+                    table = table.combine_chunks()
+                    table = table.cast(schemas[out_path], safe=False)
+            writers[out_path].write_table(table)
+finally:
+    for w in writers.values():
+        w.close()
+
+print("Finished grouping all APs.")
