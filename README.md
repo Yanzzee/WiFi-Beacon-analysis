@@ -22,7 +22,7 @@ Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons
 process_data.py - process raw .pcapng capture files to .parquet files
     requires tshark on linux
 
-group_data.py - group data by AP name instead of time, one file per hostname for entire date range
+group_data_bssid.py - group data by AP name (BSSID) instead of time, one file per hostname for entire date range
 
 group_data_cleanup.py (optional) - adds an index and moves aruba_erm.time to a regular column, if needed
 
