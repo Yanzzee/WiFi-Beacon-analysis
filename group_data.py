@@ -1,5 +1,8 @@
 #original version groups by aruba AP name
-#use group_data_bssid for data that includes BSSID
+#!!!! use group_data_bssid for data that includes BSSID
+#
+#
+#
 import dask.dataframe as dd
 from tqdm import tqdm
 from dotenv import load_dotenv
