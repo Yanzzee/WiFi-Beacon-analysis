@@ -1,3 +1,6 @@
+# take captures and create parquet files
+# need to add logic for whether capture is Aruba ERM or wireless, if ERM, which type based on env file
+
 import argparse
 from concurrent.futures import ProcessPoolExecutor
 import subprocess
