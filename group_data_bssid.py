@@ -1,3 +1,7 @@
+#regroup parquet files by AP name or BSSID if name doesn't exist
+#processed captures must include BSSID column for this version to run
+#this script may require analyze files to be updated before they will work
+
 import dask.dataframe as dd
 from tqdm import tqdm
 from dotenv import load_dotenv

@@ -87,6 +87,22 @@ def process_pcapng(file_path, output_dir, erm=True):
         freq = freq.fillna(pd.to_numeric(df["wlan_radio.frequency"], errors="coerce"))
     df["frequency_mhz"] = freq  # leave NaN if not available
 
+    # --- force SSID to pandas string dtype ---
+    if "wlan.ssid" in df.columns:
+        df["wlan.ssid"] = df["wlan.ssid"].astype("string")
+    if "wlan.vs.aruba.ap_name" in df.columns:
+        df["wlan.vs.aruba.ap_name"] = df["wlan.vs.aruba.ap_name"].astype("string")
+
+    # Convert QBSS metrics to numeric (int)
+    for col in ["wlan.qbss.scount", "wlan.qbss.cu", "wlan.qbss.adc"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce").astype("Int64")
+
+    # Convert frequency fields to int
+    for col in ["radiotap.channel.freq", "wlan_radio.frequency", "frequency_mhz"]:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce").astype("Int64")
+
     # Convert QBSS metrics to numeric
     for col in ["wlan.qbss.scount", "wlan.qbss.cu", "wlan.qbss.adc"]:
         if col in df.columns:

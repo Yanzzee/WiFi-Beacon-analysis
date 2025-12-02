@@ -34,7 +34,8 @@ sample_schedule.csv input files. These should be UTF-8 encoded, sections in the 
 
 analyze_data.ipynb - further processes and begins to analyze data within scope in the sample files
     saves plots for each class session in Output/plots/
-    all_class_beacons.parquet -  all beacon data within the scope of class sessions
+    separate parquet files for each AP are saved as class_beacons files, these contain only data within the sample scope
+    all_class_beacons.parquet - combined all beacon data within the scope of class sessions
     radio_summary.parquet - summary information for each radio/session
     analyze_data_log - detailed information for each radio/session
 
