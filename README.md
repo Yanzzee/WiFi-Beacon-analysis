@@ -19,12 +19,12 @@ Files are listed in the general order that they are run.
 beacon_capture.sh (optional) - bash script to capture using tshark on a raspberry pi or other linux device. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
 Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
 
-process_data.py - process raw .pcapng capture files to .parquet files
+process_pcapng.py - process raw .pcapng capture files to .parquet files
     requires tshark on linux
 
-group_data_bssid.py - group data by AP name (BSSID) instead of time, one file per hostname for entire date range
+group_data.py - group data by AP name (BSSID) instead of time, one file per hostname for entire date range
 
-group_data_cleanup.py (optional) - adds an index and moves aruba_erm.time to a regular column, if needed
+group_data_cleanup.py (optional) - adds an index and moves aruba_erm.time to a regular column, if needed (esp for aruba)
 
 samples.py - process sample files from CSV to dataframe/parquet listed below. Uses config.env for date range, sample_aps.csv, sample_classrooms.csv, and 
 sample_schedule.csv input files. These should be UTF-8 encoded, sections in the same class should be combined, Day of week uses M T W R F.

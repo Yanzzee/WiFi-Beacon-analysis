@@ -1,4 +1,4 @@
-# take captures and create parquet files
+# take capture files and create parquet files
 # need to add logic for whether capture is Aruba ERM or wireless, if ERM, which type based on env file
 
 import argparse
@@ -7,6 +7,7 @@ import subprocess
 import os
 from dotenv import load_dotenv
 import pandas as pd
+import re
 
 load_dotenv("config.env")
 
@@ -46,6 +47,54 @@ TSHARK_FIELDS_NATIVE = [
     "radiotap.channel.freq",
     "wlan_radio.frequency",
 ]
+
+# --- helper to decode hex-encoded SSIDs ---
+HEX_RE = re.compile(r"^[0-9a-fA-F]+$")
+
+def _looks_like_hex(s: str) -> bool:
+    s = s.strip()
+    return len(s) > 0 and len(s) % 2 == 0 and HEX_RE.fullmatch(s) is not None
+
+def _decode_hex_ssid(s: str) -> str:
+    """Decode a hex string to UTF-8; fall back to original on error."""
+    s = s.strip()
+    try:
+        return bytes.fromhex(s).decode("utf-8", errors="replace")
+    except Exception:
+        return s
+
+def normalize_ssid_column(df: pd.DataFrame) -> None:
+    """
+    Inspect wlan.ssid values to see if tshark is outputting hex.
+    If most non-empty values look like hex, decode them. Then
+    cast to pandas string dtype.
+    """
+    if "wlan.ssid" not in df.columns:
+        return
+
+    s = df["wlan.ssid"].astype("string")
+
+    # Drop NaNs/empties for detection
+    non_empty = s.dropna().str.strip()
+    non_empty = non_empty[non_empty != ""]
+    if non_empty.empty:
+        df["wlan.ssid"] = s
+        return
+
+    sample = non_empty.head(100)
+    hex_count = sum(_looks_like_hex(v) for v in sample)
+    frac_hex = hex_count / len(sample)
+
+    # Heuristic: if majority look like hex, assume tshark is in hex mode
+    if frac_hex > 0.7:
+        decoded = s.map(
+            lambda v: _decode_hex_ssid(v) if v is not None and _looks_like_hex(str(v)) else v
+        )
+        df["wlan.ssid"] = decoded.astype("string")
+    else:
+        # Already human-readable text; just enforce string dtype
+        df["wlan.ssid"] = s.astype("string")
+
 
 def process_pcapng(file_path, output_dir, erm=True):
     output_file = os.path.join(output_dir, f"{os.path.basename(file_path)}.parquet")
@@ -89,6 +138,9 @@ def process_pcapng(file_path, output_dir, erm=True):
     if "wlan_radio.frequency" in df.columns:
         freq = freq.fillna(pd.to_numeric(df["wlan_radio.frequency"], errors="coerce"))
     df["frequency_mhz"] = freq  # leave NaN if not available
+
+    # --- normalize SSID output from tshark (hex vs text) ---
+    normalize_ssid_column(df)
 
     # --- force SSID to pandas string dtype ---
     if "wlan.ssid" in df.columns:
