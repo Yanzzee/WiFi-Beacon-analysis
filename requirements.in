@@ -1,0 +1,15 @@
+# Runtime dependencies imported by scripts and notebooks.
+dask[dataframe]
+matplotlib
+numpy
+pandas
+pyarrow
+python-dotenv
+pytz
+scapy
+scipy
+statsmodels
+tqdm
+
+# Test dependencies.
+pytest

@@ -1,0 +1,794 @@
+{
+  "config": {
+    "BEACON_RATE": "1.024",
+    "END_DATE": "2025-11-14",
+    "PLOT_TIMEZONE": "America/Denver",
+    "SSID1": "eduroam",
+    "SSID2": "BYU-WiFi",
+    "START_DATE": "2025-11-10",
+    "TIMEZONE": "Etc/GMT+7"
+  },
+  "plots": {
+    "Output/all_class_beacons": 7,
+    "Output/class_sessions": 4,
+    "Output/plots": 228,
+    "Output/radio_summary": 7
+  },
+  "tables": {
+    "all_class_beacons": {
+      "columns": [
+        "level_0",
+        "index",
+        "aruba_erm.time",
+        "wlan.ta",
+        "wlan.bssid",
+        "wlan.vs.aruba.ap_name",
+        "wlan.ssid",
+        "wlan.qbss.scount",
+        "wlan.qbss.cu",
+        "wlan.qbss.adc",
+        "radiotap.channel.freq",
+        "wlan_radio.frequency",
+        "frequency_mhz",
+        "wlan.ta_int",
+        "radio_number",
+        "total_scount"
+      ],
+      "numeric": {
+        "total_scount": {
+          "max": 83.0,
+          "median": 24.0,
+          "min": 0.0
+        },
+        "wlan.qbss.adc": {
+          "max": 31250.0,
+          "median": 29687.0,
+          "min": 2500.0
+        },
+        "wlan.qbss.cu": {
+          "max": 255.0,
+          "median": 13.0,
+          "min": 0.0
+        },
+        "wlan.qbss.scount": {
+          "max": 81.0,
+          "median": 0.0,
+          "min": 0.0
+        }
+      },
+      "row_count": 2334170,
+      "timestamps": {
+        "aruba_erm.time": {
+          "max": "2025-11-14T20:49:59.944142+00:00",
+          "min": "2025-11-10T15:00:10.340107+00:00"
+        }
+      },
+      "unique": {
+        "wlan.bssid": {
+          "count": 34,
+          "sha256": "0fac47a8c01eaa9b6f2437233114be239622966af4f0027e3e66c99374dc09e9",
+          "values": [
+            "b0:1f:8c:8b:a3:b0",
+            "b0:1f:8c:8b:a3:b1",
+            "b0:1f:8c:8b:a3:b2",
+            "b0:1f:8c:8b:a3:b3",
+            "d0:15:a6:ce:bf:30",
+            "d0:15:a6:ce:bf:31",
+            "d0:15:a6:ce:bf:32",
+            "d0:15:a6:ce:bf:33",
+            "d0:15:a6:ce:bf:40",
+            "d0:15:a6:ce:bf:41",
+            "d0:15:a6:ce:bf:42",
+            "d0:15:a6:ce:bf:43",
+            "d0:15:a6:ce:c3:e0",
+            "d0:15:a6:ce:c3:e1",
+            "d0:15:a6:ce:c3:e2",
+            "d0:15:a6:ce:c3:e3",
+            "d0:15:a6:ce:c3:f0",
+            "d0:15:a6:ce:c3:f1",
+            "d0:15:a6:ce:c3:f2",
+            "d0:15:a6:ce:c3:f3",
+            "d0:15:a6:cf:0d:90",
+            "d0:15:a6:cf:0d:91",
+            "d0:15:a6:cf:0d:92",
+            "d0:15:a6:cf:0d:93",
+            "d0:15:a6:cf:0d:a0",
+            "d0:15:a6:cf:0d:a1",
+            "d0:15:a6:cf:0d:a2",
+            "d0:15:a6:cf:0d:a3",
+            "d0:4d:c6:df:7f:e1",
+            "d0:4d:c6:df:7f:e2",
+            "d0:4d:c6:df:7f:e3",
+            "d0:4d:c6:df:7f:f1",
+            "d0:4d:c6:df:7f:f2",
+            "d0:4d:c6:df:7f:f3"
+          ]
+        },
+        "wlan.ssid": {
+          "count": 5,
+          "sha256": "1f412c4da8d3242f4ccc8f8afbe65ef23178ff7c11e7918f69d7320ad3e5d6ea",
+          "values": [
+            "BYU-WiFi",
+            "ITC-VR-Lab",
+            "LSB-DNA",
+            "byu-devices",
+            "eduroam"
+          ]
+        },
+        "wlan.ta": {
+          "count": 34,
+          "sha256": "0fac47a8c01eaa9b6f2437233114be239622966af4f0027e3e66c99374dc09e9",
+          "values": [
+            "b0:1f:8c:8b:a3:b0",
+            "b0:1f:8c:8b:a3:b1",
+            "b0:1f:8c:8b:a3:b2",
+            "b0:1f:8c:8b:a3:b3",
+            "d0:15:a6:ce:bf:30",
+            "d0:15:a6:ce:bf:31",
+            "d0:15:a6:ce:bf:32",
+            "d0:15:a6:ce:bf:33",
+            "d0:15:a6:ce:bf:40",
+            "d0:15:a6:ce:bf:41",
+            "d0:15:a6:ce:bf:42",
+            "d0:15:a6:ce:bf:43",
+            "d0:15:a6:ce:c3:e0",
+            "d0:15:a6:ce:c3:e1",
+            "d0:15:a6:ce:c3:e2",
+            "d0:15:a6:ce:c3:e3",
+            "d0:15:a6:ce:c3:f0",
+            "d0:15:a6:ce:c3:f1",
+            "d0:15:a6:ce:c3:f2",
+            "d0:15:a6:ce:c3:f3",
+            "d0:15:a6:cf:0d:90",
+            "d0:15:a6:cf:0d:91",
+            "d0:15:a6:cf:0d:92",
+            "d0:15:a6:cf:0d:93",
+            "d0:15:a6:cf:0d:a0",
+            "d0:15:a6:cf:0d:a1",
+            "d0:15:a6:cf:0d:a2",
+            "d0:15:a6:cf:0d:a3",
+            "d0:4d:c6:df:7f:e1",
+            "d0:4d:c6:df:7f:e2",
+            "d0:4d:c6:df:7f:e3",
+            "d0:4d:c6:df:7f:f1",
+            "d0:4d:c6:df:7f:f2",
+            "d0:4d:c6:df:7f:f3"
+          ]
+        },
+        "wlan.vs.aruba.ap_name": {
+          "count": 5,
+          "sha256": "16ef96c7f13db07247619e2bb68510b779bd59a472ed146e31241a7e1ae2ea69",
+          "values": [
+            "P-CTB-385-AP-01-535",
+            "P-LSB-2102-AP-01-2109",
+            "P-LSB-2102-AP-02-2109",
+            "P-LSB-2102-AP-03-2109",
+            "P-TNRB-W308-AP-01-W315"
+          ]
+        }
+      }
+    },
+    "all_class_beacons_processed": {
+      "columns": [
+        "level_0",
+        "index",
+        "aruba_erm.time",
+        "wlan.ta",
+        "wlan.bssid",
+        "wlan.vs.aruba.ap_name",
+        "wlan.ssid",
+        "wlan.qbss.scount",
+        "wlan.qbss.cu",
+        "wlan.qbss.adc",
+        "radiotap.channel.freq",
+        "wlan_radio.frequency",
+        "frequency_mhz",
+        "wlan.ta_int",
+        "radio_number",
+        "total_scount",
+        "room_scount",
+        "location"
+      ],
+      "numeric": {
+        "room_scount": {
+          "max": 286.0,
+          "median": 126.0,
+          "min": 0.0
+        },
+        "total_scount": {
+          "max": 83.0,
+          "median": 24.0,
+          "min": 0.0
+        },
+        "wlan.qbss.adc": {
+          "max": 31250.0,
+          "median": 29687.0,
+          "min": 2500.0
+        },
+        "wlan.qbss.cu": {
+          "max": 255.0,
+          "median": 14.0,
+          "min": 0.0
+        },
+        "wlan.qbss.scount": {
+          "max": 81.0,
+          "median": 4.0,
+          "min": 0.0
+        }
+      },
+      "row_count": 1210919,
+      "timestamps": {
+        "aruba_erm.time": {
+          "max": "2025-11-14T20:49:59.943511+00:00",
+          "min": "2025-11-10T15:00:10.441899+00:00"
+        }
+      },
+      "unique": {
+        "location": {
+          "count": 3,
+          "sha256": "f909136ac6fda55376dda839ea93a20497a0ec851dbccdff4b50c2b34d1cb49b",
+          "values": [
+            "CTB-385",
+            "LSB-2102",
+            "TNRB-W308"
+          ]
+        },
+        "wlan.bssid": {
+          "count": 18,
+          "sha256": "945d0e74c14ec586d5ed64c28352b2932142131d58a8d5dbf9f3c58e61bfa7e5",
+          "values": [
+            "b0:1f:8c:8b:a3:b0",
+            "b0:1f:8c:8b:a3:b1",
+            "d0:15:a6:ce:bf:30",
+            "d0:15:a6:ce:bf:31",
+            "d0:15:a6:ce:bf:40",
+            "d0:15:a6:ce:bf:41",
+            "d0:15:a6:ce:c3:e0",
+            "d0:15:a6:ce:c3:e1",
+            "d0:15:a6:ce:c3:f0",
+            "d0:15:a6:ce:c3:f1",
+            "d0:15:a6:cf:0d:90",
+            "d0:15:a6:cf:0d:91",
+            "d0:15:a6:cf:0d:a0",
+            "d0:15:a6:cf:0d:a1",
+            "d0:4d:c6:df:7f:e1",
+            "d0:4d:c6:df:7f:e2",
+            "d0:4d:c6:df:7f:f1",
+            "d0:4d:c6:df:7f:f2"
+          ]
+        },
+        "wlan.ssid": {
+          "count": 2,
+          "sha256": "aaad25c50564b3d3b4134a0ceebdf3404934fd1a93ed4cc4e50868e9491197d0",
+          "values": [
+            "BYU-WiFi",
+            "eduroam"
+          ]
+        },
+        "wlan.ta": {
+          "count": 18,
+          "sha256": "945d0e74c14ec586d5ed64c28352b2932142131d58a8d5dbf9f3c58e61bfa7e5",
+          "values": [
+            "b0:1f:8c:8b:a3:b0",
+            "b0:1f:8c:8b:a3:b1",
+            "d0:15:a6:ce:bf:30",
+            "d0:15:a6:ce:bf:31",
+            "d0:15:a6:ce:bf:40",
+            "d0:15:a6:ce:bf:41",
+            "d0:15:a6:ce:c3:e0",
+            "d0:15:a6:ce:c3:e1",
+            "d0:15:a6:ce:c3:f0",
+            "d0:15:a6:ce:c3:f1",
+            "d0:15:a6:cf:0d:90",
+            "d0:15:a6:cf:0d:91",
+            "d0:15:a6:cf:0d:a0",
+            "d0:15:a6:cf:0d:a1",
+            "d0:4d:c6:df:7f:e1",
+            "d0:4d:c6:df:7f:e2",
+            "d0:4d:c6:df:7f:f1",
+            "d0:4d:c6:df:7f:f2"
+          ]
+        },
+        "wlan.vs.aruba.ap_name": {
+          "count": 5,
+          "sha256": "16ef96c7f13db07247619e2bb68510b779bd59a472ed146e31241a7e1ae2ea69",
+          "values": [
+            "P-CTB-385-AP-01-535",
+            "P-LSB-2102-AP-01-2109",
+            "P-LSB-2102-AP-02-2109",
+            "P-LSB-2102-AP-03-2109",
+            "P-TNRB-W308-AP-01-W315"
+          ]
+        }
+      }
+    },
+    "filtered_radio_summary_csv": {
+      "columns": [
+        "subject",
+        "location",
+        "AP_hostname",
+        "radio_number",
+        "start_time",
+        "end_time",
+        "capacity",
+        "enrolled",
+        "AP_count",
+        "radio_count",
+        "bssid_count",
+        "ssid_count",
+        "total_beacons",
+        "high_cu_beacons",
+        "percent_high_cu",
+        "highest_cu",
+        "median_cu",
+        "lowest_cu",
+        "high_scount",
+        "median_scount",
+        "low_scount",
+        "longest_duration_high_cu",
+        "graph_filename",
+        "class_duration",
+        "beacons_per_second"
+      ],
+      "numeric": {
+        "beacons_per_second": {
+          "max": 3.934222,
+          "median": 2.986,
+          "min": 0.333333
+        },
+        "capacity": {
+          "max": 192.0,
+          "median": 192.0,
+          "min": 30.0
+        },
+        "enrolled": {
+          "max": 171.0,
+          "median": 136.0,
+          "min": 8.0
+        },
+        "high_scount": {
+          "max": 83.0,
+          "median": 38.5,
+          "min": 1.0
+        },
+        "highest_cu": {
+          "max": 100.0,
+          "median": 72.941176,
+          "min": 5.490196
+        },
+        "low_scount": {
+          "max": 58.0,
+          "median": 15.0,
+          "min": 0.0
+        },
+        "lowest_cu": {
+          "max": 15.686275,
+          "median": 1.960784,
+          "min": 0.0
+        },
+        "median_cu": {
+          "max": 30.980392,
+          "median": 6.470588,
+          "min": 0.784314
+        },
+        "median_scount": {
+          "max": 67.0,
+          "median": 29.5,
+          "min": 0.0
+        },
+        "total_beacons": {
+          "max": 22301.0,
+          "median": 9419.0,
+          "min": 1500.0
+        }
+      },
+      "row_count": 228,
+      "timestamps": {
+        "end_time": {
+          "max": "2025-11-14T20:50:00+00:00",
+          "min": "2025-11-10T16:15:00+00:00"
+        },
+        "start_time": {
+          "max": "2025-11-14T20:00:00+00:00",
+          "min": "2025-11-10T15:00:00+00:00"
+        }
+      },
+      "unique": {
+        "AP_hostname": {
+          "count": 5,
+          "sha256": "16ef96c7f13db07247619e2bb68510b779bd59a472ed146e31241a7e1ae2ea69",
+          "values": [
+            "P-CTB-385-AP-01-535",
+            "P-LSB-2102-AP-01-2109",
+            "P-LSB-2102-AP-02-2109",
+            "P-LSB-2102-AP-03-2109",
+            "P-TNRB-W308-AP-01-W315"
+          ]
+        },
+        "location": {
+          "count": 3,
+          "sha256": "f909136ac6fda55376dda839ea93a20497a0ec851dbccdff4b50c2b34d1cb49b",
+          "values": [
+            "CTB-385",
+            "LSB-2102",
+            "TNRB-W308"
+          ]
+        },
+        "subject": {
+          "count": 23,
+          "sha256": "0f80c1c08d6467e08caefbf2ed20f0511c415a4be16c929206dcd8e2ce70bc3f",
+          "values": [
+            "ACC 200",
+            "BIO 100",
+            "BIO 691 R",
+            "CELL 120",
+            "CELL 305",
+            "CELL 362",
+            "EC EN 330",
+            "EC EN 548",
+            "IS 402",
+            "IS 403",
+            "IS 404",
+            "IS 415",
+            "IS 515",
+            "IT&C 562",
+            "MBA 593 R",
+            "MKTG 326",
+            "MPA 646",
+            "MSB 571",
+            "MSB 682",
+            "PWS 100",
+            "PWS 112",
+            "PWS 340",
+            "UNIV 101"
+          ]
+        }
+      }
+    },
+    "radio_summary": {
+      "columns": [
+        "subject",
+        "location",
+        "AP_hostname",
+        "radio_number",
+        "start_time",
+        "end_time",
+        "capacity",
+        "enrolled",
+        "AP_count",
+        "radio_count",
+        "bssid_count",
+        "ssid_count",
+        "total_beacons",
+        "high_cu_beacons",
+        "percent_high_cu",
+        "highest_cu",
+        "median_cu",
+        "lowest_cu",
+        "high_scount",
+        "median_scount",
+        "low_scount",
+        "longest_duration_high_cu",
+        "graph_filename"
+      ],
+      "numeric": {
+        "capacity": {
+          "max": 192.0,
+          "median": 192.0,
+          "min": 30.0
+        },
+        "enrolled": {
+          "max": 171.0,
+          "median": 136.0,
+          "min": 8.0
+        },
+        "high_scount": {
+          "max": 83.0,
+          "median": 38.5,
+          "min": 1.0
+        },
+        "highest_cu": {
+          "max": 100.0,
+          "median": 72.941176,
+          "min": 5.490196
+        },
+        "low_scount": {
+          "max": 58.0,
+          "median": 15.0,
+          "min": 0.0
+        },
+        "lowest_cu": {
+          "max": 15.686275,
+          "median": 1.960784,
+          "min": 0.0
+        },
+        "median_cu": {
+          "max": 30.980392,
+          "median": 6.470588,
+          "min": 0.784314
+        },
+        "median_scount": {
+          "max": 67.0,
+          "median": 29.5,
+          "min": 0.0
+        },
+        "total_beacons": {
+          "max": 22301.0,
+          "median": 9419.0,
+          "min": 1500.0
+        }
+      },
+      "row_count": 228,
+      "timestamps": {
+        "end_time": {
+          "max": "2025-11-14T20:50:00+00:00",
+          "min": "2025-11-10T16:15:00+00:00"
+        },
+        "start_time": {
+          "max": "2025-11-14T20:00:00+00:00",
+          "min": "2025-11-10T15:00:00+00:00"
+        }
+      },
+      "unique": {
+        "AP_hostname": {
+          "count": 5,
+          "sha256": "16ef96c7f13db07247619e2bb68510b779bd59a472ed146e31241a7e1ae2ea69",
+          "values": [
+            "P-CTB-385-AP-01-535",
+            "P-LSB-2102-AP-01-2109",
+            "P-LSB-2102-AP-02-2109",
+            "P-LSB-2102-AP-03-2109",
+            "P-TNRB-W308-AP-01-W315"
+          ]
+        },
+        "location": {
+          "count": 3,
+          "sha256": "f909136ac6fda55376dda839ea93a20497a0ec851dbccdff4b50c2b34d1cb49b",
+          "values": [
+            "CTB-385",
+            "LSB-2102",
+            "TNRB-W308"
+          ]
+        },
+        "subject": {
+          "count": 23,
+          "sha256": "0f80c1c08d6467e08caefbf2ed20f0511c415a4be16c929206dcd8e2ce70bc3f",
+          "values": [
+            "ACC 200",
+            "BIO 100",
+            "BIO 691 R",
+            "CELL 120",
+            "CELL 305",
+            "CELL 362",
+            "EC EN 330",
+            "EC EN 548",
+            "IS 402",
+            "IS 403",
+            "IS 404",
+            "IS 415",
+            "IS 515",
+            "IT&C 562",
+            "MBA 593 R",
+            "MKTG 326",
+            "MPA 646",
+            "MSB 571",
+            "MSB 682",
+            "PWS 100",
+            "PWS 112",
+            "PWS 340",
+            "UNIV 101"
+          ]
+        }
+      }
+    },
+    "radio_summary_csv": {
+      "columns": [
+        "subject",
+        "location",
+        "AP_hostname",
+        "radio_number",
+        "start_time",
+        "end_time",
+        "capacity",
+        "enrolled",
+        "AP_count",
+        "radio_count",
+        "bssid_count",
+        "ssid_count",
+        "total_beacons",
+        "high_cu_beacons",
+        "percent_high_cu",
+        "highest_cu",
+        "median_cu",
+        "lowest_cu",
+        "high_scount",
+        "median_scount",
+        "low_scount",
+        "longest_duration_high_cu",
+        "graph_filename"
+      ],
+      "numeric": {
+        "capacity": {
+          "max": 192.0,
+          "median": 192.0,
+          "min": 30.0
+        },
+        "enrolled": {
+          "max": 171.0,
+          "median": 136.0,
+          "min": 8.0
+        },
+        "high_scount": {
+          "max": 83.0,
+          "median": 38.5,
+          "min": 1.0
+        },
+        "highest_cu": {
+          "max": 100.0,
+          "median": 72.941176,
+          "min": 5.490196
+        },
+        "low_scount": {
+          "max": 58.0,
+          "median": 15.0,
+          "min": 0.0
+        },
+        "lowest_cu": {
+          "max": 15.686275,
+          "median": 1.960784,
+          "min": 0.0
+        },
+        "median_cu": {
+          "max": 30.980392,
+          "median": 6.470588,
+          "min": 0.784314
+        },
+        "median_scount": {
+          "max": 67.0,
+          "median": 29.5,
+          "min": 0.0
+        },
+        "total_beacons": {
+          "max": 22301.0,
+          "median": 9419.0,
+          "min": 1500.0
+        }
+      },
+      "row_count": 228,
+      "timestamps": {
+        "end_time": {
+          "max": "2025-11-14T20:50:00+00:00",
+          "min": "2025-11-10T16:15:00+00:00"
+        },
+        "start_time": {
+          "max": "2025-11-14T20:00:00+00:00",
+          "min": "2025-11-10T15:00:00+00:00"
+        }
+      },
+      "unique": {
+        "AP_hostname": {
+          "count": 5,
+          "sha256": "16ef96c7f13db07247619e2bb68510b779bd59a472ed146e31241a7e1ae2ea69",
+          "values": [
+            "P-CTB-385-AP-01-535",
+            "P-LSB-2102-AP-01-2109",
+            "P-LSB-2102-AP-02-2109",
+            "P-LSB-2102-AP-03-2109",
+            "P-TNRB-W308-AP-01-W315"
+          ]
+        },
+        "location": {
+          "count": 3,
+          "sha256": "f909136ac6fda55376dda839ea93a20497a0ec851dbccdff4b50c2b34d1cb49b",
+          "values": [
+            "CTB-385",
+            "LSB-2102",
+            "TNRB-W308"
+          ]
+        },
+        "subject": {
+          "count": 23,
+          "sha256": "0f80c1c08d6467e08caefbf2ed20f0511c415a4be16c929206dcd8e2ce70bc3f",
+          "values": [
+            "ACC 200",
+            "BIO 100",
+            "BIO 691 R",
+            "CELL 120",
+            "CELL 305",
+            "CELL 362",
+            "EC EN 330",
+            "EC EN 548",
+            "IS 402",
+            "IS 403",
+            "IS 404",
+            "IS 415",
+            "IS 515",
+            "IT&C 562",
+            "MBA 593 R",
+            "MKTG 326",
+            "MPA 646",
+            "MSB 571",
+            "MSB 682",
+            "PWS 100",
+            "PWS 112",
+            "PWS 340",
+            "UNIV 101"
+          ]
+        }
+      }
+    },
+    "sample_classes": {
+      "columns": [
+        "location",
+        "course",
+        "start_time",
+        "end_time",
+        "enrolled",
+        "capacity"
+      ],
+      "numeric": {
+        "capacity": {
+          "max": 192.0,
+          "median": 74.0,
+          "min": 30.0
+        },
+        "enrolled": {
+          "max": 171.0,
+          "median": 59.0,
+          "min": 8.0
+        }
+      },
+      "row_count": 61,
+      "timestamps": {
+        "end_time": {
+          "max": "2025-11-14T20:50:00+00:00",
+          "min": "2025-11-10T16:15:00+00:00"
+        },
+        "start_time": {
+          "max": "2025-11-14T20:00:00+00:00",
+          "min": "2025-11-10T15:00:00+00:00"
+        }
+      },
+      "unique": {
+        "course": {
+          "count": 23,
+          "sha256": "0f80c1c08d6467e08caefbf2ed20f0511c415a4be16c929206dcd8e2ce70bc3f",
+          "values": [
+            "ACC 200",
+            "BIO 100",
+            "BIO 691 R",
+            "CELL 120",
+            "CELL 305",
+            "CELL 362",
+            "EC EN 330",
+            "EC EN 548",
+            "IS 402",
+            "IS 403",
+            "IS 404",
+            "IS 415",
+            "IS 515",
+            "IT&C 562",
+            "MBA 593 R",
+            "MKTG 326",
+            "MPA 646",
+            "MSB 571",
+            "MSB 682",
+            "PWS 100",
+            "PWS 112",
+            "PWS 340",
+            "UNIV 101"
+          ]
+        },
+        "location": {
+          "count": 3,
+          "sha256": "f909136ac6fda55376dda839ea93a20497a0ec851dbccdff4b50c2b34d1cb49b",
+          "values": [
+            "CTB-385",
+            "LSB-2102",
+            "TNRB-W308"
+          ]
+        }
+      }
+    }
+  }
+}
