@@ -38,14 +38,18 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 3. Empty sampled folder crashes `combine_all_class_beacons()`
 
+- Status: fixed
 - Category: bug
-- Evidence: `analyze_data.ipynb`, code cell 0, `combine_all_class_beacons()` collects `glob.glob(directory + "/*.parquet")` and immediately calls `pd.concat([...])`. Pandas raises `ValueError: No objects to concatenate` when no sampled files are present.
+- Evidence: Original bug was in `analyze_data.ipynb`, code cell 0, where `combine_all_class_beacons()` collected sampled parquet files and immediately called `pd.concat([...])`. Pandas raised `ValueError: No objects to concatenate` when no sampled files were present.
 - Why it matters: If no AP/session data matches the sample, if grouped file names do not match AP hostnames, or if `SAMPLED_FOLDER` is misconfigured, the stage fails with an indirect pandas error rather than a pipeline-specific explanation.
 - Risk level: medium
 - Suggested fix scope: Add a clear precondition check that raises a helpful error when no sampled parquet files exist. Do not synthesize empty outputs unless that behavior is explicitly chosen.
 - Suggested validation/test: Use a fixture with valid sample parquet files but no matching grouped AP files, or a deliberately empty configured sampled folder, and assert the stage raises the clear error.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 3
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
+- Remaining caveats: The fix raises a clear `FileNotFoundError` when no sampled parquet files exist; it does not synthesize empty outputs or change AP/session matching behavior. Pytest emitted a cache warning because it could not write `.pytest_cache` entries.
 
 ### 4. `calculate_total_scount()` only handles radios 1 and 2
 

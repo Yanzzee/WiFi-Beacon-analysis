@@ -74,3 +74,16 @@ def test_analyze_data_rejects_existing_generated_outputs(monkeypatch, tmp_path):
 
     with pytest.raises(FileExistsError, match="Existing analyze_data outputs"):
         namespace["validate_no_existing_analysis_outputs"]()
+
+
+def test_analyze_data_combine_all_class_beacons_requires_sampled_files(
+    monkeypatch,
+    tmp_path,
+):
+    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+
+    with pytest.raises(
+        FileNotFoundError,
+        match="No sampled class beacon parquet files found",
+    ):
+        namespace["combine_all_class_beacons"]()
