@@ -23,14 +23,18 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 2. Rerunning `analyze_data.ipynb` appends duplicate sampled rows
 
+- Status: fixed
 - Category: bug
-- Evidence: `analyze_data.ipynb`, code cell 0, `append_to_parquet()` reads an existing AP sampled parquet file and writes `existing_table` plus the new table back to the same path. There is no stage-start cleanup or stale-output guard for `SAMPLED_FOLDER`, `Data/all_class_beacons.parquet`, or `Data/radio_summary.parquet`.
+- Evidence: Original bug was in `analyze_data.ipynb`, code cell 0, where `append_to_parquet()` read an existing AP sampled parquet file and wrote `existing_table` plus the new table back to the same path. There was no stage-start cleanup or stale-output guard for `SAMPLED_FOLDER`, `Data/all_class_beacons.parquet`, or `Data/radio_summary.parquet`.
 - Why it matters: Running the same stage twice in the same workspace can silently inflate row counts and downstream statistics. The current pytest harness uses a fresh temp workspace, so it will not catch this by default.
 - Risk level: high
 - Suggested fix scope: Add a small, explicit stage output policy: either fail fast when sampled/output files already exist, or clear only this stage's generated files at the start of the stage. Avoid changing analysis math.
 - Suggested validation/test: Run the analysis-forward pipeline twice against the same prepared workspace and assert the second run either fails with a clear stale-output message or produces identical row counts and fingerprints.
 - Safe to fix before notebook conversion: Yes, if implemented as an explicit output hygiene fix.
 - Recommended order: 2
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
+- Remaining caveats: The fix uses fail-fast output hygiene rather than deleting generated files. It intentionally leaves normal within-run appends unchanged and does not address the empty sampled folder behavior tracked separately in item 3. Pytest emitted a cache warning because it could not write `.pytest_cache` entries.
 
 ### 3. Empty sampled folder crashes `combine_all_class_beacons()`
 
