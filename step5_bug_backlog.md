@@ -8,14 +8,18 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 1. Hardcoded sampled output path ignores `SAMPLED_FOLDER`
 
+- Status: fixed
 - Category: bug
-- Evidence: `analyze_data.ipynb`, code cell 0, `append_to_parquet()` builds `ap_beacons_file = f"Data/sampled/{AP_name}_class_beacons.parquet"` even though the notebook reads `SAMPLED_FOLDER` from `config.env` and `combine_all_class_beacons()` reads from `SAMPLED_FOLDER`.
+- Evidence: Original bug was in `analyze_data.ipynb`, code cell 0, where `append_to_parquet()` built `ap_beacons_file = f"Data/sampled/{AP_name}_class_beacons.parquet"` even though the notebook reads `SAMPLED_FOLDER` from `config.env` and `combine_all_class_beacons()` reads from `SAMPLED_FOLDER`.
 - Why it matters: A non-default `SAMPLED_FOLDER` writes AP sampled files to one folder and then combines from another. That can produce missing outputs, stale outputs, or a `pd.concat` failure.
 - Risk level: high
 - Suggested fix scope: Replace only the hardcoded sampled write path with the configured `SAMPLED_FOLDER`; do not change filtering, metrics, schemas, or plot logic.
 - Suggested validation/test: In an analysis fixture copy, set `SAMPLED_FOLDER` to a non-default folder, run the `analyze_data.ipynb` stage, and assert AP sampled files and `Data/all_class_beacons.parquet` are produced from the configured folder.
 - Safe to fix before notebook conversion: Yes. This is a narrow config-path bug.
 - Recommended order: 1
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
+- Remaining caveats: The first golden regression attempt with the default `--analysis-timeout 600` timed out in `analyze_all_class_beacons.ipynb`; rerunning the same regression with a larger per-notebook timeout passed. Pytest emitted a cache warning because it could not write `.pytest_cache` entries.
 
 ### 2. Rerunning `analyze_data.ipynb` appends duplicate sampled rows
 
