@@ -68,14 +68,18 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 5. Radio-summary regression crashes when one radio-count group is empty
 
+- Status: fixed
 - Category: bug
-- Evidence: `analyze_radio_summary.ipynb`, code cell 3, runs `linear_regression(df_radio_1[...])` and `linear_regression(df_radio_2[...])`; the notebook comment says this will error if either dataframe has no rows.
+- Evidence: Original bug was in `analyze_radio_summary.ipynb`, code cell 3, where regression ran unconditionally for `df_radio_1` and `df_radio_2`; the notebook comment noted this would error if either dataframe had no rows.
 - Why it matters: A valid dataset containing only one-radio APs or only two-radio APs can fail during plotting/regression even after producing valid summary rows.
 - Risk level: medium
 - Suggested fix scope: Skip the missing group's regression and plot only available groups, while logging that the group was absent.
 - Suggested validation/test: Build a minimal `Data/radio_summary.parquet` fixture where all rows have `radio_count == 1`, run `analyze_radio_summary.ipynb`, and assert it writes CSVs and plots without crashing.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 5
+- Files changed: `analyze_radio_summary.ipynb`, `tests/test_radio_summary_notebook.py`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_radio_summary_notebook.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
+- Remaining caveats: The fix skips and logs only missing radio-count regression groups. It does not change the upstream radio-count split, `ssid_count` division behavior, histograms, PDF/CDF plots, or any filtering thresholds. Pytest emitted the existing cache warning because it could not write `.pytest_cache` entries.
 
 ### 6. Radio-summary plots divide by `ssid_count` without guarding zero
 
