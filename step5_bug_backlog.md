@@ -53,14 +53,18 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 4. `calculate_total_scount()` only handles radios 1 and 2
 
+- Status: fixed
 - Category: bug
-- Evidence: `analyze_data.ipynb`, code cell 0, `calculate_total_scount()` builds transmitter lists only for `radio_number == 1` and `radio_number == 2`. The `else` path logs `"error - no radio"` but then continues toward `radio_transmitters.remove(current_ta)` without defining a valid transmitter list for that row. The same cell only creates radio summary rows for `filtered_radio_1_df` and `filtered_radio_2_df`.
+- Evidence: Original bug was in `analyze_data.ipynb`, code cell 0, where `calculate_total_scount()` built transmitter lists only for `radio_number == 1` and `radio_number == 2`. The same cell created radio summary rows only for hardcoded radio 1 and radio 2.
 - Why it matters: Any AP/session slice inferred as more than two radios can fail, use stale state, or silently omit radio 3+ from `radio_summary.parquet`.
 - Risk level: high
 - Suggested fix scope: For Step 5, prefer a small explicit guard that fails clearly when inferred `radio_number > 2`. Generalizing all per-radio calculations can wait for module extraction unless a dedicated prompt asks for it.
 - Suggested validation/test: Add a tiny synthetic dataframe or fixture slice with three inferred radio groups and assert the current stage fails with a clear unsupported-radio message.
 - Safe to fix before notebook conversion: Partially. A guard is safe; changing the analysis to support arbitrary radios is broader.
 - Recommended order: 4
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
+- Remaining caveats: The fix supports arbitrary observed `radio_number` groups within the existing MAC-gap grouping approach. It does not add band-based radio inference or change the existing nearest-transmitter search semantics beyond selecting transmitters from the current row's radio group. Pytest emitted the existing cache warning because it could not write `.pytest_cache` entries.
 
 ### 5. Radio-summary regression crashes when one radio-count group is empty
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import io
 import json
 from pathlib import Path
 
@@ -87,3 +88,94 @@ def test_analyze_data_combine_all_class_beacons_requires_sampled_files(
         match="No sampled class beacon parquet files found",
     ):
         namespace["combine_all_class_beacons"]()
+
+
+def test_analyze_data_graph_handles_three_radio_groups(monkeypatch, tmp_path):
+    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    pd = namespace["pd"]
+
+    namespace["log_file"] = io.StringIO()
+    namespace["all_class_beacons_df"] = pd.DataFrame()
+    namespace["plot_channel_stations"] = (
+        lambda radio_df, _eduroam_df, _byu_wifi_df, _ap_name, _start_time, _end_time:
+        f"plot_R{int(radio_df.iloc[0]['radio_number'])}.png"
+    )
+
+    start_time = pd.Timestamp("2025-01-01 10:00:00", tz=namespace["TIMEZONE"])
+    end_time = pd.Timestamp("2025-01-01 10:01:00", tz=namespace["TIMEZONE"])
+    ap_df = pd.DataFrame(
+        {
+            "wlan.ta": [
+                "00:00:00:00:00:00",
+                "00:00:00:00:00:01",
+                "00:00:00:00:00:10",
+                "00:00:00:00:00:11",
+                "00:00:00:00:00:20",
+                "00:00:00:00:00:21",
+            ],
+            "wlan.vs.aruba.ap_name": ["P-TEST-AP-01"] * 6,
+            "wlan.ssid": [
+                "eduroam",
+                "BYU-WiFi",
+                "eduroam",
+                "BYU-WiFi",
+                "eduroam",
+                "BYU-WiFi",
+            ],
+            "wlan.qbss.scount": [10, 20, 30, 40, 50, 60],
+            "wlan.qbss.cu": [10, 20, 30, 40, 50, 60],
+            "wlan.qbss.adc": [1, 2, 3, 4, 5, 6],
+        },
+        index=pd.date_range(start_time, periods=6, freq="5s"),
+    )
+    ap_df.index.name = "aruba_erm.time"
+
+    radio_summary_df = pd.DataFrame(
+        {
+            "subject": pd.Series(dtype=str),
+            "location": pd.Series(dtype=str),
+            "AP_hostname": pd.Series(dtype=str),
+            "radio_number": pd.Series(dtype=int),
+            "start_time": pd.Series(dtype="datetime64[ns]"),
+            "end_time": pd.Series(dtype="datetime64[ns]"),
+            "capacity": pd.Series(dtype=int),
+            "enrolled": pd.Series(dtype=int),
+            "AP_count": pd.Series(dtype=int),
+            "radio_count": pd.Series(dtype=int),
+            "bssid_count": pd.Series(dtype=int),
+            "ssid_count": pd.Series(dtype=int),
+            "total_beacons": pd.Series(dtype=int),
+            "high_cu_beacons": pd.Series(dtype=int),
+            "percent_high_cu": pd.Series(dtype=float),
+            "highest_cu": pd.Series(dtype=int),
+            "median_cu": pd.Series(dtype=int),
+            "lowest_cu": pd.Series(dtype=int),
+            "high_scount": pd.Series(dtype=int),
+            "median_scount": pd.Series(dtype=int),
+            "low_scount": pd.Series(dtype=int),
+            "longest_duration_high_cu": pd.Series(dtype=float),
+            "graph_filename": pd.Series(dtype=str),
+        }
+    )
+
+    namespace["graph"](
+        "P-TEST-AP-01",
+        start_time,
+        end_time,
+        "TEST-101",
+        "TEST 101",
+        10,
+        20,
+        1,
+        ap_df,
+        radio_summary_df,
+    )
+
+    assert radio_summary_df["radio_number"].tolist() == [1, 2, 3]
+    assert radio_summary_df["radio_count"].tolist() == [3, 3, 3]
+    assert radio_summary_df["high_scount"].tolist() == [30, 70, 110]
+
+    all_beacons = namespace["all_class_beacons_df"]
+    assert sorted(all_beacons["radio_number"].unique().tolist()) == [1, 2, 3]
+    max_totals_by_radio = all_beacons.groupby("radio_number")["total_scount"].max()
+    assert max_totals_by_radio.to_dict() == {1: 30, 2: 70, 3: 110}
