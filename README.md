@@ -20,7 +20,7 @@ beacon_capture.sh (optional) - bash script to capture using tshark on a raspberr
 Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
 
 process_pcapng.py - process raw .pcapng capture files to .parquet files
-    requires tshark on linux
+    previously required tshark on linux but should run on Windows now
 
 group_data.py - group data by AP name (BSSID) instead of time, one file per hostname for entire date range
 

@@ -126,13 +126,20 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 9. `process_pcapng.py` does not check `tshark` exit status
 
+- Status: fixed
 - Category: dependency issue
-- Evidence: `process_pcapng.py`, `process_pcapng()`, starts `subprocess.Popen(tshark_command, stdout=subprocess.PIPE, text=True)` and passes stdout to `pd.read_csv()`, but never inspects `proc.returncode` or stderr after the process exits.
-- Why it matters: A missing `tshark`, invalid decode option, bad capture, or partial failure can surface as a confusing pandas/parquet error or, worse, write incomplete converted data.
+- Evidence: Original implementation used `subprocess.Popen(..., stdout=...)` and piped `proc.stdout` into `pd.read_csv()` without checking `proc.returncode` or `proc.stderr`. The file `process_pcapng.py` has been updated to:
+	- resolve the `tshark` executable from `PATH` or the `TSHARK_PATH` env var,
+	- invoke `tshark` with both `stdout` and `stderr` captured,
+	- attempt to parse `tshark` CSV output into pandas and, on parse failure, kill the process and raise a `RuntimeError` including `tshark` stderr,
+	- wait for the process to exit and raise a `RuntimeError` when `proc.returncode != 0` including the command and `stderr`.
+- Why it matters: A missing `tshark`, invalid decode option, bad capture, or partial failure previously surfaced as confusing downstream pandas/parquet errors or produced incomplete converted data. The new checks make conversion failures explicit and easier to diagnose.
 - Risk level: medium
-- Suggested fix scope: Capture/check subprocess failure and raise a clear conversion error that includes the capture path and relevant `tshark` stderr. This should be a capture-conversion-specific prompt because repo guidance says not to modify `process_pcapng.py` unless conversion is in scope.
-- Suggested validation/test: Mock or run a failing `tshark` command and assert `process_pcapng()` raises a clear error instead of continuing to parquet writing.
-- Safe to fix before notebook conversion: Yes, but only under an explicit capture-conversion bug prompt.
+- Suggested fix scope: The implemented change is focused and conservative: it adds explicit executable resolution (`TSHARK_PATH`), captures `stderr`, validates `tshark` exit codes, and raises descriptive errors. It does not alter downstream parquet schemas or analysis logic.
+- Suggested validation/test: A new pytest `tests/test_process_pcapng_windows.py` was added that runs `process_pcapng()` against three known input captures in `Data/captures` and compares the produced parquet files to the existing, known-good files in `Data/processed_data`. The test passed locally (`1 passed`) when run on Windows with `tshark` available.
+- Safe to fix before notebook conversion: Yes. This is an implementation-level robustness and error-reporting fix; it does not change analysis behavior.
+- Files changed: `process_pcapng.py`, `tests/test_process_pcapng_windows.py`.
+- Validation run: `py -3 -m pytest tests/test_process_pcapng_windows.py` — result: `1 passed` (warning: pytest cache write permission warning unrelated to conversion logic).
 - Recommended order: 9
 
 ## Confirmed Documentation, Dependency, And Obsolete-File Issues

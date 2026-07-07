@@ -8,17 +8,36 @@ import os
 from dotenv import load_dotenv
 import pandas as pd
 import re
+import shutil
+import io
 
 load_dotenv("config.env")
 
 PROCESSED_DATA_FOLDER = os.getenv("PROCESSED_DATA_FOLDER")
 CAPTURES_FOLDER = os.getenv("CAPTURES_FOLDER")
 THREAD_COUNT = os.getenv("THREAD_COUNT")
+TSHARK_EXECUTABLE = os.getenv("TSHARK_PATH", "tshark")
 
 ERM_UDP_PORT = int(os.getenv("ERM_UDP_PORT", "5555"))
 ERM_TYPE = os.getenv("ERM_TYPE", "aruba_erm_type0")
 
 CHUNK_SIZE = 10000
+
+
+def resolve_tshark_executable() -> str:
+    """Return the tshark executable path or raise if not available."""
+    resolved = shutil.which(TSHARK_EXECUTABLE)
+    if resolved:
+        return resolved
+
+    if os.path.isabs(TSHARK_EXECUTABLE) and os.path.exists(TSHARK_EXECUTABLE):
+        return TSHARK_EXECUTABLE
+
+    raise FileNotFoundError(
+        "The tshark executable was not found. "
+        f"Tried '{TSHARK_EXECUTABLE}'. Ensure tshark is installed and on PATH, "
+        "or set the TSHARK_PATH environment variable to the tshark executable."
+    )
 
 # Aruba ERM captures
 TSHARK_FIELDS_ERM = [
@@ -102,7 +121,8 @@ def process_pcapng(file_path, output_dir, erm=True):
 
     print(f"Processing {file_path}...")
 
-    tshark_command = ["tshark", "-r", file_path, "-M", "100000", "-T", "fields"]
+    tshark_executable = resolve_tshark_executable()
+    tshark_command = [tshark_executable, "-r", file_path, "-M", "100000", "-T", "fields"]
 
     if erm:
         tshark_command += [
@@ -122,16 +142,39 @@ def process_pcapng(file_path, output_dir, erm=True):
         tshark_command.extend(["-e", f])
 
     # Read tshark CSV directly into pandas
-    with subprocess.Popen(tshark_command, stdout=subprocess.PIPE, text=True) as proc:
+    with subprocess.Popen(
+        tshark_command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    ) as proc:
         index_col = "aruba_erm.time" if erm else "frame.time_epoch"
-        df = pd.read_csv(
-            proc.stdout,
-            sep=",",
-            quotechar='"',
-            index_col=index_col,
-            parse_dates=True,
-            date_format="%b %e, %Y %H:%M:%S.%f %Z" if erm else None,
-        )
+        try:
+            df = pd.read_csv(
+                proc.stdout,
+                sep=",",
+                quotechar='"',
+                index_col=index_col,
+                parse_dates=True,
+                date_format="%b %e, %Y %H:%M:%S.%f %Z" if erm else None,
+            )
+        except Exception as exc:
+            proc.kill()
+            stderr = proc.stderr.read() if proc.stderr is not None else ""
+            raise RuntimeError(
+                f"Failed to parse tshark output for {file_path}: {exc}. "
+                f"tshark stderr:\n{stderr}"
+            ) from exc
+
+        proc.stdout.close()
+        proc.wait()
+        if proc.returncode != 0:
+            stderr = proc.stderr.read() if proc.stderr is not None else ""
+            raise RuntimeError(
+                f"tshark failed processing {file_path} with exit code {proc.returncode}. "
+                f"Command: {' '.join(tshark_command)}\n"
+                f"stderr:\n{stderr}"
+            )
 
     # Build a single frequency_mhz column (numeric) from available sources
     freq = pd.to_numeric(df.get("radiotap.channel.freq"), errors="coerce")
@@ -174,6 +217,7 @@ def process_all_pcapngs(pcapng_dir, output_dir, num_processes, erm=True):
         for f in os.listdir(pcapng_dir)
         if f.endswith(".pcapng")
     ]
+    pcapng_files.sort()
     print(f"Found {len(pcapng_files)} pcapng files. Starting processing...")
 
     with ProcessPoolExecutor(max_workers=num_processes) as executor:
