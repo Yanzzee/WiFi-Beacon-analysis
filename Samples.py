@@ -93,16 +93,6 @@ sample_schedule_df = sample_schedule_df.apply(lambda col: col.map(clean_cell))
 #print(sample_schedule_df.head())
 
 
-# verify clean data
-# Access the first record of the DataFrame
-first_record = sample_schedule_df.iloc[10]
-
-# Print the first record, including hidden characters
-#for column, value in first_record.items():
-#    print(f"{column}: {repr(value)}")
-
-
-
 # build the sample_classes_df
 # Define the two-week schedule
 # This is the sample dates
@@ -200,12 +190,15 @@ for index, row in sample_classes_df.iterrows():
 # Ensure start_time and end_time are datetime objects
 sample_classes_df['start_time'] = pd.to_datetime(sample_classes_df['start_time'], errors='coerce')
 sample_classes_df['end_time'] = pd.to_datetime(sample_classes_df['end_time'], errors='coerce')
-# Convert the start_time and end_time columns to 'Etc/GMT+7' timezone
 
-
-
-sample_classes_df["start_time"] = sample_classes_df["start_time"].dt.tz_localize(TIMEZONE, ambiguous="NaT")
-sample_classes_df["end_time"] = sample_classes_df["end_time"].dt.tz_localize(TIMEZONE, ambiguous="NaT")
+# Convert the start_time and end_time columns to the configured timezone.
+# Some inputs may already be timezone-aware, while others may be naive.
+for column in ["start_time", "end_time"]:
+    series = sample_classes_df[column]
+    if getattr(series.dt, "tz", None) is None:
+        sample_classes_df[column] = series.dt.tz_localize(TIMEZONE, ambiguous="NaT")
+    else:
+        sample_classes_df[column] = series.dt.tz_convert(TIMEZONE)
 
 
 #change datatypes

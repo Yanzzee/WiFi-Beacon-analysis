@@ -98,14 +98,17 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 7. `Samples.py` crashes on schedules with fewer than 11 rows
 
+- Status: fixed
 - Category: bug
-- Evidence: `Samples.py`, debug section after cleaning, unconditionally executes `first_record = sample_schedule_df.iloc[10]`; the value is only used by commented debug printing.
-- Why it matters: Small sample fixtures or reduced regression fixtures with fewer than 11 schedule rows fail even though the row access is not part of required processing.
+- Evidence: `Samples.py` previously had an unused debug access in the cleaning section, `first_record = sample_schedule_df.iloc[10]`, which could fail for schedules with fewer than 11 rows even though the value was not part of required processing.
+- Why it matters: Small sample fixtures or reduced regression fixtures with fewer than 11 schedule rows could fail despite the row access being unrelated to the actual sample-generation workflow.
 - Risk level: low
-- Suggested fix scope: Remove the unused debug row access or guard it behind a length check.
+- Suggested fix scope: Remove the unused debug row access entirely rather than adding extra runtime branching for a value that is not used.
 - Suggested validation/test: Run `Samples.py` against a minimal schedule CSV with one valid class row and assert the three sample parquet files are created.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 7
+- Files changed: `Samples.py`, `tests/test_samples_script.py`, `step5_bug_backlog.md`.
+- Validation run: `./.venv/Scripts/python.exe -m pytest tests/test_samples_script.py` passed.
 
 ### 8. `Samples.py` casts dirty numeric fields before cell cleanup
 
