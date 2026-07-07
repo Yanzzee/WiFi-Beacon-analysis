@@ -83,14 +83,18 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 6. Radio-summary plots divide by `ssid_count` without guarding zero
 
+- Status: fixed
 - Category: bug
-- Evidence: `analyze_radio_summary.ipynb`, code cells 1 through 6 repeatedly compute `beacons_per_second / ssid_count`. There is no filter for missing or zero `ssid_count`.
+- Evidence: Original bug was in `analyze_radio_summary.ipynb`, code cells 1 through 6, where plotting repeatedly computed `beacons_per_second / ssid_count` without filtering missing or zero `ssid_count`.
 - Why it matters: A zero or missing SSID count can create `inf`, `NaN`, misleading plots, or statsmodels failures.
 - Risk level: medium
 - Suggested fix scope: Add a pre-plot filter or explicit validation requiring `ssid_count > 0`, and log excluded rows.
 - Suggested validation/test: Use a small `radio_summary.parquet` with one row where `ssid_count` is zero and assert the notebook excludes it or fails with a clear validation error.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 6
+- Files changed: `analyze_radio_summary.ipynb`, `tests/test_radio_summary_notebook.py`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_radio_summary_notebook.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
+- Remaining caveats: The fix excludes rows with missing, non-numeric, or non-positive `ssid_count` from `filtered_radio_summary_df` before downstream beacon-rate plots. It does not change the existing total-beacon threshold, class-duration filter, radio-count split, or plot formulas for retained rows. Pytest emitted the existing cache warning because it could not write `.pytest_cache` entries.
 
 ### 7. `Samples.py` crashes on schedules with fewer than 11 rows
 
