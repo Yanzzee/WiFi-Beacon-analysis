@@ -112,6 +112,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 8. `Samples.py` casts dirty numeric fields before cell cleanup
 
+- Status: fixed
 - Category: bug
 - Evidence: `Samples.py` strips schedule column names, then immediately calls `sample_schedule_df.astype({... "Size": "int", "Enrl": "int" ...})`. The `clean_cell()` pass that removes non-breaking spaces and control characters runs only after the cast.
 - Why it matters: The pipeline documentation notes dirty/non-breaking-space CSV inputs, but dirty numeric `Size` or `Enrl` values can fail before cleanup runs.
@@ -120,6 +121,8 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Add a focused sample CSV fixture where `Enrl` or `Size` contains whitespace/non-breaking-space formatting and assert `sample_classes.parquet` has integer `enrolled`.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 8
+- Files changed: `Samples.py`, `tests/test_samples_script.py`, `step5_bug_backlog.md`.
+- Validation run: `./.venv/Scripts/python.exe -m pytest tests/test_samples_script.py` passed.
 
 ### 9. `process_pcapng.py` does not check `tshark` exit status
 

@@ -60,6 +60,9 @@ sample_schedule_df.columns = sample_schedule_df.columns.str.strip()
 #print(sample_classes_df.dtypes)
 
 
+# Apply the cleaning function to every column in the DataFrame before strict dtype conversion
+sample_schedule_df = sample_schedule_df.apply(lambda col: col.map(clean_cell))
+
 # Change the data types of the columns
 sample_schedule_df = sample_schedule_df.astype({
     'Location': 'string',
@@ -84,10 +87,6 @@ sample_schedule_df = sample_schedule_df.astype({
 
 # Check the updated data types
 #print(sample_schedule_df.dtypes)
-
-
-# Apply the cleaning function to every column in the DataFrame
-sample_schedule_df = sample_schedule_df.apply(lambda col: col.map(clean_cell))
 
 # Check the cleaned DataFrame
 #print(sample_schedule_df.head())
