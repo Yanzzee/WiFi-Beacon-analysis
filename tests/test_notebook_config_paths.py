@@ -117,6 +117,61 @@ def test_analyze_data_grouped_schema_accepts_aruba_time_index(
     )
 
 
+def test_analyze_data_grouped_schema_rejects_naive_aruba_time_index(
+    monkeypatch,
+    tmp_path,
+):
+    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    pd = namespace["pd"]
+
+    ap_df = pd.DataFrame(
+        {
+            "wlan.ta": ["00:00:00:00:00:00"],
+            "wlan.vs.aruba.ap_name": ["P-TEST-AP-01"],
+            "wlan.ssid": ["eduroam"],
+            "wlan.qbss.scount": [10],
+            "wlan.qbss.cu": [20],
+            "wlan.qbss.adc": [30],
+        },
+        index=pd.date_range("2025-01-01 10:00:00", periods=1),
+    )
+    ap_df.index.name = "aruba_erm.time"
+
+    with pytest.raises(ValueError, match="timezone-naive"):
+        namespace["validate_grouped_ap_schema"](
+            ap_df,
+            "Data/grouped_data/P-TEST-AP-01.parquet",
+            "P-TEST-AP-01",
+        )
+
+
+def test_analyze_data_grouped_schema_rejects_string_timestamps(
+    monkeypatch,
+    tmp_path,
+):
+    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    pd = namespace["pd"]
+
+    ap_df = pd.DataFrame(
+        {
+            "aruba_erm.time": ["2025-01-01 10:00:00-07:00"],
+            "wlan.ta": ["00:00:00:00:00:00"],
+            "wlan.vs.aruba.ap_name": ["P-TEST-AP-01"],
+            "wlan.ssid": ["eduroam"],
+            "wlan.qbss.scount": [10],
+            "wlan.qbss.cu": [20],
+            "wlan.qbss.adc": [30],
+        }
+    )
+
+    with pytest.raises(ValueError, match="timezone-aware datetime dtype"):
+        namespace["validate_grouped_ap_schema"](
+            ap_df,
+            "Data/grouped_data/P-TEST-AP-01.parquet",
+            "P-TEST-AP-01",
+        )
+
+
 def test_analyze_data_grouped_schema_rejects_native_conversion_output(
     monkeypatch,
     tmp_path,

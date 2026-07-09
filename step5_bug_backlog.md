@@ -224,13 +224,17 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 15. Grouped-data cleanup and analysis use different timezone assumptions
 
+- Status: validation/documentation added; canonical timestamp normalization still deferred.
 - Category: behavior-risk
-- Evidence: `group_data_cleanup.py` localizes naive `aruba_erm.time` values to `PLOT_TIMEZONE`. `analyze_data.ipynb`, code cell 0, localizes naive beacon timestamps to UTC and then converts to `TIMEZONE`. `samples.py` localizes class sessions to `TIMEZONE`.
-- Why it matters: The same grouped parquet can land at different wall-clock times depending on whether cleanup was run first and whether timestamps were naive or timezone-aware.
+- Evidence: `group_data_cleanup.py` localizes naive `aruba_erm.time` values to `PLOT_TIMEZONE`, but parses non-datetime values with `utc=True` first. `analyze_data.ipynb`, code cell 0, formerly localized naive beacon timestamps to UTC and then converted to `TIMEZONE`. `samples.py` localizes class sessions to `TIMEZONE`. Beacon inputs and class schedule inputs may arrive in varying timestamp/time formats, and that broader normalization problem should be revisited after conversion to native Python.
+- Why it matters: The same grouped parquet can land at different wall-clock times depending on whether cleanup was run first, whether timestamps were strings or datetime dtype, and whether datetime values were naive or timezone-aware.
 - Risk level: high
-- Suggested fix scope: Do not change timestamp semantics without a dedicated timezone fixture. First define the canonical timezone contract for grouped parquet inputs.
-- Suggested validation/test: Build a small grouped parquet fixture with known naive and timezone-aware timestamps, run cleanup plus `analyze_data`, and assert expected class-session inclusion.
-- Safe to fix before notebook conversion: No, except for adding validation/documentation.
+- Suggested fix scope: Do not change timestamp semantics without a dedicated timezone fixture and a canonical timezone contract. Implemented pre-conversion guard: `analyze_data.ipynb` now validates grouped AP input before analysis and fails fast unless `aruba_erm.time` is already a timezone-aware datetime dtype. Documentation now states that varied beacon timestamp strings, naive datetimes, and broader class schedule time parsing need a dedicated normalization design after notebook conversion.
+- Suggested validation/test: Added focused schema tests for timezone-aware grouped input, timezone-naive grouped input, and string timestamp grouped input. Future semantic validation should build a small grouped parquet fixture with known naive and timezone-aware timestamps, run cleanup plus `analyze_data`, and assert expected class-session inclusion.
+- Safe to fix before notebook conversion: No for semantic timestamp changes; yes for explicit validation and documentation.
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `README.md`, `docs/current_pipeline.md`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800 -q` passed.
+- Remaining caveats: The guard does not normalize varied timestamp formats. `group_data_cleanup.py` still uses `PLOT_TIMEZONE`, while class schedule processing and analysis use `TIMEZONE`; the final contract should be designed after notebook conversion.
 - Recommended order: 15
 
 ### 16. SSID filters ignore `SSID1` and `SSID2`

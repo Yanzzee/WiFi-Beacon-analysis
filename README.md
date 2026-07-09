@@ -28,7 +28,7 @@ group_data_bssid.py - group generic capture data by BSSID instead of time, one f
 
 group_data_aruba.py - group Aruba-specific captures by Aruba AP name instead of time, one file per hostname for the entire date range. Use this when working with Aruba-specific captures that include wlan.vs.aruba.ap_name.
 
-group_data_cleanup.py (optional) - clean grouped parquet files when index cleanup is needed, especially when aruba_erm.time is stored as the index and needs to be a regular column.
+group_data_cleanup.py (optional) - clean grouped parquet files when index cleanup is needed, especially when aruba_erm.time is stored as the index and needs to be a regular column. Current timestamp handling is format-dependent and should not be treated as the final timezone contract.
 
 The grouping and cleanup scripts are currently separate. Eventually they should be combined into a single script or process that can detect vendor-specific fields and choose the right grouping and cleanup behavior.
 
@@ -39,6 +39,7 @@ sample_schedule.csv input files. These should be UTF-8 encoded, sections in the 
     sample_classes.parquet - saved dataframe file with information about sampled class periods. Sections in the same location must be combined.
 
 analyze_data.ipynb - further processes and begins to analyze data within scope in the sample files
+    grouped input must include aruba_erm.time as a timezone-aware datetime dtype; varied beacon timestamp strings, naive datetimes, and broader schedule time parsing need a dedicated normalization pass after notebook conversion
     saves plots for each class session in Output/plots/
     separate parquet files for each AP are saved as class_beacons files, these contain only data within the sample scope
     all_class_beacons.parquet - combined all beacon data within the scope of class sessions

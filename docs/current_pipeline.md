@@ -256,6 +256,7 @@ Behavior:
 - Reads each grouped parquet file.
 - If the dataframe index is named `aruba_erm.time`, resets it into a regular column.
 - Converts or localizes `aruba_erm.time` to `PLOT_TIMEZONE`.
+- Current cleanup timestamp handling is format-dependent: non-datetime values are parsed with `utc=True`, while timezone-naive datetime columns are localized to `PLOT_TIMEZONE`.
 - Writes the parquet file back in place with `index=False`.
 
 Outputs:
@@ -271,6 +272,7 @@ Fragility:
 - This step mutates grouped parquet files in place.
 - It skips files without `aruba_erm.time`, which means native/non-Aruba captures remain incompatible with the notebooks unless adapted elsewhere.
 - `analyze_data.ipynb` also resets the dataframe index, so the pipeline can be ambiguous about whether `aruba_erm.time` should be an index or a column at each point.
+- This step does not establish a final canonical timestamp contract. Full normalization of varied beacon timestamp formats should be revisited after notebook conversion.
 
 ### 5. Build Sample Metadata
 
@@ -364,6 +366,7 @@ Fragility:
 
 - Use the exact script name `samples.py`; casing matters on case-sensitive filesystems.
 - Input schedule CSV includes non-breaking spaces in headers/values; `samples.py` cleans cell values and strips column names, but schema changes can still break the explicit `astype` call.
+- Course schedule time parsing currently expects the known `Class Period` shape. Broader normalization of varied class schedule time formats should be revisited after notebook conversion.
 - `TIMEZONE=Etc/GMT+7` is a fixed offset, not DST-aware. `PLOT_TIMEZONE=America/Denver` is DST-aware, so these can disagree for data outside the current date range.
 
 ### 6. Analyze Sampled Class Beacon Data
@@ -393,6 +396,7 @@ Behavior:
 - Iterates over each class session from `sample_classes.parquet`.
 - Finds APs whose `Building-Room` matches the class `location`.
 - Loads `Data/grouped_data/<Hostname>.parquet` for each AP.
+- Validates grouped AP files before analysis. They must contain required Aruba analysis columns and `aruba_erm.time` must already be a timezone-aware datetime dtype.
 - Filters beacon rows to the class start/end time.
 - Converts `aruba_erm.time` to `TIMEZONE`.
 - Removes near-duplicate beacons by `wlan.ta` using `0.95 * BEACON_RATE`.
@@ -453,7 +457,7 @@ Fragility:
 - This notebook is the current source of truth; the `.py` export is marked outdated.
 - It assumes grouped filenames are AP hostnames from `Sample_APs.csv`.
 - It assumes `wlan.vs.aruba.ap_name` is present and has one unique value per AP/session slice.
-- It assumes `aruba_erm.time` exists and is datetime-like.
+- It now fails fast when grouped `aruba_erm.time` is missing, timezone-naive, or stored as strings/objects. This is validation only; it does not normalize varied input timestamp formats.
 - Radio numbering is inferred from transmitter MAC integer gaps, with comments noting this works for Aruba and may be better based on channel.
 - `BEACON_RATE` is used for deduplication and duration math. The configured value is the effective metadata interval, not the raw IEEE beacon interval.
 - Some SSID-specific plotting lines are commented or temporarily disabled for performance.
@@ -702,6 +706,7 @@ Additional columns introduced by the pipeline:
 - `analyze_data.ipynb` converts beacon timestamps to `TIMEZONE`.
 - `group_data_cleanup.py` uses `PLOT_TIMEZONE`, which may not match `TIMEZONE`.
 - Current `TIMEZONE=Etc/GMT+7` is a fixed offset and does not handle DST changes.
+- Until notebook conversion, grouped parquet input to `analyze_data.ipynb` must already store `aruba_erm.time` as a timezone-aware datetime dtype. Varying beacon timestamp strings, naive datetimes, and varying class schedule time formats need a dedicated normalization design after conversion to native Python.
 
 ### Beacon Interval
 
