@@ -192,14 +192,18 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 13. `BEACON_RATE` comment and value disagree
 
+- Status: fixed
 - Category: behavior-risk
-- Evidence: `config.env` says `#Default beacon rate is 0.1024` and then sets `BEACON_RATE=1.024`. `analyze_data.ipynb` uses `BEACON_RATE` for deduplication and high-CU duration, and `analyze_class_sessions.ipynb` uses it as `BEACON_WINDOW_SEC`.
-- Why it matters: The value materially affects row retention and duration metrics, but the code and current fixture behavior may intentionally rely on `1.024`.
+- Evidence: `config.env` formerly said `#Default beacon rate is 0.1024` and then set `BEACON_RATE=1.024`. `analyze_data.ipynb` uses `BEACON_RATE` for deduplication and high-CU duration, and `analyze_class_sessions.ipynb` uses it as `BEACON_WINDOW_SEC`.
+- Why it matters: The value materially affects row retention and duration metrics. IEEE 802.11 commonly defaults to a 0.1024 second beacon interval, but this application intentionally uses a 1.024 second effective metadata interval because most vendors update beacon metadata every 10 intervals, and Aruba ERM captures/forwards those metadata updates at the longer interval.
 - Risk level: high
-- Suggested fix scope: Do not change the value as a Step 5 bug fix. First document the ambiguity and pin current behavior with the golden fingerprint test. Only change behavior if a separate analysis decision proves the intended interval.
+- Suggested fix scope: Do not change the value as a Step 5 bug fix. Document the IEEE interval versus the application effective interval and keep current behavior pinned with the golden fingerprint test.
 - Suggested validation/test: Keep `BEACON_RATE` in the test fingerprint config and require review of fingerprint changes if this value or its interpretation changes.
-- Safe to fix before notebook conversion: Safe only as documentation/test clarification. Behavior change is not safe yet.
+- Safe to fix before notebook conversion: Yes, as documentation/comment clarification only. Behavior change is not safe without a separate analysis decision.
 - Recommended order: 13
+- Files changed: `config.env`, `README.md`, `docs/current_pipeline.md`, `analyze_data.ipynb`, `analyze_class_sessions.ipynb`, `step5_bug_backlog.md`.
+- Validation run: Documentation-only grep confirmed the active docs and notebook comments now distinguish the IEEE 0.1024 second interval from the application's 1.024 second effective metadata interval; no analysis behavior or `config.env` values changed.
+- Remaining caveats: Notebook fallback behavior for invalid `BEACON_RATE` values is unchanged. Any future value or semantic change should be paired with golden fingerprint review.
 
 ## Suspected Fragilities And Behavior Risks
 

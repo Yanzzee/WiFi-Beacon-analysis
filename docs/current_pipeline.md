@@ -42,6 +42,8 @@ Important current settings:
 - `ERM_UDP_PORT=5555`
 - `ERM_TYPE=aruba_erm_type0`
 
+Beacon interval note: IEEE 802.11 commonly defaults to a 0.1024 second beacon interval. This pipeline's `BEACON_RATE` is the effective metadata-bearing beacon interval used for analysis, currently 1.024 seconds. That longer interval reflects common vendor behavior where beacon metadata is updated every 10 intervals; Aruba ERM captures/forwards those updates at the longer interval even if over-the-air beacons are transmitted more frequently.
+
 ## Execution Order
 
 ### 1. Capture Files
@@ -447,7 +449,7 @@ Fragility:
 - It assumes `wlan.vs.aruba.ap_name` is present and has one unique value per AP/session slice.
 - It assumes `aruba_erm.time` exists and is datetime-like.
 - Radio numbering is inferred from transmitter MAC integer gaps, with comments noting this works for Aruba and may be better based on channel.
-- `BEACON_RATE` is used for deduplication and duration math. Current `config.env` says `BEACON_RATE=1.024`, while the nearby comment says the default beacon rate is `0.1024`.
+- `BEACON_RATE` is used for deduplication and duration math. The configured value is the effective metadata interval, not the raw IEEE beacon interval.
 - Some SSID-specific plotting lines are commented or temporarily disabled for performance.
 
 ### 7. Analyze All Class Beacons
@@ -697,11 +699,13 @@ Additional columns introduced by the pipeline:
 
 ### Beacon Interval
 
-- `BEACON_RATE` is used as the expected beacon interval in seconds.
+- IEEE 802.11 commonly defaults to a 0.1024 second beacon interval.
+- This application's default `BEACON_RATE=1.024` represents the effective interval for metadata-bearing beacon updates used by the analysis.
+- Most vendors update beacon metadata every 10 beacon intervals, and Aruba ERM captures/forwards those metadata updates at this longer interval even when beacons are transmitted over the air every 0.1024 seconds.
 - `analyze_data.ipynb` keeps beacons spaced at least `0.95 * BEACON_RATE` apart by transmitter.
 - `analyze_data.ipynb` adds `BEACON_RATE` to high-CU sequence duration calculations.
-- `analyze_class_sessions.ipynb` uses `BEACON_RATE` as `BEACON_WINDOW_SEC`.
-- Current config has `BEACON_RATE=1.024`, while the comment says the default beacon rate is `0.1024`. This ambiguity affects deduplication and duration estimates.
+- `analyze_class_sessions.ipynb` uses `BEACON_RATE` as `BEACON_WINDOW_SEC` for high-CU duration and streak bins.
+- If the capture source or vendor behavior changes the effective metadata interval, review `BEACON_RATE` and the golden fingerprint together before changing analysis behavior.
 
 ## Known Fragility and Ambiguity
 

@@ -8,6 +8,7 @@ Data requirements
 capture files in .pcapng format that include beacons from classroom APs. Use .pcapng for all new captures. Legacy files with a .pcap extension are accepted only when their magic bytes show they are actually pcapng files; true pcap files are not currently supported.
     APs must include 802.11e information elements of channel utilization, station count, and admission capacity, which are optional
     beacons probably also need advertise AP Name enabled
+    BEACON_RATE in config.env is the effective metadata interval used by the analysis, not the raw 802.11 beacon interval. IEEE 802.11 commonly defaults to 0.1024 seconds, while this application defaults to 1.024 seconds because vendor metadata is commonly updated every 10 intervals; Aruba ERM forwards these metadata-bearing beacon updates at the longer interval.
 Sample_APs.csv - list of AP hostnames and locations, see example
 Sample_classrooms.csv - list of classroom location, see example
 Sample_schedule.csv - course schedule with location, Days of the week, start/end times, and enrolled count
