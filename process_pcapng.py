@@ -285,7 +285,14 @@ if __name__ == "__main__":
     parser.add_argument("-i", "--pcapng_dir", type=str, default=CAPTURES_FOLDER)
     parser.add_argument("-o", "--output_dir", type=str, default=PROCESSED_DATA_FOLDER)
     parser.add_argument("-n", "--num_processes", type=int, default=THREAD_COUNT)
-    parser.add_argument("--no-erm", action="store_true", help="Process non-Aruba ERM captures.")
+    parser.add_argument(
+        "--no-erm",
+        action="store_true",
+        help=(
+            "Convert native/non-Aruba captures without Aruba ERM fields. "
+            "Current analysis notebooks still require Aruba-shaped grouped data."
+        ),
+    )
     args = parser.parse_args()
 
     process_all_pcapngs(args.pcapng_dir, args.output_dir, args.num_processes, erm=not args.no_erm)

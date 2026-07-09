@@ -101,6 +101,12 @@ For non-Aruba/native captures:
 py process_pcapng.py --no-erm
 ```
 
+This native path is currently conversion-only. Its parquet output does not
+feed the analysis notebooks without an additional timestamp and AP-name
+mapping/adaptation layer. Full native/non-Aruba analysis support is important
+future work, but it should wait until after the current bug fixes and
+refactoring.
+
 Inputs:
 
 - `Data/captures/*.pcapng` by default.
@@ -160,7 +166,7 @@ Fragility:
 
 - `THREAD_COUNT` is read from the environment as a string before being used as the argparse default for an integer argument.
 - True pcap input is not currently supported. TShark can read pcap files, but this pipeline now enforces pcapng at the conversion boundary so file naming, discovery, and fixture expectations stay consistent. Adding true pcap support would require separate schema and link-layer validation.
-- Native capture mode writes `frame.time_epoch`, but downstream notebooks currently expect `aruba_erm.time`.
+- Native capture mode writes `frame.time_epoch`, but downstream notebooks currently expect `aruba_erm.time` and Aruba AP names.
 - If tshark field names or Aruba ERM decode settings change, downstream schemas can break.
 
 ### 3. Group Processed Data

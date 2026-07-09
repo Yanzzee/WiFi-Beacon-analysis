@@ -90,6 +90,64 @@ def test_analyze_data_combine_all_class_beacons_requires_sampled_files(
         namespace["combine_all_class_beacons"]()
 
 
+def test_analyze_data_grouped_schema_accepts_aruba_time_index(
+    monkeypatch,
+    tmp_path,
+):
+    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    pd = namespace["pd"]
+
+    ap_df = pd.DataFrame(
+        {
+            "wlan.ta": ["00:00:00:00:00:00"],
+            "wlan.vs.aruba.ap_name": ["P-TEST-AP-01"],
+            "wlan.ssid": ["eduroam"],
+            "wlan.qbss.scount": [10],
+            "wlan.qbss.cu": [20],
+            "wlan.qbss.adc": [30],
+        },
+        index=pd.date_range("2025-01-01 10:00:00", periods=1, tz="UTC"),
+    )
+    ap_df.index.name = "aruba_erm.time"
+
+    namespace["validate_grouped_ap_schema"](
+        ap_df,
+        "Data/grouped_data/P-TEST-AP-01.parquet",
+        "P-TEST-AP-01",
+    )
+
+
+def test_analyze_data_grouped_schema_rejects_native_conversion_output(
+    monkeypatch,
+    tmp_path,
+):
+    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    pd = namespace["pd"]
+
+    native_df = pd.DataFrame(
+        {
+            "wlan.ta": ["00:00:00:00:00:00"],
+            "wlan.bssid": ["00:00:00:00:00:00"],
+            "wlan.ssid": ["eduroam"],
+            "wlan.qbss.scount": [10],
+            "wlan.qbss.cu": [20],
+            "wlan.qbss.adc": [30],
+        },
+        index=pd.date_range("2025-01-01 10:00:00", periods=1, tz="UTC"),
+    )
+    native_df.index.name = "frame.time_epoch"
+
+    with pytest.raises(
+        ValueError,
+        match=r"Native/non-Aruba captures are conversion-only",
+    ):
+        namespace["validate_grouped_ap_schema"](
+            native_df,
+            "Data/grouped_data/00_00_00_00_00_00.parquet",
+            "P-TEST-AP-01",
+        )
+
+
 def test_analyze_data_graph_handles_three_radio_groups(monkeypatch, tmp_path):
     namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
     pd = namespace["pd"]

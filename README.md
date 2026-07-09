@@ -22,6 +22,7 @@ Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons
 
 process_pcapng.py - process raw .pcapng capture files to .parquet files
     requires tshark and should run on Windows, macOS, and Linux when Python dependencies and tshark are installed
+    --no-erm converts native/non-Aruba captures to parquet, but those outputs do not currently feed the analysis notebooks without a timestamp and AP-name mapping/adaptation layer
 
 group_data_bssid.py - group generic capture data by BSSID instead of time, one file per AP/BSSID for the entire date range. This is intended as the generic grouping path.
 

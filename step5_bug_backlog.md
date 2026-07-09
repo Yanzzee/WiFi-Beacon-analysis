@@ -209,13 +209,17 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 14. Native `--no-erm` conversion output is incompatible with notebooks
 
+- Status: fixed
 - Category: fragility
 - Evidence: `process_pcapng.py` native mode requests `frame.time_epoch` and omits `wlan.vs.aruba.ap_name`. `analyze_data.ipynb` expects `aruba_erm.time`, loads grouped files by AP hostname, and validates `wlan.vs.aruba.ap_name` uniqueness.
 - Why it matters: The CLI advertises non-Aruba/native conversion, but the analysis path is still Aruba-centered.
 - Risk level: high
-- Suggested fix scope: Treat vendor-neutral analysis as out of scope for Step 5. A small safe step is to document that `--no-erm` conversion does not currently feed the notebooks without additional mapping/adaptation.
-- Suggested validation/test: Add a schema compatibility check that fails clearly when required notebook columns are absent.
+- Suggested fix scope: Implemented as a narrow compatibility guard and documentation clarification. `analyze_data.ipynb` now validates grouped AP parquet schemas before analysis and raises a clear error when native `--no-erm` output with `frame.time_epoch` is detected. `process_pcapng.py`, README, and `docs/current_pipeline.md` now state that native/non-Aruba conversion is conversion-only for now and does not feed the notebooks without timestamp plus AP-name mapping/adaptation.
+- Suggested validation/test: Added focused notebook-schema tests for Aruba-shaped grouped data and native `--no-erm` grouped data.
 - Safe to fix before notebook conversion: Documentation or explicit validation is safe; full native support is not.
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `process_pcapng.py`, `README.md`, `docs/current_pipeline.md`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_process_pcapng_windows.py -q` passed, including the known-good validation over the three capture test files.
+- Remaining caveats: Full native/non-Aruba analysis support remains an important future feature, but it still needs a dedicated mapping/adaptation design after the current bug fixes and refactoring.
 - Recommended order: 14
 
 ### 15. Grouped-data cleanup and analysis use different timezone assumptions
