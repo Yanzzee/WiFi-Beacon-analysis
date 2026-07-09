@@ -239,14 +239,18 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 16. SSID filters ignore `SSID1` and `SSID2`
 
+- Status: fixed
 - Category: fragility
-- Evidence: `config.env` defines `SSID1=eduroam` and `SSID2=BYU-WiFi`. `analyze_all_class_beacons.ipynb`, code cell 2, hardcodes `["eduroam", "BYU-WiFi"]`. `analyze_class_sessions.ipynb`, code cell 1, hardcodes `filtered[filtered["wlan.ssid"] == "eduroam"]` for `number_radios`.
+- Evidence: Original bug was that `config.env` defined `SSID1=eduroam` and `SSID2=BYU-WiFi`, while `analyze_all_class_beacons.ipynb`, code cell 2, hardcoded `["eduroam", "BYU-WiFi"]`, and `analyze_class_sessions.ipynb`, code cell 1, hardcoded `filtered[filtered["wlan.ssid"] == "eduroam"]` for `number_radios`.
 - Why it matters: Changing SSIDs in config will not change the analysis filters, producing empty or misleading metrics for other deployments.
 - Risk level: medium
-- Suggested fix scope: Read SSIDs from config with defaults matching current values, and keep the current default fixture output unchanged.
-- Suggested validation/test: Run the existing golden fixture with default SSIDs and assert fingerprints are unchanged; add a tiny alternate-SSID fixture to assert configured SSIDs are honored.
+- Suggested fix scope: Read SSIDs from config with defaults matching current values, and keep the current default fixture output unchanged. Implemented in `analyze_all_class_beacons.ipynb` with `SSID1`, `SSID2`, and `CONFIGURED_SSIDS`; implemented in `analyze_class_sessions.ipynb` with `RADIO_COUNT_SSID` sourced from `SSID1`.
+- Suggested validation/test: Added focused alternate-SSID notebook tests that assert `analyze_all_class_beacons.ipynb` filters to configured `SSID1`/`SSID2` and `analyze_class_sessions.ipynb` counts radios for configured primary `SSID1`. Ran the existing golden fixture with default SSIDs and confirmed fingerprints are unchanged.
 - Safe to fix before notebook conversion: Yes, if default behavior is pinned.
 - Recommended order: 16
+- Files changed: `analyze_all_class_beacons.ipynb`, `analyze_class_sessions.ipynb`, `tests/test_notebook_config_paths.py`, `docs/current_pipeline.md`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 3600 -q` passed.
+- Remaining caveats: `number_radios` intentionally continues to use only the primary SSID (`SSID1`) to preserve current default behavior. The golden pytest run emitted the existing `.pytest_cache` permission warning.
 
 ### 17. BSSID fallback filenames do not match sample-driven analysis lookup
 

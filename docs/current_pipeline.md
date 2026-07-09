@@ -478,12 +478,14 @@ Inputs:
   - `OUTPUT_FOLDER`
   - `SAMPLE_FOLDER`
   - `ALL_CLASS_BEACONS_FOLDER`
+  - `SSID1`
+  - `SSID2`
 
 Behavior:
 
 - Maps `wlan.vs.aruba.ap_name` to classroom `location` using `sample_aps.parquet`.
 - Computes `room_scount` by looking across APs in the same room within a plus/minus 5 second search window.
-- Filters `all_class_beacons_df` to SSIDs `eduroam` and `BYU-WiFi`.
+- Filters `all_class_beacons_df` to the configured `SSID1` and `SSID2` values.
 - Computes aggregate channel utilization and station count statistics.
 - Generates histograms, PDF/CDF plots, hexbins, and regression values.
 
@@ -508,7 +510,7 @@ Key downstream columns:
 
 Fragility:
 
-- SSIDs are hardcoded to `eduroam` and `BYU-WiFi` in the notebook rather than reading `SSID1` and `SSID2` from `config.env`.
+- The SSID filter uses `SSID1` and `SSID2` from `config.env`, with current defaults matching `eduroam` and `BYU-WiFi`.
 - Room-level station count depends on hostname-to-location mapping from `Sample_APs.csv`.
 - The plus/minus 5 second lookup window is embedded in notebook logic.
 - This notebook must run before `analyze_class_sessions.ipynb`.
@@ -586,6 +588,7 @@ Inputs:
   - `SAMPLE_FOLDER`
   - `CLASS_SESSIONS_FOLDER`
   - `BEACON_RATE`
+  - `SSID1`
 
 Behavior:
 
@@ -610,7 +613,7 @@ Behavior:
 - Filters `Data/all_class_beacons_processed.parquet` by session time and `location`.
 - Uses `room_scount` for maximum station count.
 - Uses `wlan.qbss.cu` for CU threshold analysis.
-- Counts unique `eduroam` radios with `wlan.ta`.
+- Counts unique radios with `wlan.ta` for the configured primary SSID, `SSID1`.
 
 Outputs:
 
@@ -646,7 +649,7 @@ Key columns:
 Fragility:
 
 - Requires `Data/all_class_beacons_processed.parquet`, so `analyze_all_class_beacons.ipynb` must run first.
-- Counts radios only for SSID `eduroam`, hardcoded in the notebook.
+- Counts radios only for the configured primary SSID, `SSID1`.
 - Uses `BEACON_RATE` as the bin/window duration for high-CU duration and streak math.
 - If `room_scount` is missing, class-level station metrics cannot be computed.
 
@@ -731,6 +734,6 @@ Additional columns introduced by the pipeline:
   - CU greater than 127 means greater than 50 percent.
   - radio summary filters rows with fewer than 300 beacons.
   - room station count lookup uses a plus/minus 5 second window.
-- SSID filters are partly hardcoded to `eduroam` and `BYU-WiFi`, despite `SSID1` and `SSID2` existing in `config.env`.
+- SSID filters now read `SSID1` and `SSID2` from `config.env`; `analyze_class_sessions.ipynb` uses `SSID1` as the primary radio-count SSID.
 - AP radio inference is Aruba-specific and based on MAC integer gaps, not explicit channel/radio metadata.
 - Some stages write in place or append to existing parquet files, so reruns may require manual cleanup to avoid stale or duplicated outputs.

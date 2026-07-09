@@ -8,6 +8,45 @@ from pathlib import Path
 import pytest
 
 
+CONFIG_ENV_KEYS = (
+    "DATA_FOLDER",
+    "OUTPUT_FOLDER",
+    "PLOTS_FOLDER",
+    "PLOT_TIMEZONE",
+    "TIMEZONE",
+    "SAMPLED_FOLDER",
+    "SAMPLE_FOLDER",
+    "GROUPED_DATA_FOLDER",
+    "ALL_CLASS_BEACONS_FOLDER",
+    "CLASS_SESSIONS_FOLDER",
+    "BEACON_RATE",
+    "SSID1",
+    "SSID2",
+)
+
+
+def _notebook_code_cell(notebook_name: str, cell_index: int) -> tuple[str, Path]:
+    notebook_path = Path(__file__).resolve().parents[1] / notebook_name
+    notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
+    return "".join(notebook["cells"][cell_index]["source"]), notebook_path
+
+
+def _clear_config_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    for key in CONFIG_ENV_KEYS:
+        monkeypatch.delenv(key, raising=False)
+
+
+def _env_path(path: Path) -> str:
+    return str(path).replace("\\", "/")
+
+
+def _write_config_env(path: Path, values: dict[str, str]) -> None:
+    path.write_text(
+        "\n".join(f"{key}={value}" for key, value in values.items()) + "\n",
+        encoding="utf-8",
+    )
+
+
 def _analyze_data_code_source() -> str:
     notebook_path = Path(__file__).resolve().parents[1] / "analyze_data.ipynb"
     notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
@@ -30,9 +69,7 @@ def _find_top_level_function_source(code_source: str, function_name: str) -> str
 
 
 def _load_analyze_data_first_cell(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
-    notebook_path = Path(__file__).resolve().parents[1] / "analyze_data.ipynb"
-    notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
-    source = "".join(notebook["cells"][0]["source"])
+    source, notebook_path = _notebook_code_cell("analyze_data.ipynb", 0)
 
     data_folder = tmp_path / "Data"
     env_values = {
@@ -292,3 +329,143 @@ def test_analyze_data_graph_handles_three_radio_groups(monkeypatch, tmp_path):
     assert sorted(all_beacons["radio_number"].unique().tolist()) == [1, 2, 3]
     max_totals_by_radio = all_beacons.groupby("radio_number")["total_scount"].max()
     assert max_totals_by_radio.to_dict() == {1: 30, 2: 70, 3: 110}
+
+
+def test_analyze_all_class_beacons_filters_configured_ssids(monkeypatch, tmp_path):
+    pd = pytest.importorskip("pandas")
+    pytest.importorskip("pyarrow")
+    _clear_config_env(monkeypatch)
+    monkeypatch.chdir(tmp_path)
+
+    data_dir = tmp_path / "Data"
+    output_dir = tmp_path / "Output"
+    sample_dir = tmp_path / "Sample"
+    all_class_beacons_dir = output_dir / "all_class_beacons"
+    data_dir.mkdir()
+    output_dir.mkdir()
+    sample_dir.mkdir()
+
+    _write_config_env(
+        tmp_path / "config.env",
+        {
+            "DATA_FOLDER": _env_path(data_dir),
+            "OUTPUT_FOLDER": _env_path(output_dir),
+            "SAMPLE_FOLDER": _env_path(sample_dir),
+            "ALL_CLASS_BEACONS_FOLDER": _env_path(all_class_beacons_dir),
+            "SSID1": "CampusSecure",
+            "SSID2": "CampusGuest",
+        },
+    )
+    pd.DataFrame(
+        {
+            "wlan.ssid": [
+                "CampusSecure",
+                "CampusGuest",
+                "eduroam",
+                "OtherNetwork",
+            ]
+        }
+    ).to_parquet(data_dir / "all_class_beacons.parquet")
+    pd.DataFrame({"Hostname": []}).to_parquet(sample_dir / "sample_aps.parquet")
+
+    cell0, notebook_path = _notebook_code_cell("analyze_all_class_beacons.ipynb", 0)
+    cell2, _ = _notebook_code_cell("analyze_all_class_beacons.ipynb", 2)
+    namespace = {"__name__": "not_main"}
+    try:
+        exec(compile(cell0, f"{notebook_path}::cell_0", "exec"), namespace)
+        exec(compile(cell2, f"{notebook_path}::cell_2", "exec"), namespace)
+    finally:
+        log_file = namespace.get("log_file")
+        if log_file is not None:
+            log_file.close()
+
+    filtered_ssids = namespace["all_class_beacons_df"]["wlan.ssid"].tolist()
+    assert filtered_ssids == ["CampusSecure", "CampusGuest"]
+
+
+def test_analyze_class_sessions_counts_configured_primary_ssid_radios(
+    monkeypatch,
+    tmp_path,
+):
+    pd = pytest.importorskip("pandas")
+    pytest.importorskip("pyarrow")
+    _clear_config_env(monkeypatch)
+    monkeypatch.chdir(tmp_path)
+
+    data_dir = tmp_path / "Data"
+    output_dir = tmp_path / "Output"
+    sample_dir = tmp_path / "Sample"
+    class_sessions_dir = output_dir / "class_sessions"
+    data_dir.mkdir()
+    output_dir.mkdir()
+    sample_dir.mkdir()
+
+    _write_config_env(
+        tmp_path / "config.env",
+        {
+            "DATA_FOLDER": _env_path(data_dir),
+            "OUTPUT_FOLDER": _env_path(output_dir),
+            "SAMPLE_FOLDER": _env_path(sample_dir),
+            "CLASS_SESSIONS_FOLDER": _env_path(class_sessions_dir),
+            "BEACON_RATE": "1.024",
+            "SSID1": "CampusSecure",
+            "SSID2": "CampusGuest",
+        },
+    )
+
+    start = pd.Timestamp("2025-01-01 10:00:00", tz="UTC")
+    end = pd.Timestamp("2025-01-01 10:05:00", tz="UTC")
+    pd.DataFrame(
+        {
+            "location": ["BLDG-101"],
+            "start_time": [start],
+            "end_time": [end],
+            "enrolled": [10],
+            "capacity": [20],
+        }
+    ).to_parquet(sample_dir / "sample_classes.parquet")
+    pd.DataFrame({"Building-Room": ["BLDG-101"]}).to_parquet(
+        sample_dir / "sample_aps.parquet"
+    )
+    pd.DataFrame({"Location": ["BLDG-101"], "Group": ["A"]}).to_parquet(
+        sample_dir / "sample_classrooms.parquet"
+    )
+    pd.DataFrame(
+        {
+            "aruba_erm.time": [
+                start + pd.Timedelta(seconds=1),
+                start + pd.Timedelta(seconds=2),
+                start + pd.Timedelta(seconds=3),
+                start + pd.Timedelta(seconds=4),
+            ],
+            "location": ["BLDG-101"] * 4,
+            "room_scount": [5, 6, 7, 8],
+            "wlan.qbss.cu": [200, 100, 100, 100],
+            "wlan.qbss.scount": [1, 2, 3, 4],
+            "wlan.ssid": [
+                "CampusSecure",
+                "CampusSecure",
+                "eduroam",
+                "CampusGuest",
+            ],
+            "wlan.ta": [
+                "00:00:00:00:00:01",
+                "00:00:00:00:00:02",
+                "00:00:00:00:00:03",
+                "00:00:00:00:00:04",
+            ],
+        }
+    ).to_parquet(data_dir / "all_class_beacons_processed.parquet")
+
+    cell0, notebook_path = _notebook_code_cell("analyze_class_sessions.ipynb", 0)
+    cell1, _ = _notebook_code_cell("analyze_class_sessions.ipynb", 1)
+    namespace = {"__name__": "not_main"}
+    try:
+        exec(compile(cell0, f"{notebook_path}::cell_0", "exec"), namespace)
+        exec(compile(cell1, f"{notebook_path}::cell_1", "exec"), namespace)
+    finally:
+        log_file = namespace.get("log_file")
+        if log_file is not None:
+            log_file.close()
+
+    assert int(namespace["class_sessions_df"].loc[0, "number_radios"]) == 2
