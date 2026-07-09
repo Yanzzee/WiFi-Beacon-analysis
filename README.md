@@ -22,11 +22,15 @@ Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons
 process_pcapng.py - process raw .pcapng capture files to .parquet files
     requires tshark and should run on Windows, macOS, and Linux when Python dependencies and tshark are installed
 
-group_data.py - group data by AP name (BSSID) instead of time, one file per hostname for entire date range
+group_data_bssid.py - group generic capture data by BSSID instead of time, one file per AP/BSSID for the entire date range. This is intended as the generic grouping path.
 
-group_data_cleanup.py (optional) - adds an index and moves aruba_erm.time to a regular column, if needed (esp for aruba)
+group_data_aruba.py - group Aruba-specific captures by Aruba AP name instead of time, one file per hostname for the entire date range. Use this when working with Aruba-specific captures that include wlan.vs.aruba.ap_name.
 
-samples.py - process sample files from CSV to dataframe/parquet listed below. Uses config.env for date range, sample_aps.csv, sample_classrooms.csv, and 
+group_data_cleanup.py (optional) - clean grouped parquet files when index cleanup is needed, especially when aruba_erm.time is stored as the index and needs to be a regular column.
+
+The grouping and cleanup scripts are currently separate. Eventually they should be combined into a single script or process that can detect vendor-specific fields and choose the right grouping and cleanup behavior.
+
+Samples.py - process sample files from CSV to dataframe/parquet listed below. Uses config.env for date range, sample_aps.csv, sample_classrooms.csv, and 
 sample_schedule.csv input files. These should be UTF-8 encoded, sections in the same class should be combined, Day of week uses M T W R F.
     sample_aps.parquet - saved dataframe file with information about all sampled APs
     sample_classrooms.parquet - saved dataframe file with information about sampled classroom locations

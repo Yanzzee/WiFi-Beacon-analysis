@@ -164,14 +164,17 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 11. README lists stale script names
 
+- Status: fixed
 - Category: documentation mismatch
-- Evidence: `README.md` lists `group_data.py` and `samples.py`; the repository contains `group_data_bssid.py`, `group_data_aruba.py`, `group_data_old.py`, and `Samples.py`. `docs/current_pipeline.md` already records this mismatch.
+- Evidence: Original README listed `group_data.py` and `samples.py`; the repository contains `group_data_bssid.py`, `group_data_aruba.py`, `group_data_old.py`, and `Samples.py`. README now names the current operational scripts and documents the generic, Aruba-specific, and cleanup roles.
 - Why it matters: A new runbook or future extraction prompt can start from the wrong file names.
 - Risk level: low
 - Suggested fix scope: Update README command names to match the current operational scripts and note which grouping script is preferred.
 - Suggested validation/test: Documentation-only check that every script named in README exists, except files explicitly labeled historical/obsolete.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 11
+- Files changed: `README.md`, `docs/current_pipeline.md`, `step5_bug_backlog.md`.
+- Validation run: Documentation-only grep confirmed stale `group_data.py` and `samples.py` README references were removed; no code or tests changed.
 
 ### 12. `analyze_data.py` is obsolete but remains runnable-looking
 

@@ -163,11 +163,11 @@ Fragility:
 
 ### 3. Group Processed Data
 
-Preferred current script:
+Current generic grouping script:
 
 - `group_data_bssid.py`
 
-Alternative Aruba-only script:
+Aruba-specific grouping script:
 
 - `group_data_aruba.py`
 
@@ -191,10 +191,26 @@ Inputs:
 - Falls back to the BSSID as the output filename when AP name is unavailable.
 - Writes with `pyarrow.parquet.ParquetWriter`.
 
+This is intended as the generic grouping path for captures where BSSID is the stable grouping key.
+
 Outputs:
 
 - `Data/grouped_data/<AP_name>.parquet` when Aruba AP names are present.
 - `Data/grouped_data/<BSSID>.parquet` when AP names are not present.
+
+`group_data_aruba.py` behavior:
+
+- Reads all processed parquet data with Dask.
+- Requires `wlan.vs.aruba.ap_name`.
+- Groups rows by Aruba AP name.
+- Writes one parquet file per AP name to `GROUPED_DATA_FOLDER`.
+
+This is used for Aruba-specific captures that include Aruba AP names.
+
+Current direction:
+
+- `group_data_bssid.py`, `group_data_aruba.py`, and `group_data_cleanup.py` remain separate for now.
+- Eventually these should be combined into one script or process that can detect vendor-specific fields and apply the correct grouping and cleanup behavior.
 
 Key downstream columns:
 
@@ -212,7 +228,6 @@ Fragility:
 - `analyze_data.ipynb` later constructs filenames from `Sample/sample_aps.parquet` `Hostname`, so grouped output names must match sample AP hostnames.
 - If output files are named by BSSID fallback, the current sample-driven notebook path will not find them unless sample hostnames also use those BSSID filenames.
 - `group_data_aruba.py` requires `wlan.vs.aruba.ap_name` and is not vendor-neutral.
-- The README still refers to `group_data.py`, but the current repo has `group_data_bssid.py`, `group_data_aruba.py`, and `group_data_old.py`.
 
 ### 4. Optional Grouped Data Cleanup
 
@@ -339,7 +354,7 @@ Assumptions:
 
 Fragility:
 
-- The script name is `Samples.py`, while README text refers to `samples.py`.
+- Use the exact script name `Samples.py`; casing matters on case-sensitive filesystems.
 - Input schedule CSV includes non-breaking spaces in headers/values; `Samples.py` cleans cell values and strips column names, but schema changes can still break the explicit `astype` call.
 - `TIMEZONE=Etc/GMT+7` is a fixed offset, not DST-aware. `PLOT_TIMEZONE=America/Denver` is DST-aware, so these can disagree for data outside the current date range.
 
@@ -688,7 +703,7 @@ Additional columns introduced by the pipeline:
 
 ## Known Fragility and Ambiguity
 
-- README names do not exactly match current files: `group_data.py` vs `group_data_bssid.py`/`group_data_aruba.py`, and `samples.py` vs `Samples.py`.
+- Grouping and grouped-data cleanup remain split across `group_data_bssid.py`, `group_data_aruba.py`, and `group_data_cleanup.py`; future work should merge vendor detection, grouping, and cleanup into one process.
 - The current operational source is the notebooks, not `analyze_data.py`.
 - Notebooks have no markdown guidance and no saved outputs, so execution order is mostly external knowledge.
 - `Data/`, `Output/`, and `Sample/` are ignored in `.gitignore`, but some historical sample files are tracked.
