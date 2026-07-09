@@ -13,7 +13,7 @@ This document describes the current repository pipeline from capture files to fi
 7. Run `analyze_radio_summary.ipynb` to analyze one row per radio per class session.
 8. Run `analyze_class_sessions.ipynb` to analyze one row per class session/location.
 
-The active pipeline is notebook-centered. `analyze_data.py` exists, but it contains a warning that the `.py` version is outdated and has a fatal bug compared with the notebook version.
+The active pipeline is notebook-centered. The archived `old/analyze_data.py` file is an outdated script version of `analyze_data.ipynb`; it is kept only as a historical reference and should not be treated as a runnable pipeline stage.
 
 ## Configuration
 
@@ -79,7 +79,7 @@ Notes:
 
 - These capture scripts are Linux-specific because they use Linux wireless monitor-mode tools. They are not expected to run unchanged on Windows or macOS.
 - `Wireshark-profile-Beacon-QBSS-load.zip` is a Wireshark profile for visual beacon/QBSS inspection, not a required processing step.
-- `aruba_custom.lua` and `aruba_custom_old.lua` are Wireshark Lua dissector experiments/helpers for Aruba ERM traffic. The current `process_pcapng.py` uses tshark decode options directly.
+- `old/aruba_custom.lua` and `old/aruba_custom_old.lua` are archived Wireshark Lua dissector experiments/helpers for Aruba ERM traffic. The current `process_pcapng.py` uses tshark decode options directly.
 
 ### 2. Convert Captures to Processed Parquet
 
@@ -173,7 +173,7 @@ Aruba-specific grouping script:
 
 Older reference script:
 
-- `group_data_old.py`
+- `old/group_data_old.py`
 
 Inputs:
 
@@ -268,7 +268,7 @@ Fragility:
 
 Script:
 
-- `Samples.py`
+- `samples.py`
 
 Inputs:
 
@@ -354,8 +354,8 @@ Assumptions:
 
 Fragility:
 
-- Use the exact script name `Samples.py`; casing matters on case-sensitive filesystems.
-- Input schedule CSV includes non-breaking spaces in headers/values; `Samples.py` cleans cell values and strips column names, but schema changes can still break the explicit `astype` call.
+- Use the exact script name `samples.py`; casing matters on case-sensitive filesystems.
+- Input schedule CSV includes non-breaking spaces in headers/values; `samples.py` cleans cell values and strips column names, but schema changes can still break the explicit `astype` call.
 - `TIMEZONE=Etc/GMT+7` is a fixed offset, not DST-aware. `PLOT_TIMEZONE=America/Denver` is DST-aware, so these can disagree for data outside the current date range.
 
 ### 6. Analyze Sampled Class Beacon Data
@@ -640,11 +640,13 @@ Fragility:
 
 ## Scripts and Notebooks Not Normally Run as Pipeline Stages
 
-- `analyze_data.py`: stale/outdated script version of `analyze_data.ipynb`; comments warn of a fatal bug.
+- `old/analyze_data.py`: archived stale/outdated script version of `analyze_data.ipynb`; comments warn of a fatal bug.
 - `test.ipynb`: scratch notebook for installs and parquet inspection.
-- `strip_Aruba_ERM.py`: Scapy-based Aruba ERM stripping helper; comments say it should not be needed and is redundant to current processing.
-- `group_data_old.py`: original AP-name grouping reference; comments recommend `group_data_bssid.py` for data with BSSID.
-- `aruba_custom_old.lua`: older custom Aruba dissector.
+- `old/strip_Aruba_ERM.py`: archived Scapy-based Aruba ERM stripping helper; comments say it should not be needed and is redundant to current processing.
+- `old/group_data_old.py`: archived original AP-name grouping reference; comments recommend `group_data_bssid.py` for data with BSSID.
+- `old/aruba_custom.lua`: archived custom Aruba dissector experiment/helper.
+- `old/aruba_custom_old.lua`: archived older custom Aruba dissector.
+- `old/requirements.old.txt`: archived environment/dependency reference, not the current dependency file.
 
 ## Core Downstream Schema
 
@@ -688,7 +690,7 @@ Additional columns introduced by the pipeline:
 
 - Capture conversion uses `aruba_erm.time` as the index for Aruba ERM data.
 - Cleanup and notebooks expect or create an `aruba_erm.time` datetime column.
-- `Samples.py` localizes class schedule timestamps to `TIMEZONE`.
+- `samples.py` localizes class schedule timestamps to `TIMEZONE`.
 - `analyze_data.ipynb` converts beacon timestamps to `TIMEZONE`.
 - `group_data_cleanup.py` uses `PLOT_TIMEZONE`, which may not match `TIMEZONE`.
 - Current `TIMEZONE=Etc/GMT+7` is a fixed offset and does not handle DST changes.
@@ -704,7 +706,7 @@ Additional columns introduced by the pipeline:
 ## Known Fragility and Ambiguity
 
 - Grouping and grouped-data cleanup remain split across `group_data_bssid.py`, `group_data_aruba.py`, and `group_data_cleanup.py`; future work should merge vendor detection, grouping, and cleanup into one process.
-- The current operational source is the notebooks, not `analyze_data.py`.
+- The current operational source is the notebooks, not archived `old/analyze_data.py`.
 - Notebooks have no markdown guidance and no saved outputs, so execution order is mostly external knowledge.
 - `Data/`, `Output/`, and `Sample/` are ignored in `.gitignore`, but some historical sample files are tracked.
 - `requirements.txt` appears environment-derived and includes standard-library names such as `glob`, `pathlib`, and `datetime`.

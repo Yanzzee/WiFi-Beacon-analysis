@@ -96,32 +96,32 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_radio_summary_notebook.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
 - Remaining caveats: The fix excludes rows with missing, non-numeric, or non-positive `ssid_count` from `filtered_radio_summary_df` before downstream beacon-rate plots. It does not change the existing total-beacon threshold, class-duration filter, radio-count split, or plot formulas for retained rows. Pytest emitted the existing cache warning because it could not write `.pytest_cache` entries.
 
-### 7. `Samples.py` crashes on schedules with fewer than 11 rows
+### 7. `samples.py` crashes on schedules with fewer than 11 rows
 
 - Status: fixed
 - Category: bug
-- Evidence: `Samples.py` previously had an unused debug access in the cleaning section, `first_record = sample_schedule_df.iloc[10]`, which could fail for schedules with fewer than 11 rows even though the value was not part of required processing.
+- Evidence: `samples.py` previously had an unused debug access in the cleaning section, `first_record = sample_schedule_df.iloc[10]`, which could fail for schedules with fewer than 11 rows even though the value was not part of required processing.
 - Why it matters: Small sample fixtures or reduced regression fixtures with fewer than 11 schedule rows could fail despite the row access being unrelated to the actual sample-generation workflow.
 - Risk level: low
 - Suggested fix scope: Remove the unused debug row access entirely rather than adding extra runtime branching for a value that is not used.
-- Suggested validation/test: Run `Samples.py` against a minimal schedule CSV with one valid class row and assert the three sample parquet files are created.
+- Suggested validation/test: Run `samples.py` against a minimal schedule CSV with one valid class row and assert the three sample parquet files are created.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 7
-- Files changed: `Samples.py`, `tests/test_samples_script.py`, `step5_bug_backlog.md`.
+- Files changed: `samples.py`, `tests/test_samples_script.py`, `step5_bug_backlog.md`.
 - Validation run: `./.venv/Scripts/python.exe -m pytest tests/test_samples_script.py` passed.
 
-### 8. `Samples.py` casts dirty numeric fields before cell cleanup
+### 8. `samples.py` casts dirty numeric fields before cell cleanup
 
 - Status: fixed
 - Category: bug
-- Evidence: `Samples.py` strips schedule column names, then immediately calls `sample_schedule_df.astype({... "Size": "int", "Enrl": "int" ...})`. The `clean_cell()` pass that removes non-breaking spaces and control characters runs only after the cast.
+- Evidence: `samples.py` strips schedule column names, then immediately calls `sample_schedule_df.astype({... "Size": "int", "Enrl": "int" ...})`. The `clean_cell()` pass that removes non-breaking spaces and control characters runs only after the cast.
 - Why it matters: The pipeline documentation notes dirty/non-breaking-space CSV inputs, but dirty numeric `Size` or `Enrl` values can fail before cleanup runs.
 - Risk level: medium
 - Suggested fix scope: Clean cells before strict dtype conversion, then cast numeric columns. Keep output column names and parquet schemas unchanged.
 - Suggested validation/test: Add a focused sample CSV fixture where `Enrl` or `Size` contains whitespace/non-breaking-space formatting and assert `sample_classes.parquet` has integer `enrolled`.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 8
-- Files changed: `Samples.py`, `tests/test_samples_script.py`, `step5_bug_backlog.md`.
+- Files changed: `samples.py`, `tests/test_samples_script.py`, `step5_bug_backlog.md`.
 - Validation run: `./.venv/Scripts/python.exe -m pytest tests/test_samples_script.py` passed.
 
 ### 9. `process_pcapng.py` does not check `tshark` exit status
@@ -166,7 +166,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 - Status: fixed
 - Category: documentation mismatch
-- Evidence: Original README listed `group_data.py` and `samples.py`; the repository contains `group_data_bssid.py`, `group_data_aruba.py`, `group_data_old.py`, and `Samples.py`. README now names the current operational scripts and documents the generic, Aruba-specific, and cleanup roles.
+- Evidence: Original README listed stale or inconsistent script names. README now names the current operational scripts, including `group_data_bssid.py`, `group_data_aruba.py`, `group_data_cleanup.py`, and lowercase `samples.py`; the historical grouping reference is archived under `old/group_data_old.py`.
 - Why it matters: A new runbook or future extraction prompt can start from the wrong file names.
 - Risk level: low
 - Suggested fix scope: Update README command names to match the current operational scripts and note which grouping script is preferred.
@@ -174,18 +174,21 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 11
 - Files changed: `README.md`, `docs/current_pipeline.md`, `step5_bug_backlog.md`.
-- Validation run: Documentation-only grep confirmed stale `group_data.py` and `samples.py` README references were removed; no code or tests changed.
+- Validation run: Documentation-only grep confirmed stale `group_data.py` and inconsistent uppercase sample-script README references were removed; no code or tests changed.
 
 ### 12. `analyze_data.py` is obsolete but remains runnable-looking
 
+- Status: fixed
 - Category: deprecated/obsolete file
-- Evidence: `analyze_data.py` top comments say the `.py` version has a fatal bug and is outdated compared with `analyze_data.ipynb`. It also contains older hardcoded paths such as `Output/all_class_beacons.parquet`, while the notebook now uses configured `DATA_FOLDER` for those outputs.
+- Evidence: `analyze_data.py` top comments say the `.py` version has a fatal bug and is outdated compared with `analyze_data.ipynb`. It also contains older hardcoded paths such as `Output/all_class_beacons.parquet`, while the notebook now uses configured `DATA_FOLDER` for those outputs. The obsolete script has been moved to `old/analyze_data.py`, and the documentation now identifies `analyze_data.ipynb` as the operational source of truth.
 - Why it matters: During mechanical notebook conversion, this file can be mistaken for the conversion target or used as a stale reference.
 - Risk level: medium
-- Suggested fix scope: Do not repair this file in Step 5. Add a clearer obsolete-file notice or move it out of the operational path only after deciding how notebook conversion will create replacement modules.
-- Suggested validation/test: Confirm tests and docs point at `analyze_data.ipynb` as the source of truth until conversion creates a new module.
+- Suggested fix scope: Do not repair this file in Step 5. Move it out of the operational path and document the archived status until notebook conversion creates a replacement module.
+- Suggested validation/test: Confirm docs point at `analyze_data.ipynb` as the source of truth until conversion creates a new module, and confirm archived obsolete files are referenced with `old/` paths.
 - Safe to fix before notebook conversion: Documentation notice only is safe; deleting or rewriting is not recommended before conversion.
 - Recommended order: 12
+- Files changed: `README.md`, `docs/current_pipeline.md`, `config.env`, `old/README.md`, `step5_bug_backlog.md`.
+- Validation run: Documentation-only grep confirmed active docs reference archived obsolete files with `old/` paths and use lowercase `samples.py`.
 
 ### 13. `BEACON_RATE` comment and value disagree
 
@@ -214,7 +217,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 ### 15. Grouped-data cleanup and analysis use different timezone assumptions
 
 - Category: behavior-risk
-- Evidence: `group_data_cleanup.py` localizes naive `aruba_erm.time` values to `PLOT_TIMEZONE`. `analyze_data.ipynb`, code cell 0, localizes naive beacon timestamps to UTC and then converts to `TIMEZONE`. `Samples.py` localizes class sessions to `TIMEZONE`.
+- Evidence: `group_data_cleanup.py` localizes naive `aruba_erm.time` values to `PLOT_TIMEZONE`. `analyze_data.ipynb`, code cell 0, localizes naive beacon timestamps to UTC and then converts to `TIMEZONE`. `samples.py` localizes class sessions to `TIMEZONE`.
 - Why it matters: The same grouped parquet can land at different wall-clock times depending on whether cleanup was run first and whether timestamps were naive or timezone-aware.
 - Risk level: high
 - Suggested fix scope: Do not change timestamp semantics without a dedicated timezone fixture. First define the canonical timezone contract for grouped parquet inputs.

@@ -30,7 +30,7 @@ group_data_cleanup.py (optional) - clean grouped parquet files when index cleanu
 
 The grouping and cleanup scripts are currently separate. Eventually they should be combined into a single script or process that can detect vendor-specific fields and choose the right grouping and cleanup behavior.
 
-Samples.py - process sample files from CSV to dataframe/parquet listed below. Uses config.env for date range, sample_aps.csv, sample_classrooms.csv, and 
+samples.py - process sample files from CSV to dataframe/parquet listed below. Uses config.env for date range, sample_aps.csv, sample_classrooms.csv, and 
 sample_schedule.csv input files. These should be UTF-8 encoded, sections in the same class should be combined, Day of week uses M T W R F.
     sample_aps.parquet - saved dataframe file with information about all sampled APs
     sample_classrooms.parquet - saved dataframe file with information about sampled classroom locations
@@ -65,7 +65,8 @@ Output - the output of processing including graphs, logs etc. these folders will
     /plots - plotted graphs for radio/class sessions
     /all_class_beacons - output from analyze_all_class_beacons
     /radio_summary - output from analyze_radio_summary    
-Sample - files defining the sampled courses, locations, and APs CSV files are converted to parquet files with Samples.py
+Sample - files defining the sampled courses, locations, and APs CSV files are converted to parquet files with samples.py
+old - archived obsolete/reference files that are not part of the normal pipeline. See old/README.md.
 
 
 
