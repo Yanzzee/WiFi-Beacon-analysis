@@ -5,7 +5,7 @@ Working repository - not published publicly
 processing 802.11 wireless captures from .pcapng to .parquet for analysis of 802.11e channel utilization, station count, frequency of beacons, and other information observable from captured beacons
 
 Data requirements
-capture files in pcap format that include beacons from classroom APs
+capture files in .pcapng format that include beacons from classroom APs. Use .pcapng for all new captures. Legacy files with a .pcap extension are accepted only when their magic bytes show they are actually pcapng files; true pcap files are not currently supported.
     APs must include 802.11e information elements of channel utilization, station count, and admission capacity, which are optional
     beacons probably also need advertise AP Name enabled
 Sample_APs.csv - list of AP hostnames and locations, see example
@@ -16,11 +16,11 @@ Sample_schedule.csv - course schedule with location, Days of the week, start/end
 ### Run Files
 Files are listed in the general order that they are run.
 
-beacon_capture.sh (optional) - bash script to capture using tshark on a raspberry pi or other linux device. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
+beacon_capture.sh (optional) - bash script to capture .pcapng files using tshark on a raspberry pi or other linux device. The capture scripts use Linux wireless monitor-mode tools and are not expected to run unchanged on Windows or macOS. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
 Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
 
 process_pcapng.py - process raw .pcapng capture files to .parquet files
-    previously required tshark on linux but should run on Windows now
+    requires tshark and should run on Windows, macOS, and Linux when Python dependencies and tshark are installed
 
 group_data.py - group data by AP name (BSSID) instead of time, one file per hostname for entire date range
 
@@ -53,8 +53,8 @@ analyze_class_sessions.ipynb - analyze each class session as a single row, combi
 
 ### Folders
 Data - input and working files
-    /captures - put pcapng files here
-    /processed_data - pcapng files are converted to parquet files and saved here
+    /captures - put .pcapng files here
+    /processed_data - .pcapng files are converted to parquet files and saved here
     /grouped_data - parquet files are saved per AP in this location
     /sampled - AP beacon files are saved here after processing to remove duplicates and only representing the sampled scope
 Output - the output of processing including graphs, logs etc. these folders will be created dynamically if they don't already exist

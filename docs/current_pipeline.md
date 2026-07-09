@@ -4,8 +4,8 @@ This document describes the current repository pipeline from capture files to fi
 
 ## High-Level Flow
 
-1. Capture beacon frames into pcap/pcapng files.
-2. Convert pcapng captures to parquet with selected Wireshark/tshark fields.
+1. Capture beacon frames into .pcapng files.
+2. Convert .pcapng captures to parquet with selected Wireshark/tshark fields.
 3. Group converted parquet rows by AP name or BSSID.
 4. Convert sample classroom/AP/schedule CSV files to sample parquet files.
 5. Run `analyze_data.ipynb` to extract class-session beacon data, per-radio summaries, and per-session plots.
@@ -62,7 +62,7 @@ Inputs:
 
 Outputs:
 
-- pcap/pcapng capture files, usually written outside the repo first, such as `/var/tmp/*.pcap` or `~/captures/*.pcap`.
+- .pcapng capture files, usually written outside the repo first, such as `/var/tmp/*.pcapng` or `~/captures/*.pcapng`.
 - Files are expected to be moved or placed under `Data/captures` before processing.
 
 Downstream required content:
@@ -77,6 +77,7 @@ Downstream required content:
 
 Notes:
 
+- These capture scripts are Linux-specific because they use Linux wireless monitor-mode tools. They are not expected to run unchanged on Windows or macOS.
 - `Wireshark-profile-Beacon-QBSS-load.zip` is a Wireshark profile for visual beacon/QBSS inspection, not a required processing step.
 - `aruba_custom.lua` and `aruba_custom_old.lua` are Wireshark Lua dissector experiments/helpers for Aruba ERM traffic. The current `process_pcapng.py` uses tshark decode options directly.
 
@@ -101,6 +102,7 @@ py process_pcapng.py --no-erm
 Inputs:
 
 - `Data/captures/*.pcapng` by default.
+- Legacy `*.pcap` filenames are discovered only so `process_pcapng.py` can inspect their magic bytes. If the bytes are pcapng, processing continues with a warning; if the bytes are true pcap, processing fails with a clear unsupported-format error.
 - `config.env` values:
   - `CAPTURES_FOLDER`
   - `PROCESSED_DATA_FOLDER`
@@ -155,6 +157,7 @@ Key downstream columns:
 Fragility:
 
 - `THREAD_COUNT` is read from the environment as a string before being used as the argparse default for an integer argument.
+- True pcap input is not currently supported. TShark can read pcap files, but this pipeline now enforces pcapng at the conversion boundary so file naming, discovery, and fixture expectations stay consistent. Adding true pcap support would require separate schema and link-layer validation.
 - Native capture mode writes `frame.time_epoch`, but downstream notebooks currently expect `aruba_erm.time`.
 - If tshark field names or Aruba ERM decode settings change, downstream schemas can break.
 

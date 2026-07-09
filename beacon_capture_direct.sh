@@ -84,11 +84,12 @@ iw wlan0 set freq $FREQ
 sleep 2
 
 # Set output path (tshark will append timestamps automatically)
-OUTPATH="/var/tmp/Beacons_${LOCATION}_fr${FREQ}.pcap"
+OUTPATH="/var/tmp/Beacons_${LOCATION}_fr${FREQ}.pcapng"
 
 echo "Starting capture for $HOURS hour(s)... Output prefix: $OUTPATH"
 
 tshark -i wlan0 \
+  -F pcapng \
   -g \
   -a duration:$DURATION \
   -b duration:3600 \

@@ -87,7 +87,7 @@ BASE_NAME="$USER_HOME/captures/${LOCATION}_multi-band_${TIMESTAMP}"
 echo "Starting capture to $BASE_NAME"
 
 tshark -i "$INTERFACE" \
-  -F pcap \
+  -F pcapng \
   -w "$BASE_NAME" \
   -f "type mgt subtype beacon" \
   -b duration:3600 \
@@ -148,14 +148,14 @@ iw dev $INTERFACE set type managed
 ip link set $INTERFACE up
 
 
-# Add .pcap to any rolled files if missing
+# Add .pcapng to any rolled files if missing
 shopt -s nullglob
 for f in "${BASE_NAME}"_*; do
-  [[ "$f" == *.pcap ]] && continue
-  mv -- "$f" "$f.pcap"
+  [[ "$f" == *.pcapng ]] && continue
+  mv -- "$f" "$f.pcapng"
 done
 shopt -u nullglob
 
 chown "$SUDO_USER":"$SUDO_USER" "${BASE_NAME}"*
 
-echo "Done. Capture saved to: $BASE_NAME*.pcap"
+echo "Done. Capture saved to: $BASE_NAME*.pcapng"

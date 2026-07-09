@@ -146,13 +146,20 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 10. Capture scripts produce `.pcap`, but conversion only discovers `.pcapng`
 
+- Status: fixed
 - Category: documentation mismatch
-- Evidence: `beacon_capture.sh`, `beacon_capture_direct.sh`, `beacon_capture_band.sh`, and `capture_direct.sh` write `.pcap` files. `process_pcapng.py`, `process_all_pcapngs()`, only includes files where `f.endswith(".pcapng")`. README and `docs/current_pipeline.md` mention pcap and pcapng captures in different places.
+- Evidence: Original behavior had `beacon_capture.sh`, `beacon_capture_direct.sh`, `beacon_capture_band.sh`, and `capture_direct.sh` writing `.pcap` names, while `process_pcapng.py`, `process_all_pcapngs()`, only included files where `f.endswith(".pcapng")`. README and `docs/current_pipeline.md` also mentioned pcap and pcapng captures in different places. The capture scripts now request `tshark -F pcapng` and write `.pcapng` extensions. Documentation now states that .pcapng is the required capture format.
 - Why it matters: A user following the capture scripts can move `.pcap` files into `Data/captures` and have the conversion stage report zero files.
 - Risk level: medium
-- Suggested fix scope: Either document that captures must be converted/renamed to `.pcapng`, or extend discovery to include `.pcap` if `tshark` handling is the same. Keep this as a conversion-stage prompt.
-- Suggested validation/test: Put one `.pcap` and one `.pcapng` fixture path in a temporary capture folder and test that file discovery behavior matches the documented policy.
-- Safe to fix before notebook conversion: Yes for documentation; code behavior should be fixed only with an explicit conversion prompt.
+- Suggested fix scope: Implemented as a conservative pcapng contract: all new captures should be .pcapng; conversion discovers `.pcapng` plus legacy `.pcap` filenames, validates magic bytes, warns and continues only when a `.pcap` file is actually pcapng, and raises a clear error for true pcap magic bytes. True pcap processing was reviewed but not built; supporting it would need separate schema/link-layer validation.
+- Suggested validation/test: `tests/test_process_pcapng_windows.py` now includes magic-byte coverage for legacy `.pcap` filenames containing pcapng data, true pcap rejection, and discovery behavior. The existing baseline validation still processes:
+	- `Beacon_Capture_20251110090000_00012.pcapng`
+	- `Beacon_Capture_20251110100000_00013.pcapng`
+	- `Beacon_Capture_20251110110000_00014.pcapng`
+	and compares the generated parquet files to the existing known-good files in `Data/processed_data`.
+- Safe to fix before notebook conversion: Yes; the code behavior change was made under an explicit conversion prompt and remains limited to capture-format validation/discovery.
+- Files changed: `process_pcapng.py`, `tests/test_process_pcapng_windows.py`, `beacon_capture.sh`, `beacon_capture_direct.sh`, `beacon_capture_band.sh`, `capture_direct.sh`, `README.md`, `docs/current_pipeline.md`, `tests/fixtures/README.md`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_process_pcapng_windows.py -q` — result: `5 passed` (warning: pytest cache write permission warning unrelated to conversion logic).
 - Recommended order: 10
 
 ### 11. README lists stale script names

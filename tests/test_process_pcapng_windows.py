@@ -14,6 +14,7 @@ TEST_FILES = [
     "Beacon_Capture_20251110100000_00013.pcapng",
     "Beacon_Capture_20251110110000_00014.pcapng",
 ]
+PCAP_MAGIC = b"\xd4\xc3\xb2\xa1"
 
 
 def _read_parquet(path: Path) -> pd.DataFrame:
@@ -33,6 +34,44 @@ def _assert_dataframes_equivalent(left: pd.DataFrame, right: pd.DataFrame) -> No
         rtol=1e-6,
         atol=1e-8,
     )
+
+
+def test_validate_pcapng_capture_warns_for_legacy_pcap_extension(tmp_path: Path):
+    legacy_named_capture = tmp_path / "legacy_name.pcap"
+    legacy_named_capture.write_bytes(pp.PCAPNG_MAGIC + b"\x00" * 24)
+
+    with pytest.warns(UserWarning, match="\\.pcap extension but pcapng magic bytes"):
+        pp.validate_pcapng_capture(legacy_named_capture)
+
+
+def test_validate_pcapng_capture_rejects_true_pcap_magic(tmp_path: Path):
+    pcap_capture = tmp_path / "true_pcap.pcap"
+    pcap_capture.write_bytes(PCAP_MAGIC + b"\x00" * 24)
+
+    with pytest.raises(ValueError, match="is a pcap file based on its magic bytes"):
+        pp.validate_pcapng_capture(pcap_capture)
+
+
+def test_discover_pcapng_files_includes_legacy_pcap_named_pcapng(tmp_path: Path):
+    pcapng_capture = tmp_path / "capture_a.pcapng"
+    legacy_named_capture = tmp_path / "capture_b.pcap"
+    ignored_file = tmp_path / "capture_c.txt"
+
+    pcapng_capture.write_bytes(pp.PCAPNG_MAGIC + b"\x00" * 24)
+    legacy_named_capture.write_bytes(pp.PCAPNG_MAGIC + b"\x00" * 24)
+    ignored_file.write_text("not a capture")
+
+    discovered = [Path(path).name for path in pp.discover_pcapng_files(tmp_path)]
+
+    assert discovered == ["capture_a.pcapng", "capture_b.pcap"]
+
+
+def test_discover_pcapng_files_rejects_true_pcap_magic(tmp_path: Path):
+    pcap_capture = tmp_path / "true_pcap.pcap"
+    pcap_capture.write_bytes(PCAP_MAGIC + b"\x00" * 24)
+
+    with pytest.raises(ValueError, match="is a pcap file based on its magic bytes"):
+        pp.discover_pcapng_files(tmp_path)
 
 
 @pytest.mark.requires_external_tools

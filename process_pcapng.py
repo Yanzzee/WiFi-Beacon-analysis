@@ -10,6 +10,7 @@ import pandas as pd
 import re
 import shutil
 import io
+import warnings
 
 load_dotenv("config.env")
 
@@ -22,6 +23,14 @@ ERM_UDP_PORT = int(os.getenv("ERM_UDP_PORT", "5555"))
 ERM_TYPE = os.getenv("ERM_TYPE", "aruba_erm_type0")
 
 CHUNK_SIZE = 10000
+PCAPNG_MAGIC = b"\x0a\x0d\x0d\x0a"
+PCAP_MAGIC_BYTES = {
+    b"\xa1\xb2\xc3\xd4",
+    b"\xd4\xc3\xb2\xa1",
+    b"\xa1\xb2\x3c\x4d",
+    b"\x4d\x3c\xb2\xa1",
+}
+CAPTURE_FILE_EXTENSIONS = {".pcapng", ".pcap"}
 
 
 def resolve_tshark_executable() -> str:
@@ -37,6 +46,37 @@ def resolve_tshark_executable() -> str:
         "The tshark executable was not found. "
         f"Tried '{TSHARK_EXECUTABLE}'. Ensure tshark is installed and on PATH, "
         "or set the TSHARK_PATH environment variable to the tshark executable."
+    )
+
+
+def validate_pcapng_capture(file_path, warn_on_legacy_extension=True) -> None:
+    """Validate that a capture file is pcapng, even if it has a legacy .pcap name."""
+    file_path = os.fspath(file_path)
+    extension = os.path.splitext(file_path)[1].lower()
+
+    with open(file_path, "rb") as capture_file:
+        magic = capture_file.read(4)
+
+    if magic == PCAPNG_MAGIC:
+        if extension == ".pcap" and warn_on_legacy_extension:
+            warnings.warn(
+                f"{file_path} has a .pcap extension but pcapng magic bytes. "
+                "Processing will continue, but rename the file to .pcapng when possible.",
+                UserWarning,
+                stacklevel=2,
+            )
+        return
+
+    if magic in PCAP_MAGIC_BYTES:
+        raise ValueError(
+            f"{file_path} is a pcap file based on its magic bytes. "
+            "This pipeline currently requires pcapng captures. Convert or recapture as .pcapng."
+        )
+
+    magic_hex = magic.hex(" ") if magic else "empty file"
+    raise ValueError(
+        f"{file_path} is not a pcapng capture based on its magic bytes ({magic_hex}). "
+        "This pipeline currently requires pcapng captures."
     )
 
 # Aruba ERM captures
@@ -116,6 +156,10 @@ def normalize_ssid_column(df: pd.DataFrame) -> None:
 
 
 def process_pcapng(file_path, output_dir, erm=True):
+    file_path = os.fspath(file_path)
+    output_dir = os.fspath(output_dir)
+    validate_pcapng_capture(file_path)
+
     output_file = os.path.join(output_dir, f"{os.path.basename(file_path)}.parquet")
     os.makedirs(output_dir, exist_ok=True)
 
@@ -210,15 +254,25 @@ def process_pcapng(file_path, output_dir, erm=True):
     print(f"Finished processing {file_path}")
     return output_file
 
-def process_all_pcapngs(pcapng_dir, output_dir, num_processes, erm=True):
-    os.makedirs(output_dir, exist_ok=True)
+
+def discover_pcapng_files(pcapng_dir):
+    pcapng_dir = os.fspath(pcapng_dir)
     pcapng_files = [
         os.path.join(pcapng_dir, f)
         for f in os.listdir(pcapng_dir)
-        if f.endswith(".pcapng")
+        if os.path.splitext(f)[1].lower() in CAPTURE_FILE_EXTENSIONS
     ]
+    for file in pcapng_files:
+        validate_pcapng_capture(file, warn_on_legacy_extension=False)
+
     pcapng_files.sort()
-    print(f"Found {len(pcapng_files)} pcapng files. Starting processing...")
+    return pcapng_files
+
+
+def process_all_pcapngs(pcapng_dir, output_dir, num_processes, erm=True):
+    os.makedirs(output_dir, exist_ok=True)
+    pcapng_files = discover_pcapng_files(pcapng_dir)
+    print(f"Found {len(pcapng_files)} pcapng-format files. Starting processing...")
 
     with ProcessPoolExecutor(max_workers=num_processes) as executor:
         futures = [executor.submit(process_pcapng, file, output_dir, erm) for file in pcapng_files]

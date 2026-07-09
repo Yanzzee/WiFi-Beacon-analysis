@@ -44,7 +44,7 @@ Data/grouped_data/<Hostname>.parquet
 
 ## What Not To Include
 
-- Raw `.pcap` or `.pcapng` captures.
+- Raw `.pcapng` captures, including legacy `.pcap` filenames that contain pcapng data.
 - `Data/processed_data`.
 - Existing `Data/sampled` outputs.
 - Existing `Output` files.
