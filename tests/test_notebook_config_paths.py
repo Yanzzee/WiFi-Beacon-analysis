@@ -127,6 +127,49 @@ def test_analyze_data_combine_all_class_beacons_requires_sampled_files(
         namespace["combine_all_class_beacons"]()
 
 
+def test_analyze_data_preflight_reports_missing_grouped_sample_hostname(
+    monkeypatch,
+    tmp_path,
+):
+    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    pd = namespace["pd"]
+
+    grouped_folder = Path(namespace["GROUPED_DATA_FOLDER"])
+    (grouped_folder / "P-TEST-AP-01.parquet").write_text(
+        "placeholder",
+        encoding="utf-8",
+    )
+    missing_path = grouped_folder / "P-TEST-AP-02.parquet"
+    out_of_scope_path = grouped_folder / "P-OUT-OF-SCOPE.parquet"
+
+    sample_aps_df = pd.DataFrame(
+        {
+            "Hostname": [
+                "P-TEST-AP-01",
+                "P-TEST-AP-02",
+                "P-OUT-OF-SCOPE",
+            ],
+            "Building-Room": [
+                "TEST-101",
+                "TEST-101",
+                "TEST-999",
+            ],
+        }
+    )
+    sample_classes_df = pd.DataFrame({"location": ["TEST-101"]})
+
+    with pytest.raises(FileNotFoundError) as exc_info:
+        namespace["validate_grouped_files_for_sample_aps"](
+            sample_aps_df,
+            sample_classes_df,
+        )
+
+    message = str(exc_info.value)
+    assert str(missing_path) in message
+    assert str(out_of_scope_path) not in message
+    assert "BSSID fallback files cannot be reliably associated" in message
+
+
 def test_analyze_data_grouped_schema_accepts_aruba_time_index(
     monkeypatch,
     tmp_path,

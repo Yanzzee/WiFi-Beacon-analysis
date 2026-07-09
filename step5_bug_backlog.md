@@ -254,13 +254,17 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 17. BSSID fallback filenames do not match sample-driven analysis lookup
 
+- Status: fixed
 - Category: fragility
 - Evidence: `group_data_bssid.py` falls back to `<BSSID>.parquet` when `wlan.vs.aruba.ap_name` is absent. `analyze_data.ipynb`, code cell 0, constructs grouped filenames from `Sample/sample_aps.parquet` `Hostname` values.
 - Why it matters: Grouping succeeds but analysis later fails to find files unless sample hostnames are also BSSID filenames.
 - Risk level: medium
-- Suggested fix scope: Add a preflight check before analysis that reports missing grouped files for sample AP hostnames. A broader AP/BSSID mapping strategy is out of scope for Step 5.
-- Suggested validation/test: Use a fixture where one sample hostname has no matching grouped parquet and assert the error lists the missing expected path.
+- Suggested fix scope: Implemented as a preflight check before analysis that reports missing grouped files for sampled AP hostnames. The check is scoped to APs whose `Building-Room` values are present in sampled class locations, so AP inventory rows outside the current class sample are not required.
+- Suggested validation/test: Added a focused fixture where one in-scope sample hostname has no matching grouped parquet and asserted the error lists the missing expected path, does not list an out-of-scope AP, and explains the BSSID fallback limitation.
 - Safe to fix before notebook conversion: Yes for preflight validation; no for broad mapping changes.
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `step5_bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q -k grouped_sample_hostname` passed.
+- Remaining caveats: This fix intentionally does not implement multi-vendor AP-name extraction or AP/radio inference from BSSID fallback files. Multiple SSIDs can have different BSSIDs on the same radio, and APs can have multiple radios, so BSSID-only filenames cannot reliably prove shared radio or AP membership. Aruba AP-name beacons remain the supported path for this analysis stage; broader Aruba, Mist, Extreme, Cisco, Meraki, and non-vendor abstraction should be handled later.
 - Recommended order: 17
 
 ### 18. High-CU streak logic may bridge empty time bins
