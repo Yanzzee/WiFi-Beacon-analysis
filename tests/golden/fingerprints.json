@@ -35,6 +35,11 @@
         "total_scount"
       ],
       "numeric": {
+        "radio_number": {
+          "max": 2.0,
+          "median": 1.0,
+          "min": 1.0
+        },
         "total_scount": {
           "max": 83.0,
           "median": 24.0,
@@ -190,6 +195,11 @@
         "location"
       ],
       "numeric": {
+        "radio_number": {
+          "max": 2.0,
+          "median": 1.0,
+          "min": 1.0
+        },
         "room_scount": {
           "max": 286.0,
           "median": 126.0,
@@ -376,6 +386,16 @@
           "median": 29.5,
           "min": 0.0
         },
+        "radio_count": {
+          "max": 2.0,
+          "median": 2.0,
+          "min": 1.0
+        },
+        "radio_number": {
+          "max": 2.0,
+          "median": 1.0,
+          "min": 1.0
+        },
         "total_beacons": {
           "max": 22301.0,
           "median": 9419.0,
@@ -512,6 +532,16 @@
           "median": 29.5,
           "min": 0.0
         },
+        "radio_count": {
+          "max": 2.0,
+          "median": 2.0,
+          "min": 1.0
+        },
+        "radio_number": {
+          "max": 2.0,
+          "median": 1.0,
+          "min": 1.0
+        },
         "total_beacons": {
           "max": 22301.0,
           "median": 9419.0,
@@ -647,6 +677,16 @@
           "max": 67.0,
           "median": 29.5,
           "min": 0.0
+        },
+        "radio_count": {
+          "max": 2.0,
+          "median": 2.0,
+          "min": 1.0
+        },
+        "radio_number": {
+          "max": 2.0,
+          "median": 1.0,
+          "min": 1.0
         },
         "total_beacons": {
           "max": 22301.0,

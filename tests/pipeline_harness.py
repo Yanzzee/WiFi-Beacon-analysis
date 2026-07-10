@@ -164,6 +164,8 @@ TIMESTAMP_COLUMNS: tuple[str, ...] = (
 )
 
 NUMERIC_COLUMNS: tuple[str, ...] = (
+    "radio_number",
+    "radio_count",
     "wlan.qbss.cu",
     "wlan.qbss.scount",
     "wlan.qbss.adc",

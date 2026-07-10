@@ -281,14 +281,18 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 19. Radio inference is Aruba/MAC-gap-specific
 
+- Status: safe pre-conversion platform guard added; inference replacement remains deferred
 - Category: fragility
-- Evidence: `analyze_data.ipynb`, code cell 0, derives `radio_number` by sorting `wlan.ta_int` and incrementing when adjacent MAC integers differ by more than 1. The notebook comment says channel numbers would probably be better but this works for Aruba.
+- Evidence: `analyze_data.ipynb`, code cell 0, derives `radio_number` by sorting `wlan.ta_int` and incrementing when adjacent MAC integers differ by more than 1. The notebook now reads `AP_PLATFORM` and calls `validate_radio_inference_platform()` before checking or creating analysis outputs; any value other than `aruba`, including an unset value, raises a clear error before the MAC-gap algorithm runs.
 - Why it matters: A different vendor, MAC allocation pattern, or missing transmitter can split or merge radios incorrectly and affect `total_scount`, plots, and radio summaries.
 - Risk level: high
-- Suggested fix scope: For Step 5, add explicit documentation or validation that this inference is Aruba-specific. Replacing radio inference should wait for module extraction or a dedicated analysis prompt.
-- Suggested validation/test: Pin current inferred `radio_number` counts in the golden fingerprint test and add a small targeted fixture if a future channel-based implementation is selected.
-- Safe to fix before notebook conversion: Documentation/validation only is safe; algorithm change is not.
+- Suggested fix scope: Implemented pre-conversion scope is an explicit `AP_PLATFORM=aruba` precondition plus documentation. Replacing radio inference should wait for module extraction or a dedicated analysis prompt.
+- Suggested validation/test: Added a focused test that rejects unset and non-Aruba platforms, accepts normalized Aruba configuration, and pins the validation ahead of output checks. Added `radio_number` and `radio_count` to the golden numeric fingerprint so current inferred counts are regression-checked. Add a small targeted fixture if a future channel-based implementation is selected.
+- Safe to fix before notebook conversion: Yes for the implemented platform guard and regression fingerprint; no for an algorithm change.
 - Recommended order: 19
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `tests/pipeline_harness.py`, `tests/golden/fingerprints.json`, `docs/current_pipeline.md`, `docs/bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed (15 tests); `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800 -q` passed in 22m09s with existing analysis outputs unchanged and inferred `radio_number`/`radio_count` metrics pinned in the golden fingerprint.
+- Remaining caveats: `AP_PLATFORM=aruba` is an operator-supplied precondition, not proof that the input contains a complete or correctly grouped Aruba transmitter allocation. Missing transmitter MACs can still split one radio, and adjacent allocations can still merge radios. Channel-based or vendor-neutral radio identity remains deferred until after notebook conversion.
 
 ### 20. Missing CU values are converted to measured zero
 

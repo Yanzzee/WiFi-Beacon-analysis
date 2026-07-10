@@ -20,6 +20,7 @@ CONFIG_ENV_KEYS = (
     "ALL_CLASS_BEACONS_FOLDER",
     "CLASS_SESSIONS_FOLDER",
     "BEACON_RATE",
+    "AP_PLATFORM",
     "SSID1",
     "SSID2",
 )
@@ -82,6 +83,7 @@ def _load_analyze_data_first_cell(monkeypatch: pytest.MonkeyPatch, tmp_path: Pat
         "SAMPLE_FOLDER": str(tmp_path / "Sample"),
         "GROUPED_DATA_FOLDER": str(data_folder / "grouped_data"),
         "BEACON_RATE": "1.024",
+        "AP_PLATFORM": "aruba",
     }
     for key, value in env_values.items():
         monkeypatch.setenv(key, value)
@@ -281,6 +283,33 @@ def test_analyze_data_grouped_schema_rejects_native_conversion_output(
             "Data/grouped_data/00_00_00_00_00_00.parquet",
             "P-TEST-AP-01",
         )
+
+
+@pytest.mark.parametrize("configured_platform", [None, "extreme", "none"])
+def test_analyze_data_rejects_unsupported_radio_inference_platform(
+    monkeypatch,
+    tmp_path,
+    configured_platform,
+):
+    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace["AP_PLATFORM"] = configured_platform
+
+    with pytest.raises(
+        ValueError,
+        match=r"radio inference is supported only when AP_PLATFORM=aruba",
+    ):
+        namespace["validate_radio_inference_platform"]()
+
+    namespace["AP_PLATFORM"] = " Aruba "
+    namespace["validate_radio_inference_platform"]()
+
+    main_source = _find_top_level_function_source(
+        _analyze_data_code_source(),
+        "main",
+    )
+    assert main_source.index("validate_radio_inference_platform()") < main_source.index(
+        "validate_no_existing_analysis_outputs()"
+    )
 
 
 def test_analyze_data_graph_handles_three_radio_groups(monkeypatch, tmp_path):

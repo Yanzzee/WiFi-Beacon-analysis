@@ -402,6 +402,7 @@ Behavior:
 - Removes near-duplicate beacons by `wlan.ta` using `0.95 * BEACON_RATE`.
 - Validates that every retained, deduplicated in-scope row has a non-null QBSS channel-utilization value. If CU is missing, analysis fails before integer conversion with the AP, class interval, affected count/percentage, and example source rows.
 - Replaces missing QBSS station-count and admission-capacity values with zero, then converts the QBSS columns to non-null integers. The existing CU `fillna(0)` remains in the notebook but is now guarded: missing CU cannot reach it through the supported analysis path.
+- Requires `AP_PLATFORM=aruba` before analysis because the current radio inference is Aruba-specific.
 - Infers `radio_number` from sorted transmitter MAC integer gaps.
 - Calculates `total_scount` by combining station counts across transmitters for the inferred radio.
 - Calculates per-radio metrics and plots channel utilization/station counts.
@@ -459,7 +460,7 @@ Fragility:
 - It assumes grouped filenames are AP hostnames from `Sample_APs.csv`.
 - It assumes `wlan.vs.aruba.ap_name` is present and has one unique value per AP/session slice.
 - It now fails fast when grouped `aruba_erm.time` is missing, timezone-naive, or stored as strings/objects. This is validation only; it does not normalize varied input timestamp formats.
-- Radio numbering is inferred from transmitter MAC integer gaps, with comments noting this works for Aruba and may be better based on channel.
+- Radio numbering is inferred from transmitter MAC integer gaps. The notebook now fails before analysis unless `AP_PLATFORM=aruba`; this validates the supported platform but does not prove that every observed Aruba MAC allocation is complete or correctly grouped. Channel-based or vendor-neutral inference remains deferred until after notebook conversion.
 - `BEACON_RATE` is used for deduplication and duration math. The configured value is the effective metadata interval, not the raw IEEE beacon interval.
 - Some SSID-specific plotting lines are commented or temporarily disabled for performance.
 
