@@ -400,7 +400,8 @@ Behavior:
 - Filters beacon rows to the class start/end time.
 - Converts `aruba_erm.time` to `TIMEZONE`.
 - Removes near-duplicate beacons by `wlan.ta` using `0.95 * BEACON_RATE`.
-- Replaces missing QBSS station-count, channel-utilization, and admission-capacity values with zero, then converts those columns to non-null integers. This means downstream data cannot distinguish a missing CU value from a measured CU value of zero.
+- Validates that every retained, deduplicated in-scope row has a non-null QBSS channel-utilization value. If CU is missing, analysis fails before integer conversion with the AP, class interval, affected count/percentage, and example source rows.
+- Replaces missing QBSS station-count and admission-capacity values with zero, then converts the QBSS columns to non-null integers. The existing CU `fillna(0)` remains in the notebook but is now guarded: missing CU cannot reach it through the supported analysis path.
 - Infers `radio_number` from sorted transmitter MAC integer gaps.
 - Calculates `total_scount` by combining station counts across transmitters for the inferred radio.
 - Calculates per-radio metrics and plots channel utilization/station counts.
@@ -657,7 +658,7 @@ Fragility:
 - Counts radios only for the configured primary SSID, `SSID1`.
 - Uses `BEACON_RATE` as the bin/window duration for high-CU duration and streak math.
 - The current location-wide streak can join high observations from different radios or be reset by a non-high observation from a different radio. It is not the longest independently calculated radio streak. The post-refactor target is to calculate streaks per stable radio identity and report the longest single-radio streak for the class location.
-- Missing CU values have already been converted to zero by `analyze_data.ipynb`. A bin containing only such rows is treated as observed non-high data rather than as an empty or unknown-CU bin.
+- Newly generated supported-path data cannot silently convert missing CU to zero because `analyze_data.ipynb` now fails first. Historical outputs created before the guard, or data produced outside the supported path, may still conflate imputed zero with measured zero because they do not carry missing-value provenance.
 - If `room_scount` is missing, class-level station metrics cannot be computed.
 
 ## Scripts and Notebooks Not Normally Run as Pipeline Stages

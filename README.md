@@ -40,6 +40,7 @@ sample_schedule.csv input files. These should be UTF-8 encoded, sections in the 
 
 analyze_data.ipynb - further processes and begins to analyze data within scope in the sample files
     grouped input must include aruba_erm.time as a timezone-aware datetime dtype; varied beacon timestamp strings, naive datetimes, and broader schedule time parsing need a dedicated normalization pass after notebook conversion
+    deduplicated in-scope rows must have non-null wlan.qbss.cu; the stage fails with AP, class-time, percentage, and example-row details rather than silently converting missing CU to zero
     saves plots for each class session in Output/plots/
     separate parquet files for each AP are saved as class_beacons files, these contain only data within the sample scope
     all_class_beacons.parquet - combined all beacon data within the scope of class sessions
@@ -60,6 +61,7 @@ analyze_class_sessions.ipynb - analyze each class session as a single row. Curre
 ### Documentation
 
 - `docs/current_pipeline.md` documents the behavior and assumptions of the current pipeline.
+- `docs/bug_backlog.md` tracks confirmed bugs, fragilities, and behavior risks.
 - `docs/post_refactor_design.md` tracks analysis and architecture changes intentionally deferred until after notebook refactoring.
 
 

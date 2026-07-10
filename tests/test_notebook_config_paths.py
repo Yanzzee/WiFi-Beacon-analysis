@@ -374,6 +374,49 @@ def test_analyze_data_graph_handles_three_radio_groups(monkeypatch, tmp_path):
     assert max_totals_by_radio.to_dict() == {1: 30, 2: 70, 3: 110}
 
 
+def test_analyze_data_rejects_missing_cu_before_zero_fill(monkeypatch, tmp_path):
+    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    pd = namespace["pd"]
+
+    start_time = pd.Timestamp("2025-01-01 10:00:00", tz=namespace["TIMEZONE"])
+    end_time = pd.Timestamp("2025-01-01 10:01:00", tz=namespace["TIMEZONE"])
+    rows = pd.DataFrame(
+        {
+            "aruba_erm.time": [start_time, start_time + pd.Timedelta(seconds=1)],
+            "wlan.ta": ["00:00:00:00:00:00", "00:00:00:00:00:01"],
+            "wlan.bssid": ["00:00:00:00:00:00", "00:00:00:00:00:01"],
+            "wlan.ssid": ["eduroam", "eduroam"],
+            "wlan.qbss.cu": [pd.NA, 0],
+        }
+    )
+
+    with pytest.raises(
+        ValueError,
+        match=r"1 of 2 deduplicated in-scope rows .* missing wlan.qbss.cu",
+    ):
+        namespace["validate_no_missing_cu"](
+            rows,
+            "P-TEST-AP-01",
+            start_time,
+            end_time,
+        )
+
+    namespace["validate_no_missing_cu"](
+        rows.assign(**{"wlan.qbss.cu": [0, 1]}),
+        "P-TEST-AP-01",
+        start_time,
+        end_time,
+    )
+
+    graph_source = _find_top_level_function_source(
+        _analyze_data_code_source(),
+        "graph",
+    )
+    assert graph_source.index("validate_no_missing_cu(") < graph_source.index(
+        'filtered_df["wlan.qbss.cu"] = filtered_df["wlan.qbss.cu"].fillna(0)'
+    )
+
+
 def test_analyze_all_class_beacons_filters_configured_ssids(monkeypatch, tmp_path):
     pd = pytest.importorskip("pandas")
     pytest.importorskip("pyarrow")

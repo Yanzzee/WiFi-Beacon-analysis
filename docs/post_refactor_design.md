@@ -2,7 +2,7 @@
 
 This document tracks analysis and architecture changes intentionally deferred until after the current notebooks are converted into testable Python modules. It is not a description of current behavior and does not authorize changing analysis math without a separate reviewed implementation decision.
 
-`docs/current_pipeline.md` remains the source for how the pipeline works today. `step5_bug_backlog.md` remains the source for pre-refactor bugs, fragilities, and behavior risks.
+`docs/current_pipeline.md` remains the source for how the pipeline works today. `docs/bug_backlog.md` remains the source for pre-refactor bugs, fragilities, and behavior risks.
 
 ## Analysis Semantics
 

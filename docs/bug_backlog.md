@@ -17,7 +17,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: In an analysis fixture copy, set `SAMPLED_FOLDER` to a non-default folder, run the `analyze_data.ipynb` stage, and assert AP sampled files and `Data/all_class_beacons.parquet` are produced from the configured folder.
 - Safe to fix before notebook conversion: Yes. This is a narrow config-path bug.
 - Recommended order: 1
-- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `step5_bug_backlog.md`.
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
 - Remaining caveats: The first golden regression attempt with the default `--analysis-timeout 600` timed out in `analyze_all_class_beacons.ipynb`; rerunning the same regression with a larger per-notebook timeout passed. Pytest emitted a cache warning because it could not write `.pytest_cache` entries.
 
@@ -32,7 +32,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Run the analysis-forward pipeline twice against the same prepared workspace and assert the second run either fails with a clear stale-output message or produces identical row counts and fingerprints.
 - Safe to fix before notebook conversion: Yes, if implemented as an explicit output hygiene fix.
 - Recommended order: 2
-- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `step5_bug_backlog.md`.
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
 - Remaining caveats: The fix uses fail-fast output hygiene rather than deleting generated files. It intentionally leaves normal within-run appends unchanged and does not address the empty sampled folder behavior tracked separately in item 3. Pytest emitted a cache warning because it could not write `.pytest_cache` entries.
 
@@ -47,7 +47,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Use a fixture with valid sample parquet files but no matching grouped AP files, or a deliberately empty configured sampled folder, and assert the stage raises the clear error.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 3
-- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `step5_bug_backlog.md`.
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
 - Remaining caveats: The fix raises a clear `FileNotFoundError` when no sampled parquet files exist; it does not synthesize empty outputs or change AP/session matching behavior. Pytest emitted a cache warning because it could not write `.pytest_cache` entries.
 
@@ -62,7 +62,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Add a tiny synthetic dataframe or fixture slice with three inferred radio groups and assert the current stage fails with a clear unsupported-radio message.
 - Safe to fix before notebook conversion: Partially. A guard is safe; changing the analysis to support arbitrary radios is broader.
 - Recommended order: 4
-- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `step5_bug_backlog.md`.
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
 - Remaining caveats: The fix supports arbitrary observed `radio_number` groups within the existing MAC-gap grouping approach. It does not add band-based radio inference or change the existing nearest-transmitter search semantics beyond selecting transmitters from the current row's radio group. Pytest emitted the existing cache warning because it could not write `.pytest_cache` entries.
 
@@ -77,7 +77,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Build a minimal `Data/radio_summary.parquet` fixture where all rows have `radio_count == 1`, run `analyze_radio_summary.ipynb`, and assert it writes CSVs and plots without crashing.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 5
-- Files changed: `analyze_radio_summary.ipynb`, `tests/test_radio_summary_notebook.py`, `step5_bug_backlog.md`.
+- Files changed: `analyze_radio_summary.ipynb`, `tests/test_radio_summary_notebook.py`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_radio_summary_notebook.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
 - Remaining caveats: The fix skips and logs only missing radio-count regression groups. It does not change the upstream radio-count split, `ssid_count` division behavior, histograms, PDF/CDF plots, or any filtering thresholds. Pytest emitted the existing cache warning because it could not write `.pytest_cache` entries.
 
@@ -92,7 +92,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Use a small `radio_summary.parquet` with one row where `ssid_count` is zero and assert the notebook excludes it or fails with a clear validation error.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 6
-- Files changed: `analyze_radio_summary.ipynb`, `tests/test_radio_summary_notebook.py`, `step5_bug_backlog.md`.
+- Files changed: `analyze_radio_summary.ipynb`, `tests/test_radio_summary_notebook.py`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_radio_summary_notebook.py` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800` passed.
 - Remaining caveats: The fix excludes rows with missing, non-numeric, or non-positive `ssid_count` from `filtered_radio_summary_df` before downstream beacon-rate plots. It does not change the existing total-beacon threshold, class-duration filter, radio-count split, or plot formulas for retained rows. Pytest emitted the existing cache warning because it could not write `.pytest_cache` entries.
 
@@ -107,7 +107,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Run `samples.py` against a minimal schedule CSV with one valid class row and assert the three sample parquet files are created.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 7
-- Files changed: `samples.py`, `tests/test_samples_script.py`, `step5_bug_backlog.md`.
+- Files changed: `samples.py`, `tests/test_samples_script.py`, `docs/bug_backlog.md`.
 - Validation run: `./.venv/Scripts/python.exe -m pytest tests/test_samples_script.py` passed.
 
 ### 8. `samples.py` casts dirty numeric fields before cell cleanup
@@ -121,7 +121,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Add a focused sample CSV fixture where `Enrl` or `Size` contains whitespace/non-breaking-space formatting and assert `sample_classes.parquet` has integer `enrolled`.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 8
-- Files changed: `samples.py`, `tests/test_samples_script.py`, `step5_bug_backlog.md`.
+- Files changed: `samples.py`, `tests/test_samples_script.py`, `docs/bug_backlog.md`.
 - Validation run: `./.venv/Scripts/python.exe -m pytest tests/test_samples_script.py` passed.
 
 ### 9. `process_pcapng.py` does not check `tshark` exit status
@@ -158,7 +158,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 	- `Beacon_Capture_20251110110000_00014.pcapng`
 	and compares the generated parquet files to the existing known-good files in `Data/processed_data`.
 - Safe to fix before notebook conversion: Yes; the code behavior change was made under an explicit conversion prompt and remains limited to capture-format validation/discovery.
-- Files changed: `process_pcapng.py`, `tests/test_process_pcapng_windows.py`, `beacon_capture.sh`, `beacon_capture_direct.sh`, `beacon_capture_band.sh`, `capture_direct.sh`, `README.md`, `docs/current_pipeline.md`, `tests/fixtures/README.md`, `step5_bug_backlog.md`.
+- Files changed: `process_pcapng.py`, `tests/test_process_pcapng_windows.py`, `beacon_capture.sh`, `beacon_capture_direct.sh`, `beacon_capture_band.sh`, `capture_direct.sh`, `README.md`, `docs/current_pipeline.md`, `tests/fixtures/README.md`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_process_pcapng_windows.py -q` — result: `5 passed` (warning: pytest cache write permission warning unrelated to conversion logic).
 - Recommended order: 10
 
@@ -173,7 +173,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Documentation-only check that every script named in README exists, except files explicitly labeled historical/obsolete.
 - Safe to fix before notebook conversion: Yes.
 - Recommended order: 11
-- Files changed: `README.md`, `docs/current_pipeline.md`, `step5_bug_backlog.md`.
+- Files changed: `README.md`, `docs/current_pipeline.md`, `docs/bug_backlog.md`.
 - Validation run: Documentation-only grep confirmed stale `group_data.py` and inconsistent uppercase sample-script README references were removed; no code or tests changed.
 
 ### 12. `analyze_data.py` is obsolete but remains runnable-looking
@@ -187,7 +187,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Confirm docs point at `analyze_data.ipynb` as the source of truth until conversion creates a new module, and confirm archived obsolete files are referenced with `old/` paths.
 - Safe to fix before notebook conversion: Documentation notice only is safe; deleting or rewriting is not recommended before conversion.
 - Recommended order: 12
-- Files changed: `README.md`, `docs/current_pipeline.md`, `config.env`, `old/README.md`, `step5_bug_backlog.md`.
+- Files changed: `README.md`, `docs/current_pipeline.md`, `config.env`, `old/README.md`, `docs/bug_backlog.md`.
 - Validation run: Documentation-only grep confirmed active docs reference archived obsolete files with `old/` paths and use lowercase `samples.py`.
 
 ### 13. `BEACON_RATE` comment and value disagree
@@ -201,7 +201,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Keep `BEACON_RATE` in the test fingerprint config and require review of fingerprint changes if this value or its interpretation changes.
 - Safe to fix before notebook conversion: Yes, as documentation/comment clarification only. Behavior change is not safe without a separate analysis decision.
 - Recommended order: 13
-- Files changed: `config.env`, `README.md`, `docs/current_pipeline.md`, `analyze_data.ipynb`, `analyze_class_sessions.ipynb`, `step5_bug_backlog.md`.
+- Files changed: `config.env`, `README.md`, `docs/current_pipeline.md`, `analyze_data.ipynb`, `analyze_class_sessions.ipynb`, `docs/bug_backlog.md`.
 - Validation run: Documentation-only grep confirmed the active docs and notebook comments now distinguish the IEEE 0.1024 second interval from the application's 1.024 second effective metadata interval; no analysis behavior or `config.env` values changed.
 - Remaining caveats: Notebook fallback behavior for invalid `BEACON_RATE` values is unchanged. Any future value or semantic change should be paired with golden fingerprint review.
 
@@ -217,7 +217,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested fix scope: Implemented as a narrow compatibility guard and documentation clarification. `analyze_data.ipynb` now validates grouped AP parquet schemas before analysis and raises a clear error when native `--no-erm` output with `frame.time_epoch` is detected. `process_pcapng.py`, README, and `docs/current_pipeline.md` now state that native/non-Aruba conversion is conversion-only for now and does not feed the notebooks without timestamp plus AP-name mapping/adaptation.
 - Suggested validation/test: Added focused notebook-schema tests for Aruba-shaped grouped data and native `--no-erm` grouped data.
 - Safe to fix before notebook conversion: Documentation or explicit validation is safe; full native support is not.
-- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `process_pcapng.py`, `README.md`, `docs/current_pipeline.md`, `step5_bug_backlog.md`.
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `process_pcapng.py`, `README.md`, `docs/current_pipeline.md`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_process_pcapng_windows.py -q` passed, including the known-good validation over the three capture test files.
 - Remaining caveats: Full native/non-Aruba analysis support remains an important future feature, but it still needs a dedicated mapping/adaptation design after the current bug fixes and refactoring.
 - Recommended order: 14
@@ -232,7 +232,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested fix scope: Do not change timestamp semantics without a dedicated timezone fixture and a canonical timezone contract. Implemented pre-conversion guard: `analyze_data.ipynb` now validates grouped AP input before analysis and fails fast unless `aruba_erm.time` is already a timezone-aware datetime dtype. Documentation now states that varied beacon timestamp strings, naive datetimes, and broader class schedule time parsing need a dedicated normalization design after notebook conversion.
 - Suggested validation/test: Added focused schema tests for timezone-aware grouped input, timezone-naive grouped input, and string timestamp grouped input. Future semantic validation should build a small grouped parquet fixture with known naive and timezone-aware timestamps, run cleanup plus `analyze_data`, and assert expected class-session inclusion.
 - Safe to fix before notebook conversion: No for semantic timestamp changes; yes for explicit validation and documentation.
-- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `README.md`, `docs/current_pipeline.md`, `step5_bug_backlog.md`.
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `README.md`, `docs/current_pipeline.md`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800 -q` passed.
 - Remaining caveats: The guard does not normalize varied timestamp formats. `group_data_cleanup.py` still uses `PLOT_TIMEZONE`, while class schedule processing and analysis use `TIMEZONE`; the final contract should be designed after notebook conversion.
 - Recommended order: 15
@@ -248,7 +248,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Added focused alternate-SSID notebook tests that assert `analyze_all_class_beacons.ipynb` filters to configured `SSID1`/`SSID2` and `analyze_class_sessions.ipynb` counts radios for configured primary `SSID1`. Ran the existing golden fixture with default SSIDs and confirmed fingerprints are unchanged.
 - Safe to fix before notebook conversion: Yes, if default behavior is pinned.
 - Recommended order: 16
-- Files changed: `analyze_all_class_beacons.ipynb`, `analyze_class_sessions.ipynb`, `tests/test_notebook_config_paths.py`, `docs/current_pipeline.md`, `step5_bug_backlog.md`.
+- Files changed: `analyze_all_class_beacons.ipynb`, `analyze_class_sessions.ipynb`, `tests/test_notebook_config_paths.py`, `docs/current_pipeline.md`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 3600 -q` passed.
 - Remaining caveats: `number_radios` intentionally continues to use only the primary SSID (`SSID1`) to preserve current default behavior. The golden pytest run emitted the existing `.pytest_cache` permission warning.
 
@@ -262,7 +262,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested fix scope: Implemented as a preflight check before analysis that reports missing grouped files for sampled AP hostnames. The check is scoped to APs whose `Building-Room` values are present in sampled class locations, so AP inventory rows outside the current class sample are not required.
 - Suggested validation/test: Added a focused fixture where one in-scope sample hostname has no matching grouped parquet and asserted the error lists the missing expected path, does not list an out-of-scope AP, and explains the BSSID fallback limitation.
 - Safe to fix before notebook conversion: Yes for preflight validation; no for broad mapping changes.
-- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `step5_bug_backlog.md`.
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q -k grouped_sample_hostname` passed.
 - Remaining caveats: This fix intentionally does not implement multi-vendor AP-name extraction or AP/radio inference from BSSID fallback files. Multiple SSIDs can have different BSSIDs on the same radio, and APs can have multiple radios, so BSSID-only filenames cannot reliably prove shared radio or AP membership. Aruba AP-name beacons remain the supported path for this analysis stage; broader Aruba, Mist, Extreme, Cisco, Meraki, and non-vendor abstraction should be handled later.
 - Recommended order: 17
@@ -292,14 +292,20 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 
 ### 20. Missing CU values are converted to measured zero
 
+- Status: safe pre-conversion guard added; nullable-CU semantics remain deferred
 - Category: behavior-risk
-- Evidence: `process_pcapng.py` converts `wlan.qbss.cu` with `pd.to_numeric(..., errors="coerce").astype("Int64")`, which preserves absent or invalid values as nullable `<NA>`. Later, `analyze_data.ipynb`, code cell 0, runs `filtered_df["wlan.qbss.cu"] = filtered_df["wlan.qbss.cu"].fillna(0).astype(int)` before per-radio analysis and before adding rows to `all_class_beacons.parquet`. `analyze_class_sessions.ipynb` subsequently calls `dropna()` for CU summary statistics, but the upstream fill has already removed the missing values.
+- Evidence: `process_pcapng.py` converts `wlan.qbss.cu` with `pd.to_numeric(..., errors="coerce").astype("Int64")`, which preserves absent or invalid values as nullable `<NA>`. `analyze_data.ipynb`, code cell 0, subsequently contains `filtered_df["wlan.qbss.cu"] = filtered_df["wlan.qbss.cu"].fillna(0).astype(int)` before per-radio analysis and before adding rows to `all_class_beacons.parquet`. The notebook now calls `validate_no_missing_cu()` after class-time filtering and transmitter deduplication but before the fill, and fails with AP/time/count/percentage/example-row details if any retained CU value is missing. `analyze_class_sessions.ipynb` still calls `dropna()` for CU summary statistics, but newly generated supported-path data is guaranteed non-null by the guard.
+- Observed scope: The three packet-capture outputs contain 55,627 null-CU rows out of 2,994,944 beacon rows (1.8574%). By file: `Beacon_Capture_20251110090000_00012` has 7,929/1,070,997 (0.7403%), `...100000_00013` has 27,877/1,021,926 (2.7279%), and `...110000_00014` has 19,821/902,021 (2.1974%). All 55,627 null-CU rows also lack Aruba AP-name metadata; the 265,766 rows belonging to sampled AP names contain zero null CU values.
+- In-scope impact: The five `Data/grouped_data` AP files contain 0 null-CU rows out of 8,403,745 total rows. Restricting those files to sampled class location/time intervals produces 0/2,351,053 null rows, and reproducing the notebook's per-transmitter `0.95 * BEACON_RATE` deduplication produces 0/2,334,170 affected rows. The current sampled analysis and its numerical outputs are therefore not changed by the guard.
 - Why it matters: A received beacon with absent or unparseable CU metadata becomes indistinguishable from a beacon that explicitly measured CU as zero. The imputed zero can lower average, median, and minimum CU; act as a non-high observation that resets a radio or class streak; and make a bin appear to contain observed low-CU data rather than unknown CU. Downstream files cannot count or audit which zero values were imputed.
 - Risk level: high
-- Suggested fix scope: Do not change current analysis math as a mechanical pre-refactor fix. After refactoring, preserve CU as a nullable value or retain an explicit `cu_missing` provenance field, distinguish missing-CU rows from missing beacon intervals, and define how each state participates in summaries and lower/upper streak measures. Keep summary outputs traceable to the affected source rows. See `docs/post_refactor_design.md`.
-- Suggested validation/test: Create fixtures containing a measured CU of zero, a beacon with missing CU, a fully empty expected interval, and a high-CU beacon. Assert that the refactored data model preserves all four states and that each streak assumption handles them according to its documented contract.
-- Safe to fix before notebook conversion: No for semantic or schema changes; documentation and non-behavioral missing-value diagnostics are safe.
+- Suggested fix scope: Implemented pre-conversion scope is fail-fast validation immediately before the existing fill, which prevents silent CU inference without changing schemas or analysis math. After refactoring, preserve CU as a nullable value or retain an explicit `cu_missing` provenance field, distinguish missing-CU rows from missing beacon intervals, and define how each state participates in summaries and lower/upper streak measures. Keep summary outputs traceable to the affected source rows. See `docs/post_refactor_design.md`.
+- Suggested validation/test: Added a focused fixture containing both missing CU and measured zero, asserted missing CU raises before the fill, asserted measured zero is accepted, and pinned validation order ahead of `fillna(0)`. Future refactor fixtures should also include a fully empty expected interval and high CU, preserve all four states, and assert each streak assumption follows its documented contract.
+- Safe to fix before notebook conversion: Yes for the implemented fail-fast guard because current in-scope data has no null CU and analysis math is unchanged. No for nullable schema or semantic changes before conversion.
 - Recommended order: 20
+- Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `README.md`, `docs/current_pipeline.md`, `docs/post_refactor_design.md`, `docs/bug_backlog.md`.
+- Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed (12 tests); `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800 -q` passed in 21m33s with existing fingerprints unchanged.
+- Remaining caveats: The guard intentionally does not define how missing CU should contribute to averages, thresholds, or streaks and does not change the existing zero-fill behavior for station count or admission capacity. The raw capture nulls are outside the current Aruba AP-name/sample analysis path; future multi-vendor normalization must preserve and classify them rather than relying on this Aruba-specific exclusion.
 
 ## Next Bug To Fix First
 
