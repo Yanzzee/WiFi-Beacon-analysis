@@ -55,7 +55,12 @@ analyze_radio_summary.ipynb - analyze the class_summary data that includes one r
     radio_summary/ - includes plots
     analyze_radio_summary_log - text output
 
-analyze_class_sessions.ipynb - analyze each class session as a single row, combining multiple radios in the location
+analyze_class_sessions.ipynb - analyze each class session as a single row. Current high-CU duration and streak metrics combine all beacons in the location and mark a bin high when any beacon exceeds the threshold; they are not calculated independently per radio.
+
+### Documentation
+
+- `docs/current_pipeline.md` documents the behavior and assumptions of the current pipeline.
+- `docs/post_refactor_design.md` tracks analysis and architecture changes intentionally deferred until after notebook refactoring.
 
 
 ### Folders

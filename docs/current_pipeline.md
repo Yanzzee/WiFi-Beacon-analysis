@@ -400,7 +400,7 @@ Behavior:
 - Filters beacon rows to the class start/end time.
 - Converts `aruba_erm.time` to `TIMEZONE`.
 - Removes near-duplicate beacons by `wlan.ta` using `0.95 * BEACON_RATE`.
-- Converts QBSS columns to integers.
+- Replaces missing QBSS station-count, channel-utilization, and admission-capacity values with zero, then converts those columns to non-null integers. This means downstream data cannot distinguish a missing CU value from a measured CU value of zero.
 - Infers `radio_number` from sorted transmitter MAC integer gaps.
 - Calculates `total_scount` by combining station counts across transmitters for the inferred radio.
 - Calculates per-radio metrics and plots channel utilization/station counts.
@@ -613,6 +613,11 @@ Behavior:
 - Filters `Data/all_class_beacons_processed.parquet` by session time and `location`.
 - Uses `room_scount` for maximum station count.
 - Uses `wlan.qbss.cu` for CU threshold analysis.
+- Creates `BEACON_RATE`-wide bins anchored at the class start time. Only complete bins produced by `pd.date_range(start, end, freq=...)` are evaluated; a trailing partial interval is not evaluated.
+- Calculates high-CU duration and streaks across all beacons in the location, not independently per radio. A nonempty bin is high for a threshold when any classroom beacon in that bin exceeds the threshold; it does not require every radio to be high.
+- Adds one `BEACON_RATE` interval to duration and the current streak for each high bin. A nonempty bin with no value above the threshold resets that threshold's streak.
+- Skips empty bins without adding duration and without resetting the current streak. High bins on opposite sides of one or more empty bins can therefore be part of the same reported streak, but the empty-bin time is not included in the reported streak seconds.
+- The reported maximum streak is consequently a count of observed high bins separated by no observed non-high bin, rather than a guarantee of uninterrupted high CU in wall-clock time.
 - Counts unique radios with `wlan.ta` for the configured primary SSID, `SSID1`.
 
 Outputs:
@@ -651,6 +656,8 @@ Fragility:
 - Requires `Data/all_class_beacons_processed.parquet`, so `analyze_all_class_beacons.ipynb` must run first.
 - Counts radios only for the configured primary SSID, `SSID1`.
 - Uses `BEACON_RATE` as the bin/window duration for high-CU duration and streak math.
+- The current location-wide streak can join high observations from different radios or be reset by a non-high observation from a different radio. It is not the longest independently calculated radio streak. The post-refactor target is to calculate streaks per stable radio identity and report the longest single-radio streak for the class location.
+- Missing CU values have already been converted to zero by `analyze_data.ipynb`. A bin containing only such rows is treated as observed non-high data rather than as an empty or unknown-CU bin.
 - If `room_scount` is missing, class-level station metrics cannot be computed.
 
 ## Scripts and Notebooks Not Normally Run as Pipeline Stages
@@ -722,6 +729,8 @@ Additional columns introduced by the pipeline:
 - If the capture source or vendor behavior changes the effective metadata interval, review `BEACON_RATE` and the golden fingerprint together before changing analysis behavior.
 
 ## Known Fragility and Ambiguity
+
+Analysis and architecture changes intentionally deferred until after notebook conversion are tracked in `docs/post_refactor_design.md`.
 
 - Grouping and grouped-data cleanup remain split across `group_data_bssid.py`, `group_data_aruba.py`, and `group_data_cleanup.py`; future work should merge vendor detection, grouping, and cleanup into one process.
 - The current operational source is the notebooks, not archived `old/analyze_data.py`.

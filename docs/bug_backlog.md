@@ -267,15 +267,16 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Remaining caveats: This fix intentionally does not implement multi-vendor AP-name extraction or AP/radio inference from BSSID fallback files. Multiple SSIDs can have different BSSIDs on the same radio, and APs can have multiple radios, so BSSID-only filenames cannot reliably prove shared radio or AP membership. Aruba AP-name beacons remain the supported path for this analysis stage; broader Aruba, Mist, Extreme, Cisco, Meraki, and non-vendor abstraction should be handled later.
 - Recommended order: 17
 
-### 18. High-CU streak logic may bridge empty time bins
+### 18. High-CU streak missing-bin semantics are a retained design decision
 
-- Category: behavior-risk
-- Evidence: `analyze_class_sessions.ipynb`, code cell 1, updates `current_streak` only inside `if not bin_slice.empty:`. Empty bins do not reset the streak.
-- Why it matters: Missing beacon intervals could be counted as continuous high-CU streaks across data gaps.
+- Status: current behavior retained; post-refactor redesign documented
+- Category: design-decision
+- Evidence: `analyze_class_sessions.ipynb`, code cell 1, updates `duration` and `current_streak` only inside `if not bin_slice.empty:`. A high bin adds one `BEACON_RATE` interval, a nonempty bin with no value above the threshold resets the streak, and an empty bin neither adds time nor resets the streak. The same cell filters by class time and `location` without grouping by AP or radio, then uses `(bin_slice['wlan.qbss.cu'] > threshold).any()`, so the current metric is location-wide and a bin is high when any classroom beacon exceeds the threshold.
+- Why it matters: High observations on opposite sides of missing intervals can be reported as one streak even though the missing-bin time is not included in its duration. Because the calculation is location-wide, high observations can also come from different radios, and non-high observations from one radio can reset a streak that would be missing for another radio.
 - Risk level: medium
-- Suggested fix scope: Do not change this as a mechanical cleanup. First decide whether empty bins mean "no evidence" or "break continuity."
-- Suggested validation/test: Create a tiny processed class-session dataframe with two high-CU bins separated by an empty bin and assert the intended max streak.
-- Safe to fix before notebook conversion: No, not until intended missing-data semantics are confirmed.
+- Suggested fix scope: No pre-refactor behavior change. After refactoring, calculate streaks per stable radio identity, expose at least a lower measure that treats missing intervals as non-high and an upper measure that imputes clearly defined high-adjacent gaps, and make the classroom value the longest streak from any single radio in the location. Track beacon coverage and gap lengths alongside both measures. See `docs/post_refactor_design.md`.
+- Suggested validation/test: Before changing behavior, add characterization fixtures for high/empty/high, high/empty/non-high, alternating high observations on different radios, and a missing interval for one radio while another radio reports non-high. Future tests should assert both missing-data assumptions per radio and the class-level maximum across radios.
+- Safe to fix before notebook conversion: No for analysis semantics; documentation of current behavior is safe.
 - Recommended order: 18
 
 ### 19. Radio inference is Aruba/MAC-gap-specific
@@ -288,6 +289,17 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Suggested validation/test: Pin current inferred `radio_number` counts in the golden fingerprint test and add a small targeted fixture if a future channel-based implementation is selected.
 - Safe to fix before notebook conversion: Documentation/validation only is safe; algorithm change is not.
 - Recommended order: 19
+
+### 20. Missing CU values are converted to measured zero
+
+- Category: behavior-risk
+- Evidence: `process_pcapng.py` converts `wlan.qbss.cu` with `pd.to_numeric(..., errors="coerce").astype("Int64")`, which preserves absent or invalid values as nullable `<NA>`. Later, `analyze_data.ipynb`, code cell 0, runs `filtered_df["wlan.qbss.cu"] = filtered_df["wlan.qbss.cu"].fillna(0).astype(int)` before per-radio analysis and before adding rows to `all_class_beacons.parquet`. `analyze_class_sessions.ipynb` subsequently calls `dropna()` for CU summary statistics, but the upstream fill has already removed the missing values.
+- Why it matters: A received beacon with absent or unparseable CU metadata becomes indistinguishable from a beacon that explicitly measured CU as zero. The imputed zero can lower average, median, and minimum CU; act as a non-high observation that resets a radio or class streak; and make a bin appear to contain observed low-CU data rather than unknown CU. Downstream files cannot count or audit which zero values were imputed.
+- Risk level: high
+- Suggested fix scope: Do not change current analysis math as a mechanical pre-refactor fix. After refactoring, preserve CU as a nullable value or retain an explicit `cu_missing` provenance field, distinguish missing-CU rows from missing beacon intervals, and define how each state participates in summaries and lower/upper streak measures. Keep summary outputs traceable to the affected source rows. See `docs/post_refactor_design.md`.
+- Suggested validation/test: Create fixtures containing a measured CU of zero, a beacon with missing CU, a fully empty expected interval, and a high-CU beacon. Assert that the refactored data model preserves all four states and that each streak assumption handles them according to its documented contract.
+- Safe to fix before notebook conversion: No for semantic or schema changes; documentation and non-behavioral missing-value diagnostics are safe.
+- Recommended order: 20
 
 ## Next Bug To Fix First
 
