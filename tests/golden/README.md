@@ -24,7 +24,7 @@ py tests/build_golden_outputs.py --fixture-dir C:\path\to\fixture
 
 The script runs these stages in order in a temporary workspace:
 
-1. `analyze_data.ipynb`
+1. `analyze_data.py`
 2. `analyze_all_class_beacons.ipynb`
 3. `analyze_radio_summary.ipynb`
 4. `analyze_class_sessions.ipynb`

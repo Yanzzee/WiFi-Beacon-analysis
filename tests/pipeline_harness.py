@@ -10,8 +10,9 @@ from pathlib import Path
 from typing import Iterable
 
 
+ANALYSIS_SCRIPT = "analyze_data.py"
+
 ANALYSIS_NOTEBOOK_PLAN: tuple[tuple[str, tuple[int, ...] | None], ...] = (
-    ("analyze_data.ipynb", (0, 1)),
     ("analyze_all_class_beacons.ipynb", tuple(range(13))),
     ("analyze_radio_summary.ipynb", None),
     ("analyze_class_sessions.ipynb", None),
@@ -276,14 +277,49 @@ def prepare_analysis_workspace(
     )
     shutil.copy2(config_source, workspace / "config.env")
 
+    shutil.copy2(repo_root / ANALYSIS_SCRIPT, workspace / ANALYSIS_SCRIPT)
+
     for notebook_name, _ in ANALYSIS_NOTEBOOK_PLAN:
         shutil.copy2(repo_root / notebook_name, workspace / notebook_name)
 
 
 def run_analysis_pipeline(workspace: Path, timeout: int = 600) -> None:
     workspace = Path(workspace)
+    run_script(workspace / ANALYSIS_SCRIPT, workspace, timeout)
     for notebook_name, cells in ANALYSIS_NOTEBOOK_PLAN:
         run_notebook_cells(workspace / notebook_name, cells, workspace, timeout)
+
+
+def run_script(script_path: Path, cwd: Path, timeout: int) -> None:
+    env = os.environ.copy()
+    env.setdefault("MPLBACKEND", "Agg")
+    env.setdefault("PYTHONIOENCODING", "utf-8")
+
+    completed = subprocess.run(
+        [sys.executable, str(script_path)],
+        cwd=str(cwd),
+        env=env,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        capture_output=True,
+        timeout=timeout,
+        check=False,
+    )
+
+    if completed.returncode != 0:
+        raise RuntimeError(
+            "\n".join(
+                [
+                    f"Script stage failed: {script_path.name}",
+                    f"Exit code: {completed.returncode}",
+                    "--- stdout ---",
+                    completed.stdout,
+                    "--- stderr ---",
+                    completed.stderr,
+                ]
+            )
+        )
 
 
 def run_notebook_cells(

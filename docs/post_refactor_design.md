@@ -92,3 +92,10 @@ This document tracks analysis and architecture changes intentionally deferred un
 - Add small fixtures for multiple APs and radios, multiple SSIDs per radio, alternating high radios, missing beacons, missing CU, measured zero CU, long capture gaps, and timezone boundaries.
 - Test lower and upper streak contracts independently, then test that the classroom result is the maximum of single-radio results.
 - Keep golden fingerprints for stable tabular outputs while avoiding PNG byte comparisons.
+
+
+## 6 GHz analysis
+
+### Identify and separate 6 GHz radios
+
+###
