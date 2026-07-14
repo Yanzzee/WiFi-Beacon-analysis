@@ -10,10 +10,12 @@ from pathlib import Path
 from typing import Iterable
 
 
-ANALYSIS_SCRIPT = "analyze_data.py"
+ANALYSIS_SCRIPTS: tuple[str, ...] = (
+    "analyze_data.py",
+    "analyze_all_class_beacons.py",
+)
 
 ANALYSIS_NOTEBOOK_PLAN: tuple[tuple[str, tuple[int, ...] | None], ...] = (
-    ("analyze_all_class_beacons.ipynb", tuple(range(13))),
     ("analyze_radio_summary.ipynb", None),
     ("analyze_class_sessions.ipynb", None),
 )
@@ -277,7 +279,8 @@ def prepare_analysis_workspace(
     )
     shutil.copy2(config_source, workspace / "config.env")
 
-    shutil.copy2(repo_root / ANALYSIS_SCRIPT, workspace / ANALYSIS_SCRIPT)
+    for script_name in ANALYSIS_SCRIPTS:
+        shutil.copy2(repo_root / script_name, workspace / script_name)
 
     for notebook_name, _ in ANALYSIS_NOTEBOOK_PLAN:
         shutil.copy2(repo_root / notebook_name, workspace / notebook_name)
@@ -285,7 +288,8 @@ def prepare_analysis_workspace(
 
 def run_analysis_pipeline(workspace: Path, timeout: int = 600) -> None:
     workspace = Path(workspace)
-    run_script(workspace / ANALYSIS_SCRIPT, workspace, timeout)
+    for script_name in ANALYSIS_SCRIPTS:
+        run_script(workspace / script_name, workspace, timeout)
     for notebook_name, cells in ANALYSIS_NOTEBOOK_PLAN:
         run_notebook_cells(workspace / notebook_name, cells, workspace, timeout)
 

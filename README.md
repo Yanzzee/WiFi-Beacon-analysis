@@ -38,7 +38,7 @@ sample_schedule.csv input files. These should be UTF-8 encoded, sections in the 
     sample_classrooms.parquet - saved dataframe file with information about sampled classroom locations
     sample_classes.parquet - saved dataframe file with information about sampled class periods. Sections in the same location must be combined.
 
-analyze_data.ipynb - further processes and begins to analyze data within scope in the sample files
+analyze_data.py - further processes and begins to analyze data within scope in the sample files
     grouped input must include aruba_erm.time as a timezone-aware datetime dtype; varied beacon timestamp strings, naive datetimes, and broader schedule time parsing need a dedicated normalization pass after notebook conversion
     deduplicated in-scope rows must have non-null wlan.qbss.cu; the stage fails with AP, class-time, percentage, and example-row details rather than silently converting missing CU to zero
     saves plots for each class session in Output/plots/
@@ -47,7 +47,7 @@ analyze_data.ipynb - further processes and begins to analyze data within scope i
     radio_summary.parquet - summary information for each radio/session
     analyze_data_log - detailed information for each radio/session
 
-analyze_all_class_beacons.ipynb - performs aggregate analysis on the all_class_beacons as a single dataset, required for analyze_class_sessions
+analyze_all_class_beacons.py - performs aggregate analysis on the all_class_beacons as a single dataset, required for analyze_class_sessions
     all_class_beacons_processed.parquet - includes location and room station count
     analyze_all_class_beacons_log - output and analysis results
     Output/all_class_beacons/ - includes plot files saved as png
