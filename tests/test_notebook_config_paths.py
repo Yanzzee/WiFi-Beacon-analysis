@@ -7,6 +7,8 @@ from pathlib import Path
 
 import pytest
 
+from script_sections import script_cell_source
+
 
 CONFIG_ENV_KEYS = (
     "DATA_FOLDER",
@@ -49,13 +51,8 @@ def _write_config_env(path: Path, values: dict[str, str]) -> None:
 
 
 def _analyze_data_code_source() -> str:
-    notebook_path = Path(__file__).resolve().parents[1] / "analyze_data.ipynb"
-    notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
-    return "\n".join(
-        "".join(cell.get("source", ""))
-        for cell in notebook["cells"]
-        if cell.get("cell_type") == "code"
-    )
+    source, _ = script_cell_source("analyze_data.py", 1)
+    return source
 
 
 def _find_top_level_function_source(code_source: str, function_name: str) -> str:
@@ -69,8 +66,8 @@ def _find_top_level_function_source(code_source: str, function_name: str) -> str
     raise AssertionError(f"{function_name}() was not found")
 
 
-def _load_analyze_data_first_cell(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
-    source, notebook_path = _notebook_code_cell("analyze_data.ipynb", 0)
+def _load_analyze_data_script(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
+    source, script_path = script_cell_source("analyze_data.py", 1)
 
     data_folder = tmp_path / "Data"
     env_values = {
@@ -89,7 +86,7 @@ def _load_analyze_data_first_cell(monkeypatch: pytest.MonkeyPatch, tmp_path: Pat
         monkeypatch.setenv(key, value)
 
     namespace = {"__name__": "not_main"}
-    exec(compile(source, str(notebook_path), "exec"), namespace)
+    exec(compile(source, str(script_path), "exec"), namespace)
     return namespace
 
 
@@ -104,7 +101,7 @@ def test_analyze_data_append_to_parquet_uses_configured_sampled_folder():
 
 
 def test_analyze_data_rejects_existing_generated_outputs(monkeypatch, tmp_path):
-    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
 
     namespace["validate_no_existing_analysis_outputs"]()
 
@@ -120,7 +117,7 @@ def test_analyze_data_combine_all_class_beacons_requires_sampled_files(
     monkeypatch,
     tmp_path,
 ):
-    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
 
     with pytest.raises(
         FileNotFoundError,
@@ -133,7 +130,7 @@ def test_analyze_data_preflight_reports_missing_grouped_sample_hostname(
     monkeypatch,
     tmp_path,
 ):
-    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
     pd = namespace["pd"]
 
     grouped_folder = Path(namespace["GROUPED_DATA_FOLDER"])
@@ -176,7 +173,7 @@ def test_analyze_data_grouped_schema_accepts_aruba_time_index(
     monkeypatch,
     tmp_path,
 ):
-    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
     pd = namespace["pd"]
 
     ap_df = pd.DataFrame(
@@ -203,7 +200,7 @@ def test_analyze_data_grouped_schema_rejects_naive_aruba_time_index(
     monkeypatch,
     tmp_path,
 ):
-    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
     pd = namespace["pd"]
 
     ap_df = pd.DataFrame(
@@ -231,7 +228,7 @@ def test_analyze_data_grouped_schema_rejects_string_timestamps(
     monkeypatch,
     tmp_path,
 ):
-    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
     pd = namespace["pd"]
 
     ap_df = pd.DataFrame(
@@ -258,7 +255,7 @@ def test_analyze_data_grouped_schema_rejects_native_conversion_output(
     monkeypatch,
     tmp_path,
 ):
-    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
     pd = namespace["pd"]
 
     native_df = pd.DataFrame(
@@ -291,7 +288,7 @@ def test_analyze_data_rejects_unsupported_radio_inference_platform(
     tmp_path,
     configured_platform,
 ):
-    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
     namespace["AP_PLATFORM"] = configured_platform
 
     with pytest.raises(
@@ -313,7 +310,7 @@ def test_analyze_data_rejects_unsupported_radio_inference_platform(
 
 
 def test_analyze_data_graph_handles_three_radio_groups(monkeypatch, tmp_path):
-    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
     pd = namespace["pd"]
 
     namespace["log_file"] = io.StringIO()
@@ -404,7 +401,7 @@ def test_analyze_data_graph_handles_three_radio_groups(monkeypatch, tmp_path):
 
 
 def test_analyze_data_rejects_missing_cu_before_zero_fill(monkeypatch, tmp_path):
-    namespace = _load_analyze_data_first_cell(monkeypatch, tmp_path)
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
     pd = namespace["pd"]
 
     start_time = pd.Timestamp("2025-01-01 10:00:00", tz=namespace["TIMEZONE"])
@@ -483,12 +480,12 @@ def test_analyze_all_class_beacons_filters_configured_ssids(monkeypatch, tmp_pat
     ).to_parquet(data_dir / "all_class_beacons.parquet")
     pd.DataFrame({"Hostname": []}).to_parquet(sample_dir / "sample_aps.parquet")
 
-    cell0, notebook_path = _notebook_code_cell("analyze_all_class_beacons.ipynb", 0)
-    cell2, _ = _notebook_code_cell("analyze_all_class_beacons.ipynb", 2)
+    cell1, script_path = script_cell_source("analyze_all_class_beacons.py", 1)
+    cell3, _ = script_cell_source("analyze_all_class_beacons.py", 3)
     namespace = {"__name__": "not_main"}
     try:
-        exec(compile(cell0, f"{notebook_path}::cell_0", "exec"), namespace)
-        exec(compile(cell2, f"{notebook_path}::cell_2", "exec"), namespace)
+        exec(compile(cell1, f"{script_path}::cell_1", "exec"), namespace)
+        exec(compile(cell3, f"{script_path}::cell_3", "exec"), namespace)
     finally:
         log_file = namespace.get("log_file")
         if log_file is not None:

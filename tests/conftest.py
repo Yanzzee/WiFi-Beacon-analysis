@@ -41,7 +41,7 @@ def pytest_addoption(parser):
         action="store",
         type=int,
         default=600,
-        help="Per-notebook timeout in seconds for analysis-forward tests.",
+        help="Per-stage timeout in seconds for analysis-forward tests.",
     )
 
 

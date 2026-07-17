@@ -32,10 +32,12 @@ def test_samples_script_handles_short_schedule(tmp_path):
     )
 
     env = os.environ.copy()
+    for key in ("TIMEZONE", "SAMPLE_FOLDER", "START_DATE", "END_DATE"):
+        env.pop(key, None)
     env["PYTHONPATH"] = str(REPO_ROOT) + os.pathsep + env.get("PYTHONPATH", "")
 
     result = subprocess.run(
-        [sys.executable, str(REPO_ROOT / "Samples.py")],
+        [sys.executable, str(REPO_ROOT / "samples.py")],
         cwd=sample_dir,
         env=env,
         capture_output=True,
@@ -72,10 +74,12 @@ def test_samples_script_handles_dirty_numeric_cells(tmp_path):
     )
 
     env = os.environ.copy()
+    for key in ("TIMEZONE", "SAMPLE_FOLDER", "START_DATE", "END_DATE"):
+        env.pop(key, None)
     env["PYTHONPATH"] = str(REPO_ROOT) + os.pathsep + env.get("PYTHONPATH", "")
 
     result = subprocess.run(
-        [sys.executable, str(REPO_ROOT / "Samples.py")],
+        [sys.executable, str(REPO_ROOT / "samples.py")],
         cwd=sample_dir,
         env=env,
         capture_output=True,

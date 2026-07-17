@@ -36,7 +36,7 @@ dataset/
       ...
 ```
 
-The grouped parquet filenames must match the AP hostnames used by `Sample/sample_aps.parquet` unless the current notebook logic has been deliberately updated. The current analysis notebook loads grouped AP data with:
+The grouped parquet filenames must match the AP hostnames used by `Sample/sample_aps.parquet` unless the current pipeline logic has been deliberately updated. `analyze_data.py` loads grouped AP data with:
 
 ```text
 Data/grouped_data/<Hostname>.parquet
@@ -50,4 +50,4 @@ Data/grouped_data/<Hostname>.parquet
 - Existing `Output` files.
 - Any files that require `process_pcapng.py`, `tshark`, or Linux wireless tools.
 
-The test harness copies this fixture dataset into a temporary workspace before each run, then runs the analysis notebooks there.
+The test harness copies this fixture dataset into a temporary workspace before each run, then runs the converted analysis scripts followed by the remaining analysis notebook there.

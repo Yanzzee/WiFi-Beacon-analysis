@@ -66,7 +66,7 @@ def parse_args() -> argparse.Namespace:
         "--timeout",
         type=int,
         default=600,
-        help="Per-notebook timeout in seconds.",
+        help="Per-stage timeout in seconds.",
     )
     return parser.parse_args()
 

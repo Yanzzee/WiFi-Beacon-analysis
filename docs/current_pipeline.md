@@ -8,12 +8,12 @@ This document describes the current repository pipeline from capture files to fi
 2. Convert .pcapng captures to parquet with selected Wireshark/tshark fields.
 3. Group converted parquet rows by AP name or BSSID.
 4. Convert sample classroom/AP/schedule CSV files to sample parquet files.
-5. Run `analyze_data.ipynb` to extract class-session beacon data, per-radio summaries, and per-session plots.
-6. Run `analyze_all_class_beacons.ipynb` to enrich and analyze all sampled class beacons.
-7. Run `analyze_radio_summary.ipynb` to analyze one row per radio per class session.
+5. Run `analyze_data.py` to extract class-session beacon data, per-radio summaries, and per-session plots.
+6. Run `analyze_all_class_beacons.py` to enrich and analyze all sampled class beacons.
+7. Run `analyze_radio_summary.py` to analyze one row per radio per class session.
 8. Run `analyze_class_sessions.ipynb` to analyze one row per class session/location.
 
-The active pipeline is notebook-centered. The archived `old/analyze_data.py` file is an outdated script version of `analyze_data.ipynb`; it is kept only as a historical reference and should not be treated as a runnable pipeline stage.
+The first three active analysis stages are Python scripts and are their stages' sources of truth. `analyze_class_sessions.ipynb` remains notebook-based until it is converted. Files under `old/` are optional historical references and are not runnable pipeline dependencies.
 
 ## Configuration
 
@@ -81,7 +81,7 @@ Notes:
 
 - These capture scripts are Linux-specific because they use Linux wireless monitor-mode tools. They are not expected to run unchanged on Windows or macOS.
 - `Wireshark-profile-Beacon-QBSS-load.zip` is a Wireshark profile for visual beacon/QBSS inspection, not a required processing step.
-- `old/aruba_custom.lua` and `old/aruba_custom_old.lua` are archived Wireshark Lua dissector experiments/helpers for Aruba ERM traffic. The current `process_pcapng.py` uses tshark decode options directly.
+- Archived Wireshark Lua dissector experiments are not required. The current `process_pcapng.py` uses tshark decode options directly.
 
 ### 2. Convert Captures to Processed Parquet
 
@@ -102,7 +102,7 @@ py process_pcapng.py --no-erm
 ```
 
 This native path is currently conversion-only. Its parquet output does not
-feed the analysis notebooks without an additional timestamp and AP-name
+feed the analysis pipeline without an additional timestamp and AP-name
 mapping/adaptation layer. Full native/non-Aruba analysis support is important
 future work, but it should wait until after the current bug fixes and
 refactoring.
@@ -166,7 +166,7 @@ Fragility:
 
 - `THREAD_COUNT` is read from the environment as a string before being used as the argparse default for an integer argument.
 - True pcap input is not currently supported. TShark can read pcap files, but this pipeline now enforces pcapng at the conversion boundary so file naming, discovery, and fixture expectations stay consistent. Adding true pcap support would require separate schema and link-layer validation.
-- Native capture mode writes `frame.time_epoch`, but downstream notebooks currently expect `aruba_erm.time` and Aruba AP names.
+- Native capture mode writes `frame.time_epoch`, but downstream analysis currently expects `aruba_erm.time` and Aruba AP names.
 - If tshark field names or Aruba ERM decode settings change, downstream schemas can break.
 
 ### 3. Group Processed Data
@@ -178,10 +178,6 @@ Current generic grouping script:
 Aruba-specific grouping script:
 
 - `group_data_aruba.py`
-
-Older reference script:
-
-- `old/group_data_old.py`
 
 Inputs:
 
@@ -233,8 +229,8 @@ Key downstream columns:
 
 Fragility:
 
-- `analyze_data.ipynb` later constructs filenames from `Sample/sample_aps.parquet` `Hostname`, so grouped output names must match sample AP hostnames.
-- If output files are named by BSSID fallback, the current sample-driven notebook path will not find them unless sample hostnames also use those BSSID filenames.
+- `analyze_data.py` later constructs filenames from `Sample/sample_aps.parquet` `Hostname`, so grouped output names must match sample AP hostnames.
+- If output files are named by BSSID fallback, the current sample-driven analysis path will not find them unless sample hostnames also use those BSSID filenames.
 - `group_data_aruba.py` requires `wlan.vs.aruba.ap_name` and is not vendor-neutral.
 
 ### 4. Optional Grouped Data Cleanup
@@ -270,9 +266,9 @@ Key downstream columns:
 Fragility:
 
 - This step mutates grouped parquet files in place.
-- It skips files without `aruba_erm.time`, which means native/non-Aruba captures remain incompatible with the notebooks unless adapted elsewhere.
-- `analyze_data.ipynb` also resets the dataframe index, so the pipeline can be ambiguous about whether `aruba_erm.time` should be an index or a column at each point.
-- This step does not establish a final canonical timestamp contract. Full normalization of varied beacon timestamp formats should be revisited after notebook conversion.
+- It skips files without `aruba_erm.time`, which means native/non-Aruba captures remain incompatible with the analysis pipeline unless adapted elsewhere.
+- `analyze_data.py` also resets the dataframe index, so the pipeline can be ambiguous about whether `aruba_erm.time` should be an index or a column at each point.
+- This step does not establish a final canonical timestamp contract. Full normalization of varied beacon timestamp formats remains a separate future change.
 
 ### 5. Build Sample Metadata
 
@@ -366,14 +362,14 @@ Fragility:
 
 - Use the exact script name `samples.py`; casing matters on case-sensitive filesystems.
 - Input schedule CSV includes non-breaking spaces in headers/values; `samples.py` cleans cell values and strips column names, but schema changes can still break the explicit `astype` call.
-- Course schedule time parsing currently expects the known `Class Period` shape. Broader normalization of varied class schedule time formats should be revisited after notebook conversion.
+- Course schedule time parsing currently expects the known `Class Period` shape. Broader normalization of varied class schedule time formats remains a separate future change.
 - `TIMEZONE=Etc/GMT+7` is a fixed offset, not DST-aware. `PLOT_TIMEZONE=America/Denver` is DST-aware, so these can disagree for data outside the current date range.
 
 ### 6. Analyze Sampled Class Beacon Data
 
-Notebook:
+Script:
 
-- `analyze_data.ipynb`
+- `analyze_data.py`
 
 Inputs:
 
@@ -401,7 +397,7 @@ Behavior:
 - Converts `aruba_erm.time` to `TIMEZONE`.
 - Removes near-duplicate beacons by `wlan.ta` using `0.95 * BEACON_RATE`.
 - Validates that every retained, deduplicated in-scope row has a non-null QBSS channel-utilization value. If CU is missing, analysis fails before integer conversion with the AP, class interval, affected count/percentage, and example source rows.
-- Replaces missing QBSS station-count and admission-capacity values with zero, then converts the QBSS columns to non-null integers. The existing CU `fillna(0)` remains in the notebook but is now guarded: missing CU cannot reach it through the supported analysis path.
+- Replaces missing QBSS station-count and admission-capacity values with zero, then converts the QBSS columns to non-null integers. The existing CU `fillna(0)` remains in the script but is guarded: missing CU cannot reach it through the supported analysis path.
 - Requires `AP_PLATFORM=aruba` before analysis because the current radio inference is Aruba-specific.
 - Infers `radio_number` from sorted transmitter MAC integer gaps.
 - Calculates `total_scount` by combining station counts across transmitters for the inferred radio.
@@ -456,19 +452,19 @@ Key downstream columns in `Data/radio_summary.parquet`:
 
 Fragility:
 
-- This notebook is the current source of truth; the `.py` export is marked outdated.
+- This script is the current source of truth for this pipeline stage.
 - It assumes grouped filenames are AP hostnames from `Sample_APs.csv`.
 - It assumes `wlan.vs.aruba.ap_name` is present and has one unique value per AP/session slice.
 - It now fails fast when grouped `aruba_erm.time` is missing, timezone-naive, or stored as strings/objects. This is validation only; it does not normalize varied input timestamp formats.
-- Radio numbering is inferred from transmitter MAC integer gaps. The notebook now fails before analysis unless `AP_PLATFORM=aruba`; this validates the supported platform but does not prove that every observed Aruba MAC allocation is complete or correctly grouped. Channel-based or vendor-neutral inference remains deferred until after notebook conversion.
+- Radio numbering is inferred from transmitter MAC integer gaps. The script fails before analysis unless `AP_PLATFORM=aruba`; this validates the supported platform but does not prove that every observed Aruba MAC allocation is complete or correctly grouped. Channel-based or vendor-neutral inference remains deferred to a separate analysis change.
 - `BEACON_RATE` is used for deduplication and duration math. The configured value is the effective metadata interval, not the raw IEEE beacon interval.
 - Some SSID-specific plotting lines are commented or temporarily disabled for performance.
 
 ### 7. Analyze All Class Beacons
 
-Notebook:
+Script:
 
-- `analyze_all_class_beacons.ipynb`
+- `analyze_all_class_beacons.py`
 
 Inputs:
 
@@ -514,14 +510,14 @@ Fragility:
 
 - The SSID filter uses `SSID1` and `SSID2` from `config.env`, with current defaults matching `eduroam` and `BYU-WiFi`.
 - Room-level station count depends on hostname-to-location mapping from `Sample_APs.csv`.
-- The plus/minus 5 second lookup window is embedded in notebook logic.
-- This notebook must run before `analyze_class_sessions.ipynb`.
+- The plus/minus 5 second lookup window is embedded in the script logic.
+- This script must run before `analyze_class_sessions.ipynb`.
 
 ### 8. Analyze Radio Summary
 
-Notebook:
+Script:
 
-- `analyze_radio_summary.ipynb`
+- `analyze_radio_summary.py`
 
 Inputs:
 
@@ -568,9 +564,9 @@ Key columns:
 
 Fragility:
 
-- The filter threshold of 300 beacons is embedded in the notebook.
+- The filter threshold of 300 beacons is embedded in the script.
 - Several plots divide by `ssid_count`; zero or missing `ssid_count` would break or distort outputs.
-- It expects `highest_cu` and related CU values to already be percentages, as produced by `analyze_data.ipynb`.
+- It expects `highest_cu` and related CU values to already be percentages, as produced by `analyze_data.py`.
 
 ### 9. Analyze Class Sessions
 
@@ -655,26 +651,21 @@ Key columns:
 
 Fragility:
 
-- Requires `Data/all_class_beacons_processed.parquet`, so `analyze_all_class_beacons.ipynb` must run first.
+- Requires `Data/all_class_beacons_processed.parquet`, so `analyze_all_class_beacons.py` must run first.
 - Counts radios only for the configured primary SSID, `SSID1`.
 - Uses `BEACON_RATE` as the bin/window duration for high-CU duration and streak math.
 - The current location-wide streak can join high observations from different radios or be reset by a non-high observation from a different radio. It is not the longest independently calculated radio streak. The post-refactor target is to calculate streaks per stable radio identity and report the longest single-radio streak for the class location.
-- Newly generated supported-path data cannot silently convert missing CU to zero because `analyze_data.ipynb` now fails first. Historical outputs created before the guard, or data produced outside the supported path, may still conflate imputed zero with measured zero because they do not carry missing-value provenance.
+- Newly generated supported-path data cannot silently convert missing CU to zero because `analyze_data.py` fails first. Historical outputs created before the guard, or data produced outside the supported path, may still conflate imputed zero with measured zero because they do not carry missing-value provenance.
 - If `room_scount` is missing, class-level station metrics cannot be computed.
 
 ## Scripts and Notebooks Not Normally Run as Pipeline Stages
 
-- `old/analyze_data.py`: archived stale/outdated script version of `analyze_data.ipynb`; comments warn of a fatal bug.
 - `test.ipynb`: scratch notebook for installs and parquet inspection.
-- `old/strip_Aruba_ERM.py`: archived Scapy-based Aruba ERM stripping helper; comments say it should not be needed and is redundant to current processing.
-- `old/group_data_old.py`: archived original AP-name grouping reference; comments recommend `group_data_bssid.py` for data with BSSID.
-- `old/aruba_custom.lua`: archived custom Aruba dissector experiment/helper.
-- `old/aruba_custom_old.lua`: archived older custom Aruba dissector.
-- `old/requirements.old.txt`: archived environment/dependency reference, not the current dependency file.
+- The optional `old/` archive contains historical references only. No file in that directory is imported, copied, or executed by the current pipeline or tests.
 
 ## Core Downstream Schema
 
-The notebooks rely on these beacon columns being available by the time data reaches `analyze_data.ipynb`:
+The analysis stages rely on these beacon columns being available by the time data reaches `analyze_data.py`:
 
 - `aruba_erm.time`
 - `wlan.ta`
@@ -688,11 +679,11 @@ The notebooks rely on these beacon columns being available by the time data reac
 Additional columns introduced by the pipeline:
 
 - `frequency_mhz`: added in `process_pcapng.py`.
-- `wlan.ta_int`: added in `analyze_data.ipynb`.
-- `radio_number`: inferred in `analyze_data.ipynb`.
-- `total_scount`: calculated in `analyze_data.ipynb`.
-- `location`: added in `analyze_all_class_beacons.ipynb`.
-- `room_scount`: calculated in `analyze_all_class_beacons.ipynb`.
+- `wlan.ta_int`: added in `analyze_data.py`.
+- `radio_number`: inferred in `analyze_data.py`.
+- `total_scount`: calculated in `analyze_data.py`.
+- `location`: added in `analyze_all_class_beacons.py`.
+- `room_scount`: calculated in `analyze_all_class_beacons.py`.
 
 ## Key Assumptions
 
@@ -700,47 +691,47 @@ Additional columns introduced by the pipeline:
 
 - The main analysis path assumes Aruba ERM fields are available.
 - `wlan.vs.aruba.ap_name` is used as the AP hostname and must map to sample AP `Hostname`.
-- `aruba_erm.time` is the canonical timestamp in analysis notebooks.
-- Non-Aruba/native captures may be converted by `process_pcapng.py --no-erm`, but downstream notebooks are not currently generalized for `frame.time_epoch` or missing Aruba AP names.
+- `aruba_erm.time` is the canonical timestamp in the current analysis stages.
+- Non-Aruba/native captures may be converted by `process_pcapng.py --no-erm`, but downstream analysis is not currently generalized for `frame.time_epoch` or missing Aruba AP names.
 
 ### BSSID and AP Naming
 
 - Processed data includes both `wlan.ta` and `wlan.bssid`.
 - `group_data_bssid.py` groups by `wlan.bssid`, but output filenames prefer `wlan.vs.aruba.ap_name`.
-- `analyze_data.ipynb` loads grouped files by `Sample_APs.csv` `Hostname`.
+- `analyze_data.py` loads grouped files by `Sample_APs.csv` `Hostname`.
 - Therefore, AP hostname strings in sample metadata must match grouped parquet filenames exactly.
 
 ### Timestamps and Timezone
 
 - Capture conversion uses `aruba_erm.time` as the index for Aruba ERM data.
-- Cleanup and notebooks expect or create an `aruba_erm.time` datetime column.
+- Cleanup and analysis stages expect or create an `aruba_erm.time` datetime column.
 - `samples.py` localizes class schedule timestamps to `TIMEZONE`.
-- `analyze_data.ipynb` converts beacon timestamps to `TIMEZONE`.
+- `analyze_data.py` converts beacon timestamps to `TIMEZONE`.
 - `group_data_cleanup.py` uses `PLOT_TIMEZONE`, which may not match `TIMEZONE`.
 - Current `TIMEZONE=Etc/GMT+7` is a fixed offset and does not handle DST changes.
-- Until notebook conversion, grouped parquet input to `analyze_data.ipynb` must already store `aruba_erm.time` as a timezone-aware datetime dtype. Varying beacon timestamp strings, naive datetimes, and varying class schedule time formats need a dedicated normalization design after conversion to native Python.
+- Grouped parquet input to `analyze_data.py` must already store `aruba_erm.time` as a timezone-aware datetime dtype. Varying beacon timestamp strings, naive datetimes, and varying class schedule time formats still need a dedicated normalization design.
 
 ### Beacon Interval
 
 - IEEE 802.11 commonly defaults to a 0.1024 second beacon interval.
 - This application's default `BEACON_RATE=1.024` represents the effective interval for metadata-bearing beacon updates used by the analysis.
 - Most vendors update beacon metadata every 10 beacon intervals, and Aruba ERM captures/forwards those metadata updates at this longer interval even when beacons are transmitted over the air every 0.1024 seconds.
-- `analyze_data.ipynb` keeps beacons spaced at least `0.95 * BEACON_RATE` apart by transmitter.
-- `analyze_data.ipynb` adds `BEACON_RATE` to high-CU sequence duration calculations.
+- `analyze_data.py` keeps beacons spaced at least `0.95 * BEACON_RATE` apart by transmitter.
+- `analyze_data.py` adds `BEACON_RATE` to high-CU sequence duration calculations.
 - `analyze_class_sessions.ipynb` uses `BEACON_RATE` as `BEACON_WINDOW_SEC` for high-CU duration and streak bins.
 - If the capture source or vendor behavior changes the effective metadata interval, review `BEACON_RATE` and the golden fingerprint together before changing analysis behavior.
 
 ## Known Fragility and Ambiguity
 
-Analysis and architecture changes intentionally deferred until after notebook conversion are tracked in `docs/post_refactor_design.md`.
+Analysis and architecture changes intentionally deferred from the mechanical conversions are tracked in `docs/post_refactor_design.md`.
 
 - Grouping and grouped-data cleanup remain split across `group_data_bssid.py`, `group_data_aruba.py`, and `group_data_cleanup.py`; future work should merge vendor detection, grouping, and cleanup into one process.
-- The current operational source is the notebooks, not archived `old/analyze_data.py`.
-- Notebooks have no markdown guidance and no saved outputs, so execution order is mostly external knowledge.
+- The current operational sources are the three converted scripts plus `analyze_class_sessions.ipynb`; files under `old/` are not pipeline inputs.
+- The converted scripts preserve source cell boundaries as comments, while execution order is enforced by `tests/pipeline_harness.py`.
 - `Data/`, `Output/`, and `Sample/` are ignored in `.gitignore`, but some historical sample files are tracked.
 - `requirements.txt` appears environment-derived and includes standard-library names such as `glob`, `pathlib`, and `datetime`.
 - Current local `venv` may not be reproducible as-is; `venv/pyvenv.cfg` points `home` and `executable` back into the venv.
-- Several thresholds are embedded in notebooks:
+- Several thresholds are embedded in analysis stages:
   - CU greater than 191 means greater than 75 percent.
   - CU greater than 127 means greater than 50 percent.
   - radio summary filters rows with fewer than 300 beacons.

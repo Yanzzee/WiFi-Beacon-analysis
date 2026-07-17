@@ -290,7 +290,7 @@ if __name__ == "__main__":
         action="store_true",
         help=(
             "Convert native/non-Aruba captures without Aruba ERM fields. "
-            "Current analysis notebooks still require Aruba-shaped grouped data."
+            "The current analysis pipeline still requires Aruba-shaped grouped data."
         ),
     )
     args = parser.parse_args()

@@ -13,10 +13,10 @@ from typing import Iterable
 ANALYSIS_SCRIPTS: tuple[str, ...] = (
     "analyze_data.py",
     "analyze_all_class_beacons.py",
+    "analyze_radio_summary.py",
 )
 
 ANALYSIS_NOTEBOOK_PLAN: tuple[tuple[str, tuple[int, ...] | None], ...] = (
-    ("analyze_radio_summary.ipynb", None),
     ("analyze_class_sessions.ipynb", None),
 )
 

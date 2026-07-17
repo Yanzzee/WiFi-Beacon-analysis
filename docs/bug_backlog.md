@@ -4,6 +4,8 @@ This backlog is based on `docs/current_pipeline.md` plus a spot check of the cur
 
 No source behavior changes are proposed here as broad refactors. Items marked unsafe before conversion should be treated as design decisions or guarded with explicit tests before changing analysis behavior.
 
+Conversion status: `analyze_data.py`, `analyze_all_class_beacons.py`, and `analyze_radio_summary.py` are now the operational sources of truth. References below to their former `.ipynb` files and to `tests/test_radio_summary_notebook.py` describe historical evidence and validation performed before conversion; current tests use the converted scripts.
+
 ## Confirmed Bugs
 
 ### 1. Hardcoded sampled output path ignores `SAMPLED_FOLDER`
@@ -189,6 +191,7 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Recommended order: 12
 - Files changed: `README.md`, `docs/current_pipeline.md`, `config.env`, `old/README.md`, `docs/bug_backlog.md`.
 - Validation run: Documentation-only grep confirmed active docs reference archived obsolete files with `old/` paths and use lowercase `samples.py`.
+- Post-conversion update: the mechanically converted root `analyze_data.py` is now the operational source of truth. The file described above is only the historical archived predecessor and is not required by the pipeline or tests.
 
 ### 13. `BEACON_RATE` comment and value disagree
 
@@ -311,6 +314,6 @@ No source behavior changes are proposed here as broad refactors. Items marked un
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed (12 tests); `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800 -q` passed in 21m33s with existing fingerprints unchanged.
 - Remaining caveats: The guard intentionally does not define how missing CU should contribute to averages, thresholds, or streaks and does not change the existing zero-fill behavior for station count or admission capacity. The raw capture nulls are outside the current Aruba AP-name/sample analysis path; future multi-vendor normalization must preserve and classify them rather than relying on this Aruba-specific exclusion.
 
-## Next Bug To Fix First
+## Historical Next-Bug Recommendation
 
-Fix item 1, the hardcoded `Data/sampled` path in `analyze_data.ipynb`, first. It is narrow, clearly verified against the code, does not require changing analysis math, and makes later output hygiene tests more reliable because the stage will consistently honor its configured sampled-output folder.
+Before conversion, item 1—the hardcoded `Data/sampled` path—was the recommended first fix. It is now fixed, covered by the focused configuration suite, and preserved in the operational `analyze_data.py`; it is no longer pending work.

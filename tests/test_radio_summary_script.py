@@ -1,16 +1,13 @@
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
 import pytest
 
+from script_sections import script_cell_source
 
-def _radio_summary_cell_source(cell_index: int) -> str:
-    notebook_path = Path(__file__).resolve().parents[1] / "analyze_radio_summary.ipynb"
-    notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
-    source = notebook["cells"][cell_index]["source"]
-    return "".join(source) if isinstance(source, list) else source
+
+def _radio_summary_cell_source(cell_number: int) -> str:
+    source, _ = script_cell_source("analyze_radio_summary.py", cell_number)
+    return source
 
 
 def test_radio_summary_filters_missing_or_nonpositive_ssid_count(tmp_path):
@@ -41,7 +38,7 @@ def test_radio_summary_filters_missing_or_nonpositive_ssid_count(tmp_path):
         "OUTPUT_FOLDER": str(output_folder),
     }
 
-    exec(compile(_radio_summary_cell_source(1), "analyze_radio_summary.ipynb::cell_2", "exec"), namespace)
+    exec(compile(_radio_summary_cell_source(2), "analyze_radio_summary.py::cell_2", "exec"), namespace)
 
     filtered = namespace["filtered_radio_summary_df"]
     assert filtered["ssid_count"].tolist() == [2.0]
@@ -86,7 +83,7 @@ def test_radio_summary_regression_skips_missing_radio_count(tmp_path):
         "sm": sm,
     }
 
-    exec(compile(_radio_summary_cell_source(3), "analyze_radio_summary.ipynb::cell_4", "exec"), namespace)
+    exec(compile(_radio_summary_cell_source(4), "analyze_radio_summary.py::cell_4", "exec"), namespace)
 
     assert namespace["model_1"] is not None
     assert namespace["model_2"] is None

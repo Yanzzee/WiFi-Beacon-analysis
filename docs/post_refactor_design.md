@@ -1,6 +1,6 @@
 # Post-Refactor Design Backlog
 
-This document tracks analysis and architecture changes intentionally deferred until after the current notebooks are converted into testable Python modules. It is not a description of current behavior and does not authorize changing analysis math without a separate reviewed implementation decision.
+This document tracks analysis and architecture changes intentionally deferred from the mechanical conversion work. `analyze_data.py`, `analyze_all_class_beacons.py`, and `analyze_radio_summary.py` are now the sources of truth for their stages; `analyze_class_sessions.ipynb` remains to be converted. This document is not a description of current behavior and does not authorize changing analysis math without a separate reviewed implementation decision.
 
 `docs/current_pipeline.md` remains the source for how the pipeline works today. `docs/bug_backlog.md` remains the source for pre-refactor bugs, fragilities, and behavior risks.
 

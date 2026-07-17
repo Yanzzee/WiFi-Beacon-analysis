@@ -1,0 +1,340 @@
+def main():
+    # =============================================================================
+    # Cell 1 - Imports, configuration, logging, and radio-summary input
+    # =============================================================================
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import numpy as np
+    import statsmodels.api as sm
+    from datetime import datetime
+    import os
+    from dotenv import load_dotenv
+    
+    load_dotenv("config.env")
+    
+    DATA_FOLDER = os.getenv("DATA_FOLDER")
+    OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER")
+    RADIO_SUMMARY_FOLDER = os.getenv("RADIO_SUMMARY_FOLDER")
+    
+    if not os.path.exists(RADIO_SUMMARY_FOLDER):    
+        os.makedirs(RADIO_SUMMARY_FOLDER)
+    
+    
+    #log to a file and print to terminal
+    # Open logging file
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    log_filename = f"{OUTPUT_FOLDER}/analyze_radio_summary_log_{timestamp}.txt"
+    log_file = open(log_filename, "a")# Open file in append mode
+    def log_and_print(message):
+        print(message)  # Print to terminal is too noisy
+        log_file.write(message + "\n")  # Write to file
+    
+    
+    log_and_print(f"Radio analysis started on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    
+    
+    radio_summary_df = pd.read_parquet(f"{DATA_FOLDER}/radio_summary.parquet")
+    #radio_summary_df.head()
+    
+    radio_summary_df = radio_summary_df.sort_values(by="total_beacons")
+    #radio_summary_df.head(10)
+    
+    #analyzing radio_summary - dataframe containing 1 row per radio per class session
+    log_and_print("rows in the radio_summary_df represent a single 5GHz radio per class session")
+    log_and_print(f"total number of rows: {len(radio_summary_df)}")
+    log_and_print(f"median number of beacons: {radio_summary_df['total_beacons'].median()}")
+    #expecting 5859 beacons per 50 minutes if there's 2 SSIDs
+    log_and_print(f"median row of high channel utilization duration: {radio_summary_df['longest_duration_high_cu'].median()}")
+    log_and_print(f"(channel utilization is in percentage: {(radio_summary_df['highest_cu'].max())})")
+    log_and_print(f"number of rows with total beacons less than 200: {((radio_summary_df['total_beacons'] < 200).sum())}")
+    log_and_print(f"number of rows with some very high channel use (>75%): {((radio_summary_df['highest_cu'] > 75).sum())}")
+    log_and_print(f"number of rows with some high channel use (>50%): {((radio_summary_df['highest_cu'] > 50).sum())}")
+    log_and_print(f"median number of devices per radio (peak per class session): {((radio_summary_df['high_scount']).median())}")
+    log_and_print(f"average number of devices per radio (peak per class session): {((radio_summary_df['high_scount']).mean()):.2f}")
+    
+    # Calculate the correlation between high_scount and median_cu
+    correlation = radio_summary_df["high_scount"].corr(radio_summary_df["median_cu"])
+    
+    # Display the result
+    log_and_print(f"The correlation between high_scount and median channel utilization is: {correlation}")
+    
+    radio_summary_df.to_csv(f"{OUTPUT_FOLDER}/radio_summary.csv", index=False)
+    
+    # Compute class duration in seconds, add as a new column
+    radio_summary_df['class_duration'] = (radio_summary_df['end_time'] - radio_summary_df['start_time']).dt.total_seconds()
+    
+    # Check results
+    #print(radio_summary_df[['start_time', 'end_time', 'class_duration']].head())
+    
+    # =============================================================================
+    # Cell 2 - Filter radio summaries and plot beacon rate versus channel utilization
+    # =============================================================================
+    
+    # Plotting the relationship between total_beacons and cu
+    # Ensure class_duration is not zero to avoid division errors
+    filtered_radio_summary_df = radio_summary_df[
+        (radio_summary_df['total_beacons'] >= 300) & #remove rows with less than 300 beacons
+        #(radio_summary_df['total_beacons'] <= 400000) & # not needed with clean data
+        (radio_summary_df['class_duration'] > 0)  # Avoid division by zero
+    ].copy()  # Avoid SettingWithCopyWarning
+    
+    # Avoid division by zero or missing SSID counts in downstream beacon-rate plots.
+    filtered_radio_summary_df['ssid_count'] = pd.to_numeric(filtered_radio_summary_df['ssid_count'], errors='coerce')
+    valid_ssid_count_mask = filtered_radio_summary_df['ssid_count'] > 0
+    excluded_ssid_count_rows = len(filtered_radio_summary_df) - valid_ssid_count_mask.sum()
+    if excluded_ssid_count_rows:
+        log_and_print(f"Excluding {excluded_ssid_count_rows} rows with missing or non-positive ssid_count.")
+    filtered_radio_summary_df = filtered_radio_summary_df[valid_ssid_count_mask].copy()
+    
+    # Compute total_beacons per second of class duration
+    filtered_radio_summary_df['beacons_per_second'] = (
+        filtered_radio_summary_df['total_beacons'] / filtered_radio_summary_df['class_duration']
+    )
+    
+    # Create scatter plot
+    plt.figure(figsize=(10, 6))
+    plt.scatter(filtered_radio_summary_df['highest_cu'], filtered_radio_summary_df['beacons_per_second'] / filtered_radio_summary_df['ssid_count'], alpha=0.5, edgecolors='k')
+    
+    # Labels and title
+    plt.xlabel("Highest Channel Utilization")
+    plt.ylabel("Beacons per Second of Class")
+    plt.title("Comparison of CU to Beacons per Second")
+    plt.grid(True)
+    
+    plot_file = f"{OUTPUT_FOLDER}/radio_summary/Beacons_per_second_class_cu.png"
+    #save to a file
+    plt.savefig(plot_file)
+    
+    # Show the plot
+    plt.show()
+    
+    
+    
+    
+    # =============================================================================
+    # Cell 3 - Split data by radio count
+    # =============================================================================
+    # Split data by radio_count, create new plots
+    df_radio_1 = filtered_radio_summary_df[filtered_radio_summary_df['radio_count'] == 1]
+    df_radio_2 = filtered_radio_summary_df[filtered_radio_summary_df['radio_count'] == 2]
+    combined_df = filtered_radio_summary_df[filtered_radio_summary_df['radio_count'].isin([1, 2])] # used in PDF/CDF below
+    
+    
+    # Create a figure with 3 subplots
+    fig, axes = plt.subplots(1, 3, figsize=(18, 6), sharey=True)
+    
+    # Plot all data (original plot)
+    axes[0].scatter(
+        filtered_radio_summary_df['highest_cu'], 
+        filtered_radio_summary_df['beacons_per_second'] / filtered_radio_summary_df['ssid_count'], 
+        alpha=0.5, edgecolors='k', c=filtered_radio_summary_df['radio_count'].map({1: 'blue', 2: 'red'})
+    )
+    axes[0].set_title("All Data (Both Radio Counts)")
+    axes[0].set_xlabel("Highest Channel Utilization")
+    axes[0].set_ylabel("Beacons per Second of Class")
+    axes[0].set_xlim(0, 100)
+    axes[0].grid(True)
+    
+    # Plot only radio_count == 1 (blue)
+    axes[1].scatter(
+        df_radio_1['highest_cu'], 
+        df_radio_1['beacons_per_second'] / df_radio_1['ssid_count'], 
+        alpha=0.5, edgecolors='k', c='blue'
+    )
+    axes[1].set_title("AP Radio Count 1 (Blue)")
+    axes[1].set_xlabel("Highest Channel Utilization")
+    axes[1].set_xlim(0, 100)
+    axes[1].grid(True)
+    
+    # Plot only radio_count == 2 (red)
+    axes[2].scatter(
+        df_radio_2['highest_cu'], 
+        df_radio_2['beacons_per_second'] / df_radio_2['ssid_count'], 
+        alpha=0.5, edgecolors='k', c='red'
+    )
+    axes[2].set_title("AP Radio Count 2 (Red)")
+    axes[2].set_xlabel("Highest Channel Utilization")
+    axes[2].set_xlim(0, 100)
+    axes[2].grid(True)
+    
+    # Adjust layout and show the plots
+    plt.tight_layout()
+    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_class_split.png"
+    #save to a file
+    plt.savefig(plot_file)
+    plt.show()
+    
+    # =============================================================================
+    # Cell 4 - Plot linear regressions by radio count
+    # =============================================================================
+    # Function to perform linear regression and return model & predictions
+    def linear_regression(x, y):
+        X = sm.add_constant(x)  # Add intercept term
+        model = sm.OLS(y, X).fit()  # Fit model
+        return model, model.predict(X)
+    
+    def plot_radio_regression(ax, radio_df, radio_count, color):
+        title = f"Linear Regression for Radio Count {radio_count} ({color.title()})"
+        ax.set_title(title)
+        ax.set_xlabel("Highest Channel Utilization")
+        ax.set_xlim(0, 100)
+        ax.grid(True)
+    
+        if radio_df.empty:
+            log_and_print(f"Skipping linear regression for radio_count {radio_count}: no rows after filtering.")
+            ax.text(0.5, 0.5, "No data", ha="center", va="center", transform=ax.transAxes)
+            return None
+    
+        y = radio_df['beacons_per_second'] / radio_df['ssid_count']
+        model, predictions = linear_regression(radio_df['highest_cu'], y)
+        ax.scatter(radio_df['highest_cu'], y, alpha=0.5, edgecolors='k', c=color, label="Data Points")
+        ax.plot(radio_df['highest_cu'], predictions, color='black', linewidth=2, label="Regression Line")
+        ax.legend()
+        return model
+    
+    # Create a figure with 2 subplots
+    fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
+    
+    model_1 = plot_radio_regression(axes[0], df_radio_1, 1, 'blue')
+    axes[0].set_ylabel("Beacons per Second of Class")
+    model_2 = plot_radio_regression(axes[1], df_radio_2, 2, 'red')
+    
+    # Adjust layout and show the plots
+    plt.tight_layout()
+    
+    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_class_linear_regression.png"
+    #save to a file
+    plt.savefig(plot_file)
+    
+    plt.show()
+    
+    # Print regression summaries
+    if model_1 is not None:
+        log_and_print("Linear Regression for Radio Count 1:")
+        log_and_print(model_1.summary().as_text())
+    if model_2 is not None:
+        log_and_print("\nLinear Regression for Radio Count 2:")
+        log_and_print(model_2.summary().as_text())
+    
+    
+    # =============================================================================
+    # Cell 5 - Plot beacon-rate histogram
+    # =============================================================================
+    # Create histogram
+    plt.figure(figsize=(10, 6))
+    plt.hist(filtered_radio_summary_df['beacons_per_second'] / filtered_radio_summary_df['ssid_count'], bins=50, edgecolor='black', alpha=0.7)
+    
+    # Labels and title
+    plt.xlabel("Beacon Rate (per second)")
+    plt.ylabel("Frequency")
+    plt.title("Histogram of Beacons per Second of Class")
+    plt.grid(axis='y', alpha=0.75)
+    
+    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_class_histogram.png"
+    #save to a file
+    plt.savefig(plot_file)
+    
+    # Show the plot
+    plt.show()
+    
+    # =============================================================================
+    # Cell 6 - Plot stacked beacon-rate histogram
+    # =============================================================================
+    # adjusting beacon rate based on number of SSIDs
+    # # Safe element-wise division (with aligned indices)
+    df_radio_1 = (df_radio_1['beacons_per_second'] / df_radio_1['ssid_count']).dropna()
+    df_radio_2 = (df_radio_2['beacons_per_second'] / df_radio_2['ssid_count']).dropna()
+    data_combined = (combined_df['beacons_per_second'] / combined_df['ssid_count']).dropna()
+    
+    
+    # Create stacked histogram
+    plt.figure(figsize=(10, 6))
+    plt.hist(
+        [df_radio_1, df_radio_2], 
+        bins=50, 
+        edgecolor='black', 
+        alpha=0.7, 
+        stacked=True, 
+        color=['blue', 'red'], 
+        label=['Radio Count 1', 'Radio Count 2']
+    )
+    
+    # Labels and title
+    plt.xlabel("Beacon Rate (per second)")
+    plt.ylabel("Frequency")
+    plt.title("Stacked Histogram of Beacons per Second of Class by Radio Count")
+    plt.legend()
+    plt.grid(axis='y', alpha=0.75)
+    
+    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_stacked.png"
+    #save to a file
+    plt.savefig(plot_file)
+    
+    # Show the plot
+    plt.show()
+    
+    
+    # =============================================================================
+    # Cell 7 - Plot beacon-rate PDF and CDF
+    # =============================================================================
+    # Function to compute PDF and CDF
+    def compute_pdf_cdf(data, bins=50):
+        counts, bin_edges = np.histogram(data, bins=bins, density=True)
+        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+        cdf = np.cumsum(counts) * np.diff(bin_edges)
+        return bin_centers, counts, cdf
+    
+    # Compute all distributions
+    bin_centers1, pdf1, cdf1 = compute_pdf_cdf(df_radio_1)
+    bin_centers2, pdf2, cdf2 = compute_pdf_cdf(df_radio_2)
+    bin_centers_comb, pdf_comb, cdf_comb = compute_pdf_cdf(data_combined)
+    
+    # --- PDF Plot ---
+    plt.figure(figsize=(10, 6))
+    plt.plot(bin_centers1, pdf1, label='PDF - Radio Count 1', color='blue')
+    plt.plot(bin_centers2, pdf2, label='PDF - Radio Count 2', color='red')
+    plt.plot(bin_centers_comb, pdf_comb, label='PDF - Combined', color='green')
+    plt.xlabel('Beacon Rate (per second)')
+    plt.ylabel('Probability Density')
+    plt.title('Probability Distribution Function (PDF)')
+    plt.legend()
+    plt.grid()
+    
+    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_class_PDF.png"
+    #save to a file
+    plt.savefig(plot_file)
+    
+    plt.show()
+    
+    # --- CDF Plot ---
+    plt.figure(figsize=(10, 6))
+    plt.plot(bin_centers1, cdf1, label='CDF - Radio Count 1', color='blue')
+    plt.plot(bin_centers2, cdf2, label='CDF - Radio Count 2', color='red')
+    plt.plot(bin_centers_comb, cdf_comb, label='CDF - Combined', color='green')
+    plt.xlabel('Beacon Rate (per second)')
+    plt.ylabel('Cumulative Probability')
+    plt.title('Cumulative Distribution Function (CDF)')
+    plt.legend()
+    plt.grid()
+    
+    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_class_CDF.png"
+    #save to a file
+    plt.savefig(plot_file)
+    
+    plt.show()
+    
+    
+    # =============================================================================
+    # Cell 8 - Report null counts and write filtered summary
+    # =============================================================================
+    # check for null values
+    print("Radio 1 - Count:", df_radio_1.count(), "NaNs:", df_radio_1.isna().sum())
+    print("Radio 2 - Count:", df_radio_2.count(), "NaNs:", df_radio_2.isna().sum())
+    
+    log_file.close()
+    
+    filtered_radio_summary_df.to_csv(f"{OUTPUT_FOLDER}/filtered_radio_summary.csv", index=False)
+
+
+if __name__ == "__main__":
+    main()

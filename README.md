@@ -17,12 +17,14 @@ Sample_schedule.csv - course schedule with location, Days of the week, start/end
 ### Run Files
 Files are listed in the general order that they are run.
 
+`analyze_data.py`, `analyze_all_class_beacons.py`, and `analyze_radio_summary.py` are the current sources of truth for their pipeline stages. `analyze_class_sessions.ipynb` remains notebook-based until it is converted.
+
 beacon_capture.sh (optional) - bash script to capture .pcapng files using tshark on a raspberry pi or other linux device. The capture scripts use Linux wireless monitor-mode tools and are not expected to run unchanged on Windows or macOS. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
 Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
 
 process_pcapng.py - process raw .pcapng capture files to .parquet files
     requires tshark and should run on Windows, macOS, and Linux when Python dependencies and tshark are installed
-    --no-erm converts native/non-Aruba captures to parquet, but those outputs do not currently feed the analysis notebooks without a timestamp and AP-name mapping/adaptation layer
+    --no-erm converts native/non-Aruba captures to parquet, but those outputs do not currently feed the analysis pipeline without a timestamp and AP-name mapping/adaptation layer
 
 group_data_bssid.py - group generic capture data by BSSID instead of time, one file per AP/BSSID for the entire date range. This is intended as the generic grouping path.
 
@@ -52,7 +54,7 @@ analyze_all_class_beacons.py - performs aggregate analysis on the all_class_beac
     analyze_all_class_beacons_log - output and analysis results
     Output/all_class_beacons/ - includes plot files saved as png
 
-analyze_radio_summary.ipynb - analyze the class_summary data that includes one row per radio per class session
+analyze_radio_summary.py - analyze the class_summary data that includes one row per radio per class session
     radio_summary/ - includes plots
     analyze_radio_summary_log - text output
 
@@ -76,7 +78,7 @@ Output - the output of processing including graphs, logs etc. these folders will
     /all_class_beacons - output from analyze_all_class_beacons
     /radio_summary - output from analyze_radio_summary    
 Sample - files defining the sampled courses, locations, and APs CSV files are converted to parquet files with samples.py
-old - archived obsolete/reference files that are not part of the normal pipeline. See old/README.md.
+old - optional archived obsolete/reference files that are not imported or executed by the normal pipeline or test suite.
 
 
 

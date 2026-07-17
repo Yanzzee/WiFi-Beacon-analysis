@@ -462,8 +462,8 @@ if __name__ == "__main__":
     main()
 
 
-# Cell 14 is retained as comments because the established operational notebook
-# execution and regression harness run only Cells 1-13.
+# Cell 14 preserves debug-only content from the source notebook.
+# The converted pipeline and regression harness execute only Cells 1-13.
 
 # =============================================================================
 # Cell 14 - Debug summary statistics

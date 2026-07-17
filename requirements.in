@@ -1,4 +1,4 @@
-# Runtime dependencies imported by scripts and notebooks.
+# Runtime dependencies imported by pipeline scripts and the remaining notebook.
 dask[dataframe]
 matplotlib
 numpy

@@ -67,11 +67,11 @@ def validate_radio_inference_platform():
     if configured_platform != "aruba":
         configured_display = AP_PLATFORM if AP_PLATFORM else "<unset>"
         raise ValueError(
-            "analyze_data.ipynb radio inference is supported only when "
+            "analyze_data.py radio inference is supported only when "
             "AP_PLATFORM=aruba. The current algorithm groups adjacent transmitter "
             "MAC addresses using Aruba-specific allocation assumptions; channel- "
-            "or vendor-neutral radio inference is deferred until after notebook "
-            f"conversion. Configured AP_PLATFORM: {configured_display}."
+            "or vendor-neutral radio inference is deferred until a dedicated "
+            f"analysis change. Configured AP_PLATFORM: {configured_display}."
         )
 
 # # populate total station count for all SSIDs per radio
@@ -609,7 +609,7 @@ def validate_grouped_files_for_sample_aps(sample_aps_df, sample_classes_df=None)
         expected_list = "\n".join(f"- {path}" for path in expected_paths)
         raise FileNotFoundError(
             "Missing grouped AP parquet files for sample AP Hostname values. "
-            "analyze_data.ipynb currently loads grouped data by Sample/sample_aps.parquet "
+            "analyze_data.py currently loads grouped data by Sample/sample_aps.parquet "
             "Hostname. BSSID fallback files cannot be reliably associated with all "
             "SSIDs on the same radio or all radios on the same AP without vendor AP-name "
             "metadata. Aruba AP-name beacons are supported now; broader vendor mapping "
@@ -658,8 +658,8 @@ def validate_grouped_ap_timestamps(ap_df, file_path, ap_name):
         raise ValueError(
             f"Grouped AP data for {ap_name} at {file_path} must store "
             "aruba_erm.time as a timezone-aware datetime dtype before "
-            "notebook analysis. Mixed string/input timestamp normalization is "
-            "deferred until the notebooks are converted to native Python."
+            "script analysis. Mixed string/input timestamp normalization remains "
+            "deferred to a dedicated normalization change."
             f"{invalid_detail}"
         )
 
@@ -667,7 +667,7 @@ def validate_grouped_ap_timestamps(ap_df, file_path, ap_name):
         raise ValueError(
             f"Grouped AP data for {ap_name} at {file_path} has timezone-naive "
             "aruba_erm.time values. Run or repair grouped-data cleanup so "
-            "timestamps are timezone-aware before notebook analysis."
+            "timestamps are timezone-aware before script analysis."
         )
 
 
@@ -686,7 +686,7 @@ def validate_grouped_ap_schema(ap_df, file_path, ap_name):
     missing_text = ", ".join(missing_columns)
     message = (
         f"Grouped AP data for {ap_name} at {file_path} is missing required "
-        f"analysis columns: {missing_text}. The current analysis notebooks "
+        f"analysis columns: {missing_text}. The current analysis pipeline "
         "require Aruba-shaped grouped data with aruba_erm.time and "
         "wlan.vs.aruba.ap_name."
     )
@@ -694,7 +694,7 @@ def validate_grouped_ap_schema(ap_df, file_path, ap_name):
         message += (
             " Detected native --no-erm conversion output with frame.time_epoch. "
             "Native/non-Aruba captures are conversion-only for now and need "
-            "a timestamp plus AP-name mapping/adaptation before notebook analysis."
+            "a timestamp plus AP-name mapping/adaptation before script analysis."
         )
     raise ValueError(message)
 
@@ -863,8 +863,8 @@ if __name__ == "__main__":
     log_and_print(f"Analysis started on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     main()
 
-# Cells 3-9 are retained as comments because the established operational notebook
-# execution and regression harness run only Cells 1-2.
+# Cells 3-9 preserve non-operational scratch/debug content from the source notebook.
+# The converted pipeline and regression harness execute only Cells 1-2.
 
 # =============================================================================
 # Cell 3 - Testing a single location
