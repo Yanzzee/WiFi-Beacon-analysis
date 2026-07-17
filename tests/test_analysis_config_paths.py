@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import ast
 import io
-import json
 from pathlib import Path
 
 import pytest
@@ -26,12 +25,6 @@ CONFIG_ENV_KEYS = (
     "SSID1",
     "SSID2",
 )
-
-
-def _notebook_code_cell(notebook_name: str, cell_index: int) -> tuple[str, Path]:
-    notebook_path = Path(__file__).resolve().parents[1] / notebook_name
-    notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
-    return "".join(notebook["cells"][cell_index]["source"]), notebook_path
 
 
 def _clear_config_env(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -569,12 +562,12 @@ def test_analyze_class_sessions_counts_configured_primary_ssid_radios(
         }
     ).to_parquet(data_dir / "all_class_beacons_processed.parquet")
 
-    cell0, notebook_path = _notebook_code_cell("analyze_class_sessions.ipynb", 0)
-    cell1, _ = _notebook_code_cell("analyze_class_sessions.ipynb", 1)
+    cell1, script_path = script_cell_source("analyze_class_sessions.py", 1)
+    cell2, _ = script_cell_source("analyze_class_sessions.py", 2)
     namespace = {"__name__": "not_main"}
     try:
-        exec(compile(cell0, f"{notebook_path}::cell_0", "exec"), namespace)
-        exec(compile(cell1, f"{notebook_path}::cell_1", "exec"), namespace)
+        exec(compile(cell1, f"{script_path}::cell_1", "exec"), namespace)
+        exec(compile(cell2, f"{script_path}::cell_2", "exec"), namespace)
     finally:
         log_file = namespace.get("log_file")
         if log_file is not None:

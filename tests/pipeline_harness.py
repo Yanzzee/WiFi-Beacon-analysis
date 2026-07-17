@@ -7,17 +7,13 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import Iterable
 
 
 ANALYSIS_SCRIPTS: tuple[str, ...] = (
     "analyze_data.py",
     "analyze_all_class_beacons.py",
     "analyze_radio_summary.py",
-)
-
-ANALYSIS_NOTEBOOK_PLAN: tuple[tuple[str, tuple[int, ...] | None], ...] = (
-    ("analyze_class_sessions.ipynb", None),
+    "analyze_class_sessions.py",
 )
 
 REQUIRED_FIXTURE_FILES: tuple[str, ...] = (
@@ -192,38 +188,6 @@ NUMERIC_COLUMNS: tuple[str, ...] = (
     "capacity",
 )
 
-RUN_NOTEBOOK_CODE = r"""
-import json
-import os
-import pathlib
-import sys
-
-os.environ.setdefault("MPLBACKEND", "Agg")
-
-notebook_path = pathlib.Path(sys.argv[1])
-selected_cells = json.loads(sys.argv[2])
-nb = json.loads(notebook_path.read_text(encoding="utf-8"))
-
-if selected_cells is None:
-    selected_cells = list(range(len(nb["cells"])))
-
-namespace = {
-    "__name__": "__main__",
-    "__file__": str(notebook_path),
-}
-
-for cell_index in selected_cells:
-    cell = nb["cells"][cell_index]
-    if cell.get("cell_type") != "code":
-        continue
-    source = cell.get("source", "")
-    if isinstance(source, list):
-        source = "".join(source)
-    code = compile(source, f"{notebook_path.name}::cell_{cell_index + 1}", "exec")
-    exec(code, namespace)
-"""
-
-
 def fixture_dataset_is_present(fixture_dir: Path) -> bool:
     fixture_dir = Path(fixture_dir)
     if not all((fixture_dir / rel).is_file() for rel in REQUIRED_FIXTURE_FILES):
@@ -282,16 +246,11 @@ def prepare_analysis_workspace(
     for script_name in ANALYSIS_SCRIPTS:
         shutil.copy2(repo_root / script_name, workspace / script_name)
 
-    for notebook_name, _ in ANALYSIS_NOTEBOOK_PLAN:
-        shutil.copy2(repo_root / notebook_name, workspace / notebook_name)
-
 
 def run_analysis_pipeline(workspace: Path, timeout: int = 600) -> None:
     workspace = Path(workspace)
     for script_name in ANALYSIS_SCRIPTS:
         run_script(workspace / script_name, workspace, timeout)
-    for notebook_name, cells in ANALYSIS_NOTEBOOK_PLAN:
-        run_notebook_cells(workspace / notebook_name, cells, workspace, timeout)
 
 
 def run_script(script_path: Path, cwd: Path, timeout: int) -> None:
@@ -316,49 +275,6 @@ def run_script(script_path: Path, cwd: Path, timeout: int) -> None:
             "\n".join(
                 [
                     f"Script stage failed: {script_path.name}",
-                    f"Exit code: {completed.returncode}",
-                    "--- stdout ---",
-                    completed.stdout,
-                    "--- stderr ---",
-                    completed.stderr,
-                ]
-            )
-        )
-
-
-def run_notebook_cells(
-    notebook_path: Path,
-    cells: Iterable[int] | None,
-    cwd: Path,
-    timeout: int,
-) -> None:
-    env = os.environ.copy()
-    env.setdefault("MPLBACKEND", "Agg")
-    env.setdefault("PYTHONIOENCODING", "utf-8")
-
-    completed = subprocess.run(
-        [
-            sys.executable,
-            "-c",
-            RUN_NOTEBOOK_CODE,
-            str(notebook_path),
-            json.dumps(list(cells) if cells is not None else None),
-        ],
-        cwd=str(cwd),
-        env=env,
-        text=True,
-        encoding="utf-8",
-        errors="replace",
-        capture_output=True,
-        timeout=timeout,
-        check=False,
-    )
-
-    if completed.returncode != 0:
-        raise RuntimeError(
-            "\n".join(
-                [
-                    f"Notebook stage failed: {notebook_path.name}",
                     f"Exit code: {completed.returncode}",
                     "--- stdout ---",
                     completed.stdout,

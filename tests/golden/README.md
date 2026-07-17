@@ -27,7 +27,7 @@ The script runs these stages in order in a temporary workspace:
 1. `analyze_data.py`
 2. `analyze_all_class_beacons.py`
 3. `analyze_radio_summary.py`
-4. `analyze_class_sessions.ipynb`
+4. `analyze_class_sessions.py`
 
 Then it writes `tests/golden/fingerprints.json`.
 

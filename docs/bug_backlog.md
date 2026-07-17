@@ -4,7 +4,7 @@ This backlog is based on `docs/current_pipeline.md` plus a spot check of the cur
 
 No source behavior changes are proposed here as broad refactors. Items marked unsafe before conversion should be treated as design decisions or guarded with explicit tests before changing analysis behavior.
 
-Conversion status: `analyze_data.py`, `analyze_all_class_beacons.py`, and `analyze_radio_summary.py` are now the operational sources of truth. References below to their former `.ipynb` files and to `tests/test_radio_summary_notebook.py` describe historical evidence and validation performed before conversion; current tests use the converted scripts.
+Conversion status: `analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_radio_summary.py`, and `analyze_class_sessions.py` are now the operational sources of truth. References below to their former `.ipynb` files, `tests/test_notebook_config_paths.py`, and `tests/test_radio_summary_notebook.py` describe historical evidence and validation performed before conversion; current tests use the converted scripts.
 
 ## Confirmed Bugs
 

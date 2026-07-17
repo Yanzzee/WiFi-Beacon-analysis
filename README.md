@@ -17,7 +17,7 @@ Sample_schedule.csv - course schedule with location, Days of the week, start/end
 ### Run Files
 Files are listed in the general order that they are run.
 
-`analyze_data.py`, `analyze_all_class_beacons.py`, and `analyze_radio_summary.py` are the current sources of truth for their pipeline stages. `analyze_class_sessions.ipynb` remains notebook-based until it is converted.
+`analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_radio_summary.py`, and `analyze_class_sessions.py` are the current sources of truth for their pipeline stages.
 
 beacon_capture.sh (optional) - bash script to capture .pcapng files using tshark on a raspberry pi or other linux device. The capture scripts use Linux wireless monitor-mode tools and are not expected to run unchanged on Windows or macOS. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
 Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
@@ -58,7 +58,7 @@ analyze_radio_summary.py - analyze the class_summary data that includes one row 
     radio_summary/ - includes plots
     analyze_radio_summary_log - text output
 
-analyze_class_sessions.ipynb - analyze each class session as a single row. Current high-CU duration and streak metrics combine all beacons in the location and mark a bin high when any beacon exceeds the threshold; they are not calculated independently per radio.
+analyze_class_sessions.py - analyze each class session as a single row. Current high-CU duration and streak metrics combine all beacons in the location and mark a bin high when any beacon exceeds the threshold; they are not calculated independently per radio.
 
 ### Documentation
 

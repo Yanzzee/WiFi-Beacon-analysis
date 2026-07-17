@@ -50,4 +50,4 @@ Data/grouped_data/<Hostname>.parquet
 - Existing `Output` files.
 - Any files that require `process_pcapng.py`, `tshark`, or Linux wireless tools.
 
-The test harness copies this fixture dataset into a temporary workspace before each run, then runs the converted analysis scripts followed by the remaining analysis notebook there.
+The test harness copies this fixture dataset into a temporary workspace before each run, then runs the analysis scripts there.

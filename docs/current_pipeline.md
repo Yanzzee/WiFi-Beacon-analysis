@@ -11,9 +11,9 @@ This document describes the current repository pipeline from capture files to fi
 5. Run `analyze_data.py` to extract class-session beacon data, per-radio summaries, and per-session plots.
 6. Run `analyze_all_class_beacons.py` to enrich and analyze all sampled class beacons.
 7. Run `analyze_radio_summary.py` to analyze one row per radio per class session.
-8. Run `analyze_class_sessions.ipynb` to analyze one row per class session/location.
+8. Run `analyze_class_sessions.py` to analyze one row per class session/location.
 
-The first three active analysis stages are Python scripts and are their stages' sources of truth. `analyze_class_sessions.ipynb` remains notebook-based until it is converted. Files under `old/` are optional historical references and are not runnable pipeline dependencies.
+All four active analysis stages are Python scripts and are their stages' sources of truth. Files under `old/` are optional historical references and are not runnable pipeline dependencies.
 
 ## Configuration
 
@@ -511,7 +511,7 @@ Fragility:
 - The SSID filter uses `SSID1` and `SSID2` from `config.env`, with current defaults matching `eduroam` and `BYU-WiFi`.
 - Room-level station count depends on hostname-to-location mapping from `Sample_APs.csv`.
 - The plus/minus 5 second lookup window is embedded in the script logic.
-- This script must run before `analyze_class_sessions.ipynb`.
+- This script must run before `analyze_class_sessions.py`.
 
 ### 8. Analyze Radio Summary
 
@@ -570,9 +570,9 @@ Fragility:
 
 ### 9. Analyze Class Sessions
 
-Notebook:
+Script:
 
-- `analyze_class_sessions.ipynb`
+- `analyze_class_sessions.py`
 
 Inputs:
 
@@ -718,7 +718,7 @@ Additional columns introduced by the pipeline:
 - Most vendors update beacon metadata every 10 beacon intervals, and Aruba ERM captures/forwards those metadata updates at this longer interval even when beacons are transmitted over the air every 0.1024 seconds.
 - `analyze_data.py` keeps beacons spaced at least `0.95 * BEACON_RATE` apart by transmitter.
 - `analyze_data.py` adds `BEACON_RATE` to high-CU sequence duration calculations.
-- `analyze_class_sessions.ipynb` uses `BEACON_RATE` as `BEACON_WINDOW_SEC` for high-CU duration and streak bins.
+- `analyze_class_sessions.py` uses `BEACON_RATE` as `BEACON_WINDOW_SEC` for high-CU duration and streak bins.
 - If the capture source or vendor behavior changes the effective metadata interval, review `BEACON_RATE` and the golden fingerprint together before changing analysis behavior.
 
 ## Known Fragility and Ambiguity
@@ -726,7 +726,7 @@ Additional columns introduced by the pipeline:
 Analysis and architecture changes intentionally deferred from the mechanical conversions are tracked in `docs/post_refactor_design.md`.
 
 - Grouping and grouped-data cleanup remain split across `group_data_bssid.py`, `group_data_aruba.py`, and `group_data_cleanup.py`; future work should merge vendor detection, grouping, and cleanup into one process.
-- The current operational sources are the three converted scripts plus `analyze_class_sessions.ipynb`; files under `old/` are not pipeline inputs.
+- The current operational sources are the four converted scripts; files under `old/` are not pipeline inputs.
 - The converted scripts preserve source cell boundaries as comments, while execution order is enforced by `tests/pipeline_harness.py`.
 - `Data/`, `Output/`, and `Sample/` are ignored in `.gitignore`, but some historical sample files are tracked.
 - `requirements.txt` appears environment-derived and includes standard-library names such as `glob`, `pathlib`, and `datetime`.
@@ -736,6 +736,6 @@ Analysis and architecture changes intentionally deferred from the mechanical con
   - CU greater than 127 means greater than 50 percent.
   - radio summary filters rows with fewer than 300 beacons.
   - room station count lookup uses a plus/minus 5 second window.
-- SSID filters now read `SSID1` and `SSID2` from `config.env`; `analyze_class_sessions.ipynb` uses `SSID1` as the primary radio-count SSID.
+- SSID filters now read `SSID1` and `SSID2` from `config.env`; `analyze_class_sessions.py` uses `SSID1` as the primary radio-count SSID.
 - AP radio inference is Aruba-specific and based on MAC integer gaps, not explicit channel/radio metadata.
 - Some stages write in place or append to existing parquet files, so reruns may require manual cleanup to avoid stale or duplicated outputs.
