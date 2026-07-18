@@ -16,6 +16,10 @@ ANALYSIS_SCRIPTS: tuple[str, ...] = (
     "analyze_class_sessions.py",
 )
 
+ANALYSIS_MODULES: tuple[str, ...] = (
+    "analysis_config.py",
+)
+
 REQUIRED_FIXTURE_FILES: tuple[str, ...] = (
     "Sample/sample_aps.parquet",
     "Sample/sample_classrooms.parquet",
@@ -243,8 +247,8 @@ def prepare_analysis_workspace(
     )
     shutil.copy2(config_source, workspace / "config.env")
 
-    for script_name in ANALYSIS_SCRIPTS:
-        shutil.copy2(repo_root / script_name, workspace / script_name)
+    for source_name in (*ANALYSIS_SCRIPTS, *ANALYSIS_MODULES):
+        shutil.copy2(repo_root / source_name, workspace / source_name)
 
 
 def run_analysis_pipeline(workspace: Path, timeout: int = 600) -> None:

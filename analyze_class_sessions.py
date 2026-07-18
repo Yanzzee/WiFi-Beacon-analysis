@@ -9,6 +9,7 @@ def main():
     from datetime import datetime
     import os
     from dotenv import load_dotenv
+    from analysis_config import env_or_default as _env_or_default
     
     load_dotenv("config.env")
     
@@ -16,10 +17,6 @@ def main():
     OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER")
     SAMPLE_FOLDER = os.getenv("SAMPLE_FOLDER")
     CLASS_SESSIONS_FOLDER = os.getenv("CLASS_SESSIONS_FOLDER")
-    
-    def _env_or_default(name, default):
-        value = os.getenv(name)
-        return value.strip() if value and value.strip() else default
     
     RADIO_COUNT_SSID = _env_or_default("SSID1", "eduroam")
     try:

@@ -15,3 +15,14 @@ For now, tests should start from Sample/*.parquet and Data/grouped_data/*.parque
 Do not compare PNG bytes in regression tests.
 
 Use golden fingerprints for parquet/csv outputs.
+
+
+Working on these phases individually:
+✅ Freeze behavior
+✅ Build golden dataset
+✅ Build regression tests
+✅ Fix reproducible environment
+✅ Commit
+✅ Mechanically convert one notebook at a time
+Refactor into modules
+Add 6 GHz support & post-refactor design items
