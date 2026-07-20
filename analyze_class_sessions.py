@@ -9,7 +9,7 @@ def main():
     from datetime import datetime
     import os
     from dotenv import load_dotenv
-    from analysis_config import env_or_default as _env_or_default
+    from analysis_config import env_or_default as _env_or_default, get_beacon_rate
     
     load_dotenv("config.env")
     
@@ -19,11 +19,7 @@ def main():
     CLASS_SESSIONS_FOLDER = os.getenv("CLASS_SESSIONS_FOLDER")
     
     RADIO_COUNT_SSID = _env_or_default("SSID1", "eduroam")
-    try:
-        BEACON_RATE = float(os.getenv("BEACON_RATE"))
-    except ValueError:
-        print("Invalid float value in BEACON_RATE env variable.")
-        BEACON_RATE = 0.1024
+    BEACON_RATE = get_beacon_rate()
     if not os.path.exists(CLASS_SESSIONS_FOLDER):   
         os.makedirs(CLASS_SESSIONS_FOLDER)
     

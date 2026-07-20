@@ -17,6 +17,7 @@ import pyarrow.parquet as pq
 import pyarrow as pa
 from dotenv import load_dotenv
 from tqdm import tqdm
+from analysis_config import get_beacon_rate
 
 load_dotenv("config.env")
 
@@ -30,11 +31,7 @@ SAMPLED_FOLDER = os.getenv("SAMPLED_FOLDER")
 SAMPLE_FOLDER = os.getenv("SAMPLE_FOLDER")
 GROUPED_DATA_FOLDER = os.getenv("GROUPED_DATA_FOLDER")
 AP_PLATFORM = os.getenv("AP_PLATFORM")
-try:
-    BEACON_RATE = float(os.getenv("BEACON_RATE"))
-except ValueError:
-    print("Invalid float value in BEACON_RATE env variable.")
-    BEACON_RATE = 0.1024
+BEACON_RATE = get_beacon_rate()
 
 
 
