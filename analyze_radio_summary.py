@@ -9,6 +9,7 @@ def main():
     from datetime import datetime
     import os
     from dotenv import load_dotenv
+    from analysis_config import ensure_directory
     
     load_dotenv("config.env")
     
@@ -16,8 +17,7 @@ def main():
     OUTPUT_FOLDER = os.getenv("OUTPUT_FOLDER")
     RADIO_SUMMARY_FOLDER = os.getenv("RADIO_SUMMARY_FOLDER")
     
-    if not os.path.exists(RADIO_SUMMARY_FOLDER):    
-        os.makedirs(RADIO_SUMMARY_FOLDER)
+    ensure_directory(RADIO_SUMMARY_FOLDER)
     
     
     #log to a file and print to terminal

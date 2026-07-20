@@ -1,4 +1,4 @@
-"""Small shared helpers for reading analysis configuration."""
+"""Small shared helpers for analysis configuration and paths."""
 
 import os
 
@@ -16,3 +16,9 @@ def get_beacon_rate() -> float:
     except ValueError:
         print("Invalid float value in BEACON_RATE env variable.")
         return 0.1024
+
+
+def ensure_directory(path: str) -> None:
+    """Create ``path`` when it does not already exist."""
+    if not os.path.exists(path):
+        os.makedirs(path)

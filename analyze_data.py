@@ -17,7 +17,7 @@ import pyarrow.parquet as pq
 import pyarrow as pa
 from dotenv import load_dotenv
 from tqdm import tqdm
-from analysis_config import get_beacon_rate
+from analysis_config import ensure_directory, get_beacon_rate
 
 load_dotenv("config.env")
 
@@ -37,16 +37,11 @@ BEACON_RATE = get_beacon_rate()
 
 if DATA_FOLDER is None or OUTPUT_FOLDER is None or SAMPLE_FOLDER is None:
     raise ValueError("Please set the environment variables DATA_FOLDER, OUTPUT_FOLDER, and SAMPLE_FOLDER.")
-if not os.path.exists(OUTPUT_FOLDER):
-    os.makedirs(OUTPUT_FOLDER)
-if not os.path.exists(PLOTS_FOLDER):
-    os.makedirs(PLOTS_FOLDER)
-if not os.path.exists(SAMPLED_FOLDER):
-    os.makedirs(SAMPLED_FOLDER)
-if not os.path.exists(SAMPLE_FOLDER):
-    os.makedirs(SAMPLE_FOLDER)
-if not os.path.exists(GROUPED_DATA_FOLDER):
-    os.makedirs(GROUPED_DATA_FOLDER)
+ensure_directory(OUTPUT_FOLDER)
+ensure_directory(PLOTS_FOLDER)
+ensure_directory(SAMPLED_FOLDER)
+ensure_directory(SAMPLE_FOLDER)
+ensure_directory(GROUPED_DATA_FOLDER)
 # Check if the required folders exist, and create them if they don't
 
 

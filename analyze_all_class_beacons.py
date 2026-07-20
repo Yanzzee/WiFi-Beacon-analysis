@@ -13,7 +13,7 @@ def main():
     from tqdm import tqdm
     import os
     from dotenv import load_dotenv
-    from analysis_config import env_or_default as _env_or_default
+    from analysis_config import ensure_directory, env_or_default as _env_or_default
     
     load_dotenv("config.env")
     
@@ -26,8 +26,7 @@ def main():
     SSID2 = _env_or_default("SSID2", "BYU-WiFi")
     CONFIGURED_SSIDS = [SSID1, SSID2]
     
-    if not os.path.exists(ALL_CLASS_BEACONS_FOLDER):
-        os.makedirs(ALL_CLASS_BEACONS_FOLDER)
+    ensure_directory(ALL_CLASS_BEACONS_FOLDER)
     
     #log to a file and print to terminal
     # Open logging file

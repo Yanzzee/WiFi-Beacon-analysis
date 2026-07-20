@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 import re
 from dotenv import load_dotenv
 import os
+from analysis_config import ensure_directory
 
 load_dotenv(dotenv_path="config.env")
 
@@ -21,8 +22,7 @@ if TIMEZONE is None:
 if SAMPLE_FOLDER is None:
     raise ValueError("SAMPLE_FOLDER is not set in config.env")
 
-if not os.path.exists(SAMPLE_FOLDER):
-    os.makedirs(SAMPLE_FOLDER)
+ensure_directory(SAMPLE_FOLDER)
 
 # Define a function to clean a single cell
 def clean_cell(value):

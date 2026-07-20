@@ -9,7 +9,11 @@ def main():
     from datetime import datetime
     import os
     from dotenv import load_dotenv
-    from analysis_config import env_or_default as _env_or_default, get_beacon_rate
+    from analysis_config import (
+        ensure_directory,
+        env_or_default as _env_or_default,
+        get_beacon_rate,
+    )
     
     load_dotenv("config.env")
     
@@ -20,8 +24,7 @@ def main():
     
     RADIO_COUNT_SSID = _env_or_default("SSID1", "eduroam")
     BEACON_RATE = get_beacon_rate()
-    if not os.path.exists(CLASS_SESSIONS_FOLDER):   
-        os.makedirs(CLASS_SESSIONS_FOLDER)
+    ensure_directory(CLASS_SESSIONS_FOLDER)
     
     #log to a file and print to terminal
     # Open logging file
