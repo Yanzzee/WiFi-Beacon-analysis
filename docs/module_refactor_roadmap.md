@@ -127,17 +127,18 @@ For each pass:
 - Added fixed-array tests comparing every returned array for multi-value,
   single-value, and empty inputs. Plotting was not moved or changed.
 
-### 6. Extract grouped-AP schema validation
+### 6. Extract grouped-AP schema validation — completed
 
-- Move `REQUIRED_GROUPED_AP_COLUMNS`, `_grouped_timestamp_series()`,
-  `validate_grouped_ap_timestamps()`, and `validate_grouped_ap_schema()` from
-  `analyze_data.py` into a validation module.
-- Preserve accepted index/column forms, pandas dtype checks, native-capture
+- Added `analysis_validation.py` containing `REQUIRED_GROUPED_AP_COLUMNS`,
+  `_grouped_timestamp_series()`, `validate_grouped_ap_timestamps()`, and
+  `validate_grouped_ap_schema()`.
+- Preserved accepted index/column forms, pandas dtype checks, native-capture
   detection, validation order, and exception messages.
-- Keep the functions imported into `analyze_data.py` under their existing
-  names so current tests and callers remain valid.
-- Use the existing timezone-aware, timezone-naive, string-timestamp, and
-  native-output tests as the primary characterization suite.
+- Imported every moved name back into `analyze_data.py` under its existing name
+  so current tests and callers remain valid.
+- Confirmed the existing timezone-aware, timezone-naive, string-timestamp, and
+  native-output characterization tests pass before and after the move.
+(note, validation took 47 minutes to pass after making this change)
 
 ### 7. Extract analysis preflight checks
 
