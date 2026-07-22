@@ -101,18 +101,19 @@ For each pass:
 - Added direct missing-directory and existing-directory tests.
 - Completed in commit `914fd64` (`refactor 3`).
 
-### 4. Extract analysis log-file opening
+### 4. Extract analysis log-file opening — completed
 
-- Create a small `analysis_logging.py` helper for constructing and opening the
-  timestamped stage log file.
-- Apply it to the four active analysis scripts only.
-- Preserve the timestamp format `%Y-%m-%d_%H-%M`, forward-slash path
+- Added `open_analysis_log()` in `analysis_logging.py` for constructing and
+  opening timestamped stage log files.
+- Updated the four active analysis scripts and retained their local
+  `timestamp`, `log_filename`, and `log_file` variables.
+- Preserved the timestamp format `%Y-%m-%d_%H-%M`, forward-slash path
   construction, stage-specific filename stems, append mode, encoding default,
-  and the point in execution at which the file is opened.
-- Do not yet combine `log_and_print()`: `analyze_data.py` intentionally writes
-  without printing, while the other stages print and write.
-- Add focused tests for the exact filename and append behavior before updating
-  call sites.
+  and the point in execution at which each file is opened.
+- Kept each script's existing `log_and_print()` implementation unchanged:
+  `analyze_data.py` writes without printing, while the other stages print and
+  write.
+- Added focused tests for the exact filename, append mode, and append behavior.
 
 ### 5. Extract the shared PDF/CDF calculation
 

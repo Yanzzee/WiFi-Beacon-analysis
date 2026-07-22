@@ -18,6 +18,7 @@ ANALYSIS_SCRIPTS: tuple[str, ...] = (
 
 ANALYSIS_MODULES: tuple[str, ...] = (
     "analysis_config.py",
+    "analysis_logging.py",
 )
 
 REQUIRED_FIXTURE_FILES: tuple[str, ...] = (

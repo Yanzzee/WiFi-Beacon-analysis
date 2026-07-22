@@ -10,6 +10,7 @@ def main():
     import os
     from dotenv import load_dotenv
     from analysis_config import ensure_directory
+    from analysis_logging import open_analysis_log
     
     load_dotenv("config.env")
     
@@ -22,9 +23,10 @@ def main():
     
     #log to a file and print to terminal
     # Open logging file
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    log_filename = f"{OUTPUT_FOLDER}/analyze_radio_summary_log_{timestamp}.txt"
-    log_file = open(log_filename, "a")# Open file in append mode
+    timestamp, log_filename, log_file = open_analysis_log(
+        OUTPUT_FOLDER,
+        "analyze_radio_summary",
+    )
     def log_and_print(message):
         print(message)  # Print to terminal is too noisy
         log_file.write(message + "\n")  # Write to file

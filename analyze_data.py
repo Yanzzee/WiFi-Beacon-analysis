@@ -18,6 +18,7 @@ import pyarrow as pa
 from dotenv import load_dotenv
 from tqdm import tqdm
 from analysis_config import ensure_directory, get_beacon_rate
+from analysis_logging import open_analysis_log
 
 load_dotenv("config.env")
 
@@ -849,9 +850,10 @@ def process(sample_aps_df, sample_classes_df, sample_classrooms_df):
 # =============================================================================
 #run
 if __name__ == "__main__":
-    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    log_filename = f"{OUTPUT_FOLDER}/analyze_data_log_{timestamp}.txt" #logging - need to change to logging function
-    log_file = open(log_filename, "a")  # Open file in append mode
+    timestamp, log_filename, log_file = open_analysis_log(
+        OUTPUT_FOLDER,
+        "analyze_data",
+    )
     log_and_print(f"Analysis started on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     main()
 
