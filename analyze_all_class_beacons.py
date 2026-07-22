@@ -15,6 +15,7 @@ def main():
     from dotenv import load_dotenv
     from analysis_config import ensure_directory, env_or_default as _env_or_default
     from analysis_logging import open_analysis_log
+    from analysis_statistics import compute_pdf_cdf
     
     load_dotenv("config.env")
     
@@ -254,13 +255,7 @@ def main():
     cu_data = all_class_beacons_df["wlan.qbss.cu"].dropna() * (100 / 255)
     
     # Compute PDF/CDF
-    def compute_pdf_cdf(data, bins=256):
-        counts, bin_edges = np.histogram(data, bins=bins, density=True)
-        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
-        cdf = np.cumsum(counts) * np.diff(bin_edges)
-        return bin_centers, counts, cdf
-    
-    bin_centers, pdf, cdf = compute_pdf_cdf(cu_data)
+    bin_centers, pdf, cdf = compute_pdf_cdf(cu_data, bins=256)
     
     # --- PDF Plot ---
     plt.figure(figsize=(10, 6))

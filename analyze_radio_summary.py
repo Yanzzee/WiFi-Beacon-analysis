@@ -11,6 +11,7 @@ def main():
     from dotenv import load_dotenv
     from analysis_config import ensure_directory
     from analysis_logging import open_analysis_log
+    from analysis_statistics import compute_pdf_cdf
     
     load_dotenv("config.env")
     
@@ -279,17 +280,13 @@ def main():
     # =============================================================================
     # Cell 7 - Plot beacon-rate PDF and CDF
     # =============================================================================
-    # Function to compute PDF and CDF
-    def compute_pdf_cdf(data, bins=50):
-        counts, bin_edges = np.histogram(data, bins=bins, density=True)
-        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
-        cdf = np.cumsum(counts) * np.diff(bin_edges)
-        return bin_centers, counts, cdf
-    
     # Compute all distributions
-    bin_centers1, pdf1, cdf1 = compute_pdf_cdf(df_radio_1)
-    bin_centers2, pdf2, cdf2 = compute_pdf_cdf(df_radio_2)
-    bin_centers_comb, pdf_comb, cdf_comb = compute_pdf_cdf(data_combined)
+    bin_centers1, pdf1, cdf1 = compute_pdf_cdf(df_radio_1, bins=50)
+    bin_centers2, pdf2, cdf2 = compute_pdf_cdf(df_radio_2, bins=50)
+    bin_centers_comb, pdf_comb, cdf_comb = compute_pdf_cdf(
+        data_combined,
+        bins=50,
+    )
     
     # --- PDF Plot ---
     plt.figure(figsize=(10, 6))

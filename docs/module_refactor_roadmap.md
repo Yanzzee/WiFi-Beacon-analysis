@@ -115,17 +115,17 @@ For each pass:
   write.
 - Added focused tests for the exact filename, append mode, and append behavior.
 
-### 5. Extract the shared PDF/CDF calculation
+### 5. Extract the shared PDF/CDF calculation — completed
 
-- Move the identical NumPy histogram/PDF/CDF calculation from
-  `analyze_all_class_beacons.py` and `analyze_radio_summary.py` into a pure
-  helper such as `analysis_statistics.py`.
-- Keep the caller-specific bin counts explicit: 256 for channel utilization
-  and 50 for beacon rate.
-- Preserve `np.histogram(..., density=True)`, bin-center calculation, cumulative
-  calculation, return order, dtype behavior, and empty/small-input behavior.
-- Add fixed-array tests comparing every returned array before changing either
-  script. Do not move plotting in this step.
+- Added the pure `compute_pdf_cdf()` helper in `analysis_statistics.py`.
+- Updated `analyze_all_class_beacons.py` and `analyze_radio_summary.py` while
+  keeping their caller-specific bin counts explicit: 256 for channel
+  utilization and 50 for beacon rate.
+- Preserved `np.histogram(..., density=True)`, bin-center calculation,
+  cumulative calculation, return order, dtype behavior, and empty/small-input
+  behavior.
+- Added fixed-array tests comparing every returned array for multi-value,
+  single-value, and empty inputs. Plotting was not moved or changed.
 
 ### 6. Extract grouped-AP schema validation
 
