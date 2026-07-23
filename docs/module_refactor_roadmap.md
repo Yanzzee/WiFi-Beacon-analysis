@@ -140,18 +140,18 @@ For each pass:
   native-output characterization tests pass before and after the move.
 (note, validation took 47 minutes to pass after making this change)
 
-### 7. Extract analysis preflight checks
+### 7. Extract analysis preflight checks — completed
 
-- Move `validate_radio_inference_platform()`,
+- Moved `validate_radio_inference_platform()`,
   `validate_no_existing_analysis_outputs()`, and
-  `validate_grouped_files_for_sample_aps()` into the validation/path layer.
-- Pass required paths and platform values explicitly inside the module while
-  retaining compatible names in `analyze_data.py` if tests or callers depend
-  on them.
-- Preserve validation order in `main()`, sampled-location scoping, sorted error
-  path lists, BSSID fallback explanation, and all failure types.
-- Do not change the Aruba-only platform requirement or implement vendor
-  inference here.
+  `validate_grouped_files_for_sample_aps()` into `analysis_validation.py`.
+- Passed required paths and platform values explicitly inside the module while
+  retaining compatibility wrappers with the existing names and signatures in
+  `analyze_data.py`.
+- Preserved validation order in `main()`, sampled-location scoping, sorted error
+  path lists, the BSSID fallback explanation, and all failure types.
+- Kept the Aruba-only platform requirement unchanged and did not introduce
+  vendor inference.
 
 ### 8. Extract parquet persistence helpers
 

@@ -22,8 +22,11 @@ from analysis_logging import open_analysis_log
 from analysis_validation import (
     REQUIRED_GROUPED_AP_COLUMNS,
     _grouped_timestamp_series,
+    validate_grouped_files_for_sample_aps as _validate_grouped_files_for_sample_aps,
     validate_grouped_ap_schema,
     validate_grouped_ap_timestamps,
+    validate_no_existing_analysis_outputs as _validate_no_existing_analysis_outputs,
+    validate_radio_inference_platform as _validate_radio_inference_platform,
 )
 
 load_dotenv("config.env")
@@ -62,16 +65,7 @@ def log_and_print(message):
     log_file.write(message + "\n")  # Write to file
 
 def validate_radio_inference_platform():
-    configured_platform = (AP_PLATFORM or "").strip().lower()
-    if configured_platform != "aruba":
-        configured_display = AP_PLATFORM if AP_PLATFORM else "<unset>"
-        raise ValueError(
-            "analyze_data.py radio inference is supported only when "
-            "AP_PLATFORM=aruba. The current algorithm groups adjacent transmitter "
-            "MAC addresses using Aruba-specific allocation assumptions; channel- "
-            "or vendor-neutral radio inference is deferred until a dedicated "
-            f"analysis change. Configured AP_PLATFORM: {configured_display}."
-        )
+    return _validate_radio_inference_platform(AP_PLATFORM)
 
 # # populate total station count for all SSIDs per radio
 def calculate_total_scount(df):
@@ -557,64 +551,15 @@ def append_to_parquet(AP_name, all_class_beacons_df):
 
 
 def validate_no_existing_analysis_outputs():
-    existing_outputs = []
-
-    sampled_files = glob.glob(os.path.join(SAMPLED_FOLDER, "*_class_beacons.parquet"))
-    existing_outputs.extend(sampled_files)
-
-    for output_file in [
-        os.path.join(DATA_FOLDER, "all_class_beacons.parquet"),
-        os.path.join(DATA_FOLDER, "radio_summary.parquet"),
-    ]:
-        if os.path.exists(output_file):
-            existing_outputs.append(output_file)
-
-    if existing_outputs:
-        output_list = "\n".join(f"- {path}" for path in sorted(existing_outputs))
-        raise FileExistsError(
-            "Existing analyze_data outputs were found. "
-            "Use a fresh workspace or remove these generated files before rerunning:\n"
-            f"{output_list}"
-        )
+    return _validate_no_existing_analysis_outputs(SAMPLED_FOLDER, DATA_FOLDER)
 
 
 def validate_grouped_files_for_sample_aps(sample_aps_df, sample_classes_df=None):
-    if "Hostname" not in sample_aps_df.columns:
-        raise ValueError(
-            "Sample AP metadata must include a Hostname column for grouped AP lookup."
-        )
-
-    scoped_sample_aps_df = sample_aps_df
-    if (
-        sample_classes_df is not None
-        and "Building-Room" in sample_aps_df.columns
-        and "location" in sample_classes_df.columns
-    ):
-        sampled_locations = set(
-            sample_classes_df["location"].dropna().astype("string").str.strip()
-        )
-        scoped_sample_aps_df = sample_aps_df[
-            sample_aps_df["Building-Room"].astype("string").str.strip().isin(sampled_locations)
-        ]
-
-    hostnames = scoped_sample_aps_df["Hostname"].dropna().astype("string").str.strip()
-    expected_paths = []
-    for hostname in sorted(hostname for hostname in hostnames.unique().tolist() if hostname):
-        expected_path = os.path.join(GROUPED_DATA_FOLDER, f"{hostname}.parquet")
-        if not os.path.exists(expected_path):
-            expected_paths.append(expected_path)
-
-    if expected_paths:
-        expected_list = "\n".join(f"- {path}" for path in expected_paths)
-        raise FileNotFoundError(
-            "Missing grouped AP parquet files for sample AP Hostname values. "
-            "analyze_data.py currently loads grouped data by Sample/sample_aps.parquet "
-            "Hostname. BSSID fallback files cannot be reliably associated with all "
-            "SSIDs on the same radio or all radios on the same AP without vendor AP-name "
-            "metadata. Aruba AP-name beacons are supported now; broader vendor mapping "
-            "is deferred. Expected files:\n"
-            f"{expected_list}"
-        )
+    return _validate_grouped_files_for_sample_aps(
+        sample_aps_df,
+        GROUPED_DATA_FOLDER,
+        sample_classes_df=sample_classes_df,
+    )
 
 
 # combine all files in Data/sampled into one file
