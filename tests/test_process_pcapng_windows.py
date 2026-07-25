@@ -8,12 +8,9 @@ import pandas as pd
 import pytest
 
 import process_pcapng as pp
+from pipeline_harness import SHORT_CAPTURE_FILES
 
-TEST_FILES = [
-    "Beacon_Capture_20251110090000_00012.pcapng",
-    "Beacon_Capture_20251110100000_00013.pcapng",
-    "Beacon_Capture_20251110110000_00014.pcapng",
-]
+TEST_FILES = SHORT_CAPTURE_FILES
 PCAP_MAGIC = b"\xd4\xc3\xb2\xa1"
 
 
@@ -75,12 +72,17 @@ def test_discover_pcapng_files_rejects_true_pcap_magic(tmp_path: Path):
 
 
 @pytest.mark.requires_external_tools
+@pytest.mark.pre_analysis_short
 @pytest.mark.skipif(shutil.which(os.getenv("TSHARK_PATH", "tshark")) is None, reason="tshark is not available on PATH")
-def test_process_pcapng_windows_matches_known_good(tmp_path: Path):
-    captures_dir = Path("Data") / "captures"
-    processed_dir = Path("Data") / "processed_data"
-    assert captures_dir.exists(), "Data/captures directory must exist"
-    assert processed_dir.exists(), "Data/processed_data directory must exist"
+def test_process_pcapng_windows_matches_known_good(
+    tmp_path: Path,
+    short_captures_dir: Path,
+    short_processed_dir: Path,
+):
+    captures_dir = short_captures_dir
+    processed_dir = short_processed_dir
+    assert captures_dir.exists(), f"{captures_dir} directory must exist"
+    assert processed_dir.exists(), f"{processed_dir} directory must exist"
 
     output_dir = tmp_path / "processed_data"
     output_dir.mkdir(parents=True, exist_ok=True)

@@ -1,6 +1,21 @@
 # Analysis Fixture Dataset
 
-The analysis-forward regression test starts after capture processing and grouping. Do not place raw captures here, and do not include anything that requires `tshark` or Linux wireless tools.
+The analysis-forward regression test starts after capture processing and
+grouping. Do not place raw captures here, and do not include anything that
+requires `tshark` or Linux wireless tools.
+
+The separate original-input tests in `tests/test_pipeline_golden.py` use
+`Data/captures` plus the CSV files in `Sample` (or explicitly configured source
+directories), build these fixture-shaped inputs in a temporary workspace, and
+compare semantic fingerprints at this boundary. The full-capture checkpoint is
+scoped to sampled AP/class-session windows, so irrelevant differences in
+off-hours capture coverage do not prevent an otherwise identical analysis
+golden result.
+
+Short pre-analysis tests use the local `Data/captures_test`,
+`Data/processed_data_test/original`, and `Data/grouped_data_test` folders. These
+large local inputs remain outside this tracked fixture; see
+`tests/golden/README.md` for their exact roles and retention requirements.
 
 By default, the tests look for a fixture dataset at:
 

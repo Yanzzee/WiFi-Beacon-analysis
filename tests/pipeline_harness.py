@@ -24,6 +24,44 @@ ANALYSIS_MODULES: tuple[str, ...] = (
     "analysis_validation.py",
 )
 
+PRE_ANALYSIS_SCRIPTS: tuple[str, ...] = (
+    "process_pcapng.py",
+    "group_data_aruba.py",
+    "group_data_cleanup.py",
+    "samples.py",
+)
+
+PRE_ANALYSIS_MODULES: tuple[str, ...] = (
+    "sample_processing.py",
+)
+
+SOURCE_SAMPLE_FILES: tuple[str, ...] = (
+    "Sample_APs.csv",
+    "Sample_classrooms.csv",
+    "Sample_schedule.csv",
+)
+
+FULL_CAPTURE_FILES: tuple[str, ...] = tuple(
+    (
+        f"Beacon_Capture_202511{day:02d}{hour:02d}0000_"
+        f"{first_sequence + hour - 7:05d}.pcapng"
+    )
+    for day, first_sequence in (
+        (10, 10),
+        (11, 34),
+        (12, 58),
+        (13, 82),
+        (14, 106),
+    )
+    for hour in range(7, 23)
+)
+
+SHORT_CAPTURE_FILES: tuple[str, ...] = (
+    "Beacon_Capture_20251110090000_00012.pcapng",
+    "Beacon_Capture_20251110100000_00013.pcapng",
+    "Beacon_Capture_20251110110000_00014.pcapng",
+)
+
 REQUIRED_FIXTURE_FILES: tuple[str, ...] = (
     "Sample/sample_aps.parquet",
     "Sample/sample_classrooms.parquet",
@@ -152,6 +190,12 @@ FINGERPRINT_TABLES: dict[str, tuple[str, str]] = {
     "filtered_radio_summary_csv": ("Output/filtered_radio_summary.csv", "csv"),
 }
 
+ANALYSIS_INPUT_TABLES: dict[str, tuple[str, str]] = {
+    "sample_aps": ("Sample/sample_aps.parquet", "parquet"),
+    "sample_classrooms": ("Sample/sample_classrooms.parquet", "parquet"),
+    "sample_classes": ("Sample/sample_classes.parquet", "parquet"),
+}
+
 UNIQUE_COLUMNS: tuple[str, ...] = (
     "wlan.vs.aruba.ap_name",
     "wlan.bssid",
@@ -255,19 +299,195 @@ def prepare_analysis_workspace(
         shutil.copy2(repo_root / source_name, workspace / source_name)
 
 
+def missing_original_inputs(captures_dir: Path, sample_dir: Path) -> list[str]:
+    captures_dir = Path(captures_dir)
+    sample_dir = Path(sample_dir)
+    missing = [
+        f"Sample/{name}"
+        for name in SOURCE_SAMPLE_FILES
+        if not (sample_dir / name).is_file()
+    ]
+    missing.extend(
+        f"Data/captures/{name}"
+        for name in FULL_CAPTURE_FILES
+        if not (captures_dir / name).is_file()
+    )
+    return missing
+
+
+def prepare_original_input_workspace(
+    captures_dir: Path,
+    sample_dir: Path,
+    workspace: Path,
+    repo_root: Path,
+) -> None:
+    captures_dir = Path(captures_dir)
+    sample_dir = Path(sample_dir)
+    workspace = Path(workspace)
+    repo_root = Path(repo_root)
+
+    missing = missing_original_inputs(captures_dir, sample_dir)
+    if missing:
+        raise FileNotFoundError(
+            "Original pipeline inputs are incomplete. Missing: " + ", ".join(missing)
+        )
+
+    (workspace / "Data" / "processed_data").mkdir(parents=True, exist_ok=True)
+    (workspace / "Data" / "grouped_data").mkdir(parents=True, exist_ok=True)
+    (workspace / "Data" / "sampled").mkdir(parents=True, exist_ok=True)
+    (workspace / "Sample").mkdir(parents=True, exist_ok=True)
+    (workspace / "Output").mkdir(parents=True, exist_ok=True)
+
+    for sample_name in SOURCE_SAMPLE_FILES:
+        shutil.copy2(sample_dir / sample_name, workspace / "Sample" / sample_name)
+
+    shutil.copy2(repo_root / "config.env", workspace / "config.env")
+    pipeline_sources = dict.fromkeys(
+        (
+            *PRE_ANALYSIS_SCRIPTS,
+            *PRE_ANALYSIS_MODULES,
+            *ANALYSIS_SCRIPTS,
+            *ANALYSIS_MODULES,
+        )
+    )
+    for source_name in pipeline_sources:
+        shutil.copy2(repo_root / source_name, workspace / source_name)
+
+
+def prepare_sample_input_workspace(
+    sample_dir: Path,
+    workspace: Path,
+    repo_root: Path,
+) -> None:
+    sample_dir = Path(sample_dir)
+    workspace = Path(workspace)
+    repo_root = Path(repo_root)
+    missing = [
+        f"Sample/{name}"
+        for name in SOURCE_SAMPLE_FILES
+        if not (sample_dir / name).is_file()
+    ]
+    if missing:
+        raise FileNotFoundError(
+            "Original sample inputs are incomplete. Missing: " + ", ".join(missing)
+        )
+
+    (workspace / "Sample").mkdir(parents=True, exist_ok=True)
+    for sample_name in SOURCE_SAMPLE_FILES:
+        shutil.copy2(sample_dir / sample_name, workspace / "Sample" / sample_name)
+    shutil.copy2(repo_root / "config.env", workspace / "config.env")
+    for source_name in ("samples.py", "sample_processing.py", "analysis_config.py"):
+        shutil.copy2(repo_root / source_name, workspace / source_name)
+
+
+def prepare_grouping_workspace(
+    processed_dir: Path,
+    fixture_dir: Path,
+    workspace: Path,
+    repo_root: Path,
+) -> None:
+    processed_dir = Path(processed_dir)
+    fixture_dir = Path(fixture_dir)
+    workspace = Path(workspace)
+    repo_root = Path(repo_root)
+    processed_files = sorted(processed_dir.glob("*.parquet"))
+    if not processed_files:
+        raise FileNotFoundError(
+            f"No processed parquet inputs are available in {processed_dir}"
+        )
+
+    (workspace / "Data" / "processed_data").mkdir(parents=True, exist_ok=True)
+    (workspace / "Data" / "grouped_data").mkdir(parents=True, exist_ok=True)
+    (workspace / "Sample").mkdir(parents=True, exist_ok=True)
+    for processed_path in processed_files:
+        shutil.copy2(
+            processed_path,
+            workspace / "Data" / "processed_data" / processed_path.name,
+        )
+    shutil.copytree(
+        fixture_dir / "Sample",
+        workspace / "Sample",
+        dirs_exist_ok=True,
+    )
+    shutil.copy2(repo_root / "config.env", workspace / "config.env")
+    for source_name in ("group_data_aruba.py", "group_data_cleanup.py"):
+        shutil.copy2(repo_root / source_name, workspace / source_name)
+
+
+def run_sample_pipeline(workspace: Path, timeout: int = 600) -> None:
+    workspace = Path(workspace)
+    run_script(workspace / "samples.py", workspace, timeout)
+
+
+def run_capture_pipeline(
+    workspace: Path,
+    timeout: int = 3600,
+    capture_workers: int = 4,
+    captures_dir: Path | None = None,
+) -> None:
+    workspace = Path(workspace)
+    captures_dir = (
+        Path(captures_dir).resolve()
+        if captures_dir is not None
+        else workspace / "Data" / "captures"
+    )
+    run_script(
+        workspace / "process_pcapng.py",
+        workspace,
+        timeout,
+        args=(
+            "--pcapng_dir",
+            str(captures_dir),
+            "--output_dir",
+            "Data/processed_data",
+            "--num_processes",
+            str(capture_workers),
+        ),
+    )
+
+
+def run_grouping_pipeline(workspace: Path, timeout: int = 3600) -> None:
+    workspace = Path(workspace)
+    for script_name in PRE_ANALYSIS_SCRIPTS[1:]:
+        if script_name == "samples.py":
+            continue
+        run_script(workspace / script_name, workspace, timeout)
+
+
+def run_pre_analysis_pipeline(
+    workspace: Path,
+    timeout: int = 3600,
+    capture_workers: int = 4,
+    captures_dir: Path | None = None,
+) -> None:
+    run_capture_pipeline(
+        workspace,
+        timeout=timeout,
+        capture_workers=capture_workers,
+        captures_dir=captures_dir,
+    )
+    run_grouping_pipeline(workspace, timeout=timeout)
+    run_sample_pipeline(workspace, timeout=timeout)
+
+
 def run_analysis_pipeline(workspace: Path, timeout: int = 600) -> None:
     workspace = Path(workspace)
     for script_name in ANALYSIS_SCRIPTS:
         run_script(workspace / script_name, workspace, timeout)
 
 
-def run_script(script_path: Path, cwd: Path, timeout: int) -> None:
+def run_script(
+    script_path: Path,
+    cwd: Path,
+    timeout: int,
+    args: tuple[str, ...] = (),
+) -> None:
     env = os.environ.copy()
     env.setdefault("MPLBACKEND", "Agg")
     env.setdefault("PYTHONIOENCODING", "utf-8")
 
     completed = subprocess.run(
-        [sys.executable, str(script_path)],
+        [sys.executable, str(script_path), *args],
         cwd=str(cwd),
         env=env,
         text=True,
@@ -350,6 +570,174 @@ def build_fingerprints(workspace: Path) -> dict[str, object]:
     }
 
 
+def build_analysis_input_fingerprints(dataset_root: Path) -> dict[str, object]:
+    dataset_root = Path(dataset_root)
+    pd = _require_pandas()
+    sample_aps_path = dataset_root / "Sample" / "sample_aps.parquet"
+    sample_aps = pd.read_parquet(sample_aps_path)
+    if "Hostname" not in sample_aps.columns:
+        raise ValueError(f"{sample_aps_path} does not contain the Hostname column")
+
+    hostnames = sorted(sample_aps["Hostname"].dropna().astype(str).unique())
+    grouped_tables = {}
+    for hostname in hostnames:
+        grouped_path = dataset_root / "Data" / "grouped_data" / f"{hostname}.parquet"
+        if not grouped_path.is_file():
+            raise FileNotFoundError(
+                f"Grouped input for sampled AP is missing: {grouped_path}"
+            )
+        grouped_tables[hostname] = _input_table_fingerprint(
+            grouped_path,
+            "parquet",
+        )
+
+    return {
+        "sample_tables": build_sample_input_fingerprints(dataset_root),
+        "grouped_tables": grouped_tables,
+    }
+
+
+def build_analysis_scope_input_fingerprints(
+    dataset_root: Path,
+) -> dict[str, object]:
+    dataset_root = Path(dataset_root)
+    pd = _require_pandas()
+    sample_aps = pd.read_parquet(dataset_root / "Sample" / "sample_aps.parquet")
+    sample_classes = pd.read_parquet(
+        dataset_root / "Sample" / "sample_classes.parquet"
+    )
+    sessions = {}
+
+    for _, ap_row in sample_aps.iterrows():
+        hostname = str(ap_row["Hostname"])
+        location = ap_row["Building-Room"]
+        grouped_path = (
+            dataset_root / "Data" / "grouped_data" / f"{hostname}.parquet"
+        )
+        if not grouped_path.is_file():
+            raise FileNotFoundError(
+                f"Grouped input for sampled AP is missing: {grouped_path}"
+            )
+        grouped = pd.read_parquet(grouped_path)
+        timestamps = pd.to_datetime(
+            grouped["aruba_erm.time"],
+            errors="coerce",
+            utc=True,
+        )
+        location_classes = sample_classes[sample_classes["location"] == location]
+        for class_index, class_row in location_classes.iterrows():
+            start_time = pd.to_datetime(class_row["start_time"], utc=True)
+            end_time = pd.to_datetime(class_row["end_time"], utc=True)
+            filtered = grouped[
+                (timestamps >= start_time) & (timestamps <= end_time)
+            ]
+            key = f"{class_index}:{hostname}"
+            sessions[key] = _fingerprint_dataframe(filtered)
+
+    return {
+        "sample_tables": build_sample_input_fingerprints(dataset_root),
+        "sessions": sessions,
+    }
+
+
+def build_grouped_reference_fingerprints(
+    processed_dir: Path,
+    hostnames: list[str],
+) -> dict[str, object]:
+    pd = _require_pandas()
+    frames = []
+    for processed_path in sorted(Path(processed_dir).glob("*.parquet")):
+        frame = pd.read_parquet(processed_path)
+        if frame.index.name == "aruba_erm.time":
+            frame = frame.reset_index()
+        frames.append(frame)
+    if not frames:
+        raise FileNotFoundError(
+            f"No processed parquet inputs are available in {processed_dir}"
+        )
+
+    combined = pd.concat(frames, ignore_index=True)
+    ap_names = combined["wlan.vs.aruba.ap_name"].astype("string")
+    return {
+        hostname: _fingerprint_dataframe(combined[ap_names == hostname])
+        for hostname in sorted(hostnames)
+    }
+
+
+def build_grouped_fingerprints(
+    grouped_dir: Path,
+    hostnames: list[str],
+) -> dict[str, object]:
+    return {
+        hostname: _input_table_fingerprint(
+            Path(grouped_dir) / f"{hostname}.parquet",
+            "parquet",
+        )
+        for hostname in sorted(hostnames)
+    }
+
+
+def missing_grouped_reference_rows(
+    processed_dir: Path,
+    grouped_dir: Path,
+    hostnames: list[str],
+) -> dict[str, int]:
+    import numpy as np
+
+    pd = _require_pandas()
+    frames = []
+    for processed_path in sorted(Path(processed_dir).glob("*.parquet")):
+        frame = pd.read_parquet(processed_path)
+        if frame.index.name == "aruba_erm.time":
+            frame = frame.reset_index()
+        frames.append(frame)
+    if not frames:
+        raise FileNotFoundError(
+            f"No processed parquet inputs are available in {processed_dir}"
+        )
+
+    combined = pd.concat(frames, ignore_index=True)
+    ap_names = combined["wlan.vs.aruba.ap_name"].astype("string")
+    missing = {}
+    for hostname in sorted(hostnames):
+        expected = combined[ap_names == hostname]
+        reference = pd.read_parquet(
+            Path(grouped_dir) / f"{hostname}.parquet"
+        )
+        expected_hashes = _canonical_row_hashes(expected)
+        reference_hashes = _canonical_row_hashes(reference)
+        expected_values, expected_counts = np.unique(
+            expected_hashes,
+            return_counts=True,
+        )
+        reference_values, reference_counts = np.unique(
+            reference_hashes,
+            return_counts=True,
+        )
+        positions = np.searchsorted(reference_values, expected_values)
+        available_counts = np.zeros_like(expected_counts)
+        valid = positions < len(reference_values)
+        matched = valid.copy()
+        matched[valid] = (
+            reference_values[positions[valid]] == expected_values[valid]
+        )
+        available_counts[matched] = reference_counts[positions[matched]]
+        missing_count = int(
+            np.maximum(expected_counts - available_counts, 0).sum()
+        )
+        if missing_count:
+            missing[hostname] = missing_count
+    return missing
+
+
+def build_sample_input_fingerprints(dataset_root: Path) -> dict[str, object]:
+    dataset_root = Path(dataset_root)
+    return {
+        name: _input_table_fingerprint(dataset_root / rel_path, file_type)
+        for name, (rel_path, file_type) in ANALYSIS_INPUT_TABLES.items()
+    }
+
+
 def write_fingerprints(path: Path, fingerprints: dict[str, object]) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -375,6 +763,52 @@ def _table_fingerprint(path: Path, file_type: str) -> dict[str, object]:
         "timestamps": _timestamp_fingerprint(df),
         "numeric": _numeric_fingerprint(df),
     }
+
+
+def _input_table_fingerprint(path: Path, file_type: str) -> dict[str, object]:
+    pd = _require_pandas()
+    if file_type == "csv":
+        df = pd.read_csv(path)
+    elif file_type == "parquet":
+        df = pd.read_parquet(path)
+    else:
+        raise ValueError(f"Unsupported table type: {file_type}")
+
+    return _fingerprint_dataframe(df)
+
+
+def _fingerprint_dataframe(df) -> dict[str, object]:
+    fingerprint = {
+        "row_count": int(len(df)),
+        "columns": list(df.columns),
+        "unique": _unique_fingerprint(df),
+        "timestamps": _timestamp_fingerprint(df),
+        "numeric": _numeric_fingerprint(df),
+    }
+    row_hashes = _canonical_row_hashes(df)
+    row_hashes.sort()
+    fingerprint["content_sha256"] = hashlib.sha256(
+        row_hashes.astype("<u8", copy=False).tobytes()
+    ).hexdigest()
+    return fingerprint
+
+
+def _canonical_row_hashes(df):
+    pd = _require_pandas()
+    canonical = df.copy()
+    for column in TIMESTAMP_COLUMNS:
+        if column in canonical.columns:
+            canonical[column] = pd.to_datetime(
+                canonical[column],
+                errors="coerce",
+                utc=True,
+            )
+    row_hashes = pd.util.hash_pandas_object(
+        canonical,
+        index=False,
+        categorize=True,
+    ).to_numpy(dtype="uint64", copy=True)
+    return row_hashes
 
 
 def _unique_fingerprint(df) -> dict[str, object]:

@@ -10,7 +10,10 @@ Preserve traceability from summary outputs back to source rows.
 
 Do not modify process_pcapng.py unless the task explicitly includes capture conversion.
 
-For now, tests should start from Sample/*.parquet and Data/grouped_data/*.parquet, not raw pcapng files.
+Keep ordinary analysis regression tests starting from Sample/*.parquet and
+Data/grouped_data/*.parquet. Raw pcapng coverage is opt-in: use the three-file
+short fixture for conversion/grouping changes and the full original-input
+golden test only when end-to-end provenance must be verified.
 
 Do not compare PNG bytes in regression tests.
 
