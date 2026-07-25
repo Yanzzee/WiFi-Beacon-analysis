@@ -83,14 +83,92 @@ def _load_analyze_data_script(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     return namespace
 
 
-def test_analyze_data_append_to_parquet_uses_configured_sampled_folder():
+def test_analyze_data_append_to_parquet_passes_configured_sampled_folder():
     function_source = _find_top_level_function_source(
         _analyze_data_code_source(),
         "append_to_parquet",
     )
 
     assert "Data/sampled/{AP_name}_class_beacons.parquet" not in function_source
-    assert "os.path.join(SAMPLED_FOLDER" in function_source
+    assert "_append_to_parquet(" in function_source
+    assert "SAMPLED_FOLDER" in function_source
+
+
+def test_analyze_data_append_to_parquet_creates_then_appends(
+    monkeypatch,
+    tmp_path,
+):
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
+    pd = namespace["pd"]
+    namespace["log_file"] = io.StringIO()
+
+    first_df = pd.DataFrame({"value": [1], "label": ["first"]})
+    second_df = pd.DataFrame({"value": [2], "label": ["second"]})
+
+    namespace["append_to_parquet"]("P-TEST-AP-01", first_df)
+    namespace["append_to_parquet"]("P-TEST-AP-01", second_df)
+
+    parquet_path = (
+        Path(namespace["SAMPLED_FOLDER"])
+        / "P-TEST-AP-01_class_beacons.parquet"
+    )
+    result_df = pd.read_parquet(parquet_path)
+
+    assert result_df.to_dict(orient="list") == {
+        "value": [1, 2],
+        "label": ["first", "second"],
+    }
+    assert namespace["log_file"].getvalue() == (
+        f"Creating {parquet_path}\n"
+        f"Adding to {parquet_path}\n"
+    )
+
+
+def test_analyze_data_append_to_parquet_ignores_empty_dataframe(
+    monkeypatch,
+    tmp_path,
+):
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
+    namespace["log_file"] = io.StringIO()
+
+    namespace["append_to_parquet"](
+        "P-TEST-AP-01",
+        namespace["pd"].DataFrame(),
+    )
+
+    sampled_folder = Path(namespace["SAMPLED_FOLDER"])
+    assert list(sampled_folder.glob("*.parquet")) == []
+    assert namespace["log_file"].getvalue() == ""
+
+
+def test_analyze_data_combine_all_class_beacons_preserves_glob_order(
+    monkeypatch,
+    tmp_path,
+):
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
+    pd = namespace["pd"]
+
+    sampled_folder = Path(namespace["SAMPLED_FOLDER"])
+    first_path = sampled_folder / "first.parquet"
+    second_path = sampled_folder / "second.parquet"
+    pd.DataFrame({"value": [1], "label": ["first"]}).to_parquet(first_path)
+    pd.DataFrame({"value": [2], "label": ["second"]}).to_parquet(second_path)
+    monkeypatch.setattr(
+        namespace["glob"],
+        "glob",
+        lambda _pattern: [str(second_path), str(first_path)],
+    )
+
+    namespace["combine_all_class_beacons"]()
+
+    combined_path = (
+        Path(namespace["DATA_FOLDER"]) / "all_class_beacons.parquet"
+    )
+    result_df = pd.read_parquet(combined_path)
+    assert result_df.to_dict(orient="list") == {
+        "value": [2, 1],
+        "label": ["second", "first"],
+    }
 
 
 def test_analyze_data_rejects_existing_generated_outputs(monkeypatch, tmp_path):

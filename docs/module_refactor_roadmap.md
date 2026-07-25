@@ -153,16 +153,20 @@ For each pass:
 - Kept the Aruba-only platform requirement unchanged and did not introduce
   vendor inference.
 
-### 8. Extract parquet persistence helpers
+### 8. Extract parquet persistence helpers — completed
 
-- Move the mechanics of `append_to_parquet()` and
-  `combine_all_class_beacons()` into an I/O module.
-- Preserve file discovery patterns, file ordering, PyArrow schema creation,
-  compression, index handling, append/rewrite sequence, log messages, and
-  output paths.
-- Add focused small-parquet tests before extraction; the golden fingerprint is
-  required because row order and schema can affect downstream outputs.
-- Do not redesign the append strategy or output format in this step.
+- Added `analysis_io.py` and moved the mechanics of `append_to_parquet()` and
+  `combine_all_class_beacons()` into it.
+- Retained compatibility wrappers with the existing names and signatures in
+  `analyze_data.py`, passing configured folders and the existing logger into
+  the module.
+- Preserved file discovery patterns and ordering, PyArrow schema creation,
+  Snappy compression, index behavior, append/rewrite sequence, log messages,
+  empty-data behavior, and output paths.
+- Added small-parquet characterization tests before extraction for
+  create/append ordering, exact messages, empty input, and glob ordering.
+- Added the module to the golden-test workspace and confirmed the output
+  fingerprints still match.
 
 ### 9. Extract pure sample-cleaning helpers
 

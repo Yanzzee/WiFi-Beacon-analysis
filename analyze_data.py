@@ -18,6 +18,10 @@ import pyarrow as pa
 from dotenv import load_dotenv
 from tqdm import tqdm
 from analysis_config import ensure_directory, get_beacon_rate
+from analysis_io import (
+    append_to_parquet as _append_to_parquet,
+    combine_all_class_beacons as _combine_all_class_beacons,
+)
 from analysis_logging import open_analysis_log
 from analysis_validation import (
     REQUIRED_GROUPED_AP_COLUMNS,
@@ -523,31 +527,12 @@ def graph(ap_name, start_time, end_time, location, course, enrolled, capacity, a
 # Write to parquet files for each AP that can be combined later
 # all_class_beacons is a global variable that is updated by the add_to_all_class_beacons function called in the graph function
 def append_to_parquet(AP_name, all_class_beacons_df):
-    # Ensure all_class_beacons_df is not empty before appending
-    if not all_class_beacons_df.empty:
-        ap_beacons_file = os.path.join(SAMPLED_FOLDER, f"{AP_name}_class_beacons.parquet")
-        
-        # Define schema based on the DataFrame
-        schema = pa.Schema.from_pandas(all_class_beacons_df)
-
-        # Check if the file exists
-        if os.path.exists(ap_beacons_file):
-            # If file exists, open it and append using ParquetWriter
-            existing_table = pq.read_table(ap_beacons_file)
-            with pq.ParquetWriter(ap_beacons_file, schema, compression="snappy") as writer:
-                # Append the existing data first
-                writer.write_table(existing_table)
-                # Append the new data
-                table = pa.Table.from_pandas(all_class_beacons_df, schema=schema)
-                writer.write_table(table)
-            log_and_print(f"Adding to {ap_beacons_file}")
-        else:
-            # If the file doesn't exist, create it and write data
-            all_class_beacons_df.to_parquet(ap_beacons_file, engine="pyarrow", compression="snappy", index=False)
-            log_and_print(f"Creating {ap_beacons_file}")
-        
-    #else:
-        #log_and_print("DataFrame is empty, nothing to append.")
+    return _append_to_parquet(
+        AP_name,
+        all_class_beacons_df,
+        SAMPLED_FOLDER,
+        log_and_print,
+    )
 
 
 def validate_no_existing_analysis_outputs():
@@ -564,25 +549,7 @@ def validate_grouped_files_for_sample_aps(sample_aps_df, sample_classes_df=None)
 
 # combine all files in Data/sampled into one file
 def combine_all_class_beacons():
-    all_class_beacons_df = pd.DataFrame()
-
-    # Directory containing AP .parquet files
-    directory = SAMPLED_FOLDER
-
-    # Get a list of all .parquet files
-    parquet_files = glob.glob(os.path.join(directory, "*.parquet"))
-    if not parquet_files:
-        raise FileNotFoundError(
-            "No sampled class beacon parquet files found in "
-            f"SAMPLED_FOLDER ({directory}). Check grouped AP/sample matches "
-            "before combining all class beacons."
-        )
-
-    all_class_beacons_df = all_class_beacons_df.iloc[0:0] #clear contents of the df
-    # Read and concatenate all Parquet files (faster than .pkl)
-    all_class_beacons_df = pd.concat([pd.read_parquet(file) for file in parquet_files], ignore_index=True)
-
-    all_class_beacons_df.to_parquet(f'{DATA_FOLDER}/all_class_beacons.parquet')
+    return _combine_all_class_beacons(SAMPLED_FOLDER, DATA_FOLDER)
 
 
 # main function to process all data in sample files
