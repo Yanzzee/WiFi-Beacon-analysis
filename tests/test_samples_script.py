@@ -10,6 +10,7 @@ from sample_processing import (
     clean_cell,
     expand_schedule_rows,
     parse_class_period,
+    process_samples,
 )
 
 
@@ -123,6 +124,45 @@ def test_expand_schedule_rows_skips_malformed_periods(capsys):
         "in Location: Room1\n"
         "Check the format of the Class Period.\n"
     )
+
+
+def test_process_samples_runs_as_a_callable_without_environment(
+    monkeypatch,
+    tmp_path,
+    capsys,
+):
+    (tmp_path / "Sample_APs.csv").write_text(
+        "Building-Room\nRoom1\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "Sample_classrooms.csv").write_text(
+        "Location,Capacity\nRoom1,50\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "Sample_schedule.csv").write_text(
+        "Location,Course,Sec,LQ,H,S,Cr Hr,Sec Type,Class Period,Days,Instructor,Status,Assign To,Begin Date,End Date,sample,Size,Enrl\n"
+        "Room1,Test Course,1,A,B,C,1,Regular,8:00a - 9:00a,M,Prof,Active,Room1,2025-01-01,2025-01-31,1,10,12\n",
+        encoding="utf-8",
+    )
+    for key in ("TIMEZONE", "SAMPLE_FOLDER", "START_DATE", "END_DATE"):
+        monkeypatch.delenv(key, raising=False)
+
+    result = process_samples(
+        str(tmp_path),
+        "Etc/GMT+7",
+        "2025-01-06",
+        "2025-01-06",
+    )
+
+    assert result is None
+    assert capsys.readouterr().out == (
+        "Start Date: 2025-01-06 00:00:00\n"
+        "End Date: 2025-01-06 00:00:00\n"
+        f"Sample data cleaned and saved in {tmp_path}/.\n"
+    )
+    assert (tmp_path / "sample_aps.parquet").is_file()
+    assert (tmp_path / "sample_classrooms.parquet").is_file()
+    assert (tmp_path / "sample_classes.parquet").is_file()
 
 
 def test_samples_script_handles_short_schedule(tmp_path):
@@ -253,9 +293,29 @@ def test_samples_script_expands_inclusive_weekdays_and_localizes_times(
     )
 
     assert result.returncode == 0, result.stdout + result.stderr
+    assert result.stdout == (
+        "Start Date: 2025-01-06 00:00:00\n"
+        "End Date: 2025-01-08 00:00:00\n"
+        "Sample data cleaned and saved in ./.\n"
+    )
+    assert (sample_dir / "sample_aps.parquet").is_file()
+    assert (sample_dir / "sample_classrooms.parquet").is_file()
+    assert (sample_dir / "sample_classes.parquet").is_file()
+
+    sample_aps_df = pd.read_parquet(sample_dir / "sample_aps.parquet")
+    sample_classrooms_df = pd.read_parquet(
+        sample_dir / "sample_classrooms.parquet"
+    )
     sample_classes_df = pd.read_parquet(
         sample_dir / "sample_classes.parquet"
     )
+    assert sample_aps_df.columns.tolist() == ["Building-Room"]
+    assert sample_classrooms_df.columns.tolist() == [
+        "Location",
+        "Capacity",
+        "ap_count",
+    ]
+    assert sample_classrooms_df["ap_count"].tolist() == [1]
     assert sample_classes_df["location"].tolist() == ["Room1", "Room1"]
     assert sample_classes_df["course"].tolist() == [
         "Test Course",
@@ -277,3 +337,53 @@ def test_samples_script_expands_inclusive_weekdays_and_localizes_times(
     assert str(sample_classes_df["end_time"].dt.tz) == "Etc/GMT+7"
     assert sample_classes_df["enrolled"].tolist() == [12, 12]
     assert sample_classes_df["capacity"].tolist() == [50, 50]
+    assert str(sample_classes_df["location"].dtype) == "string"
+    assert str(sample_classes_df["course"].dtype) == "string"
+    assert pd.api.types.is_integer_dtype(sample_classes_df["enrolled"])
+    assert pd.api.types.is_integer_dtype(sample_classes_df["capacity"])
+
+
+@pytest.mark.parametrize(
+    ("config_text", "error_message"),
+    [
+        (
+            "SAMPLE_FOLDER=.\n"
+            "START_DATE=2025-01-01\n"
+            "END_DATE=2025-01-01\n",
+            "ValueError: TIMEZONE is not set in config.env",
+        ),
+        (
+            "TIMEZONE=Etc/GMT+7\n"
+            "START_DATE=2025-01-01\n"
+            "END_DATE=2025-01-01\n",
+            "ValueError: SAMPLE_FOLDER is not set in config.env",
+        ),
+    ],
+)
+def test_samples_script_preserves_missing_config_exit_behavior(
+    tmp_path,
+    config_text,
+    error_message,
+):
+    (tmp_path / "config.env").write_text(config_text, encoding="utf-8")
+
+    env = os.environ.copy()
+    for key in ("TIMEZONE", "SAMPLE_FOLDER", "START_DATE", "END_DATE"):
+        env.pop(key, None)
+    env["PYTHONPATH"] = str(REPO_ROOT) + os.pathsep + env.get(
+        "PYTHONPATH",
+        "",
+    )
+
+    result = subprocess.run(
+        [sys.executable, str(REPO_ROOT / "samples.py")],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode != 0
+    assert result.stdout == ""
+    assert error_message in result.stderr

@@ -184,15 +184,21 @@ For each pass:
 - Confirmed the focused sample tests, full non-golden suite, and analysis
   golden fingerprints pass.
 
-### 10. Make `samples.py` a thin standalone entry point
+### 10. Make `samples.py` a thin standalone entry point — completed
 
-- After Step 9, move the remaining sample dataframe workflow into a callable
-  function in `sample_processing.py` and leave `samples.py` responsible for
-  configuration plus invocation.
-- Preserve CSV/parquet filenames, output dtypes, printed messages, and script
-  exit behavior.
-- Continue testing the script through a subprocess so standalone behavior is
-  pinned.
+- Added callable `process_samples()` to `sample_processing.py` and moved the
+  remaining CSV reads, dataframe cleaning/casts, date expansion setup,
+  capacity lookup, timezone conversion, sorting, and parquet writes into it.
+- Left `samples.py` responsible for loading configuration, validating required
+  settings, ensuring the sample directory exists, and invoking
+  `process_samples()`.
+- Preserved all CSV and parquet filenames, output columns and dtypes, date and
+  completion messages, missing-configuration failures, timezone behavior, and
+  standalone exit behavior.
+- Added direct callable coverage and expanded subprocess coverage for all three
+  outputs, exact messages, dtypes, and configuration failures.
+- Confirmed the focused tests and source-sample parquet golden fingerprints
+  pass.
 
 ### 11. Characterize grouping behavior before modularizing it
 

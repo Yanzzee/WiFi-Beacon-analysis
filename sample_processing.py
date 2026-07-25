@@ -1,6 +1,6 @@
-"""Pure helpers for cleaning and expanding sample schedule data."""
+"""Helpers for cleaning and processing sample schedule data."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import re
 
 import pandas as pd
@@ -98,3 +98,158 @@ def expand_schedule_rows(
                             )
 
     return sample_classes_df
+
+
+def process_samples(
+    sample_folder,
+    timezone,
+    start_date_str,
+    end_date_str,
+):
+    # Import sample files
+    sample_aps_df = pd.read_csv(f"{sample_folder}/Sample_APs.csv")
+    sample_classrooms_df = pd.read_csv(
+        f"{sample_folder}/Sample_classrooms.csv"
+    )
+    sample_schedule_df = pd.read_csv(
+        f"{sample_folder}/Sample_schedule.csv"
+    )
+
+    # Build sample_classes_df with each class period as a record.
+    sample_classes_df = pd.DataFrame(
+        {
+            "location": pd.Series(dtype="string"),
+            "course": pd.Series(dtype="string"),
+            "start_time": pd.Series(
+                dtype=f"datetime64[us, {timezone}]"
+            ),
+            "end_time": pd.Series(dtype=f"datetime64[us, {timezone}]"),
+            "enrolled": pd.Series(dtype="int"),
+            "capacity": pd.Series(dtype="int"),
+        }
+    )
+
+    # Strip extra spaces from column names.
+    sample_schedule_df.columns = sample_schedule_df.columns.str.strip()
+
+    # Clean every column before strict dtype conversion.
+    sample_schedule_df = sample_schedule_df.apply(
+        lambda col: col.map(clean_cell)
+    )
+
+    sample_schedule_df = sample_schedule_df.astype(
+        {
+            "Location": "string",
+            "Course": "string",
+            "Sec": "string",
+            "LQ": "string",
+            "H": "string",
+            "S": "string",
+            "Cr Hr": "string",
+            "Sec Type": "string",
+            "Class Period": "string",
+            "Days": "string",
+            "Instructor": "string",
+            "Status": "string",
+            "Assign To": "string",
+            "Begin Date": "string",
+            "End Date": "string",
+            "sample": "string",
+            "Size": "int",
+            "Enrl": "int",
+        }
+    )
+
+    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+    end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+    print("Start Date:", start_date)
+    print("End Date:", end_date)
+    schedule_days = [
+        start_date + timedelta(days=i)
+        for i in range((end_date - start_date).days + 1)
+    ]
+
+    sample_classes_df = expand_schedule_rows(
+        sample_schedule_df,
+        sample_classes_df,
+        schedule_days,
+    )
+
+    # Find room capacity values and add them to sample_classes_df.
+    sample_classes_df.columns = sample_classes_df.columns.str.strip()
+    sample_classrooms_df.columns = sample_classrooms_df.columns.str.strip()
+
+    location_capacity_dict = dict(
+        zip(
+            sample_classrooms_df["Location"],
+            sample_classrooms_df["Capacity"],
+        )
+    )
+
+    for index, row in sample_classes_df.iterrows():
+        location = row["location"]
+        if location in location_capacity_dict:
+            sample_classes_df.at[index, "capacity"] = (
+                location_capacity_dict[location]
+            )
+
+    # Ensure start_time and end_time are datetime objects.
+    sample_classes_df["start_time"] = pd.to_datetime(
+        sample_classes_df["start_time"],
+        errors="coerce",
+    )
+    sample_classes_df["end_time"] = pd.to_datetime(
+        sample_classes_df["end_time"],
+        errors="coerce",
+    )
+
+    # Convert start_time and end_time to the configured timezone.
+    for column in ["start_time", "end_time"]:
+        series = sample_classes_df[column]
+        if getattr(series.dt, "tz", None) is None:
+            sample_classes_df[column] = series.dt.tz_localize(
+                timezone,
+                ambiguous="NaT",
+            )
+        else:
+            sample_classes_df[column] = series.dt.tz_convert(timezone)
+
+    sample_classes_df["enrolled"] = (
+        sample_classes_df["enrolled"].fillna(0).astype(int)
+    )
+    sample_classes_df["capacity"] = (
+        sample_classes_df["capacity"].fillna(0).astype(int)
+    )
+    sample_classes_df = sample_classes_df.astype(
+        {
+            "location": "string",
+            "course": "string",
+        }
+    )
+
+    # Clean up column names for consistency.
+    sample_classes_df.columns = sample_classes_df.columns.str.strip()
+    sample_aps_df.columns = sample_aps_df.columns.str.strip()
+
+    sample_classes_df = sample_classes_df.sort_values(
+        by=["location", "start_time"]
+    ).reset_index(drop=True)
+
+    sample_classrooms_df["ap_count"] = sample_classrooms_df[
+        "Location"
+    ].apply(
+        lambda location: (
+            sample_aps_df["Building-Room"] == location
+        ).sum()
+    )
+
+    sample_classrooms_df.to_parquet(
+        f"{sample_folder}/sample_classrooms.parquet"
+    )
+    sample_aps_df.to_parquet(f"{sample_folder}/sample_aps.parquet")
+    sample_classes_df.to_parquet(
+        f"{sample_folder}/sample_classes.parquet"
+    )
+
+    print(f"Sample data cleaned and saved in {sample_folder}/.")
