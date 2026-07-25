@@ -168,17 +168,21 @@ For each pass:
 - Added the module to the golden-test workspace and confirmed the output
   fingerprints still match.
 
-### 9. Extract pure sample-cleaning helpers
+### 9. Extract pure sample-cleaning helpers — completed
 
-- Move `clean_cell()` and the existing class-period parsing/weekday expansion
-  operations from `samples.py` into a `sample_processing.py` module one helper
-  at a time.
-- Preserve non-breaking-space cleanup, control-character removal, explicit
-  dtype conversion, accepted time strings, skipped malformed periods, inclusive
-  date expansion, timezone localization, and row order.
-- Expand `tests/test_samples_script.py` with direct helper tests before moving
-  schedule expansion.
-- Do not broaden accepted schedule formats or change timezone semantics.
+- Added `sample_processing.py` containing `clean_cell()`,
+  `parse_class_period()`, and `expand_schedule_rows()`.
+- Extracted `clean_cell()` first, then added direct parsing and expansion tests
+  before replacing the original schedule loop in `samples.py`.
+- Preserved string coercion, non-breaking-space replacement,
+  control-character removal, accepted lowercase `a`/`p` time strings,
+  rejection and messages for malformed periods, weekday and input-row order,
+  inclusive schedule dates, and null capacity placeholders.
+- Left explicit schedule dtype conversion, timezone localization, capacity
+  lookup, final sorting, output filenames, and standalone execution in
+  `samples.py` for Step 10.
+- Confirmed the focused sample tests, full non-golden suite, and analysis
+  golden fingerprints pass.
 
 ### 10. Make `samples.py` a thin standalone entry point
 
