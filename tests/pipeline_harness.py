@@ -24,6 +24,7 @@ ANALYSIS_MODULES: tuple[str, ...] = (
     "analysis_validation.py",
     "class_session_analysis.py",
     "radio_summary_processing.py",
+    "room_station_count.py",
 )
 
 PRE_ANALYSIS_SCRIPTS: tuple[str, ...] = (

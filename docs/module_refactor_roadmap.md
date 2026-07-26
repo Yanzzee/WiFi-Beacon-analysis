@@ -299,16 +299,22 @@ For each pass:
   confirmed focused characterization tests, the full non-golden suite, and
   analysis-forward golden fingerprints pass.
 
-### 16. Extract room station-count enrichment
+### 16. Extract room station-count enrichment — completed
 
-- Move the room-level station-count algorithm from
-  `analyze_all_class_beacons.py` into a dedicated callable function.
-- First add a compact multi-AP fixture that pins nearest-observation selection,
-  the plus/minus five-second window, transmitter de-duplication, tie behavior,
-  missing AP/location handling, integer conversion, row sorting, and output
-  columns.
-- Preserve the five-second tolerance and current calculation exactly. Do not
-  implement the station-count redesign from `post_refactor_design.md`.
+- Added `room_station_count.py` with
+  `enrich_room_station_counts()`.
+- Added a compact multi-AP characterization fixture before extraction,
+  pinning nearest-observation selection, inclusive plus/minus five-second
+  bounds, transmitter de-duplication, first-observation tie behavior, missing
+  AP/location defaults, integer conversion, time sorting, index reset, output
+  columns, source-frame non-mutation, and the pre-filter parquet output.
+- Updated `analyze_all_class_beacons.py` to call the extracted function while
+  keeping the processed-data write, SSID filtering, aggregate calculations,
+  plots, and final output write in their original locations.
+- Preserved the current five-second calculation exactly and did not implement
+  the station-count redesign from `post_refactor_design.md`.
+- Added the module to isolated analysis-forward workspaces and confirmed the
+  focused tests, full non-golden suite, and golden fingerprints pass.
 
 ### 17. Extract beacon deduplication utilities
 

@@ -6,16 +6,14 @@ def main():
     import matplotlib.colors as mcolors
     import matplotlib.pyplot as plt
     import numpy as np
-    from tqdm import tqdm
-    from pathlib import Path
     from datetime import datetime
     from scipy.stats import linregress
-    from tqdm import tqdm
     import os
     from dotenv import load_dotenv
     from analysis_config import ensure_directory, env_or_default as _env_or_default
     from analysis_logging import open_analysis_log
     from analysis_statistics import compute_pdf_cdf
+    from room_station_count import enrich_room_station_counts
     
     load_dotenv("config.env")
     
@@ -61,110 +59,11 @@ def main():
     # then add the wlan.qbss.scount values for all the wlan.ta values for each beacon
     # the result is the total number of stations in the room
     
-    # Step 1: Set up the mappings
-    # Map AP names in sample_aps_df to locations
-    hostname_to_location = sample_aps_df.set_index("Hostname")["Building-Room"].to_dict()
-    location_to_hostnames = sample_aps_df.groupby("Building-Room")["Hostname"].apply(list).to_dict()
-    print("Calculating station count for each location")
-    print("Step 1 done")
-    # Step 2: Prepare main DataFrame
-    df = all_class_beacons_df.sort_values("aruba_erm.time").reset_index(drop=True)
-    df["room_scount"] = 0
-    df["location"] = df["wlan.vs.aruba.ap_name"].map(hostname_to_location) #add location information for quicker analysis
-    
-    print("Step 2 done")
-    # Step 3: Preprocess: create lookup per AP (wlan.vs.aruba.ap_name)
-    # Directory where your parquet files live
-    parquet_dir = Path("Data/sampled")
-    
-    host_dfs = {}
-    host_time_arrays = {}
-    host_ta_arrays = {}
-    host_scount_arrays = {}
-    
-    for hostname in tqdm(df["wlan.vs.aruba.ap_name"].unique(), desc="Preprocessing APs for faster lookup"):
-      
-        host_df = df[df["wlan.vs.aruba.ap_name"] == hostname].copy() # more reliable than using existing .parquet files
-        host_df = host_df.sort_values("aruba_erm.time").reset_index(drop=True)
-    
-        times = host_df["aruba_erm.time"].astype("int64").values
-        tas = host_df["wlan.ta"].values
-        scounts = host_df["wlan.qbss.scount"].values
-    
-        assert len(times) == len(tas) == len(scounts), f"Array mismatch for AP {hostname}"
-    
-        host_time_arrays[hostname] = times
-        host_ta_arrays[hostname] = tas
-        host_scount_arrays[hostname] = scounts
-    
-    
-    print("Step 3 done")
-    # Step 4: Process each row
-    results = np.zeros(len(df), dtype=int)
-    five_seconds_ns = np.timedelta64(5, 's').astype('timedelta64[ns]').astype('int64')
-    
-    for i in tqdm(range(len(df)), desc="Computing room_scount for each beacon"):
-        row = df.iloc[i]
-        current_time = row["aruba_erm.time"]
-        current_hostname = row["wlan.vs.aruba.ap_name"]
-        current_ta = row["wlan.ta"]
-        location = hostname_to_location.get(current_hostname)
-    
-        if not location:
-            continue
-    
-        room_hostnames = location_to_hostnames[location]  # include current AP
-    
-        seen_ta = {current_ta}
-        room_scount = row["wlan.qbss.scount"]
-        current_time_ns = current_time.value
-    
-        ta_to_best_idx = {}
-    
-        for other_hostname in room_hostnames:
-            if other_hostname not in host_time_arrays:
-                continue
-    
-            times = host_time_arrays[other_hostname]         # int64 nanoseconds
-            scounts = host_scount_arrays[other_hostname]
-            tas = host_ta_arrays[other_hostname]
-    
-            #assert len(times) == len(host_ta_arrays[hostname]) == len(host_scount_arrays[hostname]), \
-            #f"Array length mismatch for AP {hostname}"
-    
-    
-            # Get ALL rows from this AP within ±5 seconds of current time
-            left_bound = current_time_ns - five_seconds_ns
-            right_bound = current_time_ns + five_seconds_ns
-    
-            left_idx = np.searchsorted(times, left_bound, side='left')
-            right_idx = np.searchsorted(times, right_bound, side='right')
-    
-            matching_indices = range(left_idx, right_idx)
-    
-    
-            
-    
-            for j in matching_indices:
-                ta = tas[j]
-                time_diff = np.abs(times[j] - current_time_ns)
-        
-                if ta not in ta_to_best_idx or time_diff < np.abs(
-                    host_time_arrays[ta_to_best_idx[ta][0]][ta_to_best_idx[ta][1]] - current_time_ns):
-                    ta_to_best_idx[ta] = (other_hostname, j)
-    
-        for ta, (host, j) in ta_to_best_idx.items():
-            if ta not in seen_ta:
-                seen_ta.add(ta)
-                room_scount += host_scount_arrays[host][j]
-    
-        results[i] = int(room_scount)
-    
-    
-    # Step 5: Assign results back to the DataFrame
-    df["room_scount"] = results
-    all_class_beacons_df = df  # Optional: assign back to original
-    
+    all_class_beacons_df = enrich_room_station_counts(
+        all_class_beacons_df,
+        sample_aps_df,
+    )
+
     #this is used in the class sessions file:
     all_class_beacons_df.to_parquet(f"{DATA_FOLDER}/all_class_beacons_processed.parquet", engine="pyarrow")
     
