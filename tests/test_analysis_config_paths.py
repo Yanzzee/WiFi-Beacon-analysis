@@ -471,6 +471,120 @@ def test_analyze_data_graph_handles_three_radio_groups(monkeypatch, tmp_path):
     assert max_totals_by_radio.to_dict() == {1: 30, 2: 70, 3: 110}
 
 
+def _run_graph_for_aruba_radio_allocation(
+    namespace,
+    transmitters,
+):
+    pd = namespace["pd"]
+    start_time = pd.Timestamp(
+        "2025-01-01 10:00:00",
+        tz=namespace["TIMEZONE"],
+    )
+    end_time = start_time + pd.Timedelta(
+        seconds=2 * (len(transmitters) - 1)
+    )
+    ap_df = pd.DataFrame(
+        {
+            "wlan.ta": transmitters,
+            "wlan.vs.aruba.ap_name": ["P-TEST-AP-01"] * len(transmitters),
+            "wlan.ssid": ["eduroam"] * len(transmitters),
+            "wlan.qbss.scount": [1] * len(transmitters),
+            "wlan.qbss.cu": [1] * len(transmitters),
+            "wlan.qbss.adc": [1] * len(transmitters),
+            "source_row": list(range(len(transmitters))),
+        },
+        index=pd.date_range(
+            start_time,
+            periods=len(transmitters),
+            freq="2s",
+        ),
+    )
+    ap_df.index.name = "aruba_erm.time"
+
+    captured = {}
+    namespace["log_file"] = io.StringIO()
+    namespace["remove_duplicate_beacons"] = (
+        lambda frame, _beacon_rate: frame
+    )
+    namespace["calculate_total_scount"] = lambda frame: frame
+    namespace["add_to_all_class_beacons"] = (
+        lambda frame: captured.setdefault("frame", frame.copy())
+    )
+    namespace["analyze_radio_group"] = (
+        lambda _frame, _radio_number: (0,) * 10
+    )
+    namespace["plot_channel_stations"] = lambda *_args: "plot.png"
+    radio_summary_df = pd.DataFrame(columns=range(23))
+
+    namespace["graph"](
+        "P-TEST-AP-01",
+        start_time,
+        end_time,
+        "TEST-101",
+        "TEST 101",
+        10,
+        20,
+        1,
+        ap_df,
+        radio_summary_df,
+    )
+    return captured["frame"]
+
+
+def test_analyze_data_aruba_radio_allocation_current_gaps(
+    monkeypatch,
+    tmp_path,
+):
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
+    result = _run_graph_for_aruba_radio_allocation(
+        namespace,
+        [
+            "00:00:00:00:00:05",
+            "00:00:00:00:00:01",
+            "00:00:00:00:00:03",
+            "00:00:00:00:00:02",
+            "00:00:00:00:00:06",
+        ],
+    )
+
+    assert result["source_row"].tolist() == [0, 1, 2, 3, 4]
+    assert result["wlan.ta_int"].tolist() == [5, 1, 3, 2, 6]
+    assert result["radio_number"].tolist() == [2, 1, 1, 1, 2]
+    assert result.index.equals(namespace["pd"].RangeIndex(5))
+    assert result["aruba_erm.time"].is_monotonic_increasing
+
+
+@pytest.mark.parametrize(
+    ("transmitter", "error_type", "message"),
+    [
+        (
+            "not-a-mac",
+            ValueError,
+            "invalid literal for int.*base 16",
+        ),
+        (
+            None,
+            AttributeError,
+            "'NoneType' object has no attribute 'replace'",
+        ),
+    ],
+)
+def test_analyze_data_aruba_radio_allocation_current_errors(
+    monkeypatch,
+    tmp_path,
+    transmitter,
+    error_type,
+    message,
+):
+    namespace = _load_analyze_data_script(monkeypatch, tmp_path)
+
+    with pytest.raises(error_type, match=message):
+        _run_graph_for_aruba_radio_allocation(
+            namespace,
+            [transmitter],
+        )
+
+
 def test_analyze_data_rejects_missing_cu_before_zero_fill(monkeypatch, tmp_path):
     namespace = _load_analyze_data_script(monkeypatch, tmp_path)
     pd = namespace["pd"]

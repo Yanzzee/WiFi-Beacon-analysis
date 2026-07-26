@@ -330,15 +330,23 @@ For each pass:
 - Added the module to isolated analysis-forward workspaces and confirmed the
   focused tests, full non-golden suite, and golden fingerprints pass.
 
-### 18. Extract current Aruba radio inference
+### 18. Extract current Aruba radio inference — completed
 
-- Move MAC conversion and the adjacent-MAC gap algorithm from `graph()` into an
-  explicitly Aruba-named module/function.
-- Preserve sort order, integer conversion, the `> 1` split condition, numbering
-  from 1, and current error behavior for malformed/missing transmitters.
-- Keep and enforce the `AP_PLATFORM=aruba` guard.
-- Add targeted allocation fixtures before extraction. Do not replace the
-  algorithm with channel- or vendor-neutral identity in this step.
+- Added `aruba_radio_inference.py` with
+  `add_aruba_transmitter_integers()` and
+  `assign_aruba_radio_numbers()`.
+- Kept the two calls on opposite sides of the existing AP-name validation and
+  SSID/BSSID counts, preserving statement order and current error behavior.
+- Added targeted allocation fixtures before extraction, pinning integer MAC
+  conversion, MAC sort order, the `> 1` split condition, numbering from 1,
+  final timestamp sorting/index reset, and malformed/missing transmitter
+  exceptions.
+- Retained and exercised the existing `AP_PLATFORM=aruba` guard before
+  analysis processing.
+- Did not replace the Aruba adjacent-MAC algorithm with channel- or
+  vendor-neutral identity.
+- Added the module to isolated analysis-forward workspaces and confirmed the
+  focused tests, full non-golden suite, and golden fingerprints pass.
 
 ### 19. Extract per-radio calculations
 

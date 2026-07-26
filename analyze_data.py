@@ -23,6 +23,10 @@ from analysis_io import (
     combine_all_class_beacons as _combine_all_class_beacons,
 )
 from analysis_logging import open_analysis_log
+from aruba_radio_inference import (
+    add_aruba_transmitter_integers,
+    assign_aruba_radio_numbers,
+)
 from beacon_filtering import remove_duplicate_beacons
 from analysis_validation import (
     REQUIRED_GROUPED_AP_COLUMNS,
@@ -383,13 +387,8 @@ def graph(ap_name, start_time, end_time, location, course, enrolled, capacity, a
     filtered_df["wlan.qbss.cu"] = filtered_df["wlan.qbss.cu"].fillna(0).astype(int)
     filtered_df["wlan.qbss.adc"] = filtered_df["wlan.qbss.adc"].fillna(0).astype(int)
 
-    # create wlan.ta_int column
-    # Function to convert hex MAC address string to integer
-    def mac_to_int(mac):
-        return int(mac.replace(":", ""), 16)
-
-    # Apply the conversion to the wlan.ta column
-    filtered_df["wlan.ta_int"] = filtered_df["wlan.ta"].apply(mac_to_int)
+    # Convert Aruba transmitter MACs to integers for radio allocation.
+    filtered_df = add_aruba_transmitter_integers(filtered_df)
     
     
 
@@ -420,28 +419,8 @@ def graph(ap_name, start_time, end_time, location, course, enrolled, capacity, a
 
 
 
-    # add a column for unique radio number
-    # this would be better with channel numbers than BSSIDs
-    # Create the 'radio_number' column
-    filtered_df = filtered_df.sort_values("wlan.ta_int").reset_index(drop=True)
-
-    # Initialize the 'radio_number' column
-    radio_number = 1
-    radio_numbers = [radio_number]
-
-    # Assign radio numbers based on 'wlan.ta_int'
-    # would probably be better to use channel number, but this works for Aruba
-    for i in range(1, len(filtered_df)):
-        # Check if the difference between consecutive wlan.ta_int values is greater than 1
-        if abs(filtered_df.loc[i, "wlan.ta_int"] - filtered_df.loc[i - 1, "wlan.ta_int"]) > 1:
-            radio_number += 1  # Increment radio number if the condition is met
-        radio_numbers.append(radio_number)
-
-    # Add the radio_number column to the DataFrame
-    filtered_df["radio_number"] = radio_numbers
-
-    # Ensure the DataFrame is sorted by timestamp
-    filtered_df = filtered_df.sort_values(by="aruba_erm.time").reset_index(drop=True)
+    # Assign radio numbers using the current Aruba adjacent-MAC rule.
+    filtered_df = assign_aruba_radio_numbers(filtered_df)
 
     # Apply the function to calculate total_scount
     filtered_df = calculate_total_scount(filtered_df)
