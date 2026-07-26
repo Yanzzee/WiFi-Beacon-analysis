@@ -220,15 +220,26 @@ For each pass:
 - Confirmed the focused tests and short processed-data grouping golden
   regression pass.
 
-### 12. Extract grouping utilities and callable workflows
+### 12. Extract grouping utilities and callable workflows — completed
 
-- Only after Step 11, create reusable grouping helpers while keeping the three
-  current scripts as separate entry points.
-- Preserve separate Aruba and BSSID policies, Dask partition traversal,
-  PyArrow writer lifecycle/schema checks, output naming, cleanup concurrency,
-  and error/warning messages.
-- Do not unify vendor detection, grouping, and cleanup in this refactor step.
-  That is a post-refactor design change tracked separately.
+- Added separate `grouping_bssid.py`, `grouping_aruba.py`, and
+  `grouping_cleanup.py` modules; vendor grouping and cleanup policies remain
+  independent.
+- Moved BSSID sanitization and partition traversal into
+  `group_data_by_bssid()`, preserving invalid-key handling, AP-name fallback,
+  PyArrow schema checks, writer reuse/closure, append order, output names, and
+  warnings.
+- Moved Aruba sanitization and AP-name grouping into
+  `group_data_by_aruba_name()`, preserving Dask computation, null/blank-name
+  behavior, sanitized-name overwrites, output paths, and schema errors.
+- Moved per-file timestamp cleanup into `fix_one()` and threaded orchestration
+  into `cleanup_grouped_data()`, preserving file discovery, timezone rules,
+  same-path rewrites, worker count, completion ordering, and status messages.
+- Kept `group_data_bssid.py`, `group_data_aruba.py`, and
+  `group_data_cleanup.py` as separate configuration-and-invocation entry
+  points.
+- Added the modules to isolated pre-analysis workspaces and confirmed the
+  focused grouping contracts and short grouping golden regression pass.
 
 ### 13. Extract radio-summary dataframe preparation
 

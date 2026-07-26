@@ -2,13 +2,15 @@ from __future__ import annotations
 
 import ast
 import os
-import re
 import subprocess
 import sys
 from pathlib import Path
 
 import pandas as pd
 import pytest
+
+from grouping_aruba import sanitize_filename
+from grouping_bssid import sanitize
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -65,37 +67,25 @@ def _function_source(script_name: str, function_name: str) -> str:
     raise AssertionError(f"{function_name}() was not found in {script_name}")
 
 
-def _load_function(script_name: str, function_name: str):
-    function_source = _function_source(script_name, function_name)
-    namespace = {"re": re}
-    exec(function_source, namespace)
-    return namespace[function_name]
-
-
 def test_grouping_sanitizers_pin_separate_trailing_rules():
-    bssid_source = _function_source("group_data_bssid.py", "sanitize")
+    bssid_source = _function_source("grouping_bssid.py", "sanitize")
     aruba_source = _function_source(
-        "group_data_aruba.py",
-        "sanitize_filename",
-    )
-    bssid_sanitize = _load_function("group_data_bssid.py", "sanitize")
-    aruba_sanitize = _load_function(
-        "group_data_aruba.py",
+        "grouping_aruba.py",
         "sanitize_filename",
     )
 
     assert '.rstrip(".")' in bssid_source
     assert '.rstrip(" .")' in aruba_source
 
-    assert bssid_sanitize(None) == "UNKNOWN"
-    assert bssid_sanitize("  AP/One.  ") == "AP_One"
-    assert bssid_sanitize("AP:Two") == "AP_Two"
-    assert bssid_sanitize("x" * 101) == "x" * 100
+    assert sanitize(None) == "UNKNOWN"
+    assert sanitize("  AP/One.  ") == "AP_One"
+    assert sanitize("AP:Two") == "AP_Two"
+    assert sanitize("x" * 101) == "x" * 100
 
-    assert aruba_sanitize(None) == "UNKNOWN"
-    assert aruba_sanitize("  AP/One.  ") == "AP_One"
-    assert aruba_sanitize(r"AP\Two") == "AP_Two"
-    assert aruba_sanitize("x" * 101) == "x" * 100
+    assert sanitize_filename(None) == "UNKNOWN"
+    assert sanitize_filename("  AP/One.  ") == "AP_One"
+    assert sanitize_filename(r"AP\Two") == "AP_Two"
+    assert sanitize_filename("x" * 101) == "x" * 100
 
 
 def test_group_data_bssid_groups_fallbacks_and_appends_partitions(

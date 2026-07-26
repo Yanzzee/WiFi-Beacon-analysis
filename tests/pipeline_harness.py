@@ -32,6 +32,9 @@ PRE_ANALYSIS_SCRIPTS: tuple[str, ...] = (
 )
 
 PRE_ANALYSIS_MODULES: tuple[str, ...] = (
+    "grouping_aruba.py",
+    "grouping_bssid.py",
+    "grouping_cleanup.py",
     "sample_processing.py",
 )
 
@@ -410,7 +413,12 @@ def prepare_grouping_workspace(
         dirs_exist_ok=True,
     )
     shutil.copy2(repo_root / "config.env", workspace / "config.env")
-    for source_name in ("group_data_aruba.py", "group_data_cleanup.py"):
+    for source_name in (
+        "group_data_aruba.py",
+        "group_data_cleanup.py",
+        "grouping_aruba.py",
+        "grouping_cleanup.py",
+    ):
         shutil.copy2(repo_root / source_name, workspace / source_name)
 
 
