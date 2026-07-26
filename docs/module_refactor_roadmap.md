@@ -316,17 +316,19 @@ For each pass:
 - Added the module to isolated analysis-forward workspaces and confirmed the
   focused tests, full non-golden suite, and golden fingerprints pass.
 
-### 17. Extract beacon deduplication utilities
+### 17. Extract beacon deduplication utilities — completed
 
-- Move `filter_by_time()` and `remove_duplicate_beacons()` from
-  `analyze_data.py` into a filtering module.
-- Pass the effective beacon rate explicitly while preserving the
-  `0.95 * BEACON_RATE` comparison, first-row retention, per-`wlan.ta` grouping,
-  pandas `groupby().apply()` behavior, index resets, sorting, and string dtype
-  restoration.
-- Add focused tests for exact-boundary, just-under-boundary, multiple
-  transmitters, and single-row inputs before extraction.
-- Do not use this step to address the existing pandas deprecation warning.
+- Added `beacon_filtering.py` with `filter_by_time()` and
+  `remove_duplicate_beacons()`.
+- Passed the effective beacon rate explicitly from `analyze_data.py` while
+  preserving the `0.95 * BEACON_RATE` comparison, first-row retention,
+  per-`wlan.ta` grouping, sorting, index resets, and string dtype restoration.
+- Added focused characterization tests before extraction for exact-boundary,
+  just-under-boundary, multiple-transmitter, and single-row inputs.
+- Preserved the existing pandas `groupby().apply()` behavior and deprecation
+  warning; the warning was not addressed in this step.
+- Added the module to isolated analysis-forward workspaces and confirmed the
+  focused tests, full non-golden suite, and golden fingerprints pass.
 
 ### 18. Extract current Aruba radio inference
 

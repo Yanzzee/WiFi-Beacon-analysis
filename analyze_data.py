@@ -23,6 +23,7 @@ from analysis_io import (
     combine_all_class_beacons as _combine_all_class_beacons,
 )
 from analysis_logging import open_analysis_log
+from beacon_filtering import remove_duplicate_beacons
 from analysis_validation import (
     REQUIRED_GROUPED_AP_COLUMNS,
     _grouped_timestamp_series,
@@ -314,40 +315,6 @@ def add_to_all_class_beacons(filtered_df):
     #log_and_print("ran add_to_all_class_beacons")
 
 
-# clean up the parquet files further
-# keep one beacon per configured effective metadata interval
-# Function to filter rows for each wlan.ta
-def filter_by_time(df):
-    df = df.sort_values("aruba_erm.time")  # Ensure sorted order
-    keep_rows = [df.iloc[0]]  # Always keep the first row
-    
-    last_time = df.iloc[0]["aruba_erm.time"]
-    for _, row in df.iloc[1:].iterrows():
-        if (row["aruba_erm.time"] - last_time).total_seconds() >= (0.95 * BEACON_RATE): # keep rows at least 95% of the effective interval apart
-            keep_rows.append(row)
-            last_time = row["aruba_erm.time"]
-    
-    return pd.DataFrame(keep_rows)
-
-#receives the dataframe for an AP, sorts it, and sends it to be filtered by time
-def remove_duplicate_beacons(ap_df):
-
-    # Group by 'wlan.ta' without dropping it
-    # has deprecation warning, can probably just sort by time then wlan.ta without grouping since the times will be different between different tas
-    filtered_ap_df = (
-        ap_df.groupby("wlan.ta", group_keys=False, observed=True)
-        .apply(lambda group: filter_by_time(group.reset_index())) #was apply(filter_by_time)
-        .reset_index(drop=True)  # Reset index to avoid multi-index issues
-    )
-
-    # Convert specific columns back to string
-    string_columns = ["wlan.ta", "wlan.vs.aruba.ap_name", "wlan.ssid"]
-    filtered_ap_df[string_columns] = filtered_ap_df[string_columns].astype("string")
-
-
-    return(filtered_ap_df)
-
-
 def validate_no_missing_cu(df, ap_name, start_time, end_time):
     missing_mask = df["wlan.qbss.cu"].isna()
     missing_count = int(missing_mask.sum())
@@ -401,7 +368,7 @@ def graph(ap_name, start_time, end_time, location, course, enrolled, capacity, a
         log_and_print(f"No data available for {ap_name} from {start_time} to {end_time}.")
         return
 
-    filtered_df = remove_duplicate_beacons(filtered_df)
+    filtered_df = remove_duplicate_beacons(filtered_df, BEACON_RATE)
 
     # Preserve the distinction between missing CU and measured zero.
     # Current CU analysis semantics require observed values for all retained rows.
@@ -881,7 +848,7 @@ if __name__ == "__main__":
 #         #df = df[df["wlan.ssid"].isin(["eduroam", "BYU-WiFi"])]
 #
 #         # Pass the dataframe to the remove_duplicate_beacons function
-#         df_cleaned = remove_duplicate_beacons(df)
+#         df_cleaned = remove_duplicate_beacons(df, BEACON_RATE)
 #         
 #         # Save the cleaned DataFrame back to the same file
 #         #df_cleaned.to_parquet(file_path)
