@@ -22,6 +22,7 @@ ANALYSIS_MODULES: tuple[str, ...] = (
     "analysis_logging.py",
     "analysis_statistics.py",
     "analysis_validation.py",
+    "class_session_analysis.py",
     "radio_summary_processing.py",
 )
 

@@ -282,15 +282,22 @@ For each pass:
   no analysis semantics were corrected in this step.
 - Confirmed all focused tests and the full non-golden suite pass.
 
-### 15. Extract class-session metric calculation
+### 15. Extract class-session metric calculation — completed
 
-- After Step 14, move calculation for one class-session row into a pure or
-  narrowly stateful function in a class-session analysis module.
-- Preserve inclusive session filtering, bin construction, threshold values
-  `191` and `127`, duration/streak updates, unique-transmitter station sums,
-  nullable output dtypes, and zero/default behavior.
-- Keep dataframe assignment order and all aggregate reporting/plots in
-  `analyze_class_sessions.py` until a later pass.
+- Added `class_session_analysis.py` with
+  `calculate_class_session_metrics()` and the existing CU thresholds.
+- Moved only the calculation for one class-session row, preserving inclusive
+  session filtering, half-open time bins, threshold values `191` and `127`,
+  duration/streak updates, unique-transmitter station sums, configured
+  primary-SSID radio counting, missing-CU values, and zero/default behavior.
+- Kept session iteration and dataframe assignments in their original order in
+  `analyze_class_sessions.py`, so the existing nullable output dtypes remain
+  controlled by the entry script.
+- Left all aggregate reporting, plots, output paths, and logging in
+  `analyze_class_sessions.py`.
+- Added the new module to the isolated analysis-forward workspace and
+  confirmed focused characterization tests, the full non-golden suite, and
+  analysis-forward golden fingerprints pass.
 
 ### 16. Extract room station-count enrichment
 

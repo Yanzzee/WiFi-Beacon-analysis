@@ -15,6 +15,10 @@ def main():
         get_beacon_rate,
     )
     from analysis_logging import open_analysis_log
+    from class_session_analysis import (
+        CU_THRESHOLDS,
+        calculate_class_session_metrics,
+    )
     
     load_dotenv("config.env")
     
@@ -91,85 +95,31 @@ def main():
     
     # Use the configured effective metadata interval as the high-CU duration/streak bin width.
     BEACON_WINDOW_SEC = BEACON_RATE 
-    CU_THRESHOLDS = {'75': 191, '50': 127}
     
     print("Calculating metrics for each class session...")
     for idx, session in tqdm(class_sessions_df.iterrows(), total=len(class_sessions_df)):
-        start = session['start_time']
-        end = session['end_time']
-        location = session['location']
-    
-        mask = (
-            (all_class_beacons_processed_df['aruba_erm.time'] >= start) &
-            (all_class_beacons_processed_df['aruba_erm.time'] <= end) &
-            (all_class_beacons_processed_df['location'] == location)
+        metrics = calculate_class_session_metrics(
+            session,
+            all_class_beacons_processed_df,
+            BEACON_WINDOW_SEC,
+            RADIO_COUNT_SSID,
         )
-        filtered = all_class_beacons_processed_df[mask].copy()
-        filtered.sort_values('aruba_erm.time', inplace=True)
-    
-        number_beacons = len(filtered)
-    
-        if number_beacons > 0:
-            max_scount = filtered['room_scount'].max()
-            cu_values = filtered['wlan.qbss.cu'].dropna()
-            max_cu = cu_values.max()
-            avg_cu = cu_values.mean()
-            median_cu = cu_values.median()
-    
-            # Time binning for duration + streaks
-            time_range = pd.date_range(start, end, freq=f"{BEACON_WINDOW_SEC}s")
-            duration = {'75': 0, '50': 0}
-            current_streak = {'75': 0, '50': 0}
-            max_streak = {'75': 0, '50': 0}
-    
-            for i in range(len(time_range) - 1):
-                t_start = time_range[i]
-                t_end = time_range[i + 1]
-    
-                bin_slice = filtered[
-                    (filtered['aruba_erm.time'] >= t_start) & (filtered['aruba_erm.time'] < t_end)
-                ]
-    
-                if not bin_slice.empty:
-                    for level, threshold in CU_THRESHOLDS.items():
-                        if (bin_slice['wlan.qbss.cu'] > threshold).any():
-                            duration[level] += BEACON_WINDOW_SEC
-                            current_streak[level] += BEACON_WINDOW_SEC
-                            max_streak[level] = max(max_streak[level], current_streak[level])
-                        else:
-                            current_streak[level] = 0
-    
-            # Scount sums for each threshold based on unique wlan.ta
-            sum_scount = {}
-            for level, threshold in CU_THRESHOLDS.items():
-                cu_filtered = filtered[filtered['wlan.qbss.cu'] > threshold]
-                # Drop duplicate wlan.ta, keep first (could use .max() if preferred)
-                unique_scount = cu_filtered.drop_duplicates('wlan.ta')
-                sum_scount[level] = unique_scount['wlan.qbss.scount'].sum()
-            ssid_radios = filtered[filtered['wlan.ssid'] == RADIO_COUNT_SSID]['wlan.ta'].nunique()
-     
-        else:
-            max_scount = max_cu = avg_cu = median_cu = 0
-            duration = {'75': 0, '50': 0}
-            max_streak = {'75': 0, '50': 0}
-            sum_scount = {'75': 0, '50': 0}
-            ssid_radios = 0
-    
+
         # Save values back to DataFrame
-        class_sessions_df.at[idx, 'max_stations'] = max_scount
-        class_sessions_df.at[idx, 'stations_enrolled'] = max_scount / session['enrolled'] if session['enrolled'] else 0
-        class_sessions_df.at[idx, 'max_cu'] = max_cu
-        class_sessions_df.at[idx, 'average_cu'] = avg_cu
-        class_sessions_df.at[idx, 'median_cu'] = median_cu
-        class_sessions_df.at[idx, 'number_beacons'] = number_beacons
-    
-        class_sessions_df.at[idx, 'duration_75'] = duration['75']
-        class_sessions_df.at[idx, 'duration_50'] = duration['50']
-        class_sessions_df.at[idx, 'max_streak_75'] = max_streak['75']
-        class_sessions_df.at[idx, 'max_streak_50'] = max_streak['50']
-        class_sessions_df.at[idx, 'sum_scount_75'] = sum_scount['75']
-        class_sessions_df.at[idx, 'sum_scount_50'] = sum_scount['50']
-        class_sessions_df.at[idx, 'number_radios'] = ssid_radios
+        class_sessions_df.at[idx, 'max_stations'] = metrics['max_stations']
+        class_sessions_df.at[idx, 'stations_enrolled'] = metrics['stations_enrolled']
+        class_sessions_df.at[idx, 'max_cu'] = metrics['max_cu']
+        class_sessions_df.at[idx, 'average_cu'] = metrics['average_cu']
+        class_sessions_df.at[idx, 'median_cu'] = metrics['median_cu']
+        class_sessions_df.at[idx, 'number_beacons'] = metrics['number_beacons']
+
+        class_sessions_df.at[idx, 'duration_75'] = metrics['duration_75']
+        class_sessions_df.at[idx, 'duration_50'] = metrics['duration_50']
+        class_sessions_df.at[idx, 'max_streak_75'] = metrics['max_streak_75']
+        class_sessions_df.at[idx, 'max_streak_50'] = metrics['max_streak_50']
+        class_sessions_df.at[idx, 'sum_scount_75'] = metrics['sum_scount_75']
+        class_sessions_df.at[idx, 'sum_scount_50'] = metrics['sum_scount_50']
+        class_sessions_df.at[idx, 'number_radios'] = metrics['number_radios']
     
     
     # =============================================================================
