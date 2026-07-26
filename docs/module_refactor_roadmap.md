@@ -262,17 +262,25 @@ For each pass:
 - Confirmed the focused tests, full non-golden suite, and analysis-forward
   golden fingerprints pass.
 
-### 14. Characterize class-session metric edge cases
+### 14. Characterize class-session metric edge cases — completed
 
-- Add tests for the current implementation before moving it: empty sessions,
-  exact start/end boundaries, high/empty/high bins, high/non-high bins, multiple
-  radios in one location, missing CU, zero enrollment, and primary-SSID radio
-  counting.
-- These are characterization tests, not corrected semantics. In particular,
-  preserve the current location-wide `any()` rule and the rule that an empty
-  bin does not reset a streak.
-- Cross-reference the intended later redesign in
-  `docs/post_refactor_design.md` rather than changing behavior here.
+- Added `tests/test_class_session_metrics.py`, which executes the current
+  initialization and metric cells without changing the production script.
+- Pinned no-beacon session defaults and inclusive start/end filtering,
+  including the current distinction that an end-boundary beacon contributes
+  to session summaries but not the half-open duration bins.
+- Pinned high/empty/high behavior, where an empty bin does not reset the
+  current streak, and high/non-high/high behavior, where an observed non-high
+  bin does reset it.
+- Pinned the current location-wide `any()` rule using alternating high CU
+  across two radios, along with unique-transmitter station sums and configured
+  primary-SSID radio counting.
+- Pinned missing-CU nullable summary values, zero high-CU durations/sums for
+  missing CU, and zero `stations_enrolled` when enrollment is zero.
+- Left the intended per-radio streak and missing-data redesigns in
+  [the post-refactor design backlog](post_refactor_design.md#analysis-semantics);
+  no analysis semantics were corrected in this step.
+- Confirmed all focused tests and the full non-golden suite pass.
 
 ### 15. Extract class-session metric calculation
 
