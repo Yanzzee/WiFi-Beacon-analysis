@@ -348,14 +348,21 @@ For each pass:
 - Added the module to isolated analysis-forward workspaces and confirmed the
   focused tests, full non-golden suite, and golden fingerprints pass.
 
-### 19. Extract per-radio calculations
+### 19. Extract per-radio calculations — completed
 
-- Move `calculate_total_scount()` and `analyze_radio_group()` into a radio
-  analysis module after Steps 17 and 18 make their inputs explicit.
-- Preserve iteration order, total-station assignment, CU conversion, high-CU
-  condition, duration calculation, returned tuple order, and log text.
-- Supply logging as a callback rather than introducing a new logging policy.
-- Add direct dataframe tests and require an unchanged golden fingerprint.
+- Added `radio_analysis.py` with `calculate_total_scount()` and
+  `analyze_radio_group()`.
+- Passed the effective beacon rate and existing `log_and_print` function
+  explicitly, preserving the entry script's logging policy.
+- Preserved transmitter iteration and forward/backward lookup order,
+  in-place integer `total_scount` assignment, timestamp sorting, CU percentage
+  conversion, strict `wlan.qbss.cu > 191` condition, streak grouping, duration
+  calculation, returned tuple order, and all log text.
+- Added direct dataframe tests before extraction for station-count lookup,
+  tuple positions, CU thresholds/conversions, duration, and both high-CU and
+  no-high-CU logging branches.
+- Added the module to isolated analysis-forward workspaces and confirmed the
+  focused tests, full non-golden suite, and golden fingerprints pass.
 
 ### 20. Extract stage plotting functions, one plot family per pass
 

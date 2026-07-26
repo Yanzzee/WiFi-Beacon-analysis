@@ -28,6 +28,10 @@ from aruba_radio_inference import (
     assign_aruba_radio_numbers,
 )
 from beacon_filtering import remove_duplicate_beacons
+from radio_analysis import (
+    analyze_radio_group,
+    calculate_total_scount,
+)
 from analysis_validation import (
     REQUIRED_GROUPED_AP_COLUMNS,
     _grouped_timestamp_series,
@@ -75,76 +79,6 @@ def log_and_print(message):
 
 def validate_radio_inference_platform():
     return _validate_radio_inference_platform(AP_PLATFORM)
-
-# # populate total station count for all SSIDs per radio
-def calculate_total_scount(df):
-
-    # Get unique wlan.ta values for each observed radio_number.
-    radio_transmitters_by_number = {
-        radio_number: group["wlan.ta"].drop_duplicates().tolist()
-        for radio_number, group in df.groupby("radio_number", dropna=False, observed=True)
-    }
-
-    # Initialize the total_scount column
-    if "total_scount" not in df.columns:
-        df["total_scount"] = 0
-
-
-    # Iterate over the rows to calculate total_scount
-    for i in range(len(df)):
-        current_ta = df.at[i, "wlan.ta"]
-        current_scount = df.at[i, "wlan.qbss.scount"]
-        current_radio = df.at[i, "radio_number"]
-
-        if pd.isna(current_radio):
-            raise ValueError("Missing radio_number while calculating total_scount.")
-
-        radio_transmitters = radio_transmitters_by_number.get(current_radio)
-        if radio_transmitters is None:
-            raise ValueError(f"No transmitter list found for radio_number {current_radio}.")
-        radio_transmitters = radio_transmitters.copy()
-
-        # remove the current line radio from the list
-        if current_ta not in radio_transmitters:
-            raise ValueError(f"Transmitter {current_ta} not found for radio_number {current_radio}.")
-        radio_transmitters.remove(current_ta)
-        
-        #create loop for every entry in radio_x_transmitters
-        for transmitter in radio_transmitters:
-             #find the next value for this transmitter and add it to current_scount
-
-            # Look for a next record where wlan.ta matches the one in the list
-            j = i + 1  # Start with the next row
-            while j < (len(df)):
-                next_ta = df.at[j, "wlan.ta"]
-                if next_ta == transmitter:
-                    # Found a record matching the ta
-                    next_scount = df.at[j, "wlan.qbss.scount"]
-                    current_scount += next_scount
-                    break
-                j += 1  # Go to the next row
-
-            # If no valid next record was found, look backwards
-            if j >= (len(df)):
-                k = i - 1  # Start with the previous row
-                while k > 0:
-                    prev_ta = df.at[k, "wlan.ta"]
-                    if prev_ta == transmitter:
-                        # Found the next record with the same wlan.ta_int
-                        prev_scount = df.at[k, "wlan.qbss.scount"]
-                        current_scount += prev_scount
-                        break
-                    k -= 1
-            
-            # If no next record exists, keep total_scount as current_scount
-        #update the value after all is added
-        df.at[i, "total_scount"] = current_scount
-    
-    # Ensure total_scount is of type integer
-    df["total_scount"] = df["total_scount"].astype(int)
-
-    return df
-
 
 #  Define the function to generate the plot and save it as a file
 #inputs are dataframes filtered to the radio, and further filtered for each SSID
@@ -217,98 +151,6 @@ def plot_channel_stations(radio_df, eduroam_df, byu_wifi_df, AP_name, start_time
     # Display the plot
     #plt.show()
     return plot_file
-
-
-# Function to perform the analysis for a given radio DataFrame
-def analyze_radio_group(radio_df, radio_number):
-    #print("analyze_radio_group")
-    #need to add > 127 count etc.
-    # Ensure the DataFrame is sorted by timestamp
-    radio_df = radio_df.sort_values(by="aruba_erm.time").reset_index(drop=True)
-
-    # Count the total number of data points
-    total_data_points = len(radio_df)
-
-    # Calculate the greatest value of wlan.qbss.cu
-    greatest_cutil = ((radio_df["wlan.qbss.cu"].max() / 255) * 100)
-
-    # Calculate the least value of wlan.qbss.cu
-    least_cutil = ((radio_df["wlan.qbss.cu"].min() / 255) * 100)
-
-    # Count the number of data points where wlan.qbss.cu is greater than 191 (75%)
-    greater_than_191_count = (radio_df["wlan.qbss.cu"] > 191).sum()
-
-    # Calculate the percentage of data points where wlan.qbss.cu is greater than 191
-    percentage_greater_than_191 = (greater_than_191_count / total_data_points) * 100
-
-    # Median wlan.qbss.cu
-    median_cutil = ((radio_df["wlan.qbss.cu"].median() / 255) * 100)
-
-    # Calculate the greatest value of wlan.qbss.scount
-    greatest_scount = radio_df["total_scount"].max()
-
-    # Calculate the median value of wlan.qbss.scount
-    median_scount = radio_df["total_scount"].median()
-
-    # Calculate the least value of wlan.qbss.scount
-    least_scount = radio_df["total_scount"].min()
-
-    # Print the results
-    log_and_print("")
-    log_and_print(f"--- Radio Number {radio_number} ---")
-    log_and_print(f"Total beacons: {total_data_points}")
-    log_and_print(f"Quantity with very high channel utilization(>75%): {greater_than_191_count}")
-    log_and_print(f"Percent with very high channel utilization: {percentage_greater_than_191:.2f}%")
-    log_and_print(f"Highest channel utilization: {greatest_cutil:.2f}%")
-    log_and_print(f"Median channel utilization: {median_cutil:.2f}%")
-    log_and_print(f"Lowest channel utilization: {least_cutil:.2f}%")
-    log_and_print(f"Highest station count: {greatest_scount:.0f}")
-    log_and_print(f"Median station count: {median_scount:.0f}")
-    log_and_print(f"Lowest station count: {least_scount:.0f}")
-
-    # Create a boolean mask for wlan.qbss.cu > 191
-    condition = radio_df["wlan.qbss.cu"] > 191
-
-    # Assign group numbers for consecutive periods where condition is True
-    radio_df["group"] = (condition != condition.shift()).cumsum() * condition
-
-    # Filter groups where wlan.qbss.cu > 191
-    valid_groups = radio_df[radio_df["group"] > 0]
-
-    # Check if there are valid groups (i.e., groups where wlan.qbss.cu > 191)
-    if valid_groups.empty:
-        log_and_print(f"No records found where wlan.qbss.cu > 191 for radio_number {radio_number}.")
-        longest_duration = 0
-    else:
-       # Find the start and end of each group
-        group_details = valid_groups.groupby("group").agg(
-            first_index=("aruba_erm.time", "idxmin"),
-            last_index=("aruba_erm.time", "idxmax")
-        )
-
-        # Extract the first and last timestamps directly
-        group_details["first_in_sequence_time"] = valid_groups.groupby("group")["aruba_erm.time"].min()
-        group_details["end_time"] = valid_groups.groupby("group")["aruba_erm.time"].max()
-
-        # Calculate duration across observed high-CU beacons and add one BEACON_RATE window.
-        # BEACON_RATE is the effective metadata interval used by this analysis; IEEE's common 0.1024 second beacon interval is shorter.
-        group_details["duration"] = (group_details["end_time"] - group_details["first_in_sequence_time"]).dt.total_seconds() + BEACON_RATE
-
-        # Find the group with the longest duration
-        longest_group = group_details["duration"].idxmax()
-        longest_row = group_details.loc[longest_group]
-
-        # Extract details of the longest duration
-        longest_duration = longest_row["duration"]
-        longest_start_time = longest_row["first_in_sequence_time"]
-        longest_end_time = longest_row["end_time"]
-
-        # Print results for the specific radio_number
-        log_and_print(f"Longest duration very high channel utilization: {longest_duration:.2f} seconds")
-        log_and_print(f"First beacon of sequence: {longest_start_time}")
-        log_and_print(f"Last beacon of sequence: {longest_end_time}")
-
-    return total_data_points, greater_than_191_count, percentage_greater_than_191, greatest_cutil, median_cutil, least_cutil, greatest_scount, median_scount, least_scount, longest_duration
 
 
 # aggregate all beacons to a single dataframe for analysis of those during class sessions
@@ -447,7 +289,12 @@ def graph(ap_name, start_time, end_time, location, course, enrolled, capacity, a
         if filtered_radio_df.empty:
             continue
 
-        total_beacons, high_cu_beacons, percent_high_cu, highest_cu, median_cu, lowest_cu, high_scount, median_scount, low_scount, longest_duration_high_cu = analyze_radio_group(filtered_radio_df, radio_number_value)
+        total_beacons, high_cu_beacons, percent_high_cu, highest_cu, median_cu, lowest_cu, high_scount, median_scount, low_scount, longest_duration_high_cu = analyze_radio_group(
+            filtered_radio_df,
+            radio_number_value,
+            BEACON_RATE,
+            log_and_print,
+        )
 
         # SSID-specific station-count plots are currently disabled for performance.
         eduroam_radio_df = None

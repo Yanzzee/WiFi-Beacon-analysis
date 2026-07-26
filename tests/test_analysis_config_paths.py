@@ -511,7 +511,7 @@ def _run_graph_for_aruba_radio_allocation(
         lambda frame: captured.setdefault("frame", frame.copy())
     )
     namespace["analyze_radio_group"] = (
-        lambda _frame, _radio_number: (0,) * 10
+        lambda *_args: (0,) * 10
     )
     namespace["plot_channel_stations"] = lambda *_args: "plot.png"
     radio_summary_df = pd.DataFrame(columns=range(23))
