@@ -200,15 +200,25 @@ For each pass:
 - Confirmed the focused tests and source-sample parquet golden fingerprints
   pass.
 
-### 11. Characterize grouping behavior before modularizing it
+### 11. Characterize grouping behavior before modularizing it — completed
 
-- Add focused fixtures for `group_data_bssid.py`, `group_data_aruba.py`, and
-  `group_data_cleanup.py` without changing their implementation.
-- Pin AP-name grouping, BSSID fallback, null/invalid BSSID handling, filename
-  sanitization, partition append behavior, Aruba timestamp-index cleanup,
-  timezone-aware/naive handling, and in-place output behavior.
-- Explicitly test the current sanitizer differences; do not assume the two
-  filename functions are equivalent.
+- Added `tests/test_grouping_scripts.py` with focused subprocess fixtures for
+  `group_data_bssid.py`, `group_data_aruba.py`, and
+  `group_data_cleanup.py`; none of the grouping implementations were changed.
+- Pinned BSSID validation warnings, AP-name selection, BSSID fallback names,
+  source-index preservation, partition append order, and the skipped `None`,
+  empty, `nan`, `none`, and `<NA>` key forms.
+- Pinned Aruba AP-name grouping across partitions, blank-name output, null-name
+  omission, filename sanitization, and the current overwrite behavior when
+  distinct AP names sanitize to the same output filename.
+- Tested the two sanitizers independently, including their distinct trailing
+  character stripping expressions, illegal-character replacement, fallback,
+  and length limits.
+- Pinned cleanup of an `aruba_erm.time` index, naive localization, aware
+  conversion, string parsing/coercion, index removal on rewrite, skipped-file
+  preservation, and same-path output behavior.
+- Confirmed the focused tests and short processed-data grouping golden
+  regression pass.
 
 ### 12. Extract grouping utilities and callable workflows
 
