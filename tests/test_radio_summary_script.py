@@ -2,6 +2,10 @@ from __future__ import annotations
 
 import pytest
 
+from radio_summary_processing import (
+    prepare_radio_summary_frames,
+    sort_radio_summary,
+)
 from script_sections import script_cell_source
 
 
@@ -24,17 +28,39 @@ def test_radio_summary_filters_missing_or_nonpositive_ssid_count(tmp_path):
     radio_summary_df = pd.DataFrame(
         {
             "total_beacons": [400, 500, 600],
-            "class_duration": [100.0, 100.0, 100.0],
+            "start_time": pd.to_datetime(
+                [
+                    "2025-01-01 08:00:00",
+                    "2025-01-01 09:00:00",
+                    "2025-01-01 10:00:00",
+                ]
+            ),
+            "end_time": pd.to_datetime(
+                [
+                    "2025-01-01 08:01:40",
+                    "2025-01-01 09:01:40",
+                    "2025-01-01 10:01:40",
+                ]
+            ),
             "highest_cu": [10.0, 20.0, 30.0],
             "ssid_count": [2, 0, None],
+            "radio_count": [1, 2, 2],
         }
+    )
+    radio_summary_df = sort_radio_summary(radio_summary_df)
+    (
+        filtered_radio_summary_df,
+        _df_radio_1,
+        _df_radio_2,
+        _combined_df,
+    ) = prepare_radio_summary_frames(
+        radio_summary_df,
+        logged_messages.append,
     )
 
     namespace = {
-        "radio_summary_df": radio_summary_df,
-        "log_and_print": logged_messages.append,
+        "filtered_radio_summary_df": filtered_radio_summary_df,
         "plt": plt,
-        "pd": pd,
         "OUTPUT_FOLDER": str(output_folder),
     }
 
@@ -49,6 +75,96 @@ def test_radio_summary_filters_missing_or_nonpositive_ssid_count(tmp_path):
     )
     assert (output_folder / "radio_summary" / "Beacons_per_second_class_cu.png").is_file()
     plt.close("all")
+
+
+def test_prepare_radio_summary_frames_preserves_complete_frames():
+    pd = pytest.importorskip("pandas")
+
+    start_time = pd.Timestamp("2025-01-01 08:00:00")
+    source_df = pd.DataFrame(
+        {
+            "row_id": [
+                "valid-radio-1",
+                "below-threshold",
+                "zero-duration",
+                "zero-ssid",
+                "missing-ssid",
+                "bad-ssid",
+                "valid-radio-2",
+                "valid-radio-3",
+            ],
+            "total_beacons": [500, 299, 400, 300, 600, 700, 800, 900],
+            "start_time": [start_time] * 8,
+            "end_time": [
+                start_time + pd.Timedelta(seconds=100),
+                start_time + pd.Timedelta(seconds=100),
+                start_time,
+                start_time + pd.Timedelta(seconds=60),
+                start_time + pd.Timedelta(seconds=120),
+                start_time + pd.Timedelta(seconds=100),
+                start_time + pd.Timedelta(seconds=200),
+                start_time + pd.Timedelta(seconds=300),
+            ],
+            "ssid_count": ["2", 2, 2, "0", None, "bad", "4", 1],
+            "highest_cu": [50, 10, 20, 30, 60, 70, 80, 90],
+            "radio_count": [1, 1, 2, 1, 2, 2, 2, 3],
+        },
+        index=[40, 10, 30, 20, 50, 60, 70, 80],
+    )
+    original_df = source_df.copy(deep=True)
+    logged_messages: list[str] = []
+
+    sorted_df = sort_radio_summary(source_df)
+    (
+        filtered_df,
+        radio_1_df,
+        radio_2_df,
+        combined_df,
+    ) = prepare_radio_summary_frames(
+        sorted_df,
+        logged_messages.append,
+    )
+
+    pd.testing.assert_frame_equal(source_df, original_df)
+
+    expected_sorted_df = original_df.loc[
+        [10, 20, 30, 40, 50, 60, 70, 80]
+    ].copy()
+    expected_sorted_df["class_duration"] = [
+        100.0,
+        60.0,
+        0.0,
+        100.0,
+        120.0,
+        100.0,
+        200.0,
+        300.0,
+    ]
+    pd.testing.assert_frame_equal(sorted_df, expected_sorted_df)
+
+    expected_filtered_df = expected_sorted_df.loc[[40, 70, 80]].copy()
+    expected_filtered_df["ssid_count"] = pd.Series(
+        [2.0, 4.0, 1.0],
+        index=[40, 70, 80],
+        dtype="float64",
+    )
+    expected_filtered_df["beacons_per_second"] = [5.0, 4.0, 3.0]
+    pd.testing.assert_frame_equal(filtered_df, expected_filtered_df)
+    pd.testing.assert_frame_equal(
+        radio_1_df,
+        expected_filtered_df.loc[[40]],
+    )
+    pd.testing.assert_frame_equal(
+        radio_2_df,
+        expected_filtered_df.loc[[70]],
+    )
+    pd.testing.assert_frame_equal(
+        combined_df,
+        expected_filtered_df.loc[[40, 70]],
+    )
+    assert logged_messages == [
+        "Excluding 3 rows with missing or non-positive ssid_count."
+    ]
 
 
 def test_radio_summary_regression_skips_missing_radio_count(tmp_path):

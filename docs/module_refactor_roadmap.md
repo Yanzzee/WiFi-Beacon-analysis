@@ -241,16 +241,26 @@ For each pass:
 - Added the modules to isolated pre-analysis workspaces and confirmed the
   focused grouping contracts and short grouping golden regression pass.
 
-### 13. Extract radio-summary dataframe preparation
+### 13. Extract radio-summary dataframe preparation — completed
 
-- Move the non-plot dataframe work from `analyze_radio_summary.py` into a
-  callable module function: sorting, class-duration calculation, the
-  `total_beacons >= 300` filter, positive numeric `ssid_count` filtering,
-  beacon-rate calculation, and radio-count splits.
-- Preserve dataframe copies, coercion behavior, row order, warning/log text,
-  thresholds, and column names.
-- Extend the existing focused radio-summary tests to compare complete prepared
-  frames. Leave regression fitting and every plot in the script for this pass.
+- Added `radio_summary_processing.py` with `sort_radio_summary()` and
+  `prepare_radio_summary_frames()`.
+- Moved sorting, class-duration calculation, the `total_beacons >= 300` and
+  positive-duration filter, numeric positive-`ssid_count` filtering,
+  exclusion logging, beacon-rate calculation, and radio-count splits into the
+  module.
+- Kept the sort and preparation calls on opposite sides of the existing raw
+  CSV/report block so `radio_summary.csv` remains unchanged and the exclusion
+  warning retains its execution order.
+- Preserved source-frame non-mutation during sorting, explicit filtered-frame
+  copies, numeric coercion, indices and row order, thresholds, columns, and
+  warning text.
+- Added complete-frame comparisons for the sorted, filtered, one-radio,
+  two-radio, and combined outputs while retaining focused plot and regression
+  coverage.
+- Left all regression fitting and plotting in `analyze_radio_summary.py`.
+- Confirmed the focused tests, full non-golden suite, and analysis-forward
+  golden fingerprints pass.
 
 ### 14. Characterize class-session metric edge cases
 

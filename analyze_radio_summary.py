@@ -12,6 +12,10 @@ def main():
     from analysis_config import ensure_directory
     from analysis_logging import open_analysis_log
     from analysis_statistics import compute_pdf_cdf
+    from radio_summary_processing import (
+        prepare_radio_summary_frames,
+        sort_radio_summary,
+    )
     
     load_dotenv("config.env")
     
@@ -39,7 +43,7 @@ def main():
     radio_summary_df = pd.read_parquet(f"{DATA_FOLDER}/radio_summary.parquet")
     #radio_summary_df.head()
     
-    radio_summary_df = radio_summary_df.sort_values(by="total_beacons")
+    radio_summary_df = sort_radio_summary(radio_summary_df)
     #radio_summary_df.head(10)
     
     #analyzing radio_summary - dataframe containing 1 row per radio per class session
@@ -63,36 +67,16 @@ def main():
     
     radio_summary_df.to_csv(f"{OUTPUT_FOLDER}/radio_summary.csv", index=False)
     
-    # Compute class duration in seconds, add as a new column
-    radio_summary_df['class_duration'] = (radio_summary_df['end_time'] - radio_summary_df['start_time']).dt.total_seconds()
-    
-    # Check results
-    #print(radio_summary_df[['start_time', 'end_time', 'class_duration']].head())
+    (
+        filtered_radio_summary_df,
+        df_radio_1,
+        df_radio_2,
+        combined_df,
+    ) = prepare_radio_summary_frames(radio_summary_df, log_and_print)
     
     # =============================================================================
     # Cell 2 - Filter radio summaries and plot beacon rate versus channel utilization
     # =============================================================================
-    
-    # Plotting the relationship between total_beacons and cu
-    # Ensure class_duration is not zero to avoid division errors
-    filtered_radio_summary_df = radio_summary_df[
-        (radio_summary_df['total_beacons'] >= 300) & #remove rows with less than 300 beacons
-        #(radio_summary_df['total_beacons'] <= 400000) & # not needed with clean data
-        (radio_summary_df['class_duration'] > 0)  # Avoid division by zero
-    ].copy()  # Avoid SettingWithCopyWarning
-    
-    # Avoid division by zero or missing SSID counts in downstream beacon-rate plots.
-    filtered_radio_summary_df['ssid_count'] = pd.to_numeric(filtered_radio_summary_df['ssid_count'], errors='coerce')
-    valid_ssid_count_mask = filtered_radio_summary_df['ssid_count'] > 0
-    excluded_ssid_count_rows = len(filtered_radio_summary_df) - valid_ssid_count_mask.sum()
-    if excluded_ssid_count_rows:
-        log_and_print(f"Excluding {excluded_ssid_count_rows} rows with missing or non-positive ssid_count.")
-    filtered_radio_summary_df = filtered_radio_summary_df[valid_ssid_count_mask].copy()
-    
-    # Compute total_beacons per second of class duration
-    filtered_radio_summary_df['beacons_per_second'] = (
-        filtered_radio_summary_df['total_beacons'] / filtered_radio_summary_df['class_duration']
-    )
     
     # Create scatter plot
     plt.figure(figsize=(10, 6))
@@ -117,12 +101,6 @@ def main():
     # =============================================================================
     # Cell 3 - Split data by radio count
     # =============================================================================
-    # Split data by radio_count, create new plots
-    df_radio_1 = filtered_radio_summary_df[filtered_radio_summary_df['radio_count'] == 1]
-    df_radio_2 = filtered_radio_summary_df[filtered_radio_summary_df['radio_count'] == 2]
-    combined_df = filtered_radio_summary_df[filtered_radio_summary_df['radio_count'].isin([1, 2])] # used in PDF/CDF below
-    
-    
     # Create a figure with 3 subplots
     fig, axes = plt.subplots(1, 3, figsize=(18, 6), sharey=True)
     
