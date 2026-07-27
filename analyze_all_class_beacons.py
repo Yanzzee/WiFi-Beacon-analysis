@@ -13,6 +13,9 @@ def main():
     from analysis_config import ensure_directory, env_or_default as _env_or_default
     from analysis_logging import open_analysis_log
     from analysis_statistics import compute_pdf_cdf
+    from class_beacon_plotting import (
+        plot_channel_utilization_histogram,
+    )
     from room_station_count import enrich_room_station_counts
     
     load_dotenv("config.env")
@@ -122,27 +125,11 @@ def main():
     # Create bins that match the percentage scale (still 256 bins)
     bins = np.linspace(0, 100, 256)
     
-    # Make the figure larger
-    plt.figure(figsize=(10, 6))
-    
-    # Create histogram
-    plt.hist(cu_percent, bins=bins, edgecolor='black', align='mid')
-    
-    # Add labels and title with spacing adjustment
-    plt.xlabel('Channel Utilization (%)')
-    plt.ylabel('Frequency', labelpad=15)  # Add padding to prevent label overlap
-    plt.title('Histogram of Channel Utilization Values')
-    
-    # Adjust layout to prevent label/title overlap
-    plt.tight_layout()
-    
-    # Save to a file
-    plot_file = f"{ALL_CLASS_BEACONS_FOLDER}/Channel_use_histogram.png"
-    plt.savefig(plot_file)
-    
-    # Show the plot
-    plt.show()
-    plt.close()
+    plot_channel_utilization_histogram(
+        cu_percent,
+        bins,
+        ALL_CLASS_BEACONS_FOLDER,
+    )
     
     
     

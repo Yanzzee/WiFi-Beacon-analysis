@@ -527,6 +527,23 @@ For each pass:
   pass.
 - All radio-summary plot families are now extracted; plots in other stages
   remain for later Step 20 passes.
+
+#### Pass 11: Class-beacon channel-utilization histogram — completed
+
+- Added `class_beacon_plotting.py` with
+  `plot_channel_utilization_histogram()`.
+- Kept the `100 / 255` percentage conversion and
+  `np.linspace(0, 100, 256)` bin assignment in
+  `analyze_all_class_beacons.py`, preserving calculation values and execution
+  order.
+- Preserved the `(10, 6)` figure size, input series and bins, edge color,
+  alignment, labels, label padding, title, tight layout, literal-slash
+  filename, `savefig()`, `show()`, and bare `close()` behavior.
+- Added a focused test that pins the retained percentage and bin calculations,
+  creates the expected file, and asserts important pyplot parameters without
+  comparing PNG bytes.
+- Added the module to isolated analysis-forward workspaces and confirmed the
+  focused tests, full non-golden suite, and golden fingerprints pass.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.
