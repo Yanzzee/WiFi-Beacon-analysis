@@ -6,6 +6,9 @@ from radio_summary_processing import (
     prepare_radio_summary_frames,
     sort_radio_summary,
 )
+from radio_summary_plotting import (
+    plot_beacon_rate_channel_utilization_scatter,
+)
 from script_sections import script_cell_source
 
 
@@ -60,6 +63,9 @@ def test_radio_summary_filters_missing_or_nonpositive_ssid_count(tmp_path):
 
     namespace = {
         "filtered_radio_summary_df": filtered_radio_summary_df,
+        "plot_beacon_rate_channel_utilization_scatter": (
+            plot_beacon_rate_channel_utilization_scatter
+        ),
         "plt": plt,
         "OUTPUT_FOLDER": str(output_folder),
     }

@@ -16,6 +16,9 @@ def main():
         prepare_radio_summary_frames,
         sort_radio_summary,
     )
+    from radio_summary_plotting import (
+        plot_beacon_rate_channel_utilization_scatter,
+    )
     
     load_dotenv("config.env")
     
@@ -78,22 +81,10 @@ def main():
     # Cell 2 - Filter radio summaries and plot beacon rate versus channel utilization
     # =============================================================================
     
-    # Create scatter plot
-    plt.figure(figsize=(10, 6))
-    plt.scatter(filtered_radio_summary_df['highest_cu'], filtered_radio_summary_df['beacons_per_second'] / filtered_radio_summary_df['ssid_count'], alpha=0.5, edgecolors='k')
-    
-    # Labels and title
-    plt.xlabel("Highest Channel Utilization")
-    plt.ylabel("Beacons per Second of Class")
-    plt.title("Comparison of CU to Beacons per Second")
-    plt.grid(True)
-    
-    plot_file = f"{OUTPUT_FOLDER}/radio_summary/Beacons_per_second_class_cu.png"
-    #save to a file
-    plt.savefig(plot_file)
-    
-    # Show the plot
-    plt.show()
+    plot_beacon_rate_channel_utilization_scatter(
+        filtered_radio_summary_df,
+        OUTPUT_FOLDER,
+    )
     
     
     

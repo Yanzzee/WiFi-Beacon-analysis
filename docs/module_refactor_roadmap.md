@@ -421,6 +421,21 @@ For each pass:
   important pyplot calls and parameters without comparing PNG bytes.
 - Confirmed the focused tests, full non-golden suite, and golden fingerprints
   pass.
+
+#### Pass 5: Beacon-rate-versus-channel-utilization scatter — completed
+
+- Added `radio_summary_plotting.py` with
+  `plot_beacon_rate_channel_utilization_scatter()` after the filtered
+  radio-summary frames were extracted and directly tested in Step 13.
+- Preserved the `(10, 6)` figure size, highest-CU-then-normalized-beacon-rate
+  series order, existing beacon-rate/SSID-count division, alpha, edge color,
+  labels, title, grid, literal-slash filename, `savefig()`, and `show()`
+  behavior.
+- Preserved the original omission of `close()` for this plot.
+- Added a focused test that creates the expected file and asserts the
+  important pyplot calls and parameters without comparing PNG bytes.
+- Added the module to isolated analysis-forward workspaces and confirmed the
+  focused tests, full non-golden suite, and golden fingerprints pass.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.
