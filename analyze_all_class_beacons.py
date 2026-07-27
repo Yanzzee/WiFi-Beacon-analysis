@@ -16,6 +16,7 @@ def main():
     from class_beacon_plotting import (
         plot_channel_utilization_histogram,
         plot_channel_utilization_pdf_cdf,
+        plot_station_count_channel_utilization_hexbin,
         plot_station_count_histogram,
     )
     from room_station_count import enrich_room_station_counts
@@ -202,25 +203,11 @@ def main():
     
     # # create a hexbin plot to visualize the correlation between station count and channel utilization
     # Create a hexbin plot with channel utilization shown as percentage (0–100%)
-    plt.hexbin(
-        all_class_beacons_df["total_scount"],                      # X-axis: station count
-        all_class_beacons_df["wlan.qbss.cu"] * (100 / 255),        # Y-axis: channel utilization in %
-        gridsize=50,
-        cmap="Blues",
-        norm=mcolors.LogNorm()  # Log scaling for better visibility
+    plot_station_count_channel_utilization_hexbin(
+        all_class_beacons_df["total_scount"],
+        all_class_beacons_df["wlan.qbss.cu"],
+        ALL_CLASS_BEACONS_FOLDER,
     )
-    
-    plt.xlabel("Total Station Count")  # X-axis label
-    plt.ylabel("Channel Utilization (%)")  # Updated Y-axis label
-    plt.title("Hexbin Plot: Channel Utilization (%) vs. Station Count")
-    
-    plt.colorbar(label="Log Count")
-    
-    plot_file = f"{ALL_CLASS_BEACONS_FOLDER}/Scount_channel_use_hexbin.png"
-    plt.savefig(plot_file)
-    
-    plt.show()
-    plt.close()
     
     
     # =============================================================================

@@ -1,6 +1,34 @@
 """Plotting functions for all-class-beacons analysis."""
 
+import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
+
+
+def plot_station_count_channel_utilization_hexbin(
+    total_scount,
+    channel_utilization,
+    all_class_beacons_folder,
+):
+    plt.hexbin(
+        total_scount,
+        channel_utilization * (100 / 255),
+        gridsize=50,
+        cmap="Blues",
+        norm=mcolors.LogNorm(),
+    )
+    plt.xlabel("Total Station Count")
+    plt.ylabel("Channel Utilization (%)")
+    plt.title(
+        "Hexbin Plot: Channel Utilization (%) vs. Station Count"
+    )
+    plt.colorbar(label="Log Count")
+    plot_file = (
+        f"{all_class_beacons_folder}/"
+        "Scount_channel_use_hexbin.png"
+    )
+    plt.savefig(plot_file)
+    plt.show()
+    plt.close()
 
 
 def plot_station_count_histogram(
