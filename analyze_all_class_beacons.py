@@ -16,6 +16,7 @@ def main():
     from class_beacon_plotting import (
         plot_channel_utilization_histogram,
         plot_channel_utilization_pdf_cdf,
+        plot_station_count_histogram,
     )
     from room_station_count import enrich_room_station_counts
     
@@ -168,27 +169,11 @@ def main():
     # Set the number of bins to be the highest value of total_scount + 1
     num_bins = max(all_class_beacons_df["total_scount"]) + 1
     
-    # Make the figure larger
-    plt.figure(figsize=(10, 6))
-    
-    # Create histogram
-    plt.hist(all_class_beacons_df["total_scount"], bins=num_bins, edgecolor='black')
-    
-    # Add labels and title
-    plt.xlabel('Total Station Count')
-    plt.ylabel('Frequency', labelpad=15)  # Add padding to prevent label overlap
-    plt.title('Histogram of total station count values for all class beacons')
-    
-    # Adjust layout to prevent label/title overlap
-    plt.tight_layout()
-    
-    plot_file = f"{ALL_CLASS_BEACONS_FOLDER}/Scount_histogram.png"
-    #save to a file
-    plt.savefig(plot_file)
-    
-    # Show the plot
-    plt.show()
-    plt.close()
+    plot_station_count_histogram(
+        all_class_beacons_df["total_scount"],
+        num_bins,
+        ALL_CLASS_BEACONS_FOLDER,
+    )
     
     
     # =============================================================================

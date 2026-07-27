@@ -3,6 +3,32 @@
 import matplotlib.pyplot as plt
 
 
+def plot_station_count_histogram(
+    total_scount,
+    num_bins,
+    all_class_beacons_folder,
+):
+    plt.figure(figsize=(10, 6))
+    plt.hist(
+        total_scount,
+        bins=num_bins,
+        edgecolor="black",
+    )
+    plt.xlabel("Total Station Count")
+    plt.ylabel("Frequency", labelpad=15)
+    plt.title(
+        "Histogram of total station count values for all class "
+        "beacons"
+    )
+    plt.tight_layout()
+    plot_file = (
+        f"{all_class_beacons_folder}/Scount_histogram.png"
+    )
+    plt.savefig(plot_file)
+    plt.show()
+    plt.close()
+
+
 def plot_channel_utilization_pdf_cdf(
     bin_centers,
     pdf,

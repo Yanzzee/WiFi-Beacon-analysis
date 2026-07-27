@@ -561,6 +561,21 @@ For each pass:
   without comparing PNG bytes.
 - Confirmed the focused tests, full non-golden suite, and golden fingerprints
   pass.
+
+#### Pass 13: Class-beacon station-count histogram — completed
+
+- Added `plot_station_count_histogram()` to
+  `class_beacon_plotting.py`.
+- Kept `max(all_class_beacons_df["total_scount"]) + 1` and the existing
+  `num_bins` variable in `analyze_all_class_beacons.py`.
+- Preserved the `(10, 6)` figure size, station-count series, calculated bin
+  count, edge color, labels, label padding, title, tight layout,
+  literal-slash filename, `savefig()`, `show()`, and bare `close()` behavior.
+- Added a focused test that pins the retained max-plus-one calculation,
+  creates the expected file, and asserts important histogram and pyplot
+  parameters without comparing PNG bytes.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.

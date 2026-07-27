@@ -15,6 +15,7 @@ from analysis_statistics import compute_pdf_cdf
 from class_beacon_plotting import (
     plot_channel_utilization_histogram,
     plot_channel_utilization_pdf_cdf,
+    plot_station_count_histogram,
 )
 from script_sections import script_cell_source
 
@@ -247,3 +248,75 @@ def test_channel_utilization_pdf_cdf_current_calls_and_files(
     close.assert_not_called()
 
     plt.close("all")
+
+
+def test_station_count_histogram_current_calls_and_file(
+    tmp_path,
+):
+    all_class_beacons_df = pd.DataFrame(
+        {"total_scount": [0, 2, 5, 5]}
+    )
+    all_class_beacons_folder = tmp_path / "all_class_beacons"
+    all_class_beacons_folder.mkdir()
+    plot_filename = (
+        f"{all_class_beacons_folder}/Scount_histogram.png"
+    )
+    cell_source, script_path = script_cell_source(
+        "analyze_all_class_beacons.py",
+        7,
+    )
+    namespace = {
+        "all_class_beacons_df": all_class_beacons_df,
+        "ALL_CLASS_BEACONS_FOLDER": str(all_class_beacons_folder),
+        "plot_station_count_histogram": (
+            plot_station_count_histogram
+        ),
+        "plt": plt,
+    }
+
+    with (
+        patch.object(plt, "figure", wraps=plt.figure) as figure,
+        patch.object(plt, "hist", wraps=plt.hist) as hist,
+        patch.object(plt, "xlabel", wraps=plt.xlabel) as xlabel,
+        patch.object(plt, "ylabel", wraps=plt.ylabel) as ylabel,
+        patch.object(plt, "title", wraps=plt.title) as title,
+        patch.object(
+            plt,
+            "tight_layout",
+            wraps=plt.tight_layout,
+        ) as tight_layout,
+        patch.object(plt, "savefig", wraps=plt.savefig) as savefig,
+        patch.object(plt, "show", wraps=plt.show) as show,
+        patch.object(plt, "close", wraps=plt.close) as close,
+    ):
+        exec(
+            compile(
+                cell_source,
+                f"{script_path}::cell_7",
+                "exec",
+            ),
+            namespace,
+        )
+
+    assert namespace["num_bins"] == 6
+    assert Path(plot_filename).is_file()
+    figure.assert_called_once_with(figsize=(10, 6))
+    hist.assert_called_once()
+    pd.testing.assert_series_equal(
+        hist.call_args.args[0],
+        all_class_beacons_df["total_scount"],
+    )
+    assert hist.call_args.kwargs == {
+        "bins": 6,
+        "edgecolor": "black",
+    }
+    xlabel.assert_called_once_with("Total Station Count")
+    ylabel.assert_called_once_with("Frequency", labelpad=15)
+    title.assert_called_once_with(
+        "Histogram of total station count values for all class "
+        "beacons"
+    )
+    tight_layout.assert_called_once_with()
+    savefig.assert_called_once_with(plot_filename)
+    show.assert_called_once_with()
+    close.assert_called_once_with()
