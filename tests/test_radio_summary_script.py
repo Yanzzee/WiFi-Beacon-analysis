@@ -8,6 +8,7 @@ from radio_summary_processing import (
 )
 from radio_summary_plotting import (
     plot_beacon_rate_channel_utilization_scatter,
+    plot_radio_regressions,
 )
 from script_sections import script_cell_source
 
@@ -200,6 +201,7 @@ def test_radio_summary_regression_skips_missing_radio_count(tmp_path):
         "df_radio_1": df_radio_1,
         "df_radio_2": df_radio_2,
         "log_and_print": logged_messages.append,
+        "plot_radio_regressions": plot_radio_regressions,
         "plt": plt,
         "RADIO_SUMMARY_FOLDER": str(radio_summary_folder),
         "sm": sm,

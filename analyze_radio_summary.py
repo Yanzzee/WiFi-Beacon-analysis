@@ -21,6 +21,7 @@ def main():
         plot_beacon_rate_channel_utilization_scatter,
         plot_beacon_rate_pdf_cdf,
         plot_radio_count_split_scatter,
+        plot_radio_regressions,
         plot_stacked_beacon_rate_histogram,
     )
     
@@ -106,54 +107,12 @@ def main():
     # =============================================================================
     # Cell 4 - Plot linear regressions by radio count
     # =============================================================================
-    # Function to perform linear regression and return model & predictions
-    def linear_regression(x, y):
-        X = sm.add_constant(x)  # Add intercept term
-        model = sm.OLS(y, X).fit()  # Fit model
-        return model, model.predict(X)
-    
-    def plot_radio_regression(ax, radio_df, radio_count, color):
-        title = f"Linear Regression for Radio Count {radio_count} ({color.title()})"
-        ax.set_title(title)
-        ax.set_xlabel("Highest Channel Utilization")
-        ax.set_xlim(0, 100)
-        ax.grid(True)
-    
-        if radio_df.empty:
-            log_and_print(f"Skipping linear regression for radio_count {radio_count}: no rows after filtering.")
-            ax.text(0.5, 0.5, "No data", ha="center", va="center", transform=ax.transAxes)
-            return None
-    
-        y = radio_df['beacons_per_second'] / radio_df['ssid_count']
-        model, predictions = linear_regression(radio_df['highest_cu'], y)
-        ax.scatter(radio_df['highest_cu'], y, alpha=0.5, edgecolors='k', c=color, label="Data Points")
-        ax.plot(radio_df['highest_cu'], predictions, color='black', linewidth=2, label="Regression Line")
-        ax.legend()
-        return model
-    
-    # Create a figure with 2 subplots
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
-    
-    model_1 = plot_radio_regression(axes[0], df_radio_1, 1, 'blue')
-    axes[0].set_ylabel("Beacons per Second of Class")
-    model_2 = plot_radio_regression(axes[1], df_radio_2, 2, 'red')
-    
-    # Adjust layout and show the plots
-    plt.tight_layout()
-    
-    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_class_linear_regression.png"
-    #save to a file
-    plt.savefig(plot_file)
-    
-    plt.show()
-    
-    # Print regression summaries
-    if model_1 is not None:
-        log_and_print("Linear Regression for Radio Count 1:")
-        log_and_print(model_1.summary().as_text())
-    if model_2 is not None:
-        log_and_print("\nLinear Regression for Radio Count 2:")
-        log_and_print(model_2.summary().as_text())
+    model_1, model_2 = plot_radio_regressions(
+        df_radio_1,
+        df_radio_2,
+        RADIO_SUMMARY_FOLDER,
+        log_and_print,
+    )
     
     
     # =============================================================================

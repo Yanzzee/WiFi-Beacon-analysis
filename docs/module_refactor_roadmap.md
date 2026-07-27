@@ -505,6 +505,28 @@ For each pass:
   without comparing PNG bytes.
 - Confirmed the focused tests, full non-golden suite, and golden fingerprints
   pass.
+
+#### Pass 10: Radio-count linear-regression figures — completed
+
+- Added `plot_radio_regressions()` to
+  `radio_summary_plotting.py`, moving the coupled model fitting, rendering,
+  empty-data handling, and summary logging together as one plot family.
+- Preserved `sm.add_constant()`, `sm.OLS(...).fit()`, prediction inputs,
+  beacon-rate/SSID-count division, radio-count order, `None` behavior for
+  empty frames, skip text, summary text, and logging order.
+- Preserved the `1 x 2` shared-y layout, `(14, 6)` figure size, point and
+  regression-line styling, labels, titles, `0–100` x-axis limits, legends,
+  grids, tight layout, literal-slash filename, `savefig()`, and `show()`
+  behavior.
+- Preserved the original omission of `close()` and returned both models to
+  the stage script's existing `model_1` and `model_2` variable names.
+- Added focused populated- and empty-radio tests that pin fitted parameters,
+  predictions, plotted data, summaries, skip behavior, and the expected file
+  without comparing PNG bytes.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
+- All radio-summary plot families are now extracted; plots in other stages
+  remain for later Step 20 passes.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.

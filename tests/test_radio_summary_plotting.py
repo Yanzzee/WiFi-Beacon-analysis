@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import to_rgba
 import numpy as np
 import pandas as pd
+import statsmodels.api as sm
 
 from analysis_statistics import compute_pdf_cdf
 from radio_summary_plotting import (
@@ -18,6 +19,7 @@ from radio_summary_plotting import (
     plot_beacon_rate_channel_utilization_scatter,
     plot_beacon_rate_pdf_cdf,
     plot_radio_count_split_scatter,
+    plot_radio_regressions,
     plot_stacked_beacon_rate_histogram,
 )
 from script_sections import script_cell_source
@@ -506,5 +508,150 @@ def test_beacon_rate_pdf_cdf_current_calls_and_files(
     ]
     assert show.call_args_list == [call(), call()]
     close.assert_not_called()
+
+    plt.close("all")
+
+
+def test_radio_regressions_current_models_calls_and_file(
+    tmp_path,
+):
+    df_radio_1 = pd.DataFrame(
+        {
+            "highest_cu": [10.0, 30.0, 60.0],
+            "beacons_per_second": [2.0, 4.0, 8.0],
+            "ssid_count": [2.0, 2.0, 2.0],
+        }
+    )
+    df_radio_2 = pd.DataFrame(
+        {
+            "highest_cu": [20.0, 40.0, 80.0],
+            "beacons_per_second": [6.0, 12.0, 30.0],
+            "ssid_count": [3.0, 3.0, 3.0],
+        }
+    )
+    radio_summary_folder = tmp_path / "radio_summary"
+    radio_summary_folder.mkdir()
+    plot_filename = (
+        f"{radio_summary_folder}/"
+        "Beacons_per_second_class_linear_regression.png"
+    )
+    logged_messages: list[str] = []
+    cell_source, script_path = script_cell_source(
+        "analyze_radio_summary.py",
+        4,
+    )
+    namespace = {
+        "df_radio_1": df_radio_1,
+        "df_radio_2": df_radio_2,
+        "log_and_print": logged_messages.append,
+        "plot_radio_regressions": plot_radio_regressions,
+        "RADIO_SUMMARY_FOLDER": str(radio_summary_folder),
+        "plt": plt,
+        "sm": sm,
+    }
+
+    with (
+        patch.object(plt, "subplots", wraps=plt.subplots) as subplots,
+        patch.object(
+            plt,
+            "tight_layout",
+            wraps=plt.tight_layout,
+        ) as tight_layout,
+        patch.object(plt, "savefig", wraps=plt.savefig) as savefig,
+        patch.object(plt, "show", wraps=plt.show) as show,
+        patch.object(plt, "close", wraps=plt.close) as close,
+    ):
+        exec(
+            compile(
+                cell_source,
+                f"{script_path}::cell_4",
+                "exec",
+            ),
+            namespace,
+        )
+
+    axes = plt.gcf().axes
+    model_1 = namespace["model_1"]
+    model_2 = namespace["model_2"]
+    expected_frames = [df_radio_1, df_radio_2]
+    expected_colors = ["blue", "red"]
+    assert Path(plot_filename).is_file()
+    subplots.assert_called_once_with(
+        1,
+        2,
+        figsize=(14, 6),
+        sharey=True,
+    )
+    for axis, frame, color in zip(
+        axes,
+        expected_frames,
+        expected_colors,
+        strict=True,
+    ):
+        y = frame["beacons_per_second"] / frame["ssid_count"]
+        assert len(axis.collections) == 1
+        np.testing.assert_allclose(
+            axis.collections[0].get_offsets(),
+            np.column_stack([frame["highest_cu"], y]),
+        )
+        assert axis.collections[0].get_alpha() == 0.5
+        np.testing.assert_allclose(
+            axis.collections[0].get_edgecolors(),
+            [to_rgba("k", alpha=0.5)],
+        )
+        np.testing.assert_allclose(
+            axis.collections[0].get_facecolors(),
+            [to_rgba(color, alpha=0.5)],
+        )
+        assert len(axis.lines) == 1
+        np.testing.assert_allclose(
+            axis.lines[0].get_xdata(),
+            frame["highest_cu"],
+        )
+        assert axis.lines[0].get_color() == "black"
+        assert axis.lines[0].get_linewidth() == 2
+        assert axis.get_xlabel() == "Highest Channel Utilization"
+        assert axis.get_xlim() == (0.0, 100.0)
+        assert axis.get_legend() is not None
+        assert any(
+            line.get_visible()
+            for line in (
+                *axis.get_xgridlines(),
+                *axis.get_ygridlines(),
+            )
+        )
+    expected_model_1 = sm.OLS(
+        df_radio_1["beacons_per_second"] / df_radio_1["ssid_count"],
+        sm.add_constant(df_radio_1["highest_cu"]),
+    ).fit()
+    expected_model_2 = sm.OLS(
+        df_radio_2["beacons_per_second"] / df_radio_2["ssid_count"],
+        sm.add_constant(df_radio_2["highest_cu"]),
+    ).fit()
+    np.testing.assert_allclose(model_1.params, expected_model_1.params)
+    np.testing.assert_allclose(model_2.params, expected_model_2.params)
+    np.testing.assert_allclose(
+        axes[0].lines[0].get_ydata(),
+        model_1.predict(sm.add_constant(df_radio_1["highest_cu"])),
+    )
+    np.testing.assert_allclose(
+        axes[1].lines[0].get_ydata(),
+        model_2.predict(sm.add_constant(df_radio_2["highest_cu"])),
+    )
+    assert [axis.get_title() for axis in axes] == [
+        "Linear Regression for Radio Count 1 (Blue)",
+        "Linear Regression for Radio Count 2 (Red)",
+    ]
+    assert axes[0].get_ylabel() == "Beacons per Second of Class"
+    tight_layout.assert_called_once_with()
+    savefig.assert_called_once_with(plot_filename)
+    show.assert_called_once_with()
+    close.assert_not_called()
+    assert logged_messages == [
+        "Linear Regression for Radio Count 1:",
+        model_1.summary().as_text(),
+        "\nLinear Regression for Radio Count 2:",
+        model_2.summary().as_text(),
+    ]
 
     plt.close("all")

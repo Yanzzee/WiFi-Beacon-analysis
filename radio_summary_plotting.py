@@ -1,6 +1,108 @@
 """Plotting functions for radio-summary analysis."""
 
 import matplotlib.pyplot as plt
+import statsmodels.api as sm
+
+
+def plot_radio_regressions(
+    df_radio_1,
+    df_radio_2,
+    radio_summary_folder,
+    log_and_print,
+):
+    def linear_regression(x, y):
+        X = sm.add_constant(x)
+        model = sm.OLS(y, X).fit()
+        return model, model.predict(X)
+
+    def plot_radio_regression(ax, radio_df, radio_count, color):
+        title = (
+            f"Linear Regression for Radio Count {radio_count} "
+            f"({color.title()})"
+        )
+        ax.set_title(title)
+        ax.set_xlabel("Highest Channel Utilization")
+        ax.set_xlim(0, 100)
+        ax.grid(True)
+
+        if radio_df.empty:
+            log_and_print(
+                "Skipping linear regression for radio_count "
+                f"{radio_count}: no rows after filtering."
+            )
+            ax.text(
+                0.5,
+                0.5,
+                "No data",
+                ha="center",
+                va="center",
+                transform=ax.transAxes,
+            )
+            return None
+
+        y = (
+            radio_df["beacons_per_second"]
+            / radio_df["ssid_count"]
+        )
+        model, predictions = linear_regression(
+            radio_df["highest_cu"],
+            y,
+        )
+        ax.scatter(
+            radio_df["highest_cu"],
+            y,
+            alpha=0.5,
+            edgecolors="k",
+            c=color,
+            label="Data Points",
+        )
+        ax.plot(
+            radio_df["highest_cu"],
+            predictions,
+            color="black",
+            linewidth=2,
+            label="Regression Line",
+        )
+        ax.legend()
+        return model
+
+    fig, axes = plt.subplots(
+        1,
+        2,
+        figsize=(14, 6),
+        sharey=True,
+    )
+
+    model_1 = plot_radio_regression(
+        axes[0],
+        df_radio_1,
+        1,
+        "blue",
+    )
+    axes[0].set_ylabel("Beacons per Second of Class")
+    model_2 = plot_radio_regression(
+        axes[1],
+        df_radio_2,
+        2,
+        "red",
+    )
+
+    plt.tight_layout()
+    plot_file = (
+        f"{radio_summary_folder}/"
+        "Beacons_per_second_class_linear_regression.png"
+    )
+    plt.savefig(plot_file)
+    plt.show()
+
+    if model_1 is not None:
+        log_and_print("Linear Regression for Radio Count 1:")
+        log_and_print(model_1.summary().as_text())
+    if model_2 is not None:
+        log_and_print("\nLinear Regression for Radio Count 2:")
+        log_and_print(model_2.summary().as_text())
+
+    return model_1, model_2
 
 
 def plot_beacon_rate_pdf_cdf(
