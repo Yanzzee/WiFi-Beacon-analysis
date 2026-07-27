@@ -15,6 +15,7 @@ def main():
     from analysis_statistics import compute_pdf_cdf
     from class_beacon_plotting import (
         plot_channel_utilization_histogram,
+        plot_channel_utilization_pdf_cdf,
     )
     from room_station_count import enrich_room_station_counts
     
@@ -143,29 +144,12 @@ def main():
     # Compute PDF/CDF
     bin_centers, pdf, cdf = compute_pdf_cdf(cu_data, bins=256)
     
-    # --- PDF Plot ---
-    plt.figure(figsize=(10, 6))
-    plt.plot(bin_centers, pdf, color='purple', label='PDF - wlan.qbss.cu (%)')
-    plt.xlabel('Channel Utilization (%)')
-    plt.ylabel('Probability Density')
-    plt.title('PDF of Channel Utilization')
-    plt.legend()
-    plt.grid()
-    plot_file = f"{ALL_CLASS_BEACONS_FOLDER}/Channel_use_pdf.png"
-    plt.savefig(plot_file)
-    plt.show()
-    
-    # --- CDF Plot ---
-    plt.figure(figsize=(10, 6))
-    plt.plot(bin_centers, cdf, color='orange', label='CDF - wlan.qbss.cu (%)')
-    plt.xlabel('Channel Utilization (%)')
-    plt.ylabel('Cumulative Probability')
-    plt.title('CDF of Channel Utilization')
-    plt.legend()
-    plt.grid()
-    plot_file = f"{ALL_CLASS_BEACONS_FOLDER}/Channel_use_cdf.png"
-    plt.savefig(plot_file)
-    plt.show()
+    plot_channel_utilization_pdf_cdf(
+        bin_centers,
+        pdf,
+        cdf,
+        ALL_CLASS_BEACONS_FOLDER,
+    )
     
     # Report CDF at ~50% and ~75% thresholds
     cdf_at_50 = (cu_data <= 50).mean()

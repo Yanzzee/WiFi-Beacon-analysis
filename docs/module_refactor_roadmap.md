@@ -544,6 +544,23 @@ For each pass:
   comparing PNG bytes.
 - Added the module to isolated analysis-forward workspaces and confirmed the
   focused tests, full non-golden suite, and golden fingerprints pass.
+
+#### Pass 12: Class-beacon channel-utilization PDF and CDF — completed
+
+- Added `plot_channel_utilization_pdf_cdf()` to
+  `class_beacon_plotting.py`.
+- Kept `dropna()`, the `100 / 255` conversion,
+  `compute_pdf_cdf(..., bins=256)`, all result assignments, threshold means,
+  and four threshold log messages in `analyze_all_class_beacons.py`.
+- Preserved both `(10, 6)` figures, PDF-then-CDF order, plotted arrays, line
+  colors and labels, axis labels, titles, legends, grids, literal-slash
+  filenames, `savefig()`, and `show()` behavior.
+- Preserved the original omission of `close()` for both figures.
+- Added a focused test that pins the retained calculations, threshold values,
+  log text, plotted arrays, expected files, and important pyplot parameters
+  without comparing PNG bytes.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.

@@ -3,6 +3,45 @@
 import matplotlib.pyplot as plt
 
 
+def plot_channel_utilization_pdf_cdf(
+    bin_centers,
+    pdf,
+    cdf,
+    all_class_beacons_folder,
+):
+    plt.figure(figsize=(10, 6))
+    plt.plot(
+        bin_centers,
+        pdf,
+        color="purple",
+        label="PDF - wlan.qbss.cu (%)",
+    )
+    plt.xlabel("Channel Utilization (%)")
+    plt.ylabel("Probability Density")
+    plt.title("PDF of Channel Utilization")
+    plt.legend()
+    plt.grid()
+    plot_file = f"{all_class_beacons_folder}/Channel_use_pdf.png"
+    plt.savefig(plot_file)
+    plt.show()
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(
+        bin_centers,
+        cdf,
+        color="orange",
+        label="CDF - wlan.qbss.cu (%)",
+    )
+    plt.xlabel("Channel Utilization (%)")
+    plt.ylabel("Cumulative Probability")
+    plt.title("CDF of Channel Utilization")
+    plt.legend()
+    plt.grid()
+    plot_file = f"{all_class_beacons_folder}/Channel_use_cdf.png"
+    plt.savefig(plot_file)
+    plt.show()
+
+
 def plot_channel_utilization_histogram(
     cu_percent,
     bins,
