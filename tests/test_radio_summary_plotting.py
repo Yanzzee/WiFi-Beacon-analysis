@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, call, patch
 
 import matplotlib
 
@@ -12,9 +12,11 @@ from matplotlib.colors import to_rgba
 import numpy as np
 import pandas as pd
 
+from analysis_statistics import compute_pdf_cdf
 from radio_summary_plotting import (
     plot_beacon_rate_histogram,
     plot_beacon_rate_channel_utilization_scatter,
+    plot_beacon_rate_pdf_cdf,
     plot_radio_count_split_scatter,
     plot_stacked_beacon_rate_histogram,
 )
@@ -377,6 +379,132 @@ def test_stacked_beacon_rate_histogram_current_calls_and_file(
     grid.assert_called_once_with(axis="y", alpha=0.75)
     savefig.assert_called_once_with(plot_filename)
     show.assert_called_once_with()
+    close.assert_not_called()
+
+    plt.close("all")
+
+
+def test_beacon_rate_pdf_cdf_current_calls_and_files(
+    tmp_path,
+):
+    df_radio_1 = pd.Series([1.0, 2.0, 3.0])
+    df_radio_2 = pd.Series([2.0, 4.0, 6.0])
+    data_combined = pd.concat(
+        [df_radio_1, df_radio_2],
+        ignore_index=True,
+    )
+    radio_summary_folder = tmp_path / "radio_summary"
+    radio_summary_folder.mkdir()
+    pdf_filename = (
+        f"{radio_summary_folder}/"
+        "Beacons_per_second_class_PDF.png"
+    )
+    cdf_filename = (
+        f"{radio_summary_folder}/"
+        "Beacons_per_second_class_CDF.png"
+    )
+    cell_source, script_path = script_cell_source(
+        "analyze_radio_summary.py",
+        7,
+    )
+    compute_pdf_cdf_mock = Mock(wraps=compute_pdf_cdf)
+    namespace = {
+        "df_radio_1": df_radio_1,
+        "df_radio_2": df_radio_2,
+        "data_combined": data_combined,
+        "compute_pdf_cdf": compute_pdf_cdf_mock,
+        "plot_beacon_rate_pdf_cdf": plot_beacon_rate_pdf_cdf,
+        "RADIO_SUMMARY_FOLDER": str(radio_summary_folder),
+        "plt": plt,
+    }
+
+    with (
+        patch.object(plt, "figure", wraps=plt.figure) as figure,
+        patch.object(plt, "plot", wraps=plt.plot) as plot,
+        patch.object(plt, "xlabel", wraps=plt.xlabel) as xlabel,
+        patch.object(plt, "ylabel", wraps=plt.ylabel) as ylabel,
+        patch.object(plt, "title", wraps=plt.title) as title,
+        patch.object(plt, "legend", wraps=plt.legend) as legend,
+        patch.object(plt, "grid", wraps=plt.grid) as grid,
+        patch.object(plt, "savefig", wraps=plt.savefig) as savefig,
+        patch.object(plt, "show", wraps=plt.show) as show,
+        patch.object(plt, "close", wraps=plt.close) as close,
+    ):
+        exec(
+            compile(
+                cell_source,
+                f"{script_path}::cell_7",
+                "exec",
+            ),
+            namespace,
+        )
+
+    assert compute_pdf_cdf_mock.call_count == 3
+    for distribution_call, expected_series in zip(
+        compute_pdf_cdf_mock.call_args_list,
+        [df_radio_1, df_radio_2, data_combined],
+        strict=True,
+    ):
+        pd.testing.assert_series_equal(
+            distribution_call.args[0],
+            expected_series,
+        )
+        assert distribution_call.kwargs == {"bins": 50}
+    assert Path(pdf_filename).is_file()
+    assert Path(cdf_filename).is_file()
+    assert figure.call_args_list == [
+        call(figsize=(10, 6)),
+        call(figsize=(10, 6)),
+    ]
+    assert plot.call_count == 6
+    expected_plot_arrays = [
+        ("bin_centers1", "pdf1"),
+        ("bin_centers2", "pdf2"),
+        ("bin_centers_comb", "pdf_comb"),
+        ("bin_centers1", "cdf1"),
+        ("bin_centers2", "cdf2"),
+        ("bin_centers_comb", "cdf_comb"),
+    ]
+    for plot_call, (x_name, y_name) in zip(
+        plot.call_args_list,
+        expected_plot_arrays,
+        strict=True,
+    ):
+        np.testing.assert_allclose(
+            plot_call.args[0],
+            namespace[x_name],
+        )
+        np.testing.assert_allclose(
+            plot_call.args[1],
+            namespace[y_name],
+        )
+    assert [item.kwargs for item in plot.call_args_list] == [
+        {"label": "PDF - Radio Count 1", "color": "blue"},
+        {"label": "PDF - Radio Count 2", "color": "red"},
+        {"label": "PDF - Combined", "color": "green"},
+        {"label": "CDF - Radio Count 1", "color": "blue"},
+        {"label": "CDF - Radio Count 2", "color": "red"},
+        {"label": "CDF - Combined", "color": "green"},
+    ]
+    assert xlabel.call_args_list == [
+        call("Beacon Rate (per second)"),
+        call("Beacon Rate (per second)"),
+    ]
+    assert ylabel.call_args_list == [
+        call("Probability Density"),
+        call("Cumulative Probability"),
+    ]
+    assert title.call_args_list == [
+        call("Probability Distribution Function (PDF)"),
+        call("Cumulative Distribution Function (CDF)"),
+    ]
+    assert legend.call_args_list == [call(), call()]
+    assert grid.call_args_list == [call(), call()]
+    assert savefig.call_args_list == [
+        call(pdf_filename),
+        call(cdf_filename),
+    ]
+    assert show.call_args_list == [call(), call()]
     close.assert_not_called()
 
     plt.close("all")

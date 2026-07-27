@@ -3,6 +3,81 @@
 import matplotlib.pyplot as plt
 
 
+def plot_beacon_rate_pdf_cdf(
+    bin_centers1,
+    pdf1,
+    cdf1,
+    bin_centers2,
+    pdf2,
+    cdf2,
+    bin_centers_comb,
+    pdf_comb,
+    cdf_comb,
+    radio_summary_folder,
+):
+    plt.figure(figsize=(10, 6))
+    plt.plot(
+        bin_centers1,
+        pdf1,
+        label="PDF - Radio Count 1",
+        color="blue",
+    )
+    plt.plot(
+        bin_centers2,
+        pdf2,
+        label="PDF - Radio Count 2",
+        color="red",
+    )
+    plt.plot(
+        bin_centers_comb,
+        pdf_comb,
+        label="PDF - Combined",
+        color="green",
+    )
+    plt.xlabel("Beacon Rate (per second)")
+    plt.ylabel("Probability Density")
+    plt.title("Probability Distribution Function (PDF)")
+    plt.legend()
+    plt.grid()
+    plot_file = (
+        f"{radio_summary_folder}/"
+        "Beacons_per_second_class_PDF.png"
+    )
+    plt.savefig(plot_file)
+    plt.show()
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(
+        bin_centers1,
+        cdf1,
+        label="CDF - Radio Count 1",
+        color="blue",
+    )
+    plt.plot(
+        bin_centers2,
+        cdf2,
+        label="CDF - Radio Count 2",
+        color="red",
+    )
+    plt.plot(
+        bin_centers_comb,
+        cdf_comb,
+        label="CDF - Combined",
+        color="green",
+    )
+    plt.xlabel("Beacon Rate (per second)")
+    plt.ylabel("Cumulative Probability")
+    plt.title("Cumulative Distribution Function (CDF)")
+    plt.legend()
+    plt.grid()
+    plot_file = (
+        f"{radio_summary_folder}/"
+        "Beacons_per_second_class_CDF.png"
+    )
+    plt.savefig(plot_file)
+    plt.show()
+
+
 def plot_stacked_beacon_rate_histogram(
     df_radio_1,
     df_radio_2,

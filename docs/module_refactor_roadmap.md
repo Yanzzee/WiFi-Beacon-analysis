@@ -487,6 +487,24 @@ For each pass:
   pyplot calls without comparing PNG bytes.
 - Confirmed the focused tests, full non-golden suite, and golden fingerprints
   pass.
+
+#### Pass 9: Beacon-rate PDF and CDF figures — completed
+
+- Added `plot_beacon_rate_pdf_cdf()` to
+  `radio_summary_plotting.py`.
+- Kept all three `compute_pdf_cdf(..., bins=50)` calls and their nine result
+  assignments in `analyze_radio_summary.py`, preserving the tested
+  distribution calculations and their execution order.
+- Preserved both `(10, 6)` figures, PDF-then-CDF order, radio-1/radio-2/
+  combined series order, line labels and colors, axis labels, titles,
+  legends, grids, literal-slash filenames, `savefig()`, and `show()`
+  behavior.
+- Preserved the original omission of `close()` for both figures.
+- Added a focused test that pins the distribution calls and plotted arrays,
+  creates both expected files, and asserts important pyplot parameters
+  without comparing PNG bytes.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.

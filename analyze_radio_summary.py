@@ -19,6 +19,7 @@ def main():
     from radio_summary_plotting import (
         plot_beacon_rate_histogram,
         plot_beacon_rate_channel_utilization_scatter,
+        plot_beacon_rate_pdf_cdf,
         plot_radio_count_split_scatter,
         plot_stacked_beacon_rate_histogram,
     )
@@ -190,39 +191,18 @@ def main():
         bins=50,
     )
     
-    # --- PDF Plot ---
-    plt.figure(figsize=(10, 6))
-    plt.plot(bin_centers1, pdf1, label='PDF - Radio Count 1', color='blue')
-    plt.plot(bin_centers2, pdf2, label='PDF - Radio Count 2', color='red')
-    plt.plot(bin_centers_comb, pdf_comb, label='PDF - Combined', color='green')
-    plt.xlabel('Beacon Rate (per second)')
-    plt.ylabel('Probability Density')
-    plt.title('Probability Distribution Function (PDF)')
-    plt.legend()
-    plt.grid()
-    
-    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_class_PDF.png"
-    #save to a file
-    plt.savefig(plot_file)
-    
-    plt.show()
-    
-    # --- CDF Plot ---
-    plt.figure(figsize=(10, 6))
-    plt.plot(bin_centers1, cdf1, label='CDF - Radio Count 1', color='blue')
-    plt.plot(bin_centers2, cdf2, label='CDF - Radio Count 2', color='red')
-    plt.plot(bin_centers_comb, cdf_comb, label='CDF - Combined', color='green')
-    plt.xlabel('Beacon Rate (per second)')
-    plt.ylabel('Cumulative Probability')
-    plt.title('Cumulative Distribution Function (CDF)')
-    plt.legend()
-    plt.grid()
-    
-    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_class_CDF.png"
-    #save to a file
-    plt.savefig(plot_file)
-    
-    plt.show()
+    plot_beacon_rate_pdf_cdf(
+        bin_centers1,
+        pdf1,
+        cdf1,
+        bin_centers2,
+        pdf2,
+        cdf2,
+        bin_centers_comb,
+        pdf_comb,
+        cdf_comb,
+        RADIO_SUMMARY_FOLDER,
+    )
     
     
     # =============================================================================
