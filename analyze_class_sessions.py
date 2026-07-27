@@ -20,6 +20,7 @@ def main():
         calculate_class_session_metrics,
     )
     from class_session_plotting import (
+        plot_enrollment_station_scatter,
         plot_high_cu_streak_histograms,
         plot_stations_per_enrolled_histogram,
     )
@@ -217,23 +218,10 @@ def main():
     # Cell 7 - Plot enrollment versus station count and close log
     # =============================================================================
     
-    # Create scatter plot
-    plt.figure(figsize=(10, 6))
-    plt.scatter(class_sessions_df['enrolled'], class_sessions_df['max_stations'], alpha=0.5, edgecolors='k')
-    
-    # Labels and title
-    plt.xlabel("Enrolled")
-    plt.ylabel("Associated stations")
-    plt.title("Comparison of class enrollment to station count")
-    plt.grid(True)
-    
-    plot_file = f"{CLASS_SESSIONS_FOLDER}/stations_enrolled_plot.png"
-    #save to a file
-    plt.savefig(plot_file)
-    
-    # Show the plot
-    plt.show()
-    plt.close("all")
+    plot_enrollment_station_scatter(
+        class_sessions_df,
+        CLASS_SESSIONS_FOLDER,
+    )
     
     log_file.close()
 

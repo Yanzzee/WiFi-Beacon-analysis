@@ -406,6 +406,21 @@ For each pass:
   important histogram and pyplot calls without comparing PNG bytes.
 - Confirmed the focused tests, full non-golden suite, and golden fingerprints
   pass.
+
+#### Pass 4: Enrollment-versus-station-count scatter — completed
+
+- Added `plot_enrollment_station_scatter()` to
+  `class_session_plotting.py`, using the already-extracted and directly tested
+  class-session summary columns.
+- Preserved the `(10, 6)` figure size, enrolled-then-max-stations series
+  order, alpha, edge color, labels, title, grid, literal-slash filename,
+  `savefig()`, `show()`, and `close("all")` behavior.
+- Kept `log_file.close()` in `analyze_class_sessions.py`; the extracted
+  helper owns plotting only.
+- Added a focused test that creates the expected file and asserts the
+  important pyplot calls and parameters without comparing PNG bytes.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.

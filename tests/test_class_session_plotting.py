@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from class_session_plotting import (
+    plot_enrollment_station_scatter,
     plot_high_cu_streak_histograms,
     plot_stations_per_enrolled_histogram,
 )
@@ -155,6 +156,59 @@ def test_stations_per_enrolled_histogram_current_calls_and_file(
     )
     xlabel.assert_called_once_with("Stations per Enrolled")
     ylabel.assert_called_once_with("Number of Class Sessions")
+    savefig.assert_called_once_with(plot_filename)
+    show.assert_called_once_with()
+    close.assert_called_once_with("all")
+
+
+def test_enrollment_station_scatter_current_calls_and_file(
+    tmp_path,
+):
+    class_sessions_df = pd.DataFrame(
+        {
+            "enrolled": [20, 30, 40],
+            "max_stations": [15, 28, 35],
+        }
+    )
+    plot_filename = f"{tmp_path}/stations_enrolled_plot.png"
+
+    with (
+        patch.object(plt, "figure", wraps=plt.figure) as figure,
+        patch.object(plt, "scatter", wraps=plt.scatter) as scatter,
+        patch.object(plt, "xlabel", wraps=plt.xlabel) as xlabel,
+        patch.object(plt, "ylabel", wraps=plt.ylabel) as ylabel,
+        patch.object(plt, "title", wraps=plt.title) as title,
+        patch.object(plt, "grid", wraps=plt.grid) as grid,
+        patch.object(plt, "savefig", wraps=plt.savefig) as savefig,
+        patch.object(plt, "show", wraps=plt.show) as show,
+        patch.object(plt, "close", wraps=plt.close) as close,
+    ):
+        plot_enrollment_station_scatter(
+            class_sessions_df,
+            str(tmp_path),
+        )
+
+    assert Path(plot_filename).is_file()
+    figure.assert_called_once_with(figsize=(10, 6))
+    scatter.assert_called_once()
+    pd.testing.assert_series_equal(
+        scatter.call_args.args[0],
+        class_sessions_df["enrolled"],
+    )
+    pd.testing.assert_series_equal(
+        scatter.call_args.args[1],
+        class_sessions_df["max_stations"],
+    )
+    assert scatter.call_args.kwargs == {
+        "alpha": 0.5,
+        "edgecolors": "k",
+    }
+    xlabel.assert_called_once_with("Enrolled")
+    ylabel.assert_called_once_with("Associated stations")
+    title.assert_called_once_with(
+        "Comparison of class enrollment to station count"
+    )
+    grid.assert_called_once_with(True)
     savefig.assert_called_once_with(plot_filename)
     show.assert_called_once_with()
     close.assert_called_once_with("all")

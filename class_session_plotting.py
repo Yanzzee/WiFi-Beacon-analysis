@@ -3,6 +3,29 @@
 import matplotlib.pyplot as plt
 
 
+def plot_enrollment_station_scatter(
+    class_sessions_df,
+    class_sessions_folder,
+):
+    plt.figure(figsize=(10, 6))
+    plt.scatter(
+        class_sessions_df["enrolled"],
+        class_sessions_df["max_stations"],
+        alpha=0.5,
+        edgecolors="k",
+    )
+    plt.xlabel("Enrolled")
+    plt.ylabel("Associated stations")
+    plt.title("Comparison of class enrollment to station count")
+    plt.grid(True)
+    plot_file = (
+        f"{class_sessions_folder}/stations_enrolled_plot.png"
+    )
+    plt.savefig(plot_file)
+    plt.show()
+    plt.close("all")
+
+
 def plot_stations_per_enrolled_histogram(
     class_sessions_df,
     class_sessions_folder,
