@@ -5,13 +5,10 @@
 # Create plot for each radio class session
 # Create summary parquet files
 
-import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 import pandas as pd
 import numpy as np
-import pytz
 import glob
-import matplotlib.dates as mdates
 import os
 import pyarrow.parquet as pq
 import pyarrow as pa
@@ -32,6 +29,7 @@ from radio_analysis import (
     analyze_radio_group,
     calculate_total_scount,
 )
+from radio_session_plotting import plot_channel_stations
 from analysis_validation import (
     REQUIRED_GROUPED_AP_COLUMNS,
     _grouped_timestamp_series,
@@ -79,79 +77,6 @@ def log_and_print(message):
 
 def validate_radio_inference_platform():
     return _validate_radio_inference_platform(AP_PLATFORM)
-
-#  Define the function to generate the plot and save it as a file
-#inputs are dataframes filtered to the radio, and further filtered for each SSID
-def plot_channel_stations(radio_df, eduroam_df, byu_wifi_df, AP_name, start_time, end_time):
-    #print("plot_channel_stations")
-    plt.figure(figsize=(14, 7))  # Example size: 12 inches wide, 6 inches tall
-    # Add a horizontal line at value 75 with 20% opacity
-    #plt.axhline(y=75, color='red', linestyle='-', alpha=0.2, zorder=-1)
-
-    # Access the first record and get the value of 'radio_number'
-    plot_radio_number = radio_df.iloc[0]["radio_number"]
-    
-    # Plot wlan.qbss.cu normalized as percentages
-    plt.plot(radio_df["aruba_erm.time"], (radio_df["wlan.qbss.cu"] / 255) * 100, label="Channel Utilization (%)")
-
-    # Fill the area below the line
-    plt.fill_between(radio_df["aruba_erm.time"], (radio_df["wlan.qbss.cu"] / 255) * 100)
-
-
-    # Plot total_scount
-    plt.plot(radio_df["aruba_erm.time"], radio_df["total_scount"], label="Total Station Count")
-
-    # not graphing these, but it may be interesting later
-    # Plot total_scount for "eduroam"
-    #plt.plot(eduroam_df["aruba_erm.time"], eduroam_df["wlan.qbss.scount"], label="eduroam Station Count")
-
-    # Plot total_scount for "BYU-WiFi"
-    #plt.plot(byu_wifi_df["aruba_erm.time"], byu_wifi_df["wlan.qbss.scount"], label="BYU-WiFi Station Count")
-
-    # Plot total_adc
-    #plt.plot(radio_df["aruba_erm.time"], radio_df["wlan.qbss.adc"] / 32767 * 100, label="ADC (%)")
-
-    #plot adc% + cu
-    #adc updates less frequently than cu, but seems to be well correlated
-    #plt.plot(radio_df["aruba_erm.time"], 100 - ((radio_df["wlan.qbss.adc"] / 32767 * 100) + (radio_df["wlan.qbss.cu"] / 255 * 100)), label="ADC + CU")
-
-    formatted_date = start_time.strftime("%Y-%m-%d")
-    formatted_start = start_time.strftime("%H:%M")  # Keep date and time (no seconds or timezone)
-    formatted_end = end_time.strftime("%H:%M")  # Keep only the time (no date, seconds, or timezone)
-
-    plt.xlabel(f"Time ({formatted_date})", fontsize=14)
-
-    # Add labels and title
-    #plt.xlabel(f"{start_time}        to        {end_time}", fontsize=14)
-    plt.ylabel("Values", fontsize=14)
-    plt.title(f"{AP_name} Radio {plot_radio_number} {formatted_start} to {formatted_end}", fontsize=16)
-
-    # Set the y-axis limits from 0 to 100
-    plt.ylim(0, 100)
-
-    # Format x-axis to show only time (hour:minute)
-    # Define Time zone
-    time_zone = pytz.timezone(PLOT_TIMEZONE) # update to use env file
-    # Set the date formatter with time zone
-    time_formatter = mdates.DateFormatter("%H:%M", tz=time_zone)
-    plt.gca().xaxis.set_major_formatter(time_formatter)
-
-    # Add a legend
-    plt.legend()
-
-    # Save the plot as a PNG file
-    plot_file = PLOTS_FOLDER + "/" + AP_name + "_" + start_time.strftime("%Y-%m-%d_%H-%M") + "_R" + str(plot_radio_number) + ".png" #change to use env file
-    #print(plot_file)
-
-    #save to a file
-    plt.savefig(plot_file)
-    
-    plt.close()
-    #print(plot_file)
-    # Display the plot
-    #plt.show()
-    return plot_file
-
 
 # aggregate all beacons to a single dataframe for analysis of those during class sessions
 # this is periodically written, and is faster than writing to a parquet file often
@@ -299,7 +224,16 @@ def graph(ap_name, start_time, end_time, location, course, enrolled, capacity, a
         # SSID-specific station-count plots are currently disabled for performance.
         eduroam_radio_df = None
         byu_wifi_radio_df = None
-        plot_file = plot_channel_stations(filtered_radio_df, eduroam_radio_df, byu_wifi_radio_df, ap_name, start_time, end_time)
+        plot_file = plot_channel_stations(
+            filtered_radio_df,
+            eduroam_radio_df,
+            byu_wifi_radio_df,
+            ap_name,
+            start_time,
+            end_time,
+            PLOTS_FOLDER,
+            PLOT_TIMEZONE,
+        )
 
         radio_summary_df.loc[len(radio_summary_df)] = [
         course, location, ap_name, radio_number_value, start_time, end_time,

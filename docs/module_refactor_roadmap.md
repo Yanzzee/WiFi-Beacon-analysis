@@ -364,19 +364,51 @@ For each pass:
 - Added the module to isolated analysis-forward workspaces and confirmed the
   focused tests, full non-golden suite, and golden fingerprints pass.
 
-### 20. Extract stage plotting functions, one plot family per pass
+### 20. Extract stage plotting functions, one plot family per pass — in progress
 
-- Move plotting only after the dataframe calculations supplying a plot have
-  been extracted and directly tested.
-- Use stage-specific plotting modules or functions; do not create a generic
-  plotting abstraction that hides meaningful differences.
-- Preserve figure sizes, series order, bins, colors, labels, titles, grids,
-  axis limits, regression overlays, filenames, `savefig()`, `show()`, and
-  `close()` behavior exactly.
-- Add focused tests that assert expected files and important plotting call
-  parameters. Continue to avoid PNG byte comparisons.
-- Use separate passes for each plot family and do not re-style plots during
-  extraction.
+#### Pass 1: Per-radio class-session plot — completed
+
+- Added `radio_session_plotting.py` with `plot_channel_stations()` after its
+  supplying per-radio dataframe calculations were extracted and directly
+  tested in Step 19.
+- Preserved the `(14, 7)` figure size, channel-utilization and station-count
+  series order, CU percentage conversion, filled area, labels, title, y-axis
+  limits, configured timezone formatter, literal-slash filename construction,
+  `savefig()`, omitted `show()`, `close()`, and returned filename.
+- Added a focused test that creates the expected file and asserts important
+  pyplot calls and parameters without comparing PNG bytes.
+- Added the module to isolated analysis-forward workspaces and confirmed the
+  focused tests, full non-golden suite, and golden fingerprints pass.
+
+#### Pass 2: Class-session high-CU streak histograms — completed
+
+- Added `class_session_plotting.py` with
+  `plot_high_cu_streak_histograms()` after the class-session metrics were
+  extracted and directly characterized in Steps 14–15.
+- Preserved both `(10, 5)` figures, the 50%-then-75% series order, shared
+  integer bins through `max + 1`, alpha and labels, titles, legends, grids,
+  tight layouts, the second plot's `0–60` x-axis limit, literal-slash
+  filenames, `savefig()`, `show()`, and `close("all")` behavior.
+- Added a focused test that creates both expected files and asserts the
+  important pyplot calls and parameters without comparing PNG bytes.
+- Added the module to isolated analysis-forward workspaces and confirmed the
+  focused tests, full non-golden suite, and golden fingerprints pass.
+
+#### Pass 3: Stations-per-enrolled distribution histogram — completed
+
+- Added `plot_stations_per_enrolled_histogram()` to
+  `class_session_plotting.py` after its supplying class-session metric was
+  extracted and directly characterized in Steps 14–15.
+- Preserved the dataframe `hist(bins=60)` call, title, axis labels,
+  literal-slash filename, `savefig()`, `show()`, and `close("all")`
+  behavior, including the absence of an explicit figure-size call.
+- Added a focused test that creates the expected file and asserts the
+  important histogram and pyplot calls without comparing PNG bytes.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
+- Left all remaining plot families in their current stage scripts. Continue
+  Step 20 in separate passes, without re-styling or introducing a generic
+  plotting abstraction.
 
 ### 21. Reduce stage scripts to orchestration, one script per pass
 

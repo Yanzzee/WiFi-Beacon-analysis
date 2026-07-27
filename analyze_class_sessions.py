@@ -19,6 +19,10 @@ def main():
         CU_THRESHOLDS,
         calculate_class_session_metrics,
     )
+    from class_session_plotting import (
+        plot_high_cu_streak_histograms,
+        plot_stations_per_enrolled_histogram,
+    )
     
     load_dotenv("config.env")
     
@@ -179,49 +183,10 @@ def main():
     # =============================================================================
     # Cell 4 - Plot high-CU streak histograms
     # =============================================================================
-    # histogram of max streak durations for each class session
-    
-    # Get the maximum value across both columns
-    max_val = int(max(class_sessions_df['max_streak_50'].max(),
-                      class_sessions_df['max_streak_75'].max()))
-    
-    # Create bins from 0 to max_val with step 1
-    bins = range(0, max_val + 2)  # +2 to include the last value in the bin range
-    
-    plt.figure(figsize=(10, 5))
-    plt.hist(class_sessions_df['max_streak_50'], bins=bins, alpha=0.6, label='CU > 50%')
-    plt.hist(class_sessions_df['max_streak_75'], bins=bins, alpha=0.6, label='CU > 75%')
-    
-    #plt.xlim(0, 120)  # Adjust based on where most of your data falls
-    plt.xlabel('Max Continuous High CU Duration (seconds)')
-    plt.ylabel('Number of Class Sessions')
-    plt.title('Max High CU Streaks (showing outliers)')
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plot_file = f"{CLASS_SESSIONS_FOLDER}/High_CU_streaks.png"
-    #save to a file
-    plt.savefig(plot_file)
-    plt.show()
-    plt.close("all")
-    
-    #plot again zoomed in
-    plt.figure(figsize=(10, 5))
-    plt.hist(class_sessions_df['max_streak_50'], bins=bins, alpha=0.6, label='CU > 50%')
-    plt.hist(class_sessions_df['max_streak_75'], bins=bins, alpha=0.6, label='CU > 75%')
-    plt.xlim(0, 60)  # Adjust based on where most of your data falls
-    plt.xlabel('Max Continuous High CU Duration (seconds)')
-    plt.ylabel('Number of Class Sessions')
-    plt.title('Max High CU Streaks (zoomed in to 60 seconds)')
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    
-    plot_file = f"{CLASS_SESSIONS_FOLDER}/High_CU_streaks_zoomed.png"
-    #save to a file
-    plt.savefig(plot_file)
-    plt.show()
-    plt.close("all")
+    plot_high_cu_streak_histograms(
+        class_sessions_df,
+        CLASS_SESSIONS_FOLDER,
+    )
     
     
     
@@ -243,17 +208,10 @@ def main():
     # =============================================================================
     # Cell 6 - Plot stations-per-enrolled distribution
     # =============================================================================
-    # Distribution of Stations per enrolled
-    class_sessions_df['stations_enrolled'].hist(bins=60)
-    #plt.figure(figsize=(10, 5))
-    plt.title("Distribution of Stations per Enrolled")
-    plt.xlabel("Stations per Enrolled")
-    plt.ylabel("Number of Class Sessions")
-    plot_file = f"{CLASS_SESSIONS_FOLDER}/stations_enrolled_histogram.png"
-    #save to a file
-    plt.savefig(plot_file)
-    plt.show()
-    plt.close("all")
+    plot_stations_per_enrolled_histogram(
+        class_sessions_df,
+        CLASS_SESSIONS_FOLDER,
+    )
     
     # =============================================================================
     # Cell 7 - Plot enrollment versus station count and close log

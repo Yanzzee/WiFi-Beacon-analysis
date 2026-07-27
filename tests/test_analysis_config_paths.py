@@ -387,7 +387,8 @@ def test_analyze_data_graph_handles_three_radio_groups(monkeypatch, tmp_path):
     namespace["log_file"] = io.StringIO()
     namespace["all_class_beacons_df"] = pd.DataFrame()
     namespace["plot_channel_stations"] = (
-        lambda radio_df, _eduroam_df, _byu_wifi_df, _ap_name, _start_time, _end_time:
+        lambda radio_df, _eduroam_df, _byu_wifi_df, _ap_name, _start_time,
+        _end_time, _plots_folder, _plot_timezone:
         f"plot_R{int(radio_df.iloc[0]['radio_number'])}.png"
     )
 
