@@ -16,6 +16,7 @@ from analysis_statistics import compute_pdf_cdf
 from class_beacon_plotting import (
     plot_channel_utilization_histogram,
     plot_channel_utilization_pdf_cdf,
+    plot_station_count_admission_capacity_hexbin,
     plot_station_count_channel_utilization_hexbin,
     plot_station_count_histogram,
 )
@@ -399,6 +400,87 @@ def test_station_count_channel_utilization_hexbin_current_calls_and_file(
     ylabel.assert_called_once_with("Channel Utilization (%)")
     title.assert_called_once_with(
         "Hexbin Plot: Channel Utilization (%) vs. Station Count"
+    )
+    colorbar.assert_called_once_with(label="Log Count")
+    savefig.assert_called_once_with(plot_filename)
+    show.assert_called_once_with()
+    close.assert_called_once_with()
+
+
+def test_station_count_admission_capacity_hexbin_current_calls_and_file(
+    tmp_path,
+):
+    all_class_beacons_df = pd.DataFrame(
+        {
+            "total_scount": [1, 2, 3],
+            "wlan.qbss.adc": [10.0, 20.0, 30.0],
+        }
+    )
+    all_class_beacons_folder = tmp_path / "all_class_beacons"
+    all_class_beacons_folder.mkdir()
+    plot_filename = (
+        f"{all_class_beacons_folder}/Scount_adc_hexbin.png"
+    )
+    cell_source, script_path = script_cell_source(
+        "analyze_all_class_beacons.py",
+        10,
+    )
+    namespace = {
+        "all_class_beacons_df": all_class_beacons_df,
+        "ALL_CLASS_BEACONS_FOLDER": str(all_class_beacons_folder),
+        "mcolors": mcolors,
+        "plot_station_count_admission_capacity_hexbin": (
+            plot_station_count_admission_capacity_hexbin
+        ),
+        "plt": plt,
+    }
+
+    with (
+        patch.object(
+            mcolors,
+            "LogNorm",
+            wraps=mcolors.LogNorm,
+        ) as log_norm,
+        patch.object(plt, "figure", wraps=plt.figure) as figure,
+        patch.object(plt, "hexbin", wraps=plt.hexbin) as hexbin,
+        patch.object(plt, "xlabel", wraps=plt.xlabel) as xlabel,
+        patch.object(plt, "ylabel", wraps=plt.ylabel) as ylabel,
+        patch.object(plt, "title", wraps=plt.title) as title,
+        patch.object(plt, "colorbar", wraps=plt.colorbar) as colorbar,
+        patch.object(plt, "savefig", wraps=plt.savefig) as savefig,
+        patch.object(plt, "show", wraps=plt.show) as show,
+        patch.object(plt, "close", wraps=plt.close) as close,
+    ):
+        exec(
+            compile(
+                cell_source,
+                f"{script_path}::cell_10",
+                "exec",
+            ),
+            namespace,
+        )
+
+    assert Path(plot_filename).is_file()
+    figure.assert_called_once_with()
+    hexbin.assert_called_once()
+    pd.testing.assert_series_equal(
+        hexbin.call_args.args[0],
+        all_class_beacons_df["total_scount"],
+    )
+    pd.testing.assert_series_equal(
+        hexbin.call_args.args[1],
+        all_class_beacons_df["wlan.qbss.adc"],
+    )
+    assert hexbin.call_args.kwargs["gridsize"] == 50
+    assert hexbin.call_args.kwargs["cmap"] == "Blues"
+    norm = hexbin.call_args.kwargs["norm"]
+    assert isinstance(norm, mcolors.LogNorm)
+    log_norm.assert_called_once_with()
+    assert norm.clip is False
+    xlabel.assert_called_once_with("Total Station Count")
+    ylabel.assert_called_once_with("Admission Capacity")
+    title.assert_called_once_with(
+        "Hexbin Plot: Admission Capacity vs. Station Count"
     )
     colorbar.assert_called_once_with(label="Log Count")
     savefig.assert_called_once_with(plot_filename)

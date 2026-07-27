@@ -16,6 +16,7 @@ def main():
     from class_beacon_plotting import (
         plot_channel_utilization_histogram,
         plot_channel_utilization_pdf_cdf,
+        plot_station_count_admission_capacity_hexbin,
         plot_station_count_channel_utilization_hexbin,
         plot_station_count_histogram,
     )
@@ -216,26 +217,11 @@ def main():
     
     # create a hexbin plot to visualize the correlation between station count and admission capacity
     
-    plt.hexbin(
-        all_class_beacons_df["total_scount"],  # Now on x-axis
-        all_class_beacons_df["wlan.qbss.adc"],  # Now on y-axis
-        gridsize=50,
-        cmap="Blues",
-        norm=mcolors.LogNorm()  # Log scaling for better visibility
+    plot_station_count_admission_capacity_hexbin(
+        all_class_beacons_df["total_scount"],
+        all_class_beacons_df["wlan.qbss.adc"],
+        ALL_CLASS_BEACONS_FOLDER,
     )
-    
-    plt.xlabel("Total Station Count")  # X-axis: station count
-    plt.ylabel("Admission Capacity")  # Y-axis: admission capacity
-    plt.title("Hexbin Plot: Admission Capacity vs. Station Count")
-    
-    plt.colorbar(label="Log Count")
-    
-    plot_file = f"{ALL_CLASS_BEACONS_FOLDER}/Scount_adc_hexbin.png"
-    #save to a file
-    plt.savefig(plot_file)
-    
-    plt.show()
-    plt.close()
     
     # =============================================================================
     # Cell 11 - Calculate linear regression

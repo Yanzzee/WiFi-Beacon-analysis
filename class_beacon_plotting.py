@@ -4,6 +4,32 @@ import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 
 
+def plot_station_count_admission_capacity_hexbin(
+    total_scount,
+    admission_capacity,
+    all_class_beacons_folder,
+):
+    plt.hexbin(
+        total_scount,
+        admission_capacity,
+        gridsize=50,
+        cmap="Blues",
+        norm=mcolors.LogNorm(),
+    )
+    plt.xlabel("Total Station Count")
+    plt.ylabel("Admission Capacity")
+    plt.title(
+        "Hexbin Plot: Admission Capacity vs. Station Count"
+    )
+    plt.colorbar(label="Log Count")
+    plot_file = (
+        f"{all_class_beacons_folder}/Scount_adc_hexbin.png"
+    )
+    plt.savefig(plot_file)
+    plt.show()
+    plt.close()
+
+
 def plot_station_count_channel_utilization_hexbin(
     total_scount,
     channel_utilization,

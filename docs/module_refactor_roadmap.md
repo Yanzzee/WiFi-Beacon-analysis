@@ -592,6 +592,22 @@ For each pass:
   file, and important pyplot parameters without comparing PNG bytes.
 - Confirmed the focused tests, full non-golden suite, and golden fingerprints
   pass.
+
+#### Pass 15: Station-count/admission-capacity hexbin — completed
+
+- Added `plot_station_count_admission_capacity_hexbin()` to
+  `class_beacon_plotting.py` as a separate stage-specific function.
+- Preserved station count on the x-axis, unchanged admission capacity on the
+  y-axis, gridsize 50, `"Blues"` colormap, and default
+  `mcolors.LogNorm()` construction.
+- Preserved the original lack of an explicit figure call, labels, title,
+  colorbar, literal-slash filename, `savefig()`, `show()`, and bare `close()`
+  behavior.
+- Added a focused test that pins the plotted series, implicit default figure
+  creation, no-argument `LogNorm()` construction, expected file, and
+  important pyplot parameters without comparing PNG bytes.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.
