@@ -18,6 +18,7 @@ def main():
     )
     from radio_summary_plotting import (
         plot_beacon_rate_channel_utilization_scatter,
+        plot_radio_count_split_scatter,
     )
     
     load_dotenv("config.env")
@@ -92,49 +93,12 @@ def main():
     # =============================================================================
     # Cell 3 - Split data by radio count
     # =============================================================================
-    # Create a figure with 3 subplots
-    fig, axes = plt.subplots(1, 3, figsize=(18, 6), sharey=True)
-    
-    # Plot all data (original plot)
-    axes[0].scatter(
-        filtered_radio_summary_df['highest_cu'], 
-        filtered_radio_summary_df['beacons_per_second'] / filtered_radio_summary_df['ssid_count'], 
-        alpha=0.5, edgecolors='k', c=filtered_radio_summary_df['radio_count'].map({1: 'blue', 2: 'red'})
+    plot_radio_count_split_scatter(
+        filtered_radio_summary_df,
+        df_radio_1,
+        df_radio_2,
+        RADIO_SUMMARY_FOLDER,
     )
-    axes[0].set_title("All Data (Both Radio Counts)")
-    axes[0].set_xlabel("Highest Channel Utilization")
-    axes[0].set_ylabel("Beacons per Second of Class")
-    axes[0].set_xlim(0, 100)
-    axes[0].grid(True)
-    
-    # Plot only radio_count == 1 (blue)
-    axes[1].scatter(
-        df_radio_1['highest_cu'], 
-        df_radio_1['beacons_per_second'] / df_radio_1['ssid_count'], 
-        alpha=0.5, edgecolors='k', c='blue'
-    )
-    axes[1].set_title("AP Radio Count 1 (Blue)")
-    axes[1].set_xlabel("Highest Channel Utilization")
-    axes[1].set_xlim(0, 100)
-    axes[1].grid(True)
-    
-    # Plot only radio_count == 2 (red)
-    axes[2].scatter(
-        df_radio_2['highest_cu'], 
-        df_radio_2['beacons_per_second'] / df_radio_2['ssid_count'], 
-        alpha=0.5, edgecolors='k', c='red'
-    )
-    axes[2].set_title("AP Radio Count 2 (Red)")
-    axes[2].set_xlabel("Highest Channel Utilization")
-    axes[2].set_xlim(0, 100)
-    axes[2].grid(True)
-    
-    # Adjust layout and show the plots
-    plt.tight_layout()
-    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_class_split.png"
-    #save to a file
-    plt.savefig(plot_file)
-    plt.show()
     
     # =============================================================================
     # Cell 4 - Plot linear regressions by radio count

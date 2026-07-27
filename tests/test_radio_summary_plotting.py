@@ -8,10 +8,13 @@ import matplotlib
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
+from matplotlib.colors import to_rgba
+import numpy as np
 import pandas as pd
 
 from radio_summary_plotting import (
     plot_beacon_rate_channel_utilization_scatter,
+    plot_radio_count_split_scatter,
 )
 
 
@@ -71,6 +74,123 @@ def test_beacon_rate_channel_utilization_scatter_current_calls_and_file(
         "Comparison of CU to Beacons per Second"
     )
     grid.assert_called_once_with(True)
+    savefig.assert_called_once_with(plot_filename)
+    show.assert_called_once_with()
+    close.assert_not_called()
+
+    plt.close("all")
+
+
+def test_radio_count_split_scatter_current_calls_and_file(
+    tmp_path,
+):
+    filtered_radio_summary_df = pd.DataFrame(
+        {
+            "highest_cu": [10.0, 20.0, 30.0, 40.0],
+            "beacons_per_second": [4.0, 9.0, 16.0, 25.0],
+            "ssid_count": [2.0, 3.0, 4.0, 5.0],
+            "radio_count": [1, 2, 1, 2],
+        }
+    )
+    df_radio_1 = filtered_radio_summary_df[
+        filtered_radio_summary_df["radio_count"] == 1
+    ]
+    df_radio_2 = filtered_radio_summary_df[
+        filtered_radio_summary_df["radio_count"] == 2
+    ]
+    radio_summary_folder = tmp_path / "radio_summary"
+    radio_summary_folder.mkdir()
+    plot_filename = (
+        f"{radio_summary_folder}/"
+        "Beacons_per_second_class_split.png"
+    )
+    with (
+        patch.object(plt, "subplots", wraps=plt.subplots) as subplots,
+        patch.object(
+            plt,
+            "tight_layout",
+            wraps=plt.tight_layout,
+        ) as tight_layout,
+        patch.object(plt, "savefig", wraps=plt.savefig) as savefig,
+        patch.object(plt, "show", wraps=plt.show) as show,
+        patch.object(plt, "close", wraps=plt.close) as close,
+    ):
+        plot_radio_count_split_scatter(
+            filtered_radio_summary_df,
+            df_radio_1,
+            df_radio_2,
+            str(radio_summary_folder),
+        )
+
+    axes = plt.gcf().axes
+    assert Path(plot_filename).is_file()
+    subplots.assert_called_once_with(
+        1,
+        3,
+        figsize=(18, 6),
+        sharey=True,
+    )
+    expected_frames = [
+        filtered_radio_summary_df,
+        df_radio_1,
+        df_radio_2,
+    ]
+    for axis, expected_frame in zip(
+        axes,
+        expected_frames,
+        strict=True,
+    ):
+        assert len(axis.collections) == 1
+        collection = axis.collections[0]
+        np.testing.assert_allclose(
+            collection.get_offsets(),
+            np.column_stack(
+                [
+                    expected_frame["highest_cu"],
+                    (
+                        expected_frame["beacons_per_second"]
+                        / expected_frame["ssid_count"]
+                    ),
+                ]
+            ),
+        )
+        assert collection.get_alpha() == 0.5
+        np.testing.assert_allclose(
+            collection.get_edgecolors(),
+            [to_rgba("k", alpha=0.5)],
+        )
+        assert axis.get_xlabel() == "Highest Channel Utilization"
+        assert axis.get_xlim() == (0.0, 100.0)
+        assert any(
+            line.get_visible()
+            for line in (
+                *axis.get_xgridlines(),
+                *axis.get_ygridlines(),
+            )
+        )
+    np.testing.assert_allclose(
+        axes[0].collections[0].get_facecolors(),
+        [
+            to_rgba("blue", alpha=0.5),
+            to_rgba("red", alpha=0.5),
+        ]
+        * 2,
+    )
+    np.testing.assert_allclose(
+        axes[1].collections[0].get_facecolors(),
+        [to_rgba("blue", alpha=0.5)],
+    )
+    np.testing.assert_allclose(
+        axes[2].collections[0].get_facecolors(),
+        [to_rgba("red", alpha=0.5)],
+    )
+    assert [axis.get_title() for axis in axes] == [
+        "All Data (Both Radio Counts)",
+        "AP Radio Count 1 (Blue)",
+        "AP Radio Count 2 (Red)",
+    ]
+    assert axes[0].get_ylabel() == "Beacons per Second of Class"
+    tight_layout.assert_called_once_with()
     savefig.assert_called_once_with(plot_filename)
     show.assert_called_once_with()
     close.assert_not_called()

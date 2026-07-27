@@ -436,6 +436,22 @@ For each pass:
   important pyplot calls and parameters without comparing PNG bytes.
 - Added the module to isolated analysis-forward workspaces and confirmed the
   focused tests, full non-golden suite, and golden fingerprints pass.
+
+#### Pass 6: Radio-count split scatter panels — completed
+
+- Added `plot_radio_count_split_scatter()` to
+  `radio_summary_plotting.py`, using the radio-count frames extracted and
+  directly tested in Step 13.
+- Preserved the `1 x 3` shared-y layout, `(18, 6)` figure size, dataframe
+  order and beacon-rate/SSID-count divisions, radio-count color mapping,
+  alpha, edge colors, titles, labels, `0–100` x-axis limits, grids, tight
+  layout, literal-slash filename, `savefig()`, and `show()` behavior.
+- Preserved the original omission of `close()` for this figure.
+- Added a focused test that creates the expected file and checks subplot
+  layout, plotted coordinates and colors, axes, and important pyplot calls
+  without comparing PNG bytes.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.
