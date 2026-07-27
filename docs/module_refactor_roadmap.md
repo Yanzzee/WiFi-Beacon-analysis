@@ -452,6 +452,23 @@ For each pass:
   without comparing PNG bytes.
 - Confirmed the focused tests, full non-golden suite, and golden fingerprints
   pass.
+
+#### Pass 7: Beacon-rate histogram — completed
+
+- Added `plot_beacon_rate_histogram()` to
+  `radio_summary_plotting.py`, using the filtered radio-summary frame
+  extracted and directly tested in Step 13.
+- Preserved the `(10, 6)` figure size, existing beacon-rate/SSID-count
+  division, 50 bins, edge color, alpha, labels, title, y-axis grid settings,
+  literal-slash filename, `savefig()`, and `show()` behavior.
+- Preserved the original omission of `close()` for this figure.
+- Added a focused test that creates the expected file and asserts the
+  important histogram and pyplot calls without comparing PNG bytes.
+- Left the preceding linear-regression family in the stage script because its
+  model fitting, empty-data logging, summaries, and plotting remain coupled;
+  this pass did not alter regression math or behavior.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.

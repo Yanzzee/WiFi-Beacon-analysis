@@ -3,6 +3,32 @@
 import matplotlib.pyplot as plt
 
 
+def plot_beacon_rate_histogram(
+    filtered_radio_summary_df,
+    radio_summary_folder,
+):
+    plt.figure(figsize=(10, 6))
+    plt.hist(
+        (
+            filtered_radio_summary_df["beacons_per_second"]
+            / filtered_radio_summary_df["ssid_count"]
+        ),
+        bins=50,
+        edgecolor="black",
+        alpha=0.7,
+    )
+    plt.xlabel("Beacon Rate (per second)")
+    plt.ylabel("Frequency")
+    plt.title("Histogram of Beacons per Second of Class")
+    plt.grid(axis="y", alpha=0.75)
+    plot_file = (
+        f"{radio_summary_folder}/"
+        "Beacons_per_second_class_histogram.png"
+    )
+    plt.savefig(plot_file)
+    plt.show()
+
+
 def plot_radio_count_split_scatter(
     filtered_radio_summary_df,
     df_radio_1,

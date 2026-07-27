@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 
 from radio_summary_plotting import (
+    plot_beacon_rate_histogram,
     plot_beacon_rate_channel_utilization_scatter,
     plot_radio_count_split_scatter,
 )
@@ -191,6 +192,65 @@ def test_radio_count_split_scatter_current_calls_and_file(
     ]
     assert axes[0].get_ylabel() == "Beacons per Second of Class"
     tight_layout.assert_called_once_with()
+    savefig.assert_called_once_with(plot_filename)
+    show.assert_called_once_with()
+    close.assert_not_called()
+
+    plt.close("all")
+
+
+def test_beacon_rate_histogram_current_calls_and_file(
+    tmp_path,
+):
+    filtered_radio_summary_df = pd.DataFrame(
+        {
+            "beacons_per_second": [4.0, 9.0, 16.0],
+            "ssid_count": [2.0, 3.0, 4.0],
+        }
+    )
+    radio_summary_folder = tmp_path / "radio_summary"
+    radio_summary_folder.mkdir()
+    plot_filename = (
+        f"{radio_summary_folder}/"
+        "Beacons_per_second_class_histogram.png"
+    )
+    with (
+        patch.object(plt, "figure", wraps=plt.figure) as figure,
+        patch.object(plt, "hist", wraps=plt.hist) as hist,
+        patch.object(plt, "xlabel", wraps=plt.xlabel) as xlabel,
+        patch.object(plt, "ylabel", wraps=plt.ylabel) as ylabel,
+        patch.object(plt, "title", wraps=plt.title) as title,
+        patch.object(plt, "grid", wraps=plt.grid) as grid,
+        patch.object(plt, "savefig", wraps=plt.savefig) as savefig,
+        patch.object(plt, "show", wraps=plt.show) as show,
+        patch.object(plt, "close", wraps=plt.close) as close,
+    ):
+        plot_beacon_rate_histogram(
+            filtered_radio_summary_df,
+            str(radio_summary_folder),
+        )
+
+    assert Path(plot_filename).is_file()
+    figure.assert_called_once_with(figsize=(10, 6))
+    hist.assert_called_once()
+    pd.testing.assert_series_equal(
+        hist.call_args.args[0],
+        (
+            filtered_radio_summary_df["beacons_per_second"]
+            / filtered_radio_summary_df["ssid_count"]
+        ),
+    )
+    assert hist.call_args.kwargs == {
+        "bins": 50,
+        "edgecolor": "black",
+        "alpha": 0.7,
+    }
+    xlabel.assert_called_once_with("Beacon Rate (per second)")
+    ylabel.assert_called_once_with("Frequency")
+    title.assert_called_once_with(
+        "Histogram of Beacons per Second of Class"
+    )
+    grid.assert_called_once_with(axis="y", alpha=0.75)
     savefig.assert_called_once_with(plot_filename)
     show.assert_called_once_with()
     close.assert_not_called()

@@ -17,6 +17,7 @@ def main():
         sort_radio_summary,
     )
     from radio_summary_plotting import (
+        plot_beacon_rate_histogram,
         plot_beacon_rate_channel_utilization_scatter,
         plot_radio_count_split_scatter,
     )
@@ -156,22 +157,10 @@ def main():
     # =============================================================================
     # Cell 5 - Plot beacon-rate histogram
     # =============================================================================
-    # Create histogram
-    plt.figure(figsize=(10, 6))
-    plt.hist(filtered_radio_summary_df['beacons_per_second'] / filtered_radio_summary_df['ssid_count'], bins=50, edgecolor='black', alpha=0.7)
-    
-    # Labels and title
-    plt.xlabel("Beacon Rate (per second)")
-    plt.ylabel("Frequency")
-    plt.title("Histogram of Beacons per Second of Class")
-    plt.grid(axis='y', alpha=0.75)
-    
-    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_class_histogram.png"
-    #save to a file
-    plt.savefig(plot_file)
-    
-    # Show the plot
-    plt.show()
+    plot_beacon_rate_histogram(
+        filtered_radio_summary_df,
+        RADIO_SUMMARY_FOLDER,
+    )
     
     # =============================================================================
     # Cell 6 - Plot stacked beacon-rate histogram
