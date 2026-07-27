@@ -469,6 +469,24 @@ For each pass:
   this pass did not alter regression math or behavior.
 - Confirmed the focused tests, full non-golden suite, and golden fingerprints
   pass.
+
+#### Pass 8: Stacked beacon-rate histogram — completed
+
+- Added `plot_stacked_beacon_rate_histogram()` to
+  `radio_summary_plotting.py`.
+- Kept the aligned beacon-rate/SSID-count divisions, `dropna()` calls,
+  dataframe-variable reassignments, and combined series in
+  `analyze_radio_summary.py`, preserving the inputs used by the later PDF/CDF
+  and reporting cells.
+- Preserved the `(10, 6)` figure size, radio-count series order, 50 bins,
+  edge color, alpha, stacked mode, colors, labels, title, legend, y-axis grid
+  settings, literal-slash filename, `savefig()`, and `show()` behavior.
+- Preserved the original omission of `close()` for this figure.
+- Added a focused test that pins the retained normalized Series and their
+  indices, creates the expected file, and asserts the important histogram and
+  pyplot calls without comparing PNG bytes.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
 - Left all remaining plot families in their current stage scripts. Continue
   Step 20 in separate passes, without re-styling or introducing a generic
   plotting abstraction.

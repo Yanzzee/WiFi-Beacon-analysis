@@ -3,6 +3,36 @@
 import matplotlib.pyplot as plt
 
 
+def plot_stacked_beacon_rate_histogram(
+    df_radio_1,
+    df_radio_2,
+    radio_summary_folder,
+):
+    plt.figure(figsize=(10, 6))
+    plt.hist(
+        [df_radio_1, df_radio_2],
+        bins=50,
+        edgecolor="black",
+        alpha=0.7,
+        stacked=True,
+        color=["blue", "red"],
+        label=["Radio Count 1", "Radio Count 2"],
+    )
+    plt.xlabel("Beacon Rate (per second)")
+    plt.ylabel("Frequency")
+    plt.title(
+        "Stacked Histogram of Beacons per Second of Class by "
+        "Radio Count"
+    )
+    plt.legend()
+    plt.grid(axis="y", alpha=0.75)
+    plot_file = (
+        f"{radio_summary_folder}/Beacons_per_second_stacked.png"
+    )
+    plt.savefig(plot_file)
+    plt.show()
+
+
 def plot_beacon_rate_histogram(
     filtered_radio_summary_df,
     radio_summary_folder,

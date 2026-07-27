@@ -20,6 +20,7 @@ def main():
         plot_beacon_rate_histogram,
         plot_beacon_rate_channel_utilization_scatter,
         plot_radio_count_split_scatter,
+        plot_stacked_beacon_rate_histogram,
     )
     
     load_dotenv("config.env")
@@ -171,32 +172,11 @@ def main():
     df_radio_2 = (df_radio_2['beacons_per_second'] / df_radio_2['ssid_count']).dropna()
     data_combined = (combined_df['beacons_per_second'] / combined_df['ssid_count']).dropna()
     
-    
-    # Create stacked histogram
-    plt.figure(figsize=(10, 6))
-    plt.hist(
-        [df_radio_1, df_radio_2], 
-        bins=50, 
-        edgecolor='black', 
-        alpha=0.7, 
-        stacked=True, 
-        color=['blue', 'red'], 
-        label=['Radio Count 1', 'Radio Count 2']
+    plot_stacked_beacon_rate_histogram(
+        df_radio_1,
+        df_radio_2,
+        RADIO_SUMMARY_FOLDER,
     )
-    
-    # Labels and title
-    plt.xlabel("Beacon Rate (per second)")
-    plt.ylabel("Frequency")
-    plt.title("Stacked Histogram of Beacons per Second of Class by Radio Count")
-    plt.legend()
-    plt.grid(axis='y', alpha=0.75)
-    
-    plot_file = f"{RADIO_SUMMARY_FOLDER}/Beacons_per_second_stacked.png"
-    #save to a file
-    plt.savefig(plot_file)
-    
-    # Show the plot
-    plt.show()
     
     
     # =============================================================================

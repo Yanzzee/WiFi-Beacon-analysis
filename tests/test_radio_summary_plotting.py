@@ -16,7 +16,9 @@ from radio_summary_plotting import (
     plot_beacon_rate_histogram,
     plot_beacon_rate_channel_utilization_scatter,
     plot_radio_count_split_scatter,
+    plot_stacked_beacon_rate_histogram,
 )
+from script_sections import script_cell_source
 
 
 def test_beacon_rate_channel_utilization_scatter_current_calls_and_file(
@@ -250,6 +252,128 @@ def test_beacon_rate_histogram_current_calls_and_file(
     title.assert_called_once_with(
         "Histogram of Beacons per Second of Class"
     )
+    grid.assert_called_once_with(axis="y", alpha=0.75)
+    savefig.assert_called_once_with(plot_filename)
+    show.assert_called_once_with()
+    close.assert_not_called()
+
+    plt.close("all")
+
+
+def test_stacked_beacon_rate_histogram_current_calls_and_file(
+    tmp_path,
+):
+    df_radio_1 = pd.DataFrame(
+        {
+            "beacons_per_second": [4.0, None, 12.0],
+            "ssid_count": [2.0, 2.0, 3.0],
+        },
+        index=[10, 11, 12],
+    )
+    df_radio_2 = pd.DataFrame(
+        {
+            "beacons_per_second": [9.0, 20.0],
+            "ssid_count": [3.0, 4.0],
+        },
+        index=[20, 21],
+    )
+    combined_df = pd.concat([df_radio_1, df_radio_2])
+    expected_radio_1 = pd.Series(
+        [2.0, 4.0],
+        index=[10, 12],
+        name=None,
+    )
+    expected_radio_2 = pd.Series(
+        [3.0, 5.0],
+        index=[20, 21],
+        name=None,
+    )
+    expected_combined = pd.Series(
+        [2.0, 4.0, 3.0, 5.0],
+        index=[10, 12, 20, 21],
+        name=None,
+    )
+    radio_summary_folder = tmp_path / "radio_summary"
+    radio_summary_folder.mkdir()
+    plot_filename = (
+        f"{radio_summary_folder}/"
+        "Beacons_per_second_stacked.png"
+    )
+    cell_source, script_path = script_cell_source(
+        "analyze_radio_summary.py",
+        6,
+    )
+    namespace = {
+        "df_radio_1": df_radio_1,
+        "df_radio_2": df_radio_2,
+        "combined_df": combined_df,
+        "plot_stacked_beacon_rate_histogram": (
+            plot_stacked_beacon_rate_histogram
+        ),
+        "RADIO_SUMMARY_FOLDER": str(radio_summary_folder),
+        "plt": plt,
+    }
+
+    with (
+        patch.object(plt, "figure", wraps=plt.figure) as figure,
+        patch.object(plt, "hist", wraps=plt.hist) as hist,
+        patch.object(plt, "xlabel", wraps=plt.xlabel) as xlabel,
+        patch.object(plt, "ylabel", wraps=plt.ylabel) as ylabel,
+        patch.object(plt, "title", wraps=plt.title) as title,
+        patch.object(plt, "legend", wraps=plt.legend) as legend,
+        patch.object(plt, "grid", wraps=plt.grid) as grid,
+        patch.object(plt, "savefig", wraps=plt.savefig) as savefig,
+        patch.object(plt, "show", wraps=plt.show) as show,
+        patch.object(plt, "close", wraps=plt.close) as close,
+    ):
+        exec(
+            compile(
+                cell_source,
+                f"{script_path}::cell_6",
+                "exec",
+            ),
+            namespace,
+        )
+
+    pd.testing.assert_series_equal(
+        namespace["df_radio_1"],
+        expected_radio_1,
+    )
+    pd.testing.assert_series_equal(
+        namespace["df_radio_2"],
+        expected_radio_2,
+    )
+    pd.testing.assert_series_equal(
+        namespace["data_combined"],
+        expected_combined,
+    )
+    assert Path(plot_filename).is_file()
+    figure.assert_called_once_with(figsize=(10, 6))
+    hist.assert_called_once()
+    assert len(hist.call_args.args[0]) == 2
+    pd.testing.assert_series_equal(
+        hist.call_args.args[0][0],
+        expected_radio_1,
+    )
+    pd.testing.assert_series_equal(
+        hist.call_args.args[0][1],
+        expected_radio_2,
+    )
+    assert hist.call_args.kwargs == {
+        "bins": 50,
+        "edgecolor": "black",
+        "alpha": 0.7,
+        "stacked": True,
+        "color": ["blue", "red"],
+        "label": ["Radio Count 1", "Radio Count 2"],
+    }
+    xlabel.assert_called_once_with("Beacon Rate (per second)")
+    ylabel.assert_called_once_with("Frequency")
+    title.assert_called_once_with(
+        "Stacked Histogram of Beacons per Second of Class by "
+        "Radio Count"
+    )
+    legend.assert_called_once_with()
     grid.assert_called_once_with(axis="y", alpha=0.75)
     savefig.assert_called_once_with(plot_filename)
     show.assert_called_once_with()
