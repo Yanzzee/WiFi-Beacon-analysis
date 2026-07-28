@@ -5,7 +5,12 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from script_sections import script_cell_source
+from class_session_analysis import (
+    calculate_all_class_session_metrics,
+    initialize_class_sessions,
+    report_average_devices_per_enrolled,
+    report_class_session_aggregates,
+)
 
 
 CONFIG_ENV_KEYS = (
@@ -80,27 +85,20 @@ def _run_class_session_metrics(
         data_dir / "all_class_beacons_processed.parquet"
     )
 
-    cell1, script_path = script_cell_source(
-        "analyze_class_sessions.py",
-        1,
+    initialized_df = initialize_class_sessions(
+        pd.read_parquet(sample_dir / "sample_classes.parquet"),
+        pd.read_parquet(sample_dir / "sample_aps.parquet"),
+        pd.read_parquet(sample_dir / "sample_classrooms.parquet"),
     )
-    cell2, _ = script_cell_source("analyze_class_sessions.py", 2)
-    namespace = {"__name__": "not_main"}
-    try:
-        exec(
-            compile(cell1, f"{script_path}::cell_1", "exec"),
-            namespace,
-        )
-        exec(
-            compile(cell2, f"{script_path}::cell_2", "exec"),
-            namespace,
-        )
-    finally:
-        log_file = namespace.get("log_file")
-        if log_file is not None:
-            log_file.close()
-
-    return namespace["class_sessions_df"].set_index("location")
+    result_df = calculate_all_class_session_metrics(
+        initialized_df,
+        pd.read_parquet(
+            data_dir / "all_class_beacons_processed.parquet"
+        ),
+        1.0,
+        primary_ssid,
+    )
+    return result_df.set_index("location")
 
 
 def _sessions(locations, start, end, enrolled=10):
@@ -430,3 +428,120 @@ def test_class_session_missing_cu_and_zero_enrollment(monkeypatch, tmp_path):
     assert zero_enrolled["stations_enrolled"] == 0
     assert zero_enrolled["duration_75"] == 1
     assert zero_enrolled["duration_50"] == 1
+
+
+def test_initialize_class_sessions_preserves_columns_dtypes_and_mappings():
+    start = pd.Timestamp("2025-01-01 10:00:00", tz="UTC")
+    source_df = pd.DataFrame(
+        {
+            "location": ["BLDG-101", "BLDG-102"],
+            "start_time": [start, start],
+            "end_time": [
+                start + pd.Timedelta(seconds=30),
+                start + pd.Timedelta(seconds=45),
+            ],
+            "enrolled": [10, 20],
+        },
+        index=[5, 7],
+    )
+    sample_aps_df = pd.DataFrame(
+        {"Building-Room": ["BLDG-101", "BLDG-101", "BLDG-102"]}
+    )
+    sample_classrooms_df = pd.DataFrame(
+        {
+            "Location": ["BLDG-101", "BLDG-102"],
+            "Group": ["A", "B"],
+        }
+    )
+
+    result_df = initialize_class_sessions(
+        source_df,
+        sample_aps_df,
+        sample_classrooms_df,
+    )
+
+    assert result_df is source_df
+    assert result_df["number_aps"].tolist() == [2, 1]
+    assert result_df["group"].tolist() == ["A", "B"]
+    assert result_df["class_duration"].tolist() == [30.0, 45.0]
+    assert str(result_df["group"].dtype) == "string"
+    for column in [
+        "number_aps",
+        "number_radios",
+        "number_beacons",
+        "max_stations",
+        "max_cu",
+    ]:
+        assert str(result_df[column].dtype) == "Int64"
+    for column in [
+        "average_cu",
+        "median_cu",
+        "stations_enrolled",
+        "class_duration",
+        "duration_75",
+        "duration_50",
+        "max_streak_75",
+        "max_streak_50",
+        "sum_scount_75",
+        "sum_scount_50",
+    ]:
+        assert str(result_df[column].dtype) == "Float64"
+
+
+def test_class_session_reporting_preserves_messages_and_average():
+    class_sessions_df = pd.DataFrame(
+        {
+            "duration_50": [10.0, 0.0],
+            "duration_75": [5.0, 0.0],
+            "class_duration": [40.0, 60.0],
+            "sum_scount_50": [8.0, 0.0],
+            "sum_scount_75": [4.0, 0.0],
+            "max_stations": [10.0, 6.0],
+            "max_streak_50": [4.0, 0.0],
+            "max_streak_75": [2.0, 0.0],
+            "enrolled": [8, 12],
+        }
+    )
+    messages: list[str] = []
+
+    report_class_session_aggregates(
+        class_sessions_df,
+        messages.append,
+    )
+    average = report_average_devices_per_enrolled(
+        class_sessions_df,
+        messages.append,
+    )
+
+    assert average == pytest.approx(0.8)
+    assert messages == [
+        "Percentage of class sessions with at least 1s CU > 50%: 50.00%",
+        "Percentage of class sessions with at least 1s CU > 75%: 50.00%",
+        "Total duration all classes: 100.00 seconds",
+        "Total class duration with CU > 50%: 10.00 seconds (10.00%)",
+        "Total class duration with CU > 75%: 5.00 seconds (5.00%)",
+        "Total stations in all classes: 16",
+        "Total stations affected (CU > 50%): 8 (50.00%)",
+        "Total stations affected (CU > 75%): 4 (25.00%)",
+        "Duration of longest continuous channel utilization",
+        "CU > 50% - Mean Streak: 2.00 sec, Median Streak: 2.00 sec",
+        "CU > 75% - Mean Streak: 1.00 sec, Median Streak: 1.00 sec",
+        "Average devices per enrolled: 0.80",
+    ]
+
+
+def test_average_devices_per_enrolled_preserves_zero_enrollment():
+    messages: list[str] = []
+
+    average = report_average_devices_per_enrolled(
+        pd.DataFrame(
+            {
+                "max_stations": [5, 8],
+                "enrolled": [0, 0],
+            }
+        ),
+        messages.append,
+    )
+
+    assert average == 0
+    assert messages == ["Average devices per enrolled: 0.00"]

@@ -755,15 +755,23 @@ def test_analyze_class_sessions_counts_configured_primary_ssid_radios(
         }
     ).to_parquet(data_dir / "all_class_beacons_processed.parquet")
 
-    cell1, script_path = script_cell_source("analyze_class_sessions.py", 1)
-    cell2, _ = script_cell_source("analyze_class_sessions.py", 2)
-    namespace = {"__name__": "not_main"}
-    try:
-        exec(compile(cell1, f"{script_path}::cell_1", "exec"), namespace)
-        exec(compile(cell2, f"{script_path}::cell_2", "exec"), namespace)
-    finally:
-        log_file = namespace.get("log_file")
-        if log_file is not None:
-            log_file.close()
+    from class_session_analysis import (
+        calculate_all_class_session_metrics,
+        initialize_class_sessions,
+    )
 
-    assert int(namespace["class_sessions_df"].loc[0, "number_radios"]) == 2
+    class_sessions_df = initialize_class_sessions(
+        pd.read_parquet(sample_dir / "sample_classes.parquet"),
+        pd.read_parquet(sample_dir / "sample_aps.parquet"),
+        pd.read_parquet(sample_dir / "sample_classrooms.parquet"),
+    )
+    result_df = calculate_all_class_session_metrics(
+        class_sessions_df,
+        pd.read_parquet(
+            data_dir / "all_class_beacons_processed.parquet"
+        ),
+        1.024,
+        "CampusSecure",
+    )
+
+    assert int(result_df.loc[0, "number_radios"]) == 2
