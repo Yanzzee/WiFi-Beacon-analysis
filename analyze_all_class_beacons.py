@@ -14,6 +14,7 @@ def main():
     from analysis_logging import open_analysis_log
     from analysis_statistics import compute_pdf_cdf
     from class_beacon_plotting import (
+        plot_channel_utilization_admission_capacity_hexbin,
         plot_channel_utilization_histogram,
         plot_channel_utilization_pdf_cdf,
         plot_station_count_admission_capacity_hexbin,
@@ -251,24 +252,11 @@ def main():
     # Cell 12 - Plot channel utilization versus admission capacity
     # =============================================================================
     # # Channel utilization vs admission capacity
-    plt.figure()
-    plt.hexbin(
-        all_class_beacons_df['wlan.qbss.cu'] * (100 / 255),  # CU as percentage
-        all_class_beacons_df['wlan.qbss.adc'],               # ADC remains unchanged
-        gridsize=50,
-        cmap="Blues",
-        norm=mcolors.LogNorm()  # Log scaling for better visibility
+    plot_channel_utilization_admission_capacity_hexbin(
+        all_class_beacons_df["wlan.qbss.cu"],
+        all_class_beacons_df["wlan.qbss.adc"],
+        ALL_CLASS_BEACONS_FOLDER,
     )
-    plt.colorbar(label='Log Count')
-    plt.xlabel('Channel Utilization (%)')  # Updated label
-    plt.ylabel('Admission Capacity')
-    plt.title('Hexbin of Channel Utilization (%) vs. wlan.qbss.adc')
-    
-    plot_file = f"{ALL_CLASS_BEACONS_FOLDER}/adc_channel_use_hexbin.png"
-    plt.savefig(plot_file)
-    
-    plt.show()
-    plt.close()
     
     
     # =============================================================================

@@ -364,7 +364,7 @@ For each pass:
 - Added the module to isolated analysis-forward workspaces and confirmed the
   focused tests, full non-golden suite, and golden fingerprints pass.
 
-### 20. Extract stage plotting functions, one plot family per pass — in progress
+### 20. Extract stage plotting functions, one plot family per pass — completed
 
 #### Pass 1: Per-radio class-session plot — completed
 
@@ -608,9 +608,26 @@ For each pass:
   important pyplot parameters without comparing PNG bytes.
 - Confirmed the focused tests, full non-golden suite, and golden fingerprints
   pass.
-- Left all remaining plot families in their current stage scripts. Continue
-  Step 20 in separate passes, without re-styling or introducing a generic
-  plotting abstraction.
+
+#### Pass 16: Channel-utilization/admission-capacity hexbin — completed
+
+- Added `plot_channel_utilization_admission_capacity_hexbin()` to
+  `class_beacon_plotting.py` as a separate stage-specific function.
+- Preserved the explicit `plt.figure()` call, inline `100 / 255`
+  channel-utilization conversion on the x-axis, unchanged admission capacity
+  on the y-axis, gridsize 50, `"Blues"` colormap, and default
+  `mcolors.LogNorm()` construction.
+- Preserved the colorbar, labels, title, literal-slash filename, `savefig()`,
+  `show()`, and bare `close()` behavior.
+- Added a focused test that pins the explicit figure call, plotted series,
+  conversion, no-argument `LogNorm()` construction, expected file, and
+  important pyplot parameters without comparing PNG bytes.
+- Confirmed the focused tests, full non-golden suite, and golden fingerprints
+  pass.
+- All all-class-beacons plot families are now extracted.
+- This completes Step 20: all active analysis entry points delegate plotting
+  to stage-specific modules. The intentionally retained `old/` archive was
+  not changed.
 
 ### 21. Reduce stage scripts to orchestration, one script per pass
 

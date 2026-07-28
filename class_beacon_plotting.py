@@ -4,6 +4,33 @@ import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 
 
+def plot_channel_utilization_admission_capacity_hexbin(
+    channel_utilization,
+    admission_capacity,
+    all_class_beacons_folder,
+):
+    plt.figure()
+    plt.hexbin(
+        channel_utilization * (100 / 255),
+        admission_capacity,
+        gridsize=50,
+        cmap="Blues",
+        norm=mcolors.LogNorm(),
+    )
+    plt.colorbar(label="Log Count")
+    plt.xlabel("Channel Utilization (%)")
+    plt.ylabel("Admission Capacity")
+    plt.title(
+        "Hexbin of Channel Utilization (%) vs. wlan.qbss.adc"
+    )
+    plot_file = (
+        f"{all_class_beacons_folder}/adc_channel_use_hexbin.png"
+    )
+    plt.savefig(plot_file)
+    plt.show()
+    plt.close()
+
+
 def plot_station_count_admission_capacity_hexbin(
     total_scount,
     admission_capacity,
