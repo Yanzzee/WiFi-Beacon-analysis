@@ -634,14 +634,31 @@ For each pass:
 - Once the preceding functions are modular and directly tested, make each
   entry point primarily load configuration/data, call module functions, write
   outputs, and create the existing plots.
-- Use separate passes in this order:
-  1. `analyze_radio_summary.py`
-  2. `analyze_class_sessions.py`
-  3. `analyze_all_class_beacons.py`
-  4. `analyze_data.py`
 - Keep plotting in its existing stage until a separately scoped plotting
   extraction can preserve every parameter, filename, `show()`, and `close()`
   call. Do not combine these four script reductions into one change.
+
+#### Pass 1: `analyze_radio_summary.py` — completed
+
+- Added focused helpers to `radio_summary_processing.py` for summary-statistic
+  logging, normalized beacon-rate series, the three 50-bin PDF/CDF
+  calculations, and terminal null-count reporting.
+- Reduced `analyze_radio_summary.py` to configuration and input loading,
+  ordered helper and plotting calls, the existing CSV writes, and logging
+  lifetime management.
+- Preserved log and terminal text, dataframe/index behavior, calculation and
+  plot order, script-local result names, output paths, and log close/write
+  order.
+- Updated plotting tests to call the extracted calculations directly and
+  added focused tests for every newly moved behavior.
+- Confirmed focused tests, the full non-golden suite, and analysis-forward
+  golden fingerprints pass.
+
+Use separate remaining passes in this order:
+
+1. `analyze_class_sessions.py`
+2. `analyze_all_class_beacons.py`
+3. `analyze_data.py`
 
 ## Refactor Completion Boundary
 

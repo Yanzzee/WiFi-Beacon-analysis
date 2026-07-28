@@ -3,17 +3,17 @@ def main():
     # Cell 1 - Imports, configuration, logging, and radio-summary input
     # =============================================================================
     import pandas as pd
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import statsmodels.api as sm
     from datetime import datetime
     import os
     from dotenv import load_dotenv
     from analysis_config import ensure_directory
     from analysis_logging import open_analysis_log
-    from analysis_statistics import compute_pdf_cdf
     from radio_summary_processing import (
+        compute_beacon_rate_distributions,
+        normalize_beacon_rate_series,
         prepare_radio_summary_frames,
+        print_beacon_rate_null_counts,
+        report_radio_summary_statistics,
         sort_radio_summary,
     )
     from radio_summary_plotting import (
@@ -54,24 +54,10 @@ def main():
     radio_summary_df = sort_radio_summary(radio_summary_df)
     #radio_summary_df.head(10)
     
-    #analyzing radio_summary - dataframe containing 1 row per radio per class session
-    log_and_print("rows in the radio_summary_df represent a single 5GHz radio per class session")
-    log_and_print(f"total number of rows: {len(radio_summary_df)}")
-    log_and_print(f"median number of beacons: {radio_summary_df['total_beacons'].median()}")
-    #expecting 5859 beacons per 50 minutes if there's 2 SSIDs
-    log_and_print(f"median row of high channel utilization duration: {radio_summary_df['longest_duration_high_cu'].median()}")
-    log_and_print(f"(channel utilization is in percentage: {(radio_summary_df['highest_cu'].max())})")
-    log_and_print(f"number of rows with total beacons less than 200: {((radio_summary_df['total_beacons'] < 200).sum())}")
-    log_and_print(f"number of rows with some very high channel use (>75%): {((radio_summary_df['highest_cu'] > 75).sum())}")
-    log_and_print(f"number of rows with some high channel use (>50%): {((radio_summary_df['highest_cu'] > 50).sum())}")
-    log_and_print(f"median number of devices per radio (peak per class session): {((radio_summary_df['high_scount']).median())}")
-    log_and_print(f"average number of devices per radio (peak per class session): {((radio_summary_df['high_scount']).mean()):.2f}")
-    
-    # Calculate the correlation between high_scount and median_cu
-    correlation = radio_summary_df["high_scount"].corr(radio_summary_df["median_cu"])
-    
-    # Display the result
-    log_and_print(f"The correlation between high_scount and median channel utilization is: {correlation}")
+    correlation = report_radio_summary_statistics(
+        radio_summary_df,
+        log_and_print,
+    )
     
     radio_summary_df.to_csv(f"{OUTPUT_FOLDER}/radio_summary.csv", index=False)
     
@@ -126,11 +112,11 @@ def main():
     # =============================================================================
     # Cell 6 - Plot stacked beacon-rate histogram
     # =============================================================================
-    # adjusting beacon rate based on number of SSIDs
-    # # Safe element-wise division (with aligned indices)
-    df_radio_1 = (df_radio_1['beacons_per_second'] / df_radio_1['ssid_count']).dropna()
-    df_radio_2 = (df_radio_2['beacons_per_second'] / df_radio_2['ssid_count']).dropna()
-    data_combined = (combined_df['beacons_per_second'] / combined_df['ssid_count']).dropna()
+    df_radio_1, df_radio_2, data_combined = normalize_beacon_rate_series(
+        df_radio_1,
+        df_radio_2,
+        combined_df,
+    )
     
     plot_stacked_beacon_rate_histogram(
         df_radio_1,
@@ -142,12 +128,14 @@ def main():
     # =============================================================================
     # Cell 7 - Plot beacon-rate PDF and CDF
     # =============================================================================
-    # Compute all distributions
-    bin_centers1, pdf1, cdf1 = compute_pdf_cdf(df_radio_1, bins=50)
-    bin_centers2, pdf2, cdf2 = compute_pdf_cdf(df_radio_2, bins=50)
-    bin_centers_comb, pdf_comb, cdf_comb = compute_pdf_cdf(
+    (
+        (bin_centers1, pdf1, cdf1),
+        (bin_centers2, pdf2, cdf2),
+        (bin_centers_comb, pdf_comb, cdf_comb),
+    ) = compute_beacon_rate_distributions(
+        df_radio_1,
+        df_radio_2,
         data_combined,
-        bins=50,
     )
     
     plot_beacon_rate_pdf_cdf(
@@ -167,9 +155,7 @@ def main():
     # =============================================================================
     # Cell 8 - Report null counts and write filtered summary
     # =============================================================================
-    # check for null values
-    print("Radio 1 - Count:", df_radio_1.count(), "NaNs:", df_radio_1.isna().sum())
-    print("Radio 2 - Count:", df_radio_2.count(), "NaNs:", df_radio_2.isna().sum())
+    print_beacon_rate_null_counts(df_radio_1, df_radio_2)
     
     log_file.close()
     

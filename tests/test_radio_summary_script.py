@@ -3,7 +3,11 @@ from __future__ import annotations
 import pytest
 
 from radio_summary_processing import (
+    compute_beacon_rate_distributions,
+    normalize_beacon_rate_series,
     prepare_radio_summary_frames,
+    print_beacon_rate_null_counts,
+    report_radio_summary_statistics,
     sort_radio_summary,
 )
 from radio_summary_plotting import (
@@ -172,6 +176,123 @@ def test_prepare_radio_summary_frames_preserves_complete_frames():
     assert logged_messages == [
         "Excluding 3 rows with missing or non-positive ssid_count."
     ]
+
+
+def test_report_radio_summary_statistics_preserves_messages_and_correlation():
+    pd = pytest.importorskip("pandas")
+
+    radio_summary_df = pd.DataFrame(
+        {
+            "total_beacons": [100, 300, 500],
+            "longest_duration_high_cu": [0.0, 2.0, 8.0],
+            "highest_cu": [40.0, 60.0, 80.0],
+            "high_scount": [10.0, 20.0, 30.0],
+            "median_cu": [20.0, 40.0, 60.0],
+        }
+    )
+    messages: list[str] = []
+
+    correlation = report_radio_summary_statistics(
+        radio_summary_df,
+        messages.append,
+    )
+
+    assert correlation == pytest.approx(1.0)
+    assert messages == [
+        "rows in the radio_summary_df represent a single 5GHz radio per "
+        "class session",
+        "total number of rows: 3",
+        "median number of beacons: 300.0",
+        "median row of high channel utilization duration: 2.0",
+        "(channel utilization is in percentage: 80.0)",
+        "number of rows with total beacons less than 200: 1",
+        "number of rows with some very high channel use (>75%): 1",
+        "number of rows with some high channel use (>50%): 2",
+        "median number of devices per radio (peak per class session): 20.0",
+        "average number of devices per radio (peak per class session): 20.00",
+        "The correlation between high_scount and median channel "
+        "utilization is: 1.0",
+    ]
+
+
+def test_normalize_and_compute_beacon_rate_distributions(monkeypatch):
+    pd = pytest.importorskip("pandas")
+
+    radio_1_df = pd.DataFrame(
+        {
+            "beacons_per_second": [4.0, None, 12.0],
+            "ssid_count": [2.0, 2.0, 3.0],
+        },
+        index=[10, 11, 12],
+    )
+    radio_2_df = pd.DataFrame(
+        {
+            "beacons_per_second": [9.0, 20.0],
+            "ssid_count": [3.0, 4.0],
+        },
+        index=[20, 21],
+    )
+    combined_df = pd.concat([radio_1_df, radio_2_df])
+
+    radio_1_rate, radio_2_rate, combined_rate = (
+        normalize_beacon_rate_series(
+            radio_1_df,
+            radio_2_df,
+            combined_df,
+        )
+    )
+
+    pd.testing.assert_series_equal(
+        radio_1_rate,
+        pd.Series([2.0, 4.0], index=[10, 12]),
+    )
+    pd.testing.assert_series_equal(
+        radio_2_rate,
+        pd.Series([3.0, 5.0], index=[20, 21]),
+    )
+    pd.testing.assert_series_equal(
+        combined_rate,
+        pd.Series([2.0, 4.0, 3.0, 5.0], index=[10, 12, 20, 21]),
+    )
+
+    calls = []
+
+    def fake_compute_pdf_cdf(values, *, bins):
+        calls.append((values, bins))
+        return (values.index, values, values.cumsum())
+
+    monkeypatch.setattr(
+        "radio_summary_processing.compute_pdf_cdf",
+        fake_compute_pdf_cdf,
+    )
+    distributions = compute_beacon_rate_distributions(
+        radio_1_rate,
+        radio_2_rate,
+        combined_rate,
+    )
+
+    assert len(distributions) == 3
+    assert [bins for _values, bins in calls] == [50, 50, 50]
+    for (actual, _bins), expected in zip(
+        calls,
+        [radio_1_rate, radio_2_rate, combined_rate],
+        strict=True,
+    ):
+        pd.testing.assert_series_equal(actual, expected)
+
+
+def test_print_beacon_rate_null_counts_preserves_output(capsys):
+    pd = pytest.importorskip("pandas")
+
+    print_beacon_rate_null_counts(
+        pd.Series([1.0, 2.0]),
+        pd.Series([3.0]),
+    )
+
+    assert capsys.readouterr().out == (
+        "Radio 1 - Count: 2 NaNs: 0\n"
+        "Radio 2 - Count: 1 NaNs: 0\n"
+    )
 
 
 def test_radio_summary_regression_skips_missing_radio_count(tmp_path):

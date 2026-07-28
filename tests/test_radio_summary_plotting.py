@@ -13,7 +13,10 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 
-from analysis_statistics import compute_pdf_cdf
+from radio_summary_processing import (
+    compute_beacon_rate_distributions,
+    normalize_beacon_rate_series,
+)
 from radio_summary_plotting import (
     plot_beacon_rate_histogram,
     plot_beacon_rate_channel_utilization_scatter,
@@ -303,20 +306,13 @@ def test_stacked_beacon_rate_histogram_current_calls_and_file(
         f"{radio_summary_folder}/"
         "Beacons_per_second_stacked.png"
     )
-    cell_source, script_path = script_cell_source(
-        "analyze_radio_summary.py",
-        6,
+    df_radio_1, df_radio_2, data_combined = (
+        normalize_beacon_rate_series(
+            df_radio_1,
+            df_radio_2,
+            combined_df,
+        )
     )
-    namespace = {
-        "df_radio_1": df_radio_1,
-        "df_radio_2": df_radio_2,
-        "combined_df": combined_df,
-        "plot_stacked_beacon_rate_histogram": (
-            plot_stacked_beacon_rate_histogram
-        ),
-        "RADIO_SUMMARY_FOLDER": str(radio_summary_folder),
-        "plt": plt,
-    }
 
     with (
         patch.object(plt, "figure", wraps=plt.figure) as figure,
@@ -330,25 +326,22 @@ def test_stacked_beacon_rate_histogram_current_calls_and_file(
         patch.object(plt, "show", wraps=plt.show) as show,
         patch.object(plt, "close", wraps=plt.close) as close,
     ):
-        exec(
-            compile(
-                cell_source,
-                f"{script_path}::cell_6",
-                "exec",
-            ),
-            namespace,
+        plot_stacked_beacon_rate_histogram(
+            df_radio_1,
+            df_radio_2,
+            str(radio_summary_folder),
         )
 
     pd.testing.assert_series_equal(
-        namespace["df_radio_1"],
+        df_radio_1,
         expected_radio_1,
     )
     pd.testing.assert_series_equal(
-        namespace["df_radio_2"],
+        df_radio_2,
         expected_radio_2,
     )
     pd.testing.assert_series_equal(
-        namespace["data_combined"],
+        data_combined,
         expected_combined,
     )
     assert Path(plot_filename).is_file()
@@ -405,20 +398,15 @@ def test_beacon_rate_pdf_cdf_current_calls_and_files(
         f"{radio_summary_folder}/"
         "Beacons_per_second_class_CDF.png"
     )
-    cell_source, script_path = script_cell_source(
-        "analyze_radio_summary.py",
-        7,
+    (
+        (bin_centers1, pdf1, cdf1),
+        (bin_centers2, pdf2, cdf2),
+        (bin_centers_comb, pdf_comb, cdf_comb),
+    ) = compute_beacon_rate_distributions(
+        df_radio_1,
+        df_radio_2,
+        data_combined,
     )
-    compute_pdf_cdf_mock = Mock(wraps=compute_pdf_cdf)
-    namespace = {
-        "df_radio_1": df_radio_1,
-        "df_radio_2": df_radio_2,
-        "data_combined": data_combined,
-        "compute_pdf_cdf": compute_pdf_cdf_mock,
-        "plot_beacon_rate_pdf_cdf": plot_beacon_rate_pdf_cdf,
-        "RADIO_SUMMARY_FOLDER": str(radio_summary_folder),
-        "plt": plt,
-    }
 
     with (
         patch.object(plt, "figure", wraps=plt.figure) as figure,
@@ -432,26 +420,19 @@ def test_beacon_rate_pdf_cdf_current_calls_and_files(
         patch.object(plt, "show", wraps=plt.show) as show,
         patch.object(plt, "close", wraps=plt.close) as close,
     ):
-        exec(
-            compile(
-                cell_source,
-                f"{script_path}::cell_7",
-                "exec",
-            ),
-            namespace,
+        plot_beacon_rate_pdf_cdf(
+            bin_centers1,
+            pdf1,
+            cdf1,
+            bin_centers2,
+            pdf2,
+            cdf2,
+            bin_centers_comb,
+            pdf_comb,
+            cdf_comb,
+            str(radio_summary_folder),
         )
 
-    assert compute_pdf_cdf_mock.call_count == 3
-    for distribution_call, expected_series in zip(
-        compute_pdf_cdf_mock.call_args_list,
-        [df_radio_1, df_radio_2, data_combined],
-        strict=True,
-    ):
-        pd.testing.assert_series_equal(
-            distribution_call.args[0],
-            expected_series,
-        )
-        assert distribution_call.kwargs == {"bins": 50}
     assert Path(pdf_filename).is_file()
     assert Path(cdf_filename).is_file()
     assert figure.call_args_list == [
@@ -474,11 +455,11 @@ def test_beacon_rate_pdf_cdf_current_calls_and_files(
     ):
         np.testing.assert_allclose(
             plot_call.args[0],
-            namespace[x_name],
+            locals()[x_name],
         )
         np.testing.assert_allclose(
             plot_call.args[1],
-            namespace[y_name],
+            locals()[y_name],
         )
     assert [item.kwargs for item in plot.call_args_list] == [
         {"label": "PDF - Radio Count 1", "color": "blue"},
