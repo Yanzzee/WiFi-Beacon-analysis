@@ -24,6 +24,7 @@ ANALYSIS_MODULES: tuple[str, ...] = (
     "analysis_validation.py",
     "aruba_radio_inference.py",
     "beacon_filtering.py",
+    "class_beacon_analysis.py",
     "class_beacon_plotting.py",
     "class_session_analysis.py",
     "class_session_plotting.py",

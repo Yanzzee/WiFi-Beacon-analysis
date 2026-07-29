@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import Mock, call, patch
+from unittest.mock import call, patch
 
 import matplotlib
 
@@ -12,7 +12,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from analysis_statistics import compute_pdf_cdf
+from class_beacon_analysis import (
+    calculate_station_count_bins,
+    prepare_channel_utilization_distribution,
+    prepare_channel_utilization_histogram,
+    report_channel_utilization_cdf,
+)
 from class_beacon_plotting import (
     plot_channel_utilization_admission_capacity_hexbin,
     plot_channel_utilization_histogram,
@@ -35,19 +40,9 @@ def test_channel_utilization_histogram_current_calls_and_file(
     plot_filename = (
         f"{all_class_beacons_folder}/Channel_use_histogram.png"
     )
-    cell_source, script_path = script_cell_source(
-        "analyze_all_class_beacons.py",
-        5,
+    cu_percent, bins = prepare_channel_utilization_histogram(
+        all_class_beacons_df,
     )
-    namespace = {
-        "all_class_beacons_df": all_class_beacons_df,
-        "ALL_CLASS_BEACONS_FOLDER": str(all_class_beacons_folder),
-        "plot_channel_utilization_histogram": (
-            plot_channel_utilization_histogram
-        ),
-        "np": np,
-        "plt": plt,
-    }
 
     with (
         patch.object(plt, "figure", wraps=plt.figure) as figure,
@@ -64,13 +59,10 @@ def test_channel_utilization_histogram_current_calls_and_file(
         patch.object(plt, "show", wraps=plt.show) as show,
         patch.object(plt, "close", wraps=plt.close) as close,
     ):
-        exec(
-            compile(
-                cell_source,
-                f"{script_path}::cell_5",
-                "exec",
-            ),
-            namespace,
+        plot_channel_utilization_histogram(
+            cu_percent,
+            bins,
+            str(all_class_beacons_folder),
         )
 
     expected_cu_percent = (
@@ -78,10 +70,10 @@ def test_channel_utilization_histogram_current_calls_and_file(
     )
     expected_bins = np.linspace(0, 100, 256)
     pd.testing.assert_series_equal(
-        namespace["cu_percent"],
+        cu_percent,
         expected_cu_percent,
     )
-    np.testing.assert_allclose(namespace["bins"], expected_bins)
+    np.testing.assert_allclose(bins, expected_bins)
     assert Path(plot_filename).is_file()
     figure.assert_called_once_with(figsize=(10, 6))
     hist.assert_called_once()
@@ -134,22 +126,12 @@ def test_channel_utilization_pdf_cdf_current_calls_and_files(
     cdf_filename = (
         f"{all_class_beacons_folder}/Channel_use_cdf.png"
     )
-    cell_source, script_path = script_cell_source(
-        "analyze_all_class_beacons.py",
-        6,
-    )
-    compute_pdf_cdf_mock = Mock(wraps=compute_pdf_cdf)
     logged_messages: list[str] = []
-    namespace = {
-        "all_class_beacons_df": all_class_beacons_df,
-        "ALL_CLASS_BEACONS_FOLDER": str(all_class_beacons_folder),
-        "compute_pdf_cdf": compute_pdf_cdf_mock,
-        "log_and_print": logged_messages.append,
-        "plot_channel_utilization_pdf_cdf": (
-            plot_channel_utilization_pdf_cdf
-        ),
-        "plt": plt,
-    }
+    cu_data, bin_centers, pdf, cdf = (
+        prepare_channel_utilization_distribution(
+            all_class_beacons_df,
+        )
+    )
 
     with (
         patch.object(plt, "figure", wraps=plt.figure) as figure,
@@ -163,13 +145,15 @@ def test_channel_utilization_pdf_cdf_current_calls_and_files(
         patch.object(plt, "show", wraps=plt.show) as show,
         patch.object(plt, "close", wraps=plt.close) as close,
     ):
-        exec(
-            compile(
-                cell_source,
-                f"{script_path}::cell_6",
-                "exec",
-            ),
-            namespace,
+        plot_channel_utilization_pdf_cdf(
+            bin_centers,
+            pdf,
+            cdf,
+            str(all_class_beacons_folder),
+        )
+        cdf_at_50, cdf_at_75 = report_channel_utilization_cdf(
+            cu_data,
+            logged_messages.append,
         )
 
     expected_cu_data = pd.Series(
@@ -178,17 +162,11 @@ def test_channel_utilization_pdf_cdf_current_calls_and_files(
         name="wlan.qbss.cu",
     )
     pd.testing.assert_series_equal(
-        namespace["cu_data"],
+        cu_data,
         expected_cu_data,
     )
-    compute_pdf_cdf_mock.assert_called_once()
-    pd.testing.assert_series_equal(
-        compute_pdf_cdf_mock.call_args.args[0],
-        expected_cu_data,
-    )
-    assert compute_pdf_cdf_mock.call_args.kwargs == {"bins": 256}
-    assert namespace["cdf_at_50"] == 0.5
-    assert namespace["cdf_at_75"] == 0.75
+    assert cdf_at_50 == 0.5
+    assert cdf_at_75 == 0.75
     assert logged_messages == [
         "CDF at wlan.qbss.cu = 50%: 0.5000",
         "50.00 % of beacons during class show channel utilization "
@@ -206,19 +184,19 @@ def test_channel_utilization_pdf_cdf_current_calls_and_files(
     assert plot.call_count == 2
     np.testing.assert_allclose(
         plot.call_args_list[0].args[0],
-        namespace["bin_centers"],
+        bin_centers,
     )
     np.testing.assert_allclose(
         plot.call_args_list[0].args[1],
-        namespace["pdf"],
+        pdf,
     )
     np.testing.assert_allclose(
         plot.call_args_list[1].args[0],
-        namespace["bin_centers"],
+        bin_centers,
     )
     np.testing.assert_allclose(
         plot.call_args_list[1].args[1],
-        namespace["cdf"],
+        cdf,
     )
     assert [item.kwargs for item in plot.call_args_list] == [
         {
@@ -265,18 +243,7 @@ def test_station_count_histogram_current_calls_and_file(
     plot_filename = (
         f"{all_class_beacons_folder}/Scount_histogram.png"
     )
-    cell_source, script_path = script_cell_source(
-        "analyze_all_class_beacons.py",
-        7,
-    )
-    namespace = {
-        "all_class_beacons_df": all_class_beacons_df,
-        "ALL_CLASS_BEACONS_FOLDER": str(all_class_beacons_folder),
-        "plot_station_count_histogram": (
-            plot_station_count_histogram
-        ),
-        "plt": plt,
-    }
+    num_bins = calculate_station_count_bins(all_class_beacons_df)
 
     with (
         patch.object(plt, "figure", wraps=plt.figure) as figure,
@@ -293,16 +260,13 @@ def test_station_count_histogram_current_calls_and_file(
         patch.object(plt, "show", wraps=plt.show) as show,
         patch.object(plt, "close", wraps=plt.close) as close,
     ):
-        exec(
-            compile(
-                cell_source,
-                f"{script_path}::cell_7",
-                "exec",
-            ),
-            namespace,
+        plot_station_count_histogram(
+            all_class_beacons_df["total_scount"],
+            num_bins,
+            str(all_class_beacons_folder),
         )
 
-    assert namespace["num_bins"] == 6
+    assert num_bins == 6
     assert Path(plot_filename).is_file()
     figure.assert_called_once_with(figsize=(10, 6))
     hist.assert_called_once()

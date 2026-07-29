@@ -671,10 +671,28 @@ For each pass:
 - Confirmed focused tests, the full non-golden suite, and analysis-forward
   golden fingerprints pass.
 
+#### Pass 3: `analyze_all_class_beacons.py` — completed
+
+- Added `class_beacon_analysis.py` with focused helpers for configured-SSID
+  filtering, aggregate beacon reporting, channel-utilization histogram and
+  PDF/CDF preparation, CDF-threshold reporting, station-count bin selection,
+  correlations, and linear regression.
+- Reduced `analyze_all_class_beacons.py` to configuration and input loading,
+  room station-count enrichment, ordered helper and plotting calls, the two
+  existing parquet writes, and logging lifetime management.
+- Preserved SSID filter output and row selection, analysis math, threshold
+  comparisons, calculation and logging text/order, plot inputs and order,
+  local result names, pre-filter and post-filter parquet write order, and the
+  existing log close before the final plot and write.
+- Added the new module to isolated analysis-forward workspaces, updated
+  plotting tests to call extracted preparation helpers directly, and added
+  focused tests for every newly moved calculation/reporting family.
+- Confirmed focused tests, the full non-golden suite, and analysis-forward
+  golden fingerprints pass.
+
 Use separate remaining passes in this order:
 
-1. `analyze_all_class_beacons.py`
-2. `analyze_data.py`
+1. `analyze_data.py`
 
 ## Refactor Completion Boundary
 

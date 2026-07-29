@@ -3,16 +3,21 @@ def main():
     # Cell 1 - Imports, configuration, logging, and input data
     # =============================================================================
     import pandas as pd
-    import matplotlib.colors as mcolors
-    import matplotlib.pyplot as plt
-    import numpy as np
     from datetime import datetime
-    from scipy.stats import linregress
     import os
     from dotenv import load_dotenv
     from analysis_config import ensure_directory, env_or_default as _env_or_default
     from analysis_logging import open_analysis_log
-    from analysis_statistics import compute_pdf_cdf
+    from class_beacon_analysis import (
+        calculate_station_count_bins,
+        filter_configured_ssids,
+        prepare_channel_utilization_distribution,
+        prepare_channel_utilization_histogram,
+        report_channel_utilization_cdf,
+        report_class_beacon_aggregates,
+        report_class_beacon_correlations,
+        report_class_beacon_linear_regression,
+    )
     from class_beacon_plotting import (
         plot_channel_utilization_admission_capacity_hexbin,
         plot_channel_utilization_histogram,
@@ -81,9 +86,10 @@ def main():
     # Cell 3 - Filter to configured SSIDs
     # =============================================================================
     #reduce overrepresentation of areas that have additional SSIDs
-    print(all_class_beacons_df["wlan.ssid"].unique())
-    all_class_beacons_df = all_class_beacons_df[all_class_beacons_df["wlan.ssid"].isin(CONFIGURED_SSIDS)]
-    print(all_class_beacons_df["wlan.ssid"].unique())
+    all_class_beacons_df = filter_configured_ssids(
+        all_class_beacons_df,
+        CONFIGURED_SSIDS,
+    )
     
     
     # =============================================================================
@@ -91,31 +97,10 @@ def main():
     # =============================================================================
     # metrics for all beacons during class sessions in a single dataframe
     
-    total_data_points = len(all_class_beacons_df)
-    
-    # Count the number of data points where wlan.qbss.cu is greater than 191 (75%)
-    greater_than_191_count = (all_class_beacons_df["wlan.qbss.cu"] > 191).sum()
-    
-    # Calculate the percentage of data points where wlan.qbss.cu is greater than 191
-    percentage_greater_than_191 = (greater_than_191_count / total_data_points) * 100
-    
-    log_and_print(f"percent of beacons with very high utilization (> 75% cu): {percentage_greater_than_191:.4f} %")
-    
-    # Count the number of data points where wlan.qbss.cu is greater than 127 (50%)
-    greater_than_127_count = (all_class_beacons_df["wlan.qbss.cu"] > 127).sum()
-    
-    # Calculate the percentage of data points where wlan.qbss.cu is greater than 127
-    percentage_greater_than_127 = (greater_than_127_count / total_data_points) * 100
-    
-    log_and_print(f"percent of beacons with high utilization (> 50% cu): {percentage_greater_than_127:.4f} %")
-    
-    log_and_print(f"median number of associated devices per radio: {all_class_beacons_df['total_scount'].median()}")
-    
-    log_and_print(f"average number of associated devices per radio: {all_class_beacons_df['total_scount'].mean():.2f}")
-    
-    log_and_print(f"median channel utilization qbss: {all_class_beacons_df['wlan.qbss.cu'].median()}")
-    
-    log_and_print(f"average channel utilization qbss: {all_class_beacons_df['wlan.qbss.cu'].mean():.2f}")
+    report_class_beacon_aggregates(
+        all_class_beacons_df,
+        log_and_print,
+    )
     
     # =============================================================================
     # Cell 5 - Plot channel-utilization histogram
@@ -124,11 +109,9 @@ def main():
     # # Create histogram for the 'wlan.qbss.cu' column
     
     
-    # Convert the wlan.qbss.cu values to percentage (0-100 scale)
-    cu_percent = all_class_beacons_df["wlan.qbss.cu"] * (100 / 255)
-    
-    # Create bins that match the percentage scale (still 256 bins)
-    bins = np.linspace(0, 100, 256)
+    cu_percent, bins = prepare_channel_utilization_histogram(
+        all_class_beacons_df,
+    )
     
     plot_channel_utilization_histogram(
         cu_percent,
@@ -141,12 +124,11 @@ def main():
     # =============================================================================
     # Cell 6 - Plot channel-utilization PDF and CDF
     # =============================================================================
-    # PDF/CDF plots (as percentage)
-    # Drop NaNs and convert to percentage scale
-    cu_data = all_class_beacons_df["wlan.qbss.cu"].dropna() * (100 / 255)
-    
-    # Compute PDF/CDF
-    bin_centers, pdf, cdf = compute_pdf_cdf(cu_data, bins=256)
+    cu_data, bin_centers, pdf, cdf = (
+        prepare_channel_utilization_distribution(
+            all_class_beacons_df,
+        )
+    )
     
     plot_channel_utilization_pdf_cdf(
         bin_centers,
@@ -155,14 +137,10 @@ def main():
         ALL_CLASS_BEACONS_FOLDER,
     )
     
-    # Report CDF at ~50% and ~75% thresholds
-    cdf_at_50 = (cu_data <= 50).mean()
-    log_and_print(f"CDF at wlan.qbss.cu = 50%: {cdf_at_50:.4f}")
-    log_and_print(f"{(cdf_at_50 * 100):.2f} % of beacons during class show channel utilization under 50%")
-    
-    cdf_at_75 = (cu_data <= 75).mean()
-    log_and_print(f"CDF at wlan.qbss.cu = 75%: {cdf_at_75:.4f}")
-    log_and_print(f"{(cdf_at_75 * 100):.2f} % of beacons during class show channel utilization under 75%")
+    cdf_at_50, cdf_at_75 = report_channel_utilization_cdf(
+        cu_data,
+        log_and_print,
+    )
     
     
     # =============================================================================
@@ -170,7 +148,7 @@ def main():
     # =============================================================================
     # Histogram of radio scount
     # Set the number of bins to be the highest value of total_scount + 1
-    num_bins = max(all_class_beacons_df["total_scount"]) + 1
+    num_bins = calculate_station_count_bins(all_class_beacons_df)
     
     plot_station_count_histogram(
         all_class_beacons_df["total_scount"],
@@ -182,21 +160,14 @@ def main():
     # =============================================================================
     # Cell 8 - Calculate correlations
     # =============================================================================
-    # Calculate the pearson correlation between wlan.qbss.cu and total_scount
-    correlation = all_class_beacons_df["total_scount"].corr(all_class_beacons_df["wlan.qbss.cu"])
-    
-    # Display the result
-    log_and_print(f"The correlation between total_scount and wlan.qbss.cu is: {correlation:.4f}")
-    
-    # Calculate the pearson correlation between wlan.qbss.adc and total_scount
-    correlation_adc = all_class_beacons_df["wlan.qbss.adc"].corr(all_class_beacons_df["wlan.qbss.cu"])
-    
-    log_and_print(f"The correlation between wlan.qbss.adc and wlan.qbss.cu is: {correlation_adc:.4f}")
-    
-    # Calculate the pearson correlation between wlan.qbss.cu and total_scount
-    correlation_adc_sc = all_class_beacons_df["total_scount"].corr(all_class_beacons_df["wlan.qbss.adc"])
-    
-    log_and_print(f"The correlation between total_scount and wlan.qbss.adc is: {correlation_adc_sc:.4f}")
+    (
+        correlation,
+        correlation_adc,
+        correlation_adc_sc,
+    ) = report_class_beacon_correlations(
+        all_class_beacons_df,
+        log_and_print,
+    )
     
     
     # =============================================================================
@@ -229,15 +200,16 @@ def main():
     # =============================================================================
     # Linear regression
     
-    x = all_class_beacons_df["total_scount"]
-    y = all_class_beacons_df["wlan.qbss.cu"]
-    
-    slope, intercept, r_value, p_value, std_err = linregress(x, y)
-    log_and_print("Linear regression values of total_scount to wlan.qbss.cu:")
-    log_and_print(f"Slope: {slope:.3f}")
-    log_and_print(f"Intercept: {intercept:.3f}")
-    log_and_print(f"R-squared: {r_value**2:.3f}")
-    log_and_print(f"P-value: {p_value:.3g}")
+    (
+        slope,
+        intercept,
+        r_value,
+        p_value,
+        std_err,
+    ) = report_class_beacon_linear_regression(
+        all_class_beacons_df,
+        log_and_print,
+    )
     
     log_file.close()
     
