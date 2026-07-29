@@ -1,6 +1,13 @@
 # Post-Refactor Design Backlog
 
-This document tracks analysis and architecture changes intentionally deferred from the mechanical conversion work. `analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_radio_summary.py`, and `analyze_class_sessions.py` are now the sources of truth for their stages. This document is not a description of current behavior and does not authorize changing analysis math without a separate reviewed implementation decision.
+This document tracks analysis and architecture changes intentionally deferred
+from the completed mechanical conversion and behavior-preserving module
+refactor. `analyze_data.py`, `analyze_all_class_beacons.py`,
+`analyze_radio_summary.py`, and `analyze_class_sessions.py` are the
+orchestration entry points for their stages, with operational behavior
+delegated to focused runtime modules. This document is not a description of
+current behavior and does not authorize changing analysis math without a
+separate reviewed implementation decision.
 
 `docs/current_pipeline.md` remains the source for how the pipeline works today. `docs/bug_backlog.md` remains the source for pre-refactor bugs, fragilities, and behavior risks.
 

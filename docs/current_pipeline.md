@@ -13,7 +13,10 @@ This document describes the current repository pipeline from capture files to fi
 7. Run `analyze_radio_summary.py` to analyze one row per radio per class session.
 8. Run `analyze_class_sessions.py` to analyze one row per class session/location.
 
-All four active analysis stages are Python scripts and are their stages' sources of truth. Files under `old/` are optional historical references and are not runnable pipeline dependencies.
+All four active analysis stages have standalone Python orchestration scripts.
+Their calculations, plotting, validation, and persistence behavior are
+delegated to focused runtime modules. Files under `old/` are optional
+historical references and are not runnable pipeline dependencies.
 
 ## Configuration
 
@@ -104,8 +107,7 @@ py process_pcapng.py --no-erm
 This native path is currently conversion-only. Its parquet output does not
 feed the analysis pipeline without an additional timestamp and AP-name
 mapping/adaptation layer. Full native/non-Aruba analysis support is important
-future work, but it should wait until after the current bug fixes and
-refactoring.
+future work and is tracked as a separate post-refactor design project.
 
 Inputs:
 
@@ -397,7 +399,7 @@ Behavior:
 - Converts `aruba_erm.time` to `TIMEZONE`.
 - Removes near-duplicate beacons by `wlan.ta` using `0.95 * BEACON_RATE`.
 - Validates that every retained, deduplicated in-scope row has a non-null QBSS channel-utilization value. If CU is missing, analysis fails before integer conversion with the AP, class interval, affected count/percentage, and example source rows.
-- Replaces missing QBSS station-count and admission-capacity values with zero, then converts the QBSS columns to non-null integers. The existing CU `fillna(0)` remains in the script but is guarded: missing CU cannot reach it through the supported analysis path.
+- Replaces missing QBSS station-count and admission-capacity values with zero, then converts the QBSS columns to non-null integers. The retained CU `fillna(0)` in `analysis_pipeline.py` is guarded: missing CU cannot reach it through the supported analysis path.
 - Requires `AP_PLATFORM=aruba` before analysis because the current radio inference is Aruba-specific.
 - Infers `radio_number` from sorted transmitter MAC integer gaps.
 - Calculates `total_scount` by combining station counts across transmitters for the inferred radio.
@@ -452,7 +454,8 @@ Key downstream columns in `Data/radio_summary.parquet`:
 
 Fragility:
 
-- This script is the current source of truth for this pipeline stage.
+- `analyze_data.py` is the orchestration entry point; its operational workflow
+  is implemented by the focused analysis modules.
 - It assumes grouped filenames are AP hostnames from `Sample_APs.csv`.
 - It assumes `wlan.vs.aruba.ap_name` is present and has one unique value per AP/session slice.
 - It now fails fast when grouped `aruba_erm.time` is missing, timezone-naive, or stored as strings/objects. This is validation only; it does not normalize varied input timestamp formats.
@@ -510,7 +513,8 @@ Fragility:
 
 - The SSID filter uses `SSID1` and `SSID2` from `config.env`, with current defaults matching `eduroam` and `BYU-WiFi`.
 - Room-level station count depends on hostname-to-location mapping from `Sample_APs.csv`.
-- The plus/minus 5 second lookup window is embedded in the script logic.
+- The plus/minus 5 second lookup window is retained in
+  `room_station_count.py`.
 - This script must run before `analyze_class_sessions.py`.
 
 ### 8. Analyze Radio Summary
@@ -564,7 +568,8 @@ Key columns:
 
 Fragility:
 
-- The filter threshold of 300 beacons is embedded in the script.
+- The filter threshold of 300 beacons is retained in
+  `radio_summary_processing.py`.
 - Several plots divide by `ssid_count`; zero or missing `ssid_count` would break or distort outputs.
 - It expects `highest_cu` and related CU values to already be percentages, as produced by `analyze_data.py`.
 
@@ -723,10 +728,14 @@ Additional columns introduced by the pipeline:
 
 ## Known Fragility and Ambiguity
 
-Analysis and architecture changes intentionally deferred from the mechanical conversions are tracked in `docs/post_refactor_design.md`.
+Analysis and architecture changes intentionally deferred from the completed
+behavior-preserving module refactor are tracked in
+`docs/post_refactor_design.md`.
 
 - Grouping and grouped-data cleanup remain split across `group_data_bssid.py`, `group_data_aruba.py`, and `group_data_cleanup.py`; future work should merge vendor detection, grouping, and cleanup into one process.
-- The current operational sources are the four converted scripts; files under `old/` are not pipeline inputs.
+- The four converted scripts are the current operational entry points and
+  delegate to the runtime modules listed in
+  `docs/module_refactor_roadmap.md`; files under `old/` are not pipeline inputs.
 - The converted scripts preserve source cell boundaries as comments, while execution order is enforced by `tests/pipeline_harness.py`.
 - `Data/`, `Output/`, and `Sample/` are ignored in `.gitignore`, but some historical sample files are tracked.
 - `requirements.txt` appears environment-derived and includes standard-library names such as `glob`, `pathlib`, and `datetime`.

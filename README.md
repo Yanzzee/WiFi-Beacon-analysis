@@ -17,7 +17,7 @@ Sample_schedule.csv - course schedule with location, Days of the week, start/end
 ### Run Files
 Files are listed in the general order that they are run.
 
-`analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_radio_summary.py`, and `analyze_class_sessions.py` are the current sources of truth for their pipeline stages.
+`analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_radio_summary.py`, and `analyze_class_sessions.py` are the current orchestration entry points for their pipeline stages. Their calculations, plotting, validation, and persistence workflows are delegated to focused modules documented in `docs/module_refactor_roadmap.md`.
 
 beacon_capture.sh (optional) - bash script to capture .pcapng files using tshark on a raspberry pi or other linux device. The capture scripts use Linux wireless monitor-mode tools and are not expected to run unchanged on Windows or macOS. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
 Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
@@ -41,7 +41,7 @@ sample_schedule.csv input files. These should be UTF-8 encoded, sections in the 
     sample_classes.parquet - saved dataframe file with information about sampled class periods. Sections in the same location must be combined.
 
 analyze_data.py - further processes and begins to analyze data within scope in the sample files
-    grouped input must include aruba_erm.time as a timezone-aware datetime dtype; varied beacon timestamp strings, naive datetimes, and broader schedule time parsing need a dedicated normalization pass after notebook conversion
+    grouped input must include aruba_erm.time as a timezone-aware datetime dtype; varied beacon timestamp strings, naive datetimes, and broader schedule time parsing need a separately approved post-refactor normalization project
     deduplicated in-scope rows must have non-null wlan.qbss.cu; the stage fails with AP, class-time, percentage, and example-row details rather than silently converting missing CU to zero
     saves plots for each class session in Output/plots/
     separate parquet files for each AP are saved as class_beacons files, these contain only data within the sample scope
@@ -64,7 +64,8 @@ analyze_class_sessions.py - analyze each class session as a single row. Current 
 
 - `docs/current_pipeline.md` documents the behavior and assumptions of the current pipeline.
 - `docs/bug_backlog.md` tracks confirmed bugs, fragilities, and behavior risks.
-- `docs/post_refactor_design.md` tracks analysis and architecture changes intentionally deferred until after notebook refactoring.
+- `docs/module_refactor_roadmap.md` records the completed behavior-preserving module refactor.
+- `docs/post_refactor_design.md` tracks analysis and architecture changes deferred until after that refactor.
 
 
 ### Folders

@@ -18,22 +18,27 @@ capture conversion.
 
 ## Current Structure
 
-- `analysis_config.py` is currently the only shared runtime module. It contains
-  the three completed extractions below.
-- `analyze_all_class_beacons.py`, `analyze_radio_summary.py`, and
-  `analyze_class_sessions.py` each contain nearly their entire stage inside one
-  large `main()` function, including configuration, I/O, calculation, plotting,
-  and logging.
-- `analyze_data.py` has several callable functions, but many depend on module
-  globals for configuration, logging, accumulated dataframes, and output paths.
-- The clearest remaining exact duplication is timestamped log-file setup and
-  NumPy PDF/CDF calculation. These are ordered before stage-specific logic.
-- Grouping behavior has little focused coverage and contains similar but
-  non-identical filename policies. Tests must precede its extraction.
-- The highest-risk blocks are room station-count enrichment, class-session
-  streak calculation, beacon deduplication, Aruba MAC-gap radio inference, and
-  per-radio summaries. They remain late in the sequence and require compact
-  characterization fixtures before movement.
+- The four active analysis scripts are standalone orchestration entry points.
+  Stage calculations and plotting live in focused `analysis_*`,
+  `class_*`, `radio_*`, `room_station_count.py`, `beacon_filtering.py`, and
+  `aruba_radio_inference.py` modules.
+- `samples.py` and the three grouping scripts delegate their workflows to
+  `sample_processing.py`, `grouping_bssid.py`, `grouping_aruba.py`, and
+  `grouping_cleanup.py`.
+- Shared configuration, validation, logging, statistics, and persistence
+  behavior lives in `analysis_config.py`, `analysis_validation.py`,
+  `analysis_logging.py`, `analysis_statistics.py`, and `analysis_io.py`.
+- The intentionally distinct grouping sanitizers, logging policies, directory
+  creation variants, and plotting cleanup behavior remain separate because
+  their characterized contracts differ.
+- The highest-risk behavior now has focused characterization coverage:
+  room station-count enrichment, class-session streak calculation, beacon
+  deduplication, Aruba MAC-gap radio inference, per-radio summaries, grouping,
+  and plotting.
+- `analyze_data.py` retains compatibility wrappers and its historical global
+  accumulator so existing callers and monkeypatch-based tests keep working.
+  Removing that compatibility surface is not required for the entry point to
+  delegate its operational work to modules.
 
 ## Refactor Rules
 
@@ -629,7 +634,7 @@ For each pass:
   to stage-specific modules. The intentionally retained `old/` archive was
   not changed.
 
-### 21. Reduce stage scripts to orchestration, one script per pass
+### 21. Reduce stage scripts to orchestration, one script per pass — completed
 
 - Once the preceding functions are modular and directly tested, make each
   entry point primarily load configuration/data, call module functions, write
@@ -724,3 +729,28 @@ work from `docs/post_refactor_design.md` as new, explicitly approved projects.
 That later work includes canonical timezone handling, configurable thresholds,
 missing-data semantics, physical-radio identity, multi-vendor normalization,
 unified grouping/cleanup, traceable versioned outputs, and 6 GHz support.
+
+## Completion Review — 2026-07-29
+
+Status: complete. A whole-repository review found no additional
+behavior-preserving module extraction required for this phase.
+
+- Reviewed every active Python entry point and runtime module, their import and
+  delegation boundaries, focused test coverage, the isolated-workspace module
+  lists in `tests/pipeline_harness.py`, and the current pipeline/design
+  documentation.
+- The remaining longer functions are cohesive stage-specific workflows whose
+  calculation, ordering, I/O, or plotting contracts are already isolated and
+  characterized. Splitting them solely by line count would not create a new
+  reusable boundary and would increase behavior-preservation risk.
+- Import-time compatibility state in `analyze_data.py` and deliberately
+  different grouping/logging/plotting policies are retained contracts, not
+  unfinished extractions.
+- `process_pcapng.py` remains outside this roadmap, and `old/` remains an
+  unexecuted historical archive.
+- The complete non-golden suite passed during this review: 95 passed and 5
+  opt-in tests deselected. No production code or golden fingerprint changed.
+
+Future semantic and architecture work remains in
+`docs/post_refactor_design.md`; it should not be appended to this
+behavior-preserving roadmap.

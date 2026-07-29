@@ -27,5 +27,5 @@ Working on these phases individually:
 ✅ Fix reproducible environment
 ✅ Commit
 ✅ Mechanically convert one notebook at a time
-Refactor into modules
+✅ Refactor into modules
 Add 6 GHz support & post-refactor design items

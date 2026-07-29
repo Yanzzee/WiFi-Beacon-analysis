@@ -1,10 +1,17 @@
 # Step 5 Bug Backlog
 
-This backlog is based on `docs/current_pipeline.md` plus a spot check of the current scripts, notebooks, README, config, and analysis-forward test harness. It is intentionally scoped to bugs and fragilities worth considering before mechanical notebook conversion and module extraction.
+This backlog is based on `docs/current_pipeline.md` plus a spot check of the current scripts, notebooks, README, config, and analysis-forward test harness. It records bugs and fragilities identified before mechanical notebook conversion and module extraction; both phases are now complete.
 
 No source behavior changes are proposed here as broad refactors. Items marked unsafe before conversion should be treated as design decisions or guarded with explicit tests before changing analysis behavior.
 
-Conversion status: `analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_radio_summary.py`, and `analyze_class_sessions.py` are now the operational sources of truth. References below to their former `.ipynb` files, `tests/test_notebook_config_paths.py`, and `tests/test_radio_summary_notebook.py` describe historical evidence and validation performed before conversion; current tests use the converted scripts.
+Conversion/refactor status: `analyze_data.py`,
+`analyze_all_class_beacons.py`, `analyze_radio_summary.py`, and
+`analyze_class_sessions.py` are now the orchestration entry points, with
+operational behavior delegated to focused modules. References below to their
+former `.ipynb` files, `tests/test_notebook_config_paths.py`, and
+`tests/test_radio_summary_notebook.py` describe historical evidence and
+validation performed before conversion; current tests use the converted
+scripts and extracted modules.
 
 ## Confirmed Bugs
 
@@ -60,7 +67,7 @@ Conversion status: `analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_r
 - Evidence: Original bug was in `analyze_data.ipynb`, code cell 0, where `calculate_total_scount()` built transmitter lists only for `radio_number == 1` and `radio_number == 2`. The same cell created radio summary rows only for hardcoded radio 1 and radio 2.
 - Why it matters: Any AP/session slice inferred as more than two radios can fail, use stale state, or silently omit radio 3+ from `radio_summary.parquet`.
 - Risk level: high
-- Suggested fix scope: For Step 5, prefer a small explicit guard that fails clearly when inferred `radio_number > 2`. Generalizing all per-radio calculations can wait for module extraction unless a dedicated prompt asks for it.
+- Suggested fix scope: The historical Step 5 option was a small explicit guard for inferred `radio_number > 2`. The completed conversion and module extraction instead generalized the existing per-radio workflow, as recorded under Remaining caveats below.
 - Suggested validation/test: Add a tiny synthetic dataframe or fixture slice with three inferred radio groups and assert the current stage fails with a clear unsupported-radio message.
 - Safe to fix before notebook conversion: Partially. A guard is safe; changing the analysis to support arbitrary radios is broader.
 - Recommended order: 4
@@ -222,22 +229,22 @@ Conversion status: `analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_r
 - Safe to fix before notebook conversion: Documentation or explicit validation is safe; full native support is not.
 - Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `process_pcapng.py`, `README.md`, `docs/current_pipeline.md`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_process_pcapng_windows.py -q` passed, including the known-good validation over the three capture test files.
-- Remaining caveats: Full native/non-Aruba analysis support remains an important future feature, but it still needs a dedicated mapping/adaptation design after the current bug fixes and refactoring.
+- Remaining caveats: Full native/non-Aruba analysis support remains an important future feature and needs a dedicated mapping/adaptation design in a separately approved post-refactor project.
 - Recommended order: 14
 
 ### 15. Grouped-data cleanup and analysis use different timezone assumptions
 
 - Status: validation/documentation added; canonical timestamp normalization still deferred.
 - Category: behavior-risk
-- Evidence: `group_data_cleanup.py` localizes naive `aruba_erm.time` values to `PLOT_TIMEZONE`, but parses non-datetime values with `utc=True` first. `analyze_data.ipynb`, code cell 0, formerly localized naive beacon timestamps to UTC and then converted to `TIMEZONE`. `samples.py` localizes class sessions to `TIMEZONE`. Beacon inputs and class schedule inputs may arrive in varying timestamp/time formats, and that broader normalization problem should be revisited after conversion to native Python.
+- Evidence: `group_data_cleanup.py` localizes naive `aruba_erm.time` values to `PLOT_TIMEZONE`, but parses non-datetime values with `utc=True` first. `analyze_data.ipynb`, code cell 0, formerly localized naive beacon timestamps to UTC and then converted to `TIMEZONE`. `samples.py` localizes class sessions to `TIMEZONE`. Beacon inputs and class schedule inputs may arrive in varying timestamp/time formats, and that broader normalization problem remains in the post-refactor design backlog.
 - Why it matters: The same grouped parquet can land at different wall-clock times depending on whether cleanup was run first, whether timestamps were strings or datetime dtype, and whether datetime values were naive or timezone-aware.
 - Risk level: high
-- Suggested fix scope: Do not change timestamp semantics without a dedicated timezone fixture and a canonical timezone contract. Implemented pre-conversion guard: `analyze_data.ipynb` now validates grouped AP input before analysis and fails fast unless `aruba_erm.time` is already a timezone-aware datetime dtype. Documentation now states that varied beacon timestamp strings, naive datetimes, and broader class schedule time parsing need a dedicated normalization design after notebook conversion.
+- Suggested fix scope: Do not change timestamp semantics without a dedicated timezone fixture and a canonical timezone contract. Implemented pre-conversion guard: `analyze_data.ipynb` now validates grouped AP input before analysis and fails fast unless `aruba_erm.time` is already a timezone-aware datetime dtype. Varied beacon timestamp strings, naive datetimes, and broader class schedule time parsing now require a separately approved post-refactor normalization project.
 - Suggested validation/test: Added focused schema tests for timezone-aware grouped input, timezone-naive grouped input, and string timestamp grouped input. Future semantic validation should build a small grouped parquet fixture with known naive and timezone-aware timestamps, run cleanup plus `analyze_data`, and assert expected class-session inclusion.
 - Safe to fix before notebook conversion: No for semantic timestamp changes; yes for explicit validation and documentation.
 - Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `README.md`, `docs/current_pipeline.md`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed; `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800 -q` passed.
-- Remaining caveats: The guard does not normalize varied timestamp formats. `group_data_cleanup.py` still uses `PLOT_TIMEZONE`, while class schedule processing and analysis use `TIMEZONE`; the final contract should be designed after notebook conversion.
+- Remaining caveats: The guard does not normalize varied timestamp formats. `group_data_cleanup.py` still uses `PLOT_TIMEZONE`, while class schedule processing and analysis use `TIMEZONE`; the final contract remains in `docs/post_refactor_design.md`.
 - Recommended order: 15
 
 ### 16. SSID filters ignore `SSID1` and `SSID2`
@@ -277,7 +284,7 @@ Conversion status: `analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_r
 - Evidence: `analyze_class_sessions.ipynb`, code cell 1, updates `duration` and `current_streak` only inside `if not bin_slice.empty:`. A high bin adds one `BEACON_RATE` interval, a nonempty bin with no value above the threshold resets the streak, and an empty bin neither adds time nor resets the streak. The same cell filters by class time and `location` without grouping by AP or radio, then uses `(bin_slice['wlan.qbss.cu'] > threshold).any()`, so the current metric is location-wide and a bin is high when any classroom beacon exceeds the threshold.
 - Why it matters: High observations on opposite sides of missing intervals can be reported as one streak even though the missing-bin time is not included in its duration. Because the calculation is location-wide, high observations can also come from different radios, and non-high observations from one radio can reset a streak that would be missing for another radio.
 - Risk level: medium
-- Suggested fix scope: No pre-refactor behavior change. After refactoring, calculate streaks per stable radio identity, expose at least a lower measure that treats missing intervals as non-high and an upper measure that imputes clearly defined high-adjacent gaps, and make the classroom value the longest streak from any single radio in the location. Track beacon coverage and gap lengths alongside both measures. See `docs/post_refactor_design.md`.
+- Suggested fix scope: No behavior change was made during the refactor. In a separately approved post-refactor project, calculate streaks per stable radio identity, expose at least a lower measure that treats missing intervals as non-high and an upper measure that imputes clearly defined high-adjacent gaps, and make the classroom value the longest streak from any single radio in the location. Track beacon coverage and gap lengths alongside both measures. See `docs/post_refactor_design.md`.
 - Suggested validation/test: Before changing behavior, add characterization fixtures for high/empty/high, high/empty/non-high, alternating high observations on different radios, and a missing interval for one radio while another radio reports non-high. Future tests should assert both missing-data assumptions per radio and the class-level maximum across radios.
 - Safe to fix before notebook conversion: No for analysis semantics; documentation of current behavior is safe.
 - Recommended order: 18
@@ -289,13 +296,13 @@ Conversion status: `analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_r
 - Evidence: `analyze_data.ipynb`, code cell 0, derives `radio_number` by sorting `wlan.ta_int` and incrementing when adjacent MAC integers differ by more than 1. The notebook now reads `AP_PLATFORM` and calls `validate_radio_inference_platform()` before checking or creating analysis outputs; any value other than `aruba`, including an unset value, raises a clear error before the MAC-gap algorithm runs.
 - Why it matters: A different vendor, MAC allocation pattern, or missing transmitter can split or merge radios incorrectly and affect `total_scount`, plots, and radio summaries.
 - Risk level: high
-- Suggested fix scope: Implemented pre-conversion scope is an explicit `AP_PLATFORM=aruba` precondition plus documentation. Replacing radio inference should wait for module extraction or a dedicated analysis prompt.
+- Suggested fix scope: Implemented pre-conversion scope is an explicit `AP_PLATFORM=aruba` precondition plus documentation. The current algorithm is now isolated in `aruba_radio_inference.py`; replacing it still requires a dedicated analysis prompt.
 - Suggested validation/test: Added a focused test that rejects unset and non-Aruba platforms, accepts normalized Aruba configuration, and pins the validation ahead of output checks. Added `radio_number` and `radio_count` to the golden numeric fingerprint so current inferred counts are regression-checked. Add a small targeted fixture if a future channel-based implementation is selected.
 - Safe to fix before notebook conversion: Yes for the implemented platform guard and regression fingerprint; no for an algorithm change.
 - Recommended order: 19
 - Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `tests/pipeline_harness.py`, `tests/golden/fingerprints.json`, `docs/current_pipeline.md`, `docs/bug_backlog.md`.
 - Validation run: `.\.venv\Scripts\python.exe -m pytest tests/test_notebook_config_paths.py -q` passed (15 tests); `.\.venv\Scripts\python.exe -m pytest tests/test_analysis_forward.py --analysis-timeout 1800 -q` passed in 22m09s with existing analysis outputs unchanged and inferred `radio_number`/`radio_count` metrics pinned in the golden fingerprint.
-- Remaining caveats: `AP_PLATFORM=aruba` is an operator-supplied precondition, not proof that the input contains a complete or correctly grouped Aruba transmitter allocation. Missing transmitter MACs can still split one radio, and adjacent allocations can still merge radios. Channel-based or vendor-neutral radio identity remains deferred until after notebook conversion.
+- Remaining caveats: `AP_PLATFORM=aruba` is an operator-supplied precondition, not proof that the input contains a complete or correctly grouped Aruba transmitter allocation. Missing transmitter MACs can still split one radio, and adjacent allocations can still merge radios. Channel-based or vendor-neutral radio identity remains deferred to the post-refactor design backlog.
 
 ### 20. Missing CU values are converted to measured zero
 
@@ -306,8 +313,8 @@ Conversion status: `analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_r
 - In-scope impact: The five `Data/grouped_data` AP files contain 0 null-CU rows out of 8,403,745 total rows. Restricting those files to sampled class location/time intervals produces 0/2,351,053 null rows, and reproducing the notebook's per-transmitter `0.95 * BEACON_RATE` deduplication produces 0/2,334,170 affected rows. The current sampled analysis and its numerical outputs are therefore not changed by the guard.
 - Why it matters: A received beacon with absent or unparseable CU metadata becomes indistinguishable from a beacon that explicitly measured CU as zero. The imputed zero can lower average, median, and minimum CU; act as a non-high observation that resets a radio or class streak; and make a bin appear to contain observed low-CU data rather than unknown CU. Downstream files cannot count or audit which zero values were imputed.
 - Risk level: high
-- Suggested fix scope: Implemented pre-conversion scope is fail-fast validation immediately before the existing fill, which prevents silent CU inference without changing schemas or analysis math. After refactoring, preserve CU as a nullable value or retain an explicit `cu_missing` provenance field, distinguish missing-CU rows from missing beacon intervals, and define how each state participates in summaries and lower/upper streak measures. Keep summary outputs traceable to the affected source rows. See `docs/post_refactor_design.md`.
-- Suggested validation/test: Added a focused fixture containing both missing CU and measured zero, asserted missing CU raises before the fill, asserted measured zero is accepted, and pinned validation order ahead of `fillna(0)`. Future refactor fixtures should also include a fully empty expected interval and high CU, preserve all four states, and assert each streak assumption follows its documented contract.
+- Suggested fix scope: Implemented pre-conversion scope is fail-fast validation immediately before the existing fill, which prevents silent CU inference without changing schemas or analysis math. In a separately approved post-refactor project, preserve CU as a nullable value or retain an explicit `cu_missing` provenance field, distinguish missing-CU rows from missing beacon intervals, and define how each state participates in summaries and lower/upper streak measures. Keep summary outputs traceable to the affected source rows. See `docs/post_refactor_design.md`.
+- Suggested validation/test: Added a focused fixture containing both missing CU and measured zero, asserted missing CU raises before the fill, asserted measured zero is accepted, and pinned validation order ahead of `fillna(0)`. Future redesign fixtures should also include a fully empty expected interval and high CU, preserve all four states, and assert each streak assumption follows its documented contract.
 - Safe to fix before notebook conversion: Yes for the implemented fail-fast guard because current in-scope data has no null CU and analysis math is unchanged. No for nullable schema or semantic changes before conversion.
 - Recommended order: 20
 - Files changed: `analyze_data.ipynb`, `tests/test_notebook_config_paths.py`, `README.md`, `docs/current_pipeline.md`, `docs/post_refactor_design.md`, `docs/bug_backlog.md`.
