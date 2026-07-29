@@ -64,7 +64,7 @@ do
 
         echo "Starting new captures."
 
-        tshark -i wlan0 -w /var/tmp/"$LOCATION".pcap -g -a duration:86400 -b interval:3600 -b nametimenum:2 -f "type mgt subtype beacon and ether src $BSSID"
+        tshark -i wlan0 -F pcapng -w /var/tmp/"$LOCATION".pcapng -g -a duration:86400 -b interval:3600 -b nametimenum:2 -f "type mgt subtype beacon and ether src $BSSID"
 
         echo $i
 done
