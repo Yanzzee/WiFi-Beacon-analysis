@@ -20,6 +20,11 @@ from analysis_io import (
     combine_all_class_beacons as _combine_all_class_beacons,
 )
 from analysis_logging import open_analysis_log
+from analysis_pipeline import (
+    analyze_ap_class_session as _analyze_ap_class_session,
+    process_class_samples as _process_class_samples,
+    validate_no_missing_cu as _validate_no_missing_cu,
+)
 from aruba_radio_inference import (
     add_aruba_transmitter_integers,
     assign_aruba_radio_numbers,
@@ -87,168 +92,42 @@ def add_to_all_class_beacons(filtered_df):
 
 
 def validate_no_missing_cu(df, ap_name, start_time, end_time):
-    missing_mask = df["wlan.qbss.cu"].isna()
-    missing_count = int(missing_mask.sum())
-    if missing_count == 0:
-        return
-
-    total_count = len(df)
-    missing_percent = (missing_count / total_count) * 100 if total_count else 0
-    example_columns = [
-        column
-        for column in ("aruba_erm.time", "wlan.ta", "wlan.bssid", "wlan.ssid")
-        if column in df.columns
-    ]
-    examples = df.loc[missing_mask, example_columns].head(5).to_dict("records")
-    raise ValueError(
-        f"Grouped AP data for {ap_name} from {start_time} to {end_time} contains "
-        f"{missing_count} of {total_count} deduplicated in-scope rows "
-        f"({missing_percent:.4f}%) with missing wlan.qbss.cu. Current analysis "
-        "does not define missing-CU semantics and would otherwise convert these "
-        f"values to measured zero. Example source rows: {examples}"
+    return _validate_no_missing_cu(
+        df,
+        ap_name,
+        start_time,
+        end_time,
     )
 
 
 # Receives the information for each AP and class time information
 # Reads the file and processes the information for that time/AP
 def graph(ap_name, start_time, end_time, location, course, enrolled, capacity, ap_count, ap_df, radio_summary_df):
-
-    #log_and_print("")
-    log_and_print("\n-----------------------------------------------------------------\n")
-    log_and_print(f"AP name: {ap_name}")
-
-    # copy the AP df for manipulation
-    filtered_df = ap_df.copy() # this is needed, otherwise the original df is modified
-
-    # time column
-    filtered_df.reset_index(inplace=True) #reset index so that the timestamp is in a column instead
-
-    # Fix timestamp consistency
-    # Localize only if the timestamps are naive
-    if filtered_df["aruba_erm.time"].dt.tz is None:
-        filtered_df["aruba_erm.time"] = filtered_df["aruba_erm.time"].dt.tz_localize("UTC")
-
-    # Convert to UTC-7
-    filtered_df["aruba_erm.time"] = filtered_df["aruba_erm.time"].dt.tz_convert(TIMEZONE) # update to use env file
-
-    # Filter the DataFrame by the date/time range
-    filtered_df = filtered_df[(filtered_df['aruba_erm.time'] >= start_time) & (filtered_df['aruba_erm.time'] <= end_time)]
-
-    # return if there's no data
-    if filtered_df.empty:
-        log_and_print(f"No data available for {ap_name} from {start_time} to {end_time}.")
-        return
-
-    filtered_df = remove_duplicate_beacons(filtered_df, BEACON_RATE)
-
-    # Preserve the distinction between missing CU and measured zero.
-    # Current CU analysis semantics require observed values for all retained rows.
-    validate_no_missing_cu(filtered_df, ap_name, start_time, end_time)
-
-    # Ensure the DataFrame is sorted by timestamp
-    filtered_df = filtered_df.sort_values(by="aruba_erm.time").reset_index(drop=True)
-
-
-    # Convert wlan.qbss.scount to integer, handling NaN values
-    filtered_df["wlan.qbss.scount"] = filtered_df["wlan.qbss.scount"].fillna(0).astype(int)
-    filtered_df["wlan.qbss.cu"] = filtered_df["wlan.qbss.cu"].fillna(0).astype(int)
-    filtered_df["wlan.qbss.adc"] = filtered_df["wlan.qbss.adc"].fillna(0).astype(int)
-
-    # Convert Aruba transmitter MACs to integers for radio allocation.
-    filtered_df = add_aruba_transmitter_integers(filtered_df)
-    
-    
-
-    # Check Radio and SSID count
-    # Verify all values in wlan.vs.aruba.ap_name are the same
-    if filtered_df["wlan.vs.aruba.ap_name"].nunique() != 1:
-        raise ValueError("Values in wlan.vs.aruba.ap_name are not all the same.")
-    #else:
-        #wlan_ap_name_value = filtered_df["wlan.vs.aruba.ap_name"].iloc[0]
-        #print(f"Data from {wlan_ap_name_value}")
-        
-
-
-    # Count unique transmit addresses and corresponding SSIDs
-    # ensures that data is clean and shows multi-radio APs
-    # Group by wlan.ta and collect the corresponding wlan.ssid values
-    #bssid_info = (
-    #    filtered_df.groupby("wlan.ta")["wlan.ssid"]
-    #    .unique()  # Get unique SSIDs for each wlan.ta
-    #    .reset_index()
-        #.rename(columns={"wlan.ta": "transmit_address", "wlan.ssid": "SSIDs"})
-    #)
-
-    # Count the number of unique BSSIDs, SSIDs
-    #unique_bssid_count = bssid_info["wlan.ta"].nunique()
-    bssid_count = filtered_df["wlan.ta"].nunique() #bssid count for all radios until divided below
-    ssid_count = filtered_df["wlan.ssid"].nunique()
-
-
-
-    # Assign radio numbers using the current Aruba adjacent-MAC rule.
-    filtered_df = assign_aruba_radio_numbers(filtered_df)
-
-    # Apply the function to calculate total_scount
-    filtered_df = calculate_total_scount(filtered_df)
-
-    # send the df to aggregate function
-    add_to_all_class_beacons(filtered_df)
-
-    #print number of radios
-    radio_numbers = sorted(filtered_df["radio_number"].dropna().unique())
-    radio_count = len(radio_numbers)
-    #print(f"Number or 5GHz radios: {radio_count}")
-    log_and_print(f"Number of radios: {radio_count}")
-    #bssid_count = bssid_count / radio_count if radio_count != 0 else 0 # assumes that all radios have the same number of BSSIDs
-
-    # Output the BSSID results
-    log_and_print(f"Number of BSSIDs: {bssid_count}")
-    log_and_print(f"Number of SSIDs: {ssid_count}")
-    #print("List of addresses and their corresponding SSIDs:")
-    #print(bssid_info)
-
-    for current_radio_number in radio_numbers:
-        radio_number_value = int(current_radio_number)
-        filtered_radio_df = filtered_df[filtered_df["radio_number"] == current_radio_number]
-        if filtered_radio_df.empty:
-            continue
-
-        total_beacons, high_cu_beacons, percent_high_cu, highest_cu, median_cu, lowest_cu, high_scount, median_scount, low_scount, longest_duration_high_cu = analyze_radio_group(
-            filtered_radio_df,
-            radio_number_value,
-            BEACON_RATE,
-            log_and_print,
-        )
-
-        # SSID-specific station-count plots are currently disabled for performance.
-        eduroam_radio_df = None
-        byu_wifi_radio_df = None
-        plot_file = plot_channel_stations(
-            filtered_radio_df,
-            eduroam_radio_df,
-            byu_wifi_radio_df,
-            ap_name,
-            start_time,
-            end_time,
-            PLOTS_FOLDER,
-            PLOT_TIMEZONE,
-        )
-
-        radio_summary_df.loc[len(radio_summary_df)] = [
-        course, location, ap_name, radio_number_value, start_time, end_time,
-        capacity, enrolled, ap_count, radio_count, bssid_count, ssid_count, total_beacons,
-        high_cu_beacons, percent_high_cu, highest_cu, median_cu, lowest_cu,
-        high_scount, median_scount, low_scount, longest_duration_high_cu, plot_file
-        ]
-
-    if radio_count == 1:
-        log_and_print(f"{ap_name} has only one radio")
-
-    #print()
-    
-    # return df not needed since it is directly modified
-    #return radio_summary_df
+    return _analyze_ap_class_session(
+        ap_name,
+        start_time,
+        end_time,
+        location,
+        course,
+        enrolled,
+        capacity,
+        ap_count,
+        ap_df,
+        radio_summary_df,
+        timezone=TIMEZONE,
+        beacon_rate=BEACON_RATE,
+        plots_folder=PLOTS_FOLDER,
+        plot_timezone=PLOT_TIMEZONE,
+        log_and_print=log_and_print,
+        remove_duplicate_beacons=remove_duplicate_beacons,
+        add_aruba_transmitter_integers=add_aruba_transmitter_integers,
+        assign_aruba_radio_numbers=assign_aruba_radio_numbers,
+        calculate_total_scount=calculate_total_scount,
+        add_to_all_class_beacons=add_to_all_class_beacons,
+        analyze_radio_group=analyze_radio_group,
+        plot_channel_stations=plot_channel_stations,
+        validate_missing_cu=validate_no_missing_cu,
+    )
 
 
 # Write to parquet files for each AP that can be combined later
@@ -306,104 +185,27 @@ def main():
 
 
 def process(sample_aps_df, sample_classes_df, sample_classrooms_df):
-    # will loop for each class row, iterate through each AP at that location
-    # this will go through ALL data and take a while
-
     global all_class_beacons_df
 
-    #create a separate dataframe for aggregate radio information
-    # Define column names and data types
-    columns = {
-        "subject": str,
-        "location": str,
-        "AP_hostname": str,
-        "radio_number": int,
-        "start_time": "datetime64[ns]",
-        "end_time": "datetime64[ns]",
-        "capacity": int,
-        "enrolled": int,
-        "AP_count": int,
-        "radio_count": int,
-        "bssid_count": int,
-        "ssid_count": int,
-        "total_beacons": int,
-        "high_cu_beacons": int,
-        "percent_high_cu": float,
-        "highest_cu": int,
-        "median_cu": int,
-        "lowest_cu": int,
-        "high_scount": int,
-        "median_scount": int,
-        "low_scount": int,
-        "longest_duration_high_cu": float,
-        "graph_filename": str
-    }
+    def get_all_class_beacons():
+        return all_class_beacons_df
 
-    # Create an empty DataFrame with specified columns and data types
-    radio_summary_df = pd.DataFrame({col: pd.Series(dtype=dtype) for col, dtype in columns.items()})
+    def clear_all_class_beacons():
+        global all_class_beacons_df
+        all_class_beacons_df = all_class_beacons_df.iloc[0:0]
 
-    # Display the empty DataFrame
-    #print(radio_summary_df.head)
-    
-
-    # Initialize the global DataFrame for aggregate analysis
-    #all_class_beacons_df = pd.DataFrame() # moved to top
-
-    # Define the base directory for the files
-    base_dir = GROUPED_DATA_FOLDER
-
-    # Initialize variables to ensure it's defined
-    ap_df = pd.DataFrame()
-    AP_name = ""
-
-
-    # Loop through each row in sample_classes_df
-    for index, class_row in tqdm(sample_classes_df.iterrows(), total=len(sample_classes_df)):
-        location = class_row['location']
-        start_time = class_row['start_time']
-        end_time = class_row['end_time']
-        course = class_row['course']
-        enrolled = class_row['enrolled']
-        capacity = class_row['capacity']
-        ap_count = sample_classrooms_df.loc[sample_classrooms_df['Location'] == location, 'ap_count'].iloc[0]
-
-
-        log_and_print("\n-----------------------------------------------------------------")
-        log_and_print("-----------------------------------------------------------------\n")
-        log_and_print(f"Subject: {course}")
-        log_and_print(f"Location: {location}")
-        log_and_print(f"Start Time: {start_time}")
-        log_and_print(f"End Time: {end_time}")
-        log_and_print(f"Capacity: {capacity}")
-        log_and_print(f"Enrolled: {enrolled}")
-        log_and_print(f"Number of APs: {ap_count}")
-        log_and_print("")
-        
-        # Sub loop for each matching AP in sample_aps_df
-        for ap_index, ap_row in sample_aps_df.iterrows():
-            building_room = ap_row['Building-Room']
-            
-            # Check if the building-room matches the location
-            if building_room == location:
-                    
-                if AP_name != ap_row['Hostname']:
-                    AP_name = ap_row['Hostname']
-                    file_name = AP_name + ".parquet" #temp using cleaned up files
-                    # Load the data for the AP file into a dataframe
-                    ap_df = pd.read_parquet(
-                        f"{base_dir}/{file_name}",
-                        engine="pyarrow",
-                    )
-                    validate_grouped_ap_schema(ap_df, f"{base_dir}/{file_name}", AP_name)
-                
-                # Call the graph function with the variables (do not need to set to a variable in order to update radio_summary_df)
-                # Graph function will remove duplicates, sort, clean the data, add to all_class_beacons_df, calculate station counts, create plots, and do some analysis
-                graph(AP_name, start_time, end_time, location, course, enrolled, capacity, ap_count, ap_df, radio_summary_df)
-            #write to parquet file
-            append_to_parquet(AP_name, all_class_beacons_df) #writes the file for the AP
-            all_class_beacons_df = all_class_beacons_df.iloc[0:0]  # Clear contents of the df, otherwise it would build to become all
-
-    # write summary dataframe to a file so it can be analyzed further later
+    radio_summary_df = _process_class_samples(
+        sample_aps_df,
+        sample_classes_df,
+        sample_classrooms_df,
+        grouped_data_folder=GROUPED_DATA_FOLDER,
+        log_and_print=log_and_print,
+        graph=graph,
+        append_to_parquet=append_to_parquet,
+        get_all_class_beacons=get_all_class_beacons,
+        clear_all_class_beacons=clear_all_class_beacons,
+        validate_grouped_ap_schema=validate_grouped_ap_schema,
+    )
     radio_summary_df.to_parquet(f'{DATA_FOLDER}/radio_summary.parquet')
 
 

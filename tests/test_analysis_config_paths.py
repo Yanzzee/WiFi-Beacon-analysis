@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ast
+import inspect
 import io
 from pathlib import Path
 
@@ -620,12 +621,11 @@ def test_analyze_data_rejects_missing_cu_before_zero_fill(monkeypatch, tmp_path)
         end_time,
     )
 
-    graph_source = _find_top_level_function_source(
-        _analyze_data_code_source(),
-        "graph",
-    )
-    assert graph_source.index("validate_no_missing_cu(") < graph_source.index(
-        'filtered_df["wlan.qbss.cu"] = filtered_df["wlan.qbss.cu"].fillna(0)'
+    from analysis_pipeline import analyze_ap_class_session
+
+    graph_source = inspect.getsource(analyze_ap_class_session)
+    assert graph_source.index("validate_missing_cu(") < graph_source.index(
+        'filtered_df["wlan.qbss.cu"] = ('
     )
 
 

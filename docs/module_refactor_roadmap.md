@@ -690,9 +690,30 @@ For each pass:
 - Confirmed focused tests, the full non-golden suite, and analysis-forward
   golden fingerprints pass.
 
-Use separate remaining passes in this order:
+#### Pass 4: `analyze_data.py` — completed
 
-1. `analyze_data.py`
+- Added `analysis_pipeline.py` with the primary stage's AP/class-session
+  analysis, missing-CU validation, radio-summary schema initialization, and
+  sample/class/AP traversal.
+- Reduced the operational portion of `analyze_data.py` to configuration,
+  compatibility wrappers, preflight and input loading, ordered pipeline calls,
+  persistence, and logging lifetime management. Retained the converted
+  notebook's non-operational debug cells as comments.
+- Preserved all existing public callable names and the global
+  `all_class_beacons_df` accumulator, including runtime monkeypatch behavior
+  used by current callers and tests.
+- Preserved timezone handling, inclusive session bounds, deduplication and
+  missing-CU validation order, Aruba radio allocation, summary schema and row
+  order, plotting calls, the AP traversal/read policy, per-AP append/clear
+  behavior, validation and output write order, and exception text.
+- Added the new module to isolated analysis-forward workspaces and added
+  focused tests for the radio-summary schema and traversal behavior while
+  retaining direct compatibility-wrapper coverage.
+- Confirmed focused tests, the full non-golden suite, and analysis-forward
+  golden fingerprints pass.
+
+This completes Step 21 and the module-refactor phase. All active analysis
+scripts are now standalone orchestration layers over directly tested modules.
 
 ## Refactor Completion Boundary
 

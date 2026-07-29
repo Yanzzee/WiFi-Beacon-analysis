@@ -20,6 +20,7 @@ ANALYSIS_MODULES: tuple[str, ...] = (
     "analysis_config.py",
     "analysis_io.py",
     "analysis_logging.py",
+    "analysis_pipeline.py",
     "analysis_statistics.py",
     "analysis_validation.py",
     "aruba_radio_inference.py",
