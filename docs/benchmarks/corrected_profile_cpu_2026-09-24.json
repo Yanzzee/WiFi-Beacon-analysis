@@ -1,0 +1,957 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-09-24T15:10:44.406693+00:00",
+  "purpose": "narrow_corrected_output_cpu_allocation_profile",
+  "workload": {
+    "name": "one_class_1024ms",
+    "class_count": 1,
+    "radio_count": 3,
+    "bssids_per_radio": 4,
+    "class_duration_seconds": 3000,
+    "bin_width_us": 1024000
+  },
+  "input_rows": {
+    "class_bins": 2930,
+    "identity": 12,
+    "selected_observations": 33944
+  },
+  "allocation_profile_enabled": false,
+  "phases": [
+    {
+      "name": "selected_validation_and_logical_build",
+      "wall_seconds": 4.894608200062066,
+      "cpu_seconds": 4.65625,
+      "baseline_rss_bytes": 114696192,
+      "peak_rss_bytes": 179126272,
+      "peak_incremental_rss_bytes": 64430080,
+      "python_traced_current_bytes": null,
+      "python_traced_peak_bytes": null,
+      "arrow_allocated_before_bytes": 0,
+      "arrow_allocated_after_bytes": 0,
+      "arrow_allocated_delta_bytes": 0,
+      "top_cpu_functions": [
+        {
+          "function": "profile_corrected_outputs.py:282(<lambda>)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.009059300000000001,
+          "cumulative_seconds": 4.8945289,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:160(build_selected_observations)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.3065551,
+          "cumulative_seconds": 4.8854696,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:75(_is_missing)",
+          "primitive_calls": 2036640,
+          "total_calls": 2036640,
+          "self_seconds": 0.6729283,
+          "cumulative_seconds": 1.5381651,
+          "project_function": true
+        },
+        {
+          "function": "_decorators.py:325(wrapper)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 1.1400000000000001e-05,
+          "cumulative_seconds": 1.3030737000000001,
+          "project_function": false
+        },
+        {
+          "function": "frame.py:2063(to_dict)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 2.93e-05,
+          "cumulative_seconds": 1.303061,
+          "project_function": false
+        },
+        {
+          "function": "to_dict.py:78(to_dict)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 0.4815052,
+          "cumulative_seconds": 1.3021331,
+          "project_function": false
+        },
+        {
+          "function": "selected_observation_output.py:142(_rows_to_table)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.3983882,
+          "cumulative_seconds": 1.1691013000000001,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:128(_utc_timestamp)",
+          "primitive_calls": 169720,
+          "total_calls": 169720,
+          "self_seconds": 0.6575939000000001,
+          "cumulative_seconds": 0.8356259,
+          "project_function": true
+        },
+        {
+          "function": "missing.py:101(isna)",
+          "primitive_calls": 1898144,
+          "total_calls": 1898144,
+          "self_seconds": 0.33324960000000003,
+          "cumulative_seconds": 0.7328515000000001,
+          "project_function": false
+        },
+        {
+          "function": "cast.py:182(maybe_box_native)",
+          "primitive_calls": 1527480,
+          "total_calls": 1527480,
+          "self_seconds": 0.5432383000000001,
+          "cumulative_seconds": 0.6741376,
+          "project_function": false
+        },
+        {
+          "function": "selected_observation_output.py:103(_integer)",
+          "primitive_calls": 305496,
+          "total_calls": 305496,
+          "self_seconds": 0.2105399,
+          "cumulative_seconds": 0.508484,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:87(_required_text)",
+          "primitive_calls": 305496,
+          "total_calls": 305496,
+          "self_seconds": 0.11750940000000001,
+          "cumulative_seconds": 0.40912760000000004,
+          "project_function": true
+        },
+        {
+          "function": "missing.py:184(_isna)",
+          "primitive_calls": 1898144,
+          "total_calls": 1898144,
+          "self_seconds": 0.39955490000000005,
+          "cumulative_seconds": 0.3996019,
+          "project_function": false
+        },
+        {
+          "function": "selected_observation_output.py:96(_optional_text)",
+          "primitive_calls": 169720,
+          "total_calls": 169720,
+          "self_seconds": 0.058134700000000004,
+          "cumulative_seconds": 0.19328240000000002,
+          "project_function": true
+        },
+        {
+          "function": "~:0(<built-in method builtins.isinstance>)",
+          "primitive_calls": 2037338,
+          "total_calls": 2037350,
+          "self_seconds": 0.1741716,
+          "cumulative_seconds": 0.1748068,
+          "project_function": false
+        },
+        {
+          "function": "datetimes.py:645(__iter__)",
+          "primitive_calls": 339450,
+          "total_calls": 339450,
+          "self_seconds": 0.136887,
+          "cumulative_seconds": 0.13712470000000002,
+          "project_function": false
+        },
+        {
+          "function": "frame.py:694(__init__)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 3.2000000000000005e-05,
+          "cumulative_seconds": 0.1362643,
+          "project_function": false
+        },
+        {
+          "function": "~:0(<built-in method builtins.hasattr>)",
+          "primitive_calls": 1898171,
+          "total_calls": 1898171,
+          "self_seconds": 0.13245610000000002,
+          "cumulative_seconds": 0.13245610000000002,
+          "project_function": false
+        }
+      ],
+      "top_project_cpu_functions": [
+        {
+          "function": "profile_corrected_outputs.py:282(<lambda>)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.009059300000000001,
+          "cumulative_seconds": 4.8945289,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:160(build_selected_observations)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.3065551,
+          "cumulative_seconds": 4.8854696,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:75(_is_missing)",
+          "primitive_calls": 2036640,
+          "total_calls": 2036640,
+          "self_seconds": 0.6729283,
+          "cumulative_seconds": 1.5381651,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:142(_rows_to_table)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.3983882,
+          "cumulative_seconds": 1.1691013000000001,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:128(_utc_timestamp)",
+          "primitive_calls": 169720,
+          "total_calls": 169720,
+          "self_seconds": 0.6575939000000001,
+          "cumulative_seconds": 0.8356259,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:103(_integer)",
+          "primitive_calls": 305496,
+          "total_calls": 305496,
+          "self_seconds": 0.2105399,
+          "cumulative_seconds": 0.508484,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:87(_required_text)",
+          "primitive_calls": 305496,
+          "total_calls": 305496,
+          "self_seconds": 0.11750940000000001,
+          "cumulative_seconds": 0.40912760000000004,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:96(_optional_text)",
+          "primitive_calls": 169720,
+          "total_calls": 169720,
+          "self_seconds": 0.058134700000000004,
+          "cumulative_seconds": 0.19328240000000002,
+          "project_function": true
+        }
+      ],
+      "top_retained_project_allocations": []
+    },
+    {
+      "name": "selected_partition_arrow_and_parquet_write",
+      "wall_seconds": 1.886060299933888,
+      "cpu_seconds": 1.828125,
+      "baseline_rss_bytes": 179195904,
+      "peak_rss_bytes": 192708608,
+      "peak_incremental_rss_bytes": 13512704,
+      "python_traced_current_bytes": null,
+      "python_traced_peak_bytes": null,
+      "arrow_allocated_before_bytes": 0,
+      "arrow_allocated_after_bytes": 0,
+      "arrow_allocated_delta_bytes": 0,
+      "top_cpu_functions": [
+        {
+          "function": "profile_corrected_outputs.py:288(<lambda>)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.0015406,
+          "cumulative_seconds": 1.8859990000000002,
+          "project_function": true
+        },
+        {
+          "function": "profile_corrected_outputs.py:216(_write_selected_logical)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.0219516,
+          "cumulative_seconds": 1.8844584000000002,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:142(_rows_to_table)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.386919,
+          "cumulative_seconds": 1.1335697,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:75(_is_missing)",
+          "primitive_calls": 1052264,
+          "total_calls": 1052264,
+          "self_seconds": 0.3284385,
+          "cumulative_seconds": 0.7422420000000001,
+          "project_function": true
+        },
+        {
+          "function": "_decorators.py:325(wrapper)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 5.1e-06,
+          "cumulative_seconds": 0.6505893,
+          "project_function": false
+        },
+        {
+          "function": "frame.py:2063(to_dict)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 7.5e-06,
+          "cumulative_seconds": 0.6505838,
+          "project_function": false
+        },
+        {
+          "function": "to_dict.py:78(to_dict)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.23456900000000003,
+          "cumulative_seconds": 0.6505763,
+          "project_function": false
+        },
+        {
+          "function": "missing.py:101(isna)",
+          "primitive_calls": 984383,
+          "total_calls": 984383,
+          "self_seconds": 0.15521700000000002,
+          "cumulative_seconds": 0.3495376,
+          "project_function": false
+        },
+        {
+          "function": "cast.py:182(maybe_box_native)",
+          "primitive_calls": 780712,
+          "total_calls": 780712,
+          "self_seconds": 0.2768623,
+          "cumulative_seconds": 0.34459660000000003,
+          "project_function": false
+        },
+        {
+          "function": "missing.py:184(_isna)",
+          "primitive_calls": 984383,
+          "total_calls": 984383,
+          "self_seconds": 0.1943206,
+          "cumulative_seconds": 0.1943206,
+          "project_function": false
+        },
+        {
+          "function": "datetimes.py:645(__iter__)",
+          "primitive_calls": 169725,
+          "total_calls": 169725,
+          "self_seconds": 0.06921350000000001,
+          "cumulative_seconds": 0.0693113,
+          "project_function": false
+        },
+        {
+          "function": "~:0(<built-in method builtins.isinstance>)",
+          "primitive_calls": 782106,
+          "total_calls": 782108,
+          "self_seconds": 0.06795770000000001,
+          "cumulative_seconds": 0.06815410000000001,
+          "project_function": false
+        },
+        {
+          "function": "~:0(<built-in method builtins.hasattr>)",
+          "primitive_calls": 984396,
+          "total_calls": 984396,
+          "self_seconds": 0.0642799,
+          "cumulative_seconds": 0.0642813,
+          "project_function": false
+        },
+        {
+          "function": "core.py:1875(write_table)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 3.07e-05,
+          "cumulative_seconds": 0.0604719,
+          "project_function": false
+        },
+        {
+          "function": "core.py:1092(write_table)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.0533085,
+          "cumulative_seconds": 0.0533085,
+          "project_function": false
+        },
+        {
+          "function": "managers.py:623(reindex_indexer)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 0.0001321,
+          "cumulative_seconds": 0.0088827,
+          "project_function": false
+        },
+        {
+          "function": "blocks.py:1287(take_nd)",
+          "primitive_calls": 16,
+          "total_calls": 16,
+          "self_seconds": 5.81e-05,
+          "cumulative_seconds": 0.0084078,
+          "project_function": false
+        },
+        {
+          "function": "take.py:59(take_nd)",
+          "primitive_calls": 18,
+          "total_calls": 23,
+          "self_seconds": 5.5400000000000005e-05,
+          "cumulative_seconds": 0.0082882,
+          "project_function": false
+        }
+      ],
+      "top_project_cpu_functions": [
+        {
+          "function": "profile_corrected_outputs.py:288(<lambda>)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.0015406,
+          "cumulative_seconds": 1.8859990000000002,
+          "project_function": true
+        },
+        {
+          "function": "profile_corrected_outputs.py:216(_write_selected_logical)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.0219516,
+          "cumulative_seconds": 1.8844584000000002,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:142(_rows_to_table)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.386919,
+          "cumulative_seconds": 1.1335697,
+          "project_function": true
+        },
+        {
+          "function": "selected_observation_output.py:75(_is_missing)",
+          "primitive_calls": 1052264,
+          "total_calls": 1052264,
+          "self_seconds": 0.3284385,
+          "cumulative_seconds": 0.7422420000000001,
+          "project_function": true
+        }
+      ],
+      "top_retained_project_allocations": []
+    },
+    {
+      "name": "adr0004_summary_calculation",
+      "wall_seconds": 28.489182699937373,
+      "cpu_seconds": 27.765625,
+      "baseline_rss_bytes": 192770048,
+      "peak_rss_bytes": 195272704,
+      "peak_incremental_rss_bytes": 2502656,
+      "python_traced_current_bytes": null,
+      "python_traced_peak_bytes": null,
+      "arrow_allocated_before_bytes": 0,
+      "arrow_allocated_after_bytes": 0,
+      "arrow_allocated_delta_bytes": 0,
+      "top_cpu_functions": [
+        {
+          "function": "profile_corrected_outputs.py:294(<lambda>)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.0021142,
+          "cumulative_seconds": 28.4891259,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:602(build_corrected_summaries)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.160994,
+          "cumulative_seconds": 28.4870117,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:486(_radio_row)",
+          "primitive_calls": 3,
+          "total_calls": 3,
+          "self_seconds": 0.2226931,
+          "cumulative_seconds": 25.359694800000003,
+          "project_function": true
+        },
+        {
+          "function": "frame.py:6997(sort_values)",
+          "primitive_calls": 8491,
+          "total_calls": 8491,
+          "self_seconds": 0.1085041,
+          "cumulative_seconds": 17.8991306,
+          "project_function": false
+        },
+        {
+          "function": "sorting.py:301(lexsort_indexer)",
+          "primitive_calls": 8490,
+          "total_calls": 8490,
+          "self_seconds": 0.47649450000000004,
+          "cumulative_seconds": 13.44904,
+          "project_function": false
+        },
+        {
+          "function": "categorical.py:371(__init__)",
+          "primitive_calls": 76404,
+          "total_calls": 76404,
+          "self_seconds": 0.5640008000000001,
+          "cumulative_seconds": 12.510397500000002,
+          "project_function": false
+        },
+        {
+          "function": "indexing.py:1176(__getitem__)",
+          "primitive_calls": 58511,
+          "total_calls": 58511,
+          "self_seconds": 0.0828465,
+          "cumulative_seconds": 5.552524900000001,
+          "project_function": false
+        },
+        {
+          "function": "dtypes.py:220(__init__)",
+          "primitive_calls": 305616,
+          "total_calls": 305616,
+          "self_seconds": 0.1006185,
+          "cumulative_seconds": 4.7094169,
+          "project_function": false
+        },
+        {
+          "function": "indexing.py:1397(_getitem_axis)",
+          "primitive_calls": 50425,
+          "total_calls": 50425,
+          "self_seconds": 0.0913558,
+          "cumulative_seconds": 4.6408652,
+          "project_function": false
+        },
+        {
+          "function": "dtypes.py:373(_finalize)",
+          "primitive_calls": 305616,
+          "total_calls": 305616,
+          "self_seconds": 0.15236960000000002,
+          "cumulative_seconds": 4.6087984,
+          "project_function": false
+        },
+        {
+          "function": "algorithms.py:610(factorize)",
+          "primitive_calls": 76419,
+          "total_calls": 76419,
+          "self_seconds": 0.2445739,
+          "cumulative_seconds": 4.4632491000000005,
+          "project_function": false
+        },
+        {
+          "function": "dtypes.py:550(validate_categories)",
+          "primitive_calls": 152808,
+          "total_calls": 152808,
+          "self_seconds": 0.3474544,
+          "cumulative_seconds": 4.4016093000000005,
+          "project_function": false
+        },
+        {
+          "function": "~:0(<built-in method builtins.isinstance>)",
+          "primitive_calls": 11714819,
+          "total_calls": 11909086,
+          "self_seconds": 1.8939424,
+          "cumulative_seconds": 3.6168047000000003,
+          "project_function": false
+        },
+        {
+          "function": "indexing.py:1205(_getbool_axis)",
+          "primitive_calls": 16481,
+          "total_calls": 16481,
+          "self_seconds": 0.022514700000000002,
+          "cumulative_seconds": 3.2475193,
+          "project_function": false
+        },
+        {
+          "function": "generic.py:4159(xs)",
+          "primitive_calls": 110349,
+          "total_calls": 110349,
+          "self_seconds": 0.21723350000000002,
+          "cumulative_seconds": 2.9920660000000003,
+          "project_function": false
+        },
+        {
+          "function": "generic.py:1870(_get_label_or_level_values)",
+          "primitive_calls": 76405,
+          "total_calls": 76405,
+          "self_seconds": 0.19343700000000003,
+          "cumulative_seconds": 2.9065070000000004,
+          "project_function": false
+        },
+        {
+          "function": "frame.py:4062(__getitem__)",
+          "primitive_calls": 101408,
+          "total_calls": 101408,
+          "self_seconds": 0.2253931,
+          "cumulative_seconds": 2.6207113,
+          "project_function": false
+        },
+        {
+          "function": "generic.py:4142(_take_with_is_copy)",
+          "primitive_calls": 16482,
+          "total_calls": 16482,
+          "self_seconds": 0.028984600000000003,
+          "cumulative_seconds": 2.5527548,
+          "project_function": false
+        }
+      ],
+      "top_project_cpu_functions": [
+        {
+          "function": "profile_corrected_outputs.py:294(<lambda>)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.0021142,
+          "cumulative_seconds": 28.4891259,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:602(build_corrected_summaries)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.160994,
+          "cumulative_seconds": 28.4870117,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:486(_radio_row)",
+          "primitive_calls": 3,
+          "total_calls": 3,
+          "self_seconds": 0.2226931,
+          "cumulative_seconds": 25.359694800000003,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:336(_normalize_selected)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.11165850000000001,
+          "cumulative_seconds": 1.2254593,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:141(_required_text)",
+          "primitive_calls": 243504,
+          "total_calls": 243504,
+          "self_seconds": 0.090995,
+          "cumulative_seconds": 0.2064815,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:207(_utc_timestamp)",
+          "primitive_calls": 39804,
+          "total_calls": 39804,
+          "self_seconds": 0.0689821,
+          "cumulative_seconds": 0.0689821,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:428(_source_rank)",
+          "primitive_calls": 33944,
+          "total_calls": 33944,
+          "self_seconds": 0.0204943,
+          "cumulative_seconds": 0.0535653,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:171(_integer)",
+          "primitive_calls": 107704,
+          "total_calls": 107704,
+          "self_seconds": 0.036383900000000004,
+          "cumulative_seconds": 0.0519886,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:417(_valid_channel)",
+          "primitive_calls": 33944,
+          "total_calls": 33944,
+          "self_seconds": 0.0204889,
+          "cumulative_seconds": 0.0519746,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:239(_normalize_bins)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 0.0056813,
+          "cumulative_seconds": 0.0504247,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:191(_valid_cu)",
+          "primitive_calls": 33944,
+          "total_calls": 33944,
+          "self_seconds": 0.024115300000000003,
+          "cumulative_seconds": 0.043662200000000005,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:524(<genexpr>)",
+          "primitive_calls": 42430,
+          "total_calls": 42430,
+          "self_seconds": 0.008203700000000001,
+          "cumulative_seconds": 0.008203700000000001,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:452(_threshold_metrics)",
+          "primitive_calls": 6,
+          "total_calls": 6,
+          "self_seconds": 0.0024597,
+          "cumulative_seconds": 0.0031511,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:304(_normalize_identity)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 4.85e-05,
+          "cumulative_seconds": 0.0026116000000000004,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:296(_identity_channel_values)",
+          "primitive_calls": 12,
+          "total_calls": 12,
+          "self_seconds": 6.900000000000001e-06,
+          "cumulative_seconds": 0.0001733,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:217(_integer_values)",
+          "primitive_calls": 12,
+          "total_calls": 12,
+          "self_seconds": 2.57e-05,
+          "cumulative_seconds": 0.0001664,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:137(_missing_columns)",
+          "primitive_calls": 3,
+          "total_calls": 3,
+          "self_seconds": 6.200000000000001e-06,
+          "cumulative_seconds": 3.18e-05,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:578(_maximum_with_radios)",
+          "primitive_calls": 4,
+          "total_calls": 4,
+          "self_seconds": 8.200000000000001e-06,
+          "cumulative_seconds": 2.7400000000000002e-05,
+          "project_function": true
+        }
+      ],
+      "top_retained_project_allocations": []
+    },
+    {
+      "name": "adr0004_arrow_and_parquet_write",
+      "wall_seconds": 0.01016970002092421,
+      "cpu_seconds": 0.015625,
+      "baseline_rss_bytes": 195391488,
+      "peak_rss_bytes": 195518464,
+      "peak_incremental_rss_bytes": 126976,
+      "python_traced_current_bytes": null,
+      "python_traced_peak_bytes": null,
+      "arrow_allocated_before_bytes": 0,
+      "arrow_allocated_after_bytes": 0,
+      "arrow_allocated_delta_bytes": 0,
+      "top_cpu_functions": [
+        {
+          "function": "profile_corrected_outputs.py:305(<lambda>)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 1.3e-06,
+          "cumulative_seconds": 0.0101171,
+          "project_function": true
+        },
+        {
+          "function": "profile_corrected_outputs.py:252(_write_summary_logical)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 7.32e-05,
+          "cumulative_seconds": 0.010115800000000001,
+          "project_function": true
+        },
+        {
+          "function": "core.py:1875(write_table)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 2.89e-05,
+          "cumulative_seconds": 0.0052986000000000005,
+          "project_function": false
+        },
+        {
+          "function": "corrected_summary_output.py:715(_arrow_table)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 0.0004314,
+          "cumulative_seconds": 0.004717300000000001,
+          "project_function": true
+        },
+        {
+          "function": "_decorators.py:325(wrapper)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 4.800000000000001e-06,
+          "cumulative_seconds": 0.0039931,
+          "project_function": false
+        },
+        {
+          "function": "frame.py:2063(to_dict)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 7.7e-06,
+          "cumulative_seconds": 0.0039874,
+          "project_function": false
+        },
+        {
+          "function": "to_dict.py:78(to_dict)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 0.0001144,
+          "cumulative_seconds": 0.0039797,
+          "project_function": false
+        },
+        {
+          "function": "frame.py:1559(itertuples)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 1.7500000000000002e-05,
+          "cumulative_seconds": 0.0032742,
+          "project_function": false
+        },
+        {
+          "function": "~:0(<method 'extend' of 'list' objects>)",
+          "primitive_calls": 4,
+          "total_calls": 4,
+          "self_seconds": 9.7e-06,
+          "cumulative_seconds": 0.0031511,
+          "project_function": false
+        },
+        {
+          "function": "frame.py:1630(<genexpr>)",
+          "primitive_calls": 44,
+          "total_calls": 44,
+          "self_seconds": 3.74e-05,
+          "cumulative_seconds": 0.0031414000000000004,
+          "project_function": false
+        },
+        {
+          "function": "indexing.py:1176(__getitem__)",
+          "primitive_calls": 42,
+          "total_calls": 42,
+          "self_seconds": 0.00011080000000000001,
+          "cumulative_seconds": 0.0030908000000000003,
+          "project_function": false
+        },
+        {
+          "function": "indexing.py:1689(_getitem_tuple)",
+          "primitive_calls": 42,
+          "total_calls": 42,
+          "self_seconds": 8.09e-05,
+          "cumulative_seconds": 0.0026103000000000003,
+          "project_function": false
+        },
+        {
+          "function": "core.py:1092(write_table)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 0.0023225000000000003,
+          "cumulative_seconds": 0.0023225000000000003,
+          "project_function": false
+        },
+        {
+          "function": "indexing.py:1032(_getitem_lowerdim)",
+          "primitive_calls": 42,
+          "total_calls": 42,
+          "self_seconds": 0.0001508,
+          "cumulative_seconds": 0.0019854,
+          "project_function": false
+        },
+        {
+          "function": "core.py:968(__init__)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 0.0015178000000000001,
+          "cumulative_seconds": 0.0017499000000000002,
+          "project_function": false
+        },
+        {
+          "function": "indexing.py:1719(_getitem_axis)",
+          "primitive_calls": 42,
+          "total_calls": 42,
+          "self_seconds": 9.98e-05,
+          "cumulative_seconds": 0.001549,
+          "project_function": false
+        },
+        {
+          "function": "core.py:1052(__exit__)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 2.4000000000000003e-06,
+          "cumulative_seconds": 0.001196,
+          "project_function": false
+        },
+        {
+          "function": "frame.py:3983(_ixs)",
+          "primitive_calls": 42,
+          "total_calls": 42,
+          "self_seconds": 6.2e-05,
+          "cumulative_seconds": 0.0011958000000000001,
+          "project_function": false
+        }
+      ],
+      "top_project_cpu_functions": [
+        {
+          "function": "profile_corrected_outputs.py:305(<lambda>)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 1.3e-06,
+          "cumulative_seconds": 0.0101171,
+          "project_function": true
+        },
+        {
+          "function": "profile_corrected_outputs.py:252(_write_summary_logical)",
+          "primitive_calls": 1,
+          "total_calls": 1,
+          "self_seconds": 7.32e-05,
+          "cumulative_seconds": 0.010115800000000001,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:715(_arrow_table)",
+          "primitive_calls": 2,
+          "total_calls": 2,
+          "self_seconds": 0.0004314,
+          "cumulative_seconds": 0.004717300000000001,
+          "project_function": true
+        },
+        {
+          "function": "corrected_summary_output.py:716(arrow_value)",
+          "primitive_calls": 88,
+          "total_calls": 88,
+          "self_seconds": 3.96e-05,
+          "cumulative_seconds": 0.00018810000000000002,
+          "project_function": true
+        }
+      ],
+      "top_retained_project_allocations": []
+    }
+  ],
+  "correctness": {
+    "selected_rows": 33944,
+    "expected_selected_rows": 33944,
+    "radio_class_rows": 3,
+    "expected_radio_class_rows": 3,
+    "classroom_class_rows": 1,
+    "expected_classroom_class_rows": 1,
+    "summary_files_exist": true,
+    "output_bytes": 386181
+  },
+  "notes": [
+    "cProfile instrumentation is included in phase wall/CPU time",
+    "tracemalloc is optional and materially slows allocation-profile runs",
+    "RSS increments are per phase and can retain memory from earlier phases",
+    "the two write-only phases reproduce production serialization after logical build"
+  ]
+}

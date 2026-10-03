@@ -1,0 +1,129 @@
+{
+  "project": {
+    "name": "Corrected Semantics Oracle",
+    "slug": "oracle-corrected"
+  },
+  "run_id": "oracle-corrected-v1",
+  "input_set": {
+    "sha256": "bbd5a79ab0176777fa8e260594a91508e28d6b1f9aaa6e63fe0eb80c77a1eae3",
+    "files": [
+      {
+        "role": "beacon_observations",
+        "path": "tests/fixtures/corrected_semantics/input/observations.csv",
+        "bytes": 9274,
+        "sha256": "ff82dc3dc4dc3058fd0ad51facb7094b6b69a6a16e36121d144c84f1d5212395"
+      },
+      {
+        "role": "class_schedule",
+        "path": "tests/fixtures/corrected_semantics/input/classes.csv",
+        "bytes": 919,
+        "sha256": "34d28b292b24540350d03e41f7ae6cde6cb492ab81bc750b3da58f633ed58bb3"
+      },
+      {
+        "role": "identity_evidence",
+        "path": "tests/fixtures/corrected_semantics/input/identity_evidence.csv",
+        "bytes": 797,
+        "sha256": "c8c664c14417274f7b678e2bd18ed5c33eb10bc5330f9cad688ddb86820d5581"
+      }
+    ]
+  },
+  "code_provenance": {
+    "source": "fixture",
+    "revision": "beacon.fixture/corrected-semantics/v1",
+    "dirty": false
+  },
+  "schema_id": "beacon.schema/analysis-results/v1",
+  "metric_id": "beacon.metric/corrected-cu/v1",
+  "requested_sample_range": {
+    "start": "2026-01-15T10:00:00.000000000Z",
+    "end": "2026-01-15T10:00:08.500000000Z"
+  },
+  "actual_selected_observation_range": {
+    "start": "2026-01-15T10:00:00.100000000Z",
+    "end": "2026-01-15T10:00:08.250000000Z"
+  },
+  "effective_configuration": {
+    "nominal_raw_beacon_interval_us": 102400,
+    "useful_metadata_cadence_us": 1024000,
+    "bin_width_us": 1024000,
+    "class_admission_time": "preferred_observation_time",
+    "tsf_origin": "per_bssid_session_min_observation_time_minus_tsf",
+    "tsf_failure_scope": "whole_bssid_session_observation_time_fallback",
+    "representative_selection": "first_observed_per_bssid_bin",
+    "rolling_minimum_spacing_gate": false,
+    "high_cu_raw_minimum": 128,
+    "very_high_cu_raw_minimum": 192
+  },
+  "source_precedence": [
+    "valid_aruba_erm_time",
+    "valid_frame_time_epoch",
+    "declared_capture_source_rank_within_timestamp_source",
+    "earliest_preferred_observation_time",
+    "stable_source_path_and_frame"
+  ],
+  "storage": {
+    "timestamp": "timestamp_ns_utc",
+    "tsf": "uint64_microseconds",
+    "duration": "int64_microseconds",
+    "qbss_cu_raw": "nullable_uint8",
+    "coverage_and_average": "float64_unrounded_ratio",
+    "responsible_radio_ids": "list_string"
+  },
+  "stages": [
+    {
+      "name": "normalize_fixture_input",
+      "start": "2026-01-15T10:01:00.000000000Z",
+      "end": "2026-01-15T10:01:00.010000000Z",
+      "status": "completed",
+      "warning_count": 0,
+      "error_count": 0
+    },
+    {
+      "name": "select_observations",
+      "start": "2026-01-15T10:01:00.010000000Z",
+      "end": "2026-01-15T10:01:00.020000000Z",
+      "status": "completed",
+      "warning_count": 0,
+      "error_count": 0
+    },
+    {
+      "name": "summarize_corrected_metrics",
+      "start": "2026-01-15T10:01:00.020000000Z",
+      "end": "2026-01-15T10:01:00.030000000Z",
+      "status": "completed",
+      "warning_count": 0,
+      "error_count": 0
+    }
+  ],
+  "detailed_log": null,
+  "artifacts": {
+    "project_identity_map": {
+      "path": "Output/runs/oracle-corrected/oracle-corrected-v1/project_identity_map.parquet",
+      "rows": 4
+    },
+    "selected_observations": {
+      "path": "Output/runs/oracle-corrected/oracle-corrected-v1/selected_observations/",
+      "partition_by": ["class_date"],
+      "rows": 15
+    },
+    "radio_class_summary": {
+      "path": "Output/runs/oracle-corrected/oracle-corrected-v1/radio_class_summary.parquet",
+      "rows": 3
+    },
+    "classroom_class_summary": {
+      "path": "Output/runs/oracle-corrected/oracle-corrected-v1/classroom_class_summary.parquet",
+      "rows": 1
+    }
+  },
+  "stage_log": [
+    {
+      "stage": "corrected_semantics_oracle",
+      "start": "2026-01-15T10:00:00.000000000Z",
+      "end": "2026-01-15T10:00:08.500000000Z",
+      "status": "complete",
+      "warning_count": 0,
+      "error_count": 0
+    }
+  ],
+  "legacy_artifacts": []
+}

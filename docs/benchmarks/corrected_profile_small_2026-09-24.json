@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-09-24T15:10:04.672694+00:00",
+  "purpose": "narrow_corrected_output_cpu_allocation_profile",
+  "workload": {
+    "name": "profile_small_5min",
+    "class_count": 1,
+    "radio_count": 3,
+    "bssids_per_radio": 4,
+    "class_duration_seconds": 300,
+    "bin_width_us": 1024000
+  },
+  "input_rows": {
+    "class_bins": 293,
+    "identity": 12,
+    "selected_observations": 3392
+  },
+  "allocation_profile_enabled": true,
+  "phases": [
+    {
+      "name": "selected_validation_and_logical_build",
+      "wall_seconds": 5.841540300054476,
+      "cpu_seconds": 5.578125,
+      "baseline_rss_bytes": 94957568,
+      "peak_rss_bytes": 122552320,
+      "peak_incremental_rss_bytes": 27594752,
+      "python_traced_current_bytes": 1100679,
+      "python_traced_peak_bytes": 15426644,
+      "arrow_allocated_before_bytes": 0,
+      "arrow_allocated_after_bytes": 0,
+      "arrow_allocated_delta_bytes": 0,
+      "top_cpu_functions": [],
+      "top_project_cpu_functions": [],
+      "top_retained_project_allocations": [
+        {
+          "location": "selected_observation_output.py:264",
+          "allocated_bytes_retained": 108544,
+          "allocation_count_retained": 3392
+        },
+        {
+          "location": "selected_observation_output.py:129",
+          "allocated_bytes_retained": 16550,
+          "allocation_count_retained": 331
+        },
+        {
+          "location": "selected_observation_output.py:157",
+          "allocated_bytes_retained": 12124,
+          "allocation_count_retained": 240
+        },
+        {
+          "location": "selected_observation_output.py:351",
+          "allocated_bytes_retained": 1703,
+          "allocation_count_retained": 32
+        },
+        {
+          "location": "profile_corrected_outputs.py:177",
+          "allocated_bytes_retained": 112,
+          "allocation_count_retained": 3
+        },
+        {
+          "location": "selected_observation_output.py:185",
+          "allocated_bytes_retained": 56,
+          "allocation_count_retained": 1
+        },
+        {
+          "location": "selected_observation_output.py:150",
+          "allocated_bytes_retained": 56,
+          "allocation_count_retained": 1
+        },
+        {
+          "location": "profile_corrected_outputs.py:174",
+          "allocated_bytes_retained": 48,
+          "allocation_count_retained": 2
+        },
+        {
+          "location": "profile_corrected_outputs.py:173",
+          "allocated_bytes_retained": 24,
+          "allocation_count_retained": 1
+        }
+      ]
+    },
+    {
+      "name": "selected_partition_arrow_and_parquet_write",
+      "wall_seconds": 1.7811758000170812,
+      "cpu_seconds": 1.5,
+      "baseline_rss_bytes": 105771008,
+      "peak_rss_bytes": 116649984,
+      "peak_incremental_rss_bytes": 10878976,
+      "python_traced_current_bytes": 60493,
+      "python_traced_peak_bytes": 10007579,
+      "arrow_allocated_before_bytes": 0,
+      "arrow_allocated_after_bytes": 0,
+      "arrow_allocated_delta_bytes": 0,
+      "top_cpu_functions": [],
+      "top_project_cpu_functions": [],
+      "top_retained_project_allocations": [
+        {
+          "location": "selected_observation_output.py:157",
+          "allocated_bytes_retained": 3956,
+          "allocation_count_retained": 76
+        },
+        {
+          "location": "profile_corrected_outputs.py:177",
+          "allocated_bytes_retained": 112,
+          "allocation_count_retained": 3
+        },
+        {
+          "location": "profile_corrected_outputs.py:240",
+          "allocated_bytes_retained": 64,
+          "allocation_count_retained": 1
+        },
+        {
+          "location": "profile_corrected_outputs.py:174",
+          "allocated_bytes_retained": 24,
+          "allocation_count_retained": 1
+        },
+        {
+          "location": "profile_corrected_outputs.py:173",
+          "allocated_bytes_retained": 24,
+          "allocation_count_retained": 1
+        }
+      ]
+    },
+    {
+      "name": "adr0004_summary_calculation",
+      "wall_seconds": 20.22209570009727,
+      "cpu_seconds": 19.640625,
+      "baseline_rss_bytes": 108097536,
+      "peak_rss_bytes": 116490240,
+      "peak_incremental_rss_bytes": 8392704,
+      "python_traced_current_bytes": 347586,
+      "python_traced_peak_bytes": 7470697,
+      "arrow_allocated_before_bytes": 0,
+      "arrow_allocated_after_bytes": 0,
+      "arrow_allocated_delta_bytes": 0,
+      "top_cpu_functions": [],
+      "top_project_cpu_functions": [],
+      "top_retained_project_allocations": [
+        {
+          "location": "corrected_summary_output.py:620",
+          "allocated_bytes_retained": 18624,
+          "allocation_count_retained": 291
+        },
+        {
+          "location": "corrected_summary_output.py:535",
+          "allocated_bytes_retained": 16960,
+          "allocation_count_retained": 265
+        },
+        {
+          "location": "corrected_summary_output.py:707",
+          "allocated_bytes_retained": 1339,
+          "allocation_count_retained": 23
+        },
+        {
+          "location": "corrected_summary_output.py:710",
+          "allocated_bytes_retained": 1242,
+          "allocation_count_retained": 19
+        },
+        {
+          "location": "corrected_summary_output.py:529",
+          "allocated_bytes_retained": 1088,
+          "allocation_count_retained": 17
+        },
+        {
+          "location": "corrected_summary_output.py:521",
+          "allocated_bytes_retained": 640,
+          "allocation_count_retained": 10
+        },
+        {
+          "location": "corrected_summary_output.py:585",
+          "allocated_bytes_retained": 480,
+          "allocation_count_retained": 8
+        },
+        {
+          "location": "corrected_summary_output.py:705",
+          "allocated_bytes_retained": 392,
+          "allocation_count_retained": 2
+        },
+        {
+          "location": "corrected_summary_output.py:498",
+          "allocated_bytes_retained": 264,
+          "allocation_count_retained": 6
+        },
+        {
+          "location": "corrected_summary_output.py:709",
+          "allocated_bytes_retained": 208,
+          "allocation_count_retained": 3
+        },
+        {
+          "location": "profile_corrected_outputs.py:177",
+          "allocated_bytes_retained": 112,
+          "allocation_count_retained": 3
+        },
+        {
+          "location": "corrected_summary_output.py:706",
+          "allocated_bytes_retained": 112,
+          "allocation_count_retained": 1
+        },
+        {
+          "location": "corrected_summary_output.py:566",
+          "allocated_bytes_retained": 72,
+          "allocation_count_retained": 3
+        },
+        {
+          "location": "corrected_summary_output.py:551",
+          "allocated_bytes_retained": 64,
+          "allocation_count_retained": 1
+        },
+        {
+          "location": "corrected_summary_output.py:568",
+          "allocated_bytes_retained": 48,
+          "allocation_count_retained": 2
+        }
+      ]
+    },
+    {
+      "name": "adr0004_arrow_and_parquet_write",
+      "wall_seconds": 0.04012569994665682,
+      "cpu_seconds": 0.03125,
+      "baseline_rss_bytes": 109752320,
+      "peak_rss_bytes": 109916160,
+      "peak_incremental_rss_bytes": 163840,
+      "python_traced_current_bytes": 25162,
+      "python_traced_peak_bytes": 41295,
+      "arrow_allocated_before_bytes": 0,
+      "arrow_allocated_after_bytes": 0,
+      "arrow_allocated_delta_bytes": 0,
+      "top_cpu_functions": [],
+      "top_project_cpu_functions": [],
+      "top_retained_project_allocations": [
+        {
+          "location": "corrected_summary_output.py:731",
+          "allocated_bytes_retained": 1304,
+          "allocation_count_retained": 23
+        },
+        {
+          "location": "profile_corrected_outputs.py:177",
+          "allocated_bytes_retained": 112,
+          "allocation_count_retained": 3
+        },
+        {
+          "location": "profile_corrected_outputs.py:265",
+          "allocated_bytes_retained": 56,
+          "allocation_count_retained": 1
+        },
+        {
+          "location": "profile_corrected_outputs.py:174",
+          "allocated_bytes_retained": 24,
+          "allocation_count_retained": 1
+        },
+        {
+          "location": "profile_corrected_outputs.py:173",
+          "allocated_bytes_retained": 24,
+          "allocation_count_retained": 1
+        }
+      ]
+    }
+  ],
+  "correctness": {
+    "selected_rows": 3392,
+    "expected_selected_rows": 3392,
+    "radio_class_rows": 3,
+    "expected_radio_class_rows": 3,
+    "classroom_class_rows": 1,
+    "expected_classroom_class_rows": 1,
+    "summary_files_exist": true,
+    "output_bytes": 66775
+  },
+  "notes": [
+    "cProfile instrumentation is included in phase wall/CPU time",
+    "tracemalloc is optional and materially slows allocation-profile runs",
+    "RSS increments are per phase and can retain memory from earlier phases",
+    "the two write-only phases reproduce production serialization after logical build"
+  ]
+}

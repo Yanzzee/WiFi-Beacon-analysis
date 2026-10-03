@@ -1,0 +1,7 @@
+fixture_id,bssid,ssid,radio_group_id,ap_id,ap_name,classroom,band,channel,mapping_status,ap_identity_method,radio_grouping_method,result_grain,mapping_diagnostics
+CF05_10,A24,eduroam,R24,AP1,AP-ONE,ROOM1,2.4,6,resolved,vendor_ap_name,band_channel_single_bssid,ap_radio_group,
+CF05_10,A5,eduroam,R5,AP1,AP-ONE,ROOM1,5,36,resolved,vendor_ap_name,band_channel,ap_radio_group,
+CF05_10,B5,guest,R5,AP1,AP-ONE,ROOM1,5,36,resolved,vendor_ap_name,band_channel,ap_radio_group,
+CF05_10,A6,eduroam,R6,AP1,AP-ONE,ROOM1,6,5,resolved,vendor_ap_name,band_channel_single_bssid,ap_radio_group,
+CF09,Q5A,eduroam,R5A,AP2,AP-TWO,ROOM2,5,36,resolved,vendor_ap_name,band_channel_single_bssid,ap_radio_group,
+CF09,Q5B,eduroam,R5B,AP3,AP-THREE,ROOM2,5,36,resolved,vendor_ap_name,band_channel_single_bssid,ap_radio_group,

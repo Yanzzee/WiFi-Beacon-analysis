@@ -1,0 +1,542 @@
+{
+  "captures": [
+    {
+      "bytes": 749241812,
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures\\Beacon_Capture_20251110070000_00010.pcapng"
+    },
+    {
+      "bytes": 622708032,
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures\\Beacon_Capture_20251110080000_00011.pcapng"
+    },
+    {
+      "bytes": 460708660,
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures\\Beacon_Capture_20251110090000_00012.pcapng"
+    },
+    {
+      "bytes": 441484000,
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures\\Beacon_Capture_20251110100000_00013.pcapng"
+    },
+    {
+      "bytes": 389266084,
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures\\Beacon_Capture_20251110110000_00014.pcapng"
+    },
+    {
+      "bytes": 569421516,
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures\\Beacon_Capture_20251110120000_00015.pcapng"
+    },
+    {
+      "bytes": 578850076,
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures\\Beacon_Capture_20251110130000_00016.pcapng"
+    },
+    {
+      "bytes": 492709088,
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures\\Beacon_Capture_20251110140000_00017.pcapng"
+    }
+  ],
+  "environment": {
+    "logical_cpu_count": 24,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "total_memory_bytes": 68401475584,
+    "tshark": "4.6.6"
+  },
+  "generated_at_utc": "2026-09-29T18:25:28.595832+00:00",
+  "logical_artifacts_equivalent": true,
+  "purpose": "corrected_capture_worker_comparison",
+  "runs": [
+    {
+      "artifacts": {
+        "classroom_class_summary.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "class_duration_us",
+            "radio_count_2_4_ghz",
+            "radio_count_5_ghz",
+            "radio_count_6_ghz",
+            "radio_count_unknown",
+            "radio_count_total",
+            "high_possible_connected_max_us",
+            "high_possible_connected_responsible_radio_ids",
+            "high_actual_observed_max_us",
+            "high_actual_observed_responsible_radio_ids",
+            "very_high_possible_connected_max_us",
+            "very_high_possible_connected_responsible_radio_ids",
+            "very_high_actual_observed_max_us",
+            "very_high_actual_observed_responsible_radio_ids"
+          ],
+          "rows": 14,
+          "sha256": "8bdec07d25c23aa9da6045028fd97d9342e7ff3aee3bec8f69e369c1d976869f"
+        },
+        "project_identity_map.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "bssid",
+            "ssid",
+            "radio_group_id",
+            "radio_number",
+            "ap_id",
+            "ap_name",
+            "classroom",
+            "band",
+            "observed_channels",
+            "observed_frequencies_mhz",
+            "ap_identity_method",
+            "radio_grouping_method",
+            "result_grain",
+            "mapping_status",
+            "mapping_diagnostics"
+          ],
+          "rows": 34,
+          "sha256": "7c5baa08f0bff0b7f0af2e86b4af853e2f95515490c42d0f31bc74ea4bf99bfa"
+        },
+        "radio_class_summary.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "radio_group_id",
+            "band",
+            "channel",
+            "member_bssids",
+            "preferred_bssid",
+            "class_duration_us",
+            "valid_cu_duration_us",
+            "missing_cu_duration_us",
+            "no_beacon_duration_us",
+            "cu_coverage",
+            "average_cu_raw",
+            "average_cu_ratio",
+            "high_duration_us",
+            "high_possible_connected_streak_us",
+            "high_actual_observed_streak_us",
+            "very_high_duration_us",
+            "very_high_possible_connected_streak_us",
+            "very_high_actual_observed_streak_us"
+          ],
+          "rows": 55,
+          "sha256": "0e4252b63fbe90f32bce67c9b3e3accb72717f8230dfbeea97d9392ad334e5dc"
+        },
+        "selected_observations": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "bin_number",
+            "bin_start",
+            "bin_end",
+            "bin_duration_us",
+            "width_status",
+            "bssid",
+            "ssid",
+            "radio_group_id",
+            "ap_id",
+            "band",
+            "channel",
+            "observation_time",
+            "observation_time_source",
+            "tsf_us",
+            "tsf_origin",
+            "tsf_derived_time",
+            "timing_method",
+            "tsf_status",
+            "unusable_tsf_reason",
+            "source_capture",
+            "source_frame",
+            "duplicate_views_collapsed",
+            "skipped_intervals_before",
+            "qbss_cu_raw",
+            "qbss_station_count",
+            "qbss_admission_capacity"
+          ],
+          "rows": 376633,
+          "sha256": "67f89ae8313bbbda65ed57ed6eb51a81923e0197501c3258540f13c8130c7949"
+        }
+      },
+      "capture_workers": 1,
+      "resources": {
+        "peak_process_tree_rss_bytes": 1177038848,
+        "peak_workspace_bytes": 22003926,
+        "sampled_process_tree_cpu_seconds": 604.78125
+      },
+      "wall_seconds": 604.2417576999869
+    },
+    {
+      "artifacts": {
+        "classroom_class_summary.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "class_duration_us",
+            "radio_count_2_4_ghz",
+            "radio_count_5_ghz",
+            "radio_count_6_ghz",
+            "radio_count_unknown",
+            "radio_count_total",
+            "high_possible_connected_max_us",
+            "high_possible_connected_responsible_radio_ids",
+            "high_actual_observed_max_us",
+            "high_actual_observed_responsible_radio_ids",
+            "very_high_possible_connected_max_us",
+            "very_high_possible_connected_responsible_radio_ids",
+            "very_high_actual_observed_max_us",
+            "very_high_actual_observed_responsible_radio_ids"
+          ],
+          "rows": 14,
+          "sha256": "8bdec07d25c23aa9da6045028fd97d9342e7ff3aee3bec8f69e369c1d976869f"
+        },
+        "project_identity_map.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "bssid",
+            "ssid",
+            "radio_group_id",
+            "radio_number",
+            "ap_id",
+            "ap_name",
+            "classroom",
+            "band",
+            "observed_channels",
+            "observed_frequencies_mhz",
+            "ap_identity_method",
+            "radio_grouping_method",
+            "result_grain",
+            "mapping_status",
+            "mapping_diagnostics"
+          ],
+          "rows": 34,
+          "sha256": "7c5baa08f0bff0b7f0af2e86b4af853e2f95515490c42d0f31bc74ea4bf99bfa"
+        },
+        "radio_class_summary.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "radio_group_id",
+            "band",
+            "channel",
+            "member_bssids",
+            "preferred_bssid",
+            "class_duration_us",
+            "valid_cu_duration_us",
+            "missing_cu_duration_us",
+            "no_beacon_duration_us",
+            "cu_coverage",
+            "average_cu_raw",
+            "average_cu_ratio",
+            "high_duration_us",
+            "high_possible_connected_streak_us",
+            "high_actual_observed_streak_us",
+            "very_high_duration_us",
+            "very_high_possible_connected_streak_us",
+            "very_high_actual_observed_streak_us"
+          ],
+          "rows": 55,
+          "sha256": "0e4252b63fbe90f32bce67c9b3e3accb72717f8230dfbeea97d9392ad334e5dc"
+        },
+        "selected_observations": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "bin_number",
+            "bin_start",
+            "bin_end",
+            "bin_duration_us",
+            "width_status",
+            "bssid",
+            "ssid",
+            "radio_group_id",
+            "ap_id",
+            "band",
+            "channel",
+            "observation_time",
+            "observation_time_source",
+            "tsf_us",
+            "tsf_origin",
+            "tsf_derived_time",
+            "timing_method",
+            "tsf_status",
+            "unusable_tsf_reason",
+            "source_capture",
+            "source_frame",
+            "duplicate_views_collapsed",
+            "skipped_intervals_before",
+            "qbss_cu_raw",
+            "qbss_station_count",
+            "qbss_admission_capacity"
+          ],
+          "rows": 376633,
+          "sha256": "67f89ae8313bbbda65ed57ed6eb51a81923e0197501c3258540f13c8130c7949"
+        }
+      },
+      "capture_workers": 2,
+      "resources": {
+        "peak_process_tree_rss_bytes": 1335300096,
+        "peak_workspace_bytes": 22003926,
+        "sampled_process_tree_cpu_seconds": 604.296875
+      },
+      "wall_seconds": 379.4288242999464
+    },
+    {
+      "artifacts": {
+        "classroom_class_summary.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "class_duration_us",
+            "radio_count_2_4_ghz",
+            "radio_count_5_ghz",
+            "radio_count_6_ghz",
+            "radio_count_unknown",
+            "radio_count_total",
+            "high_possible_connected_max_us",
+            "high_possible_connected_responsible_radio_ids",
+            "high_actual_observed_max_us",
+            "high_actual_observed_responsible_radio_ids",
+            "very_high_possible_connected_max_us",
+            "very_high_possible_connected_responsible_radio_ids",
+            "very_high_actual_observed_max_us",
+            "very_high_actual_observed_responsible_radio_ids"
+          ],
+          "rows": 14,
+          "sha256": "8bdec07d25c23aa9da6045028fd97d9342e7ff3aee3bec8f69e369c1d976869f"
+        },
+        "project_identity_map.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "bssid",
+            "ssid",
+            "radio_group_id",
+            "radio_number",
+            "ap_id",
+            "ap_name",
+            "classroom",
+            "band",
+            "observed_channels",
+            "observed_frequencies_mhz",
+            "ap_identity_method",
+            "radio_grouping_method",
+            "result_grain",
+            "mapping_status",
+            "mapping_diagnostics"
+          ],
+          "rows": 34,
+          "sha256": "7c5baa08f0bff0b7f0af2e86b4af853e2f95515490c42d0f31bc74ea4bf99bfa"
+        },
+        "radio_class_summary.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "radio_group_id",
+            "band",
+            "channel",
+            "member_bssids",
+            "preferred_bssid",
+            "class_duration_us",
+            "valid_cu_duration_us",
+            "missing_cu_duration_us",
+            "no_beacon_duration_us",
+            "cu_coverage",
+            "average_cu_raw",
+            "average_cu_ratio",
+            "high_duration_us",
+            "high_possible_connected_streak_us",
+            "high_actual_observed_streak_us",
+            "very_high_duration_us",
+            "very_high_possible_connected_streak_us",
+            "very_high_actual_observed_streak_us"
+          ],
+          "rows": 55,
+          "sha256": "0e4252b63fbe90f32bce67c9b3e3accb72717f8230dfbeea97d9392ad334e5dc"
+        },
+        "selected_observations": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "bin_number",
+            "bin_start",
+            "bin_end",
+            "bin_duration_us",
+            "width_status",
+            "bssid",
+            "ssid",
+            "radio_group_id",
+            "ap_id",
+            "band",
+            "channel",
+            "observation_time",
+            "observation_time_source",
+            "tsf_us",
+            "tsf_origin",
+            "tsf_derived_time",
+            "timing_method",
+            "tsf_status",
+            "unusable_tsf_reason",
+            "source_capture",
+            "source_frame",
+            "duplicate_views_collapsed",
+            "skipped_intervals_before",
+            "qbss_cu_raw",
+            "qbss_station_count",
+            "qbss_admission_capacity"
+          ],
+          "rows": 376633,
+          "sha256": "67f89ae8313bbbda65ed57ed6eb51a81923e0197501c3258540f13c8130c7949"
+        }
+      },
+      "capture_workers": 4,
+      "resources": {
+        "peak_process_tree_rss_bytes": 1763577856,
+        "peak_workspace_bytes": 22003926,
+        "sampled_process_tree_cpu_seconds": 605.734375
+      },
+      "wall_seconds": 274.7270839000121
+    },
+    {
+      "artifacts": {
+        "classroom_class_summary.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "class_duration_us",
+            "radio_count_2_4_ghz",
+            "radio_count_5_ghz",
+            "radio_count_6_ghz",
+            "radio_count_unknown",
+            "radio_count_total",
+            "high_possible_connected_max_us",
+            "high_possible_connected_responsible_radio_ids",
+            "high_actual_observed_max_us",
+            "high_actual_observed_responsible_radio_ids",
+            "very_high_possible_connected_max_us",
+            "very_high_possible_connected_responsible_radio_ids",
+            "very_high_actual_observed_max_us",
+            "very_high_actual_observed_responsible_radio_ids"
+          ],
+          "rows": 14,
+          "sha256": "8bdec07d25c23aa9da6045028fd97d9342e7ff3aee3bec8f69e369c1d976869f"
+        },
+        "project_identity_map.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "bssid",
+            "ssid",
+            "radio_group_id",
+            "radio_number",
+            "ap_id",
+            "ap_name",
+            "classroom",
+            "band",
+            "observed_channels",
+            "observed_frequencies_mhz",
+            "ap_identity_method",
+            "radio_grouping_method",
+            "result_grain",
+            "mapping_status",
+            "mapping_diagnostics"
+          ],
+          "rows": 34,
+          "sha256": "7c5baa08f0bff0b7f0af2e86b4af853e2f95515490c42d0f31bc74ea4bf99bfa"
+        },
+        "radio_class_summary.parquet": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "radio_group_id",
+            "band",
+            "channel",
+            "member_bssids",
+            "preferred_bssid",
+            "class_duration_us",
+            "valid_cu_duration_us",
+            "missing_cu_duration_us",
+            "no_beacon_duration_us",
+            "cu_coverage",
+            "average_cu_raw",
+            "average_cu_ratio",
+            "high_duration_us",
+            "high_possible_connected_streak_us",
+            "high_actual_observed_streak_us",
+            "very_high_duration_us",
+            "very_high_possible_connected_streak_us",
+            "very_high_actual_observed_streak_us"
+          ],
+          "rows": 55,
+          "sha256": "0e4252b63fbe90f32bce67c9b3e3accb72717f8230dfbeea97d9392ad334e5dc"
+        },
+        "selected_observations": {
+          "columns": [
+            "schema_id",
+            "metric_id",
+            "class_session_id",
+            "classroom",
+            "bin_number",
+            "bin_start",
+            "bin_end",
+            "bin_duration_us",
+            "width_status",
+            "bssid",
+            "ssid",
+            "radio_group_id",
+            "ap_id",
+            "band",
+            "channel",
+            "observation_time",
+            "observation_time_source",
+            "tsf_us",
+            "tsf_origin",
+            "tsf_derived_time",
+            "timing_method",
+            "tsf_status",
+            "unusable_tsf_reason",
+            "source_capture",
+            "source_frame",
+            "duplicate_views_collapsed",
+            "skipped_intervals_before",
+            "qbss_cu_raw",
+            "qbss_station_count",
+            "qbss_admission_capacity"
+          ],
+          "rows": 376633,
+          "sha256": "67f89ae8313bbbda65ed57ed6eb51a81923e0197501c3258540f13c8130c7949"
+        }
+      },
+      "capture_workers": 8,
+      "resources": {
+        "peak_process_tree_rss_bytes": 2405134336,
+        "peak_workspace_bytes": 22003926,
+        "sampled_process_tree_cpu_seconds": 633.59375
+      },
+      "wall_seconds": 245.0734027000144
+    }
+  ],
+  "schema_version": 1,
+  "speedup_vs_first_run": {
+    "1": 1.0,
+    "2": 1.5925035711633788,
+    "4": 2.199425513939874,
+    "8": 2.4655542014880236
+  }
+}

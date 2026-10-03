@@ -1,0 +1,5 @@
+run_id,schema_id,metric_id,bssid,ssid,radio_group_id,radio_number,ap_id,ap_name,ap_model,classroom,band,observed_channels,observed_frequencies_mhz,ap_identity_method,radio_grouping_method,result_grain,mapping_status,mapping_diagnostics
+oracle-corrected-v1,beacon.schema/analysis-results/v1,beacon.metric/corrected-cu/v1,A24,eduroam,R24,1,AP1,AP-ONE,TEST-MODEL,ROOM1,2.4,6,2437,vendor_ap_name,band_channel_single_bssid,ap_radio_group,resolved,
+oracle-corrected-v1,beacon.schema/analysis-results/v1,beacon.metric/corrected-cu/v1,A5,eduroam,R5,2,AP1,AP-ONE,TEST-MODEL,ROOM1,5,36,5180,vendor_ap_name,band_channel,ap_radio_group,resolved,
+oracle-corrected-v1,beacon.schema/analysis-results/v1,beacon.metric/corrected-cu/v1,A6,eduroam,R6,3,AP1,AP-ONE,TEST-MODEL,ROOM1,6,5,5975,vendor_ap_name,band_channel_single_bssid,ap_radio_group,resolved,
+oracle-corrected-v1,beacon.schema/analysis-results/v1,beacon.metric/corrected-cu/v1,B5,guest,R5,2,AP1,AP-ONE,TEST-MODEL,ROOM1,5,36,5180,vendor_ap_name,band_channel,ap_radio_group,resolved,

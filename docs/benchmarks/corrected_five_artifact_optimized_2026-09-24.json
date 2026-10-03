@@ -1,0 +1,206 @@
+{
+  "environment": {
+    "logical_cpu_count": 24,
+    "platform": "Windows-11-10.0.26200-SP0",
+    "psutil_measurement_available": true,
+    "python": "3.13.14",
+    "total_memory_bytes": 68401475584
+  },
+  "generated_at_utc": "2026-09-24T15:43:37.443340+00:00",
+  "interpretation": {
+    "note": "Observed synthetic baseline only. Use the results to locate costs; do not infer capture-to-run performance or accept 102.4 ms production bins from this evidence alone.",
+    "optimization_authorized": false,
+    "release_budget": null,
+    "supported_scale_claim": null
+  },
+  "purpose": "corrected_five_artifact_boundary_baseline",
+  "schema_version": 1,
+  "scope": {
+    "excluded": [
+      "capture extraction and raw-capture hashing at representative size",
+      "vendor normalization and AP/radio identity resolution",
+      "per-BSSID timing and selection",
+      "plots, CSV exports, and user-interface latency",
+      "synthetic input generation"
+    ],
+    "included": [
+      "run lifecycle and input descriptor hashing",
+      "identity-map Parquet write",
+      "selected-observation partitioned Parquet write",
+      "ADR-0004 radio/class and classroom/class calculation/write",
+      "manifest write and atomic run publication"
+    ]
+  },
+  "workloads": [
+    {
+      "artifact_bytes": {
+        "classroom_class_summary": 7234,
+        "manifest": 4110,
+        "project_identity_map": 5988,
+        "radio_class_summary": 7913,
+        "selected_observations": 371334
+      },
+      "correctness": {
+        "artifact_names": [
+          "classroom_class_summary",
+          "project_identity_map",
+          "radio_class_summary",
+          "selected_observations"
+        ],
+        "metric_id": "beacon.metric/corrected-cu/v1",
+        "published": true,
+        "schema_id": "beacon.schema/analysis-results/v1",
+        "stage_names": [
+          "write_project_identity_map",
+          "write_selected_observations",
+          "write_corrected_summaries"
+        ]
+      },
+      "cpu_seconds": {
+        "maximum": 4.78125,
+        "median": 4.71875,
+        "minimum": 4.671875,
+        "runs": [
+          4.78125,
+          4.71875,
+          4.671875
+        ]
+      },
+      "input_shape": {
+        "class_bins": 2930,
+        "classroom_class_rows": 1,
+        "dataframe_deep_bytes": {
+          "class_bins": 647661,
+          "identity_map": 11084,
+          "selected_observations": 35958338
+        },
+        "dataframe_deep_bytes_total": 36617083,
+        "identity_rows": 12,
+        "radio_class_rows": 3,
+        "selected_observation_rows": 33944
+      },
+      "microseconds_per_selected_row": {
+        "maximum": 142.17625795437746,
+        "median": 140.2482824635916,
+        "minimum": 139.5831929055593,
+        "runs": [
+          142.17625795437746,
+          140.2482824635916,
+          139.5831929055593
+        ]
+      },
+      "peak_incremental_rss_bytes": {
+        "maximum": 148021248.0,
+        "median": 125833216.0,
+        "minimum": 105717760.0,
+        "runs": [
+          148021248,
+          105717760,
+          125833216
+        ]
+      },
+      "peak_output_tree_bytes": {
+        "maximum": 396828.0,
+        "median": 396828.0,
+        "minimum": 396828.0,
+        "runs": [
+          396828,
+          396828,
+          396828
+        ]
+      },
+      "peak_rss_bytes": {
+        "maximum": 263208960.0,
+        "median": 241238016.0,
+        "minimum": 220844032.0,
+        "runs": [
+          263208960,
+          220844032,
+          241238016
+        ]
+      },
+      "process_write_bytes": {
+        "maximum": 397171.0,
+        "median": 397171.0,
+        "minimum": 397171.0,
+        "runs": [
+          397171,
+          397171,
+          397171
+        ]
+      },
+      "published_file_count": 5,
+      "published_run_bytes": {
+        "maximum": 396579.0,
+        "median": 396579.0,
+        "minimum": 396579.0,
+        "runs": [
+          396579,
+          396579,
+          396579
+        ]
+      },
+      "repetitions": 3,
+      "stage_wall_seconds": {
+        "write_corrected_summaries": {
+          "maximum": 1.121585,
+          "median": 1.10463,
+          "minimum": 1.085956,
+          "runs": [
+            1.121585,
+            1.10463,
+            1.085956
+          ]
+        },
+        "write_project_identity_map": {
+          "maximum": 0.008577,
+          "median": 0.007781,
+          "minimum": 0.0075,
+          "runs": [
+            0.008577,
+            0.0075,
+            0.007781
+          ]
+        },
+        "write_selected_observations": {
+          "maximum": 3.676249,
+          "median": 3.6287789999999998,
+          "minimum": 3.6247439999999997,
+          "runs": [
+            3.676249,
+            3.6287789999999998,
+            3.6247439999999997
+          ]
+        }
+      },
+      "unattributed_lifecycle_wall_seconds": {
+        "maximum": 0.019678699944154054,
+        "median": 0.019619900003388757,
+        "minimum": 0.01953089998630464,
+        "runs": [
+          0.019619900003388757,
+          0.019678699944154054,
+          0.01953089998630464
+        ]
+      },
+      "wall_seconds": {
+        "maximum": 4.8260309000033885,
+        "median": 4.760587699944153,
+        "minimum": 4.738011899986304,
+        "runs": [
+          4.8260309000033885,
+          4.760587699944153,
+          4.738011899986304
+        ]
+      },
+      "workload": {
+        "bin_width_us": 1024000,
+        "bssids_per_radio": 4,
+        "class_count": 1,
+        "class_duration_seconds": 3000,
+        "name": "one_class_1024ms",
+        "radio_count": 3
+      }
+    }
+  ]
+}

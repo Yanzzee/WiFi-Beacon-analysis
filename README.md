@@ -1,88 +1,137 @@
-# Beacon-analysis
-802.11 beacon analysis with python
-This beacon analysis code was originally created to support a master's thesis:
-Performance Analysis of University WiFi Using 802.11e Information Elements 
-https://scholarsarchive.byu.edu/etd/10917/
-It has since been refactored from ipynb to standard python. Calculations and output are the same as original development code.
+# Beacon Analysis
 
-processing 802.11 wireless captures from .pcapng to .parquet for analysis of 802.11e channel utilization, station count, frequency of beacons, and other information observable from captured beacons
+Beacon Analysis processes 802.11 beacon captures during scheduled class
+sessions. It selects one representative beacon per BSSID and analysis bin,
+resolves BSSIDs to radios/APs/classrooms, and reports channel utilization,
+coverage, missingness, and high-utilization streaks.
 
-Data requirements
-capture files in .pcapng format that include beacons from classroom APs. Use .pcapng for all new captures. Legacy files with a .pcap extension are accepted only when their magic bytes show they are actually pcapng files; true pcap files are not currently supported.
-    APs must include 802.11e information elements of channel utilization, station count, and admission capacity, which are optional
-    beacons probably also need advertise AP Name enabled
-    BEACON_RATE in config.env is the effective metadata interval used by the analysis, not the raw 802.11 beacon interval. IEEE 802.11 commonly defaults to 0.1024 seconds, while this application defaults to 1.024 seconds because vendor metadata is commonly updated every 10 intervals; Aruba ERM forwards these metadata-bearing beacon updates at the longer interval.
-Sample_APs.csv - list of AP hostnames and locations, see example
-Sample_classrooms.csv - list of classroom location, see example
-Sample_schedule.csv - course schedule with location, Days of the week, start/end times, and enrolled count
+## Supported workflow
 
+`beacon_analysis.py run` is the supported entry point. One command reads the
+captures and three source CSVs, completes the analysis, and atomically
+publishes a unique run directory:
 
-### Run Files
-Files are listed in the general order that they are run.
+```powershell
+.\.venv\Scripts\python.exe beacon_analysis.py run --project "Fall 2026"
+```
 
-`analyze_data.py`, `analyze_all_class_beacons.py`, `analyze_radio_summary.py`, and `analyze_class_sessions.py` are the current orchestration entry points for their pipeline stages. Their calculations, plotting, validation, and persistence workflows are delegated to focused modules documented in `docs/module_refactor_roadmap.md`.
+The command prints the resolved plan and asks for confirmation. `--yes` skips
+that confirmation. `--non-interactive` prohibits prompts and fails if required
+configuration is missing.
 
-beacon_capture.sh (optional) - bash script to capture .pcapng files using tshark on a raspberry pi or other linux device. The capture scripts use Linux wireless monitor-mode tools and are not expected to run unchanged on Windows or macOS. This is an alternative to capturing from infrastructure. For capturing using aruba infrastructure, see https://www.youtube.com/watch?v=o3CL5KLBWK0
-Wireshark-profile-Beacon-QBSS-load.zip - Wireshark profile to color code beacons by channel utilization. 
+Configuration is resolved in this order:
 
-process_pcapng.py - process raw .pcapng capture files to .parquet files
-    requires tshark and should run on Windows, macOS, and Linux when Python dependencies and tshark are installed
-    --no-erm converts native/non-Aruba captures to parquet, but those outputs do not currently feed the analysis pipeline without a timestamp and AP-name mapping/adaptation layer
+1. command-line flags;
+2. caller environment;
+3. `config.env` (or `--env-file`);
+4. an interactive prompt for unresolved required values.
 
-group_data_bssid.py - group generic capture data by BSSID instead of time, one file per AP/BSSID for the entire date range. This is intended as the generic grouping path.
+Important settings are `PROJECT_NAME`, `CAPTURES_FOLDER`, `OUTPUT_FOLDER` or
+`CORRECTED_OUTPUT_ROOT`, `SAMPLE_FOLDER`, `START_DATE`, `END_DATE`, `TIMEZONE`,
+`TSHARK_PATH`, and `CAPTURE_WORKERS`. Run `beacon_analysis.py run --help` for
+the corresponding flags.
 
-group_data_aruba.py - group Aruba-specific captures by Aruba AP name instead of time, one file per hostname for the entire date range. Use this when working with Aruba-specific captures that include wlan.vs.aruba.ap_name.
+`OUTPUT_FOLDER` is the base application-output folder, so
+`OUTPUT_FOLDER=Output` publishes projects beneath `Output/runs`.
+`CORRECTED_OUTPUT_ROOT` and `--output-root` are exact roots for project run
+folders; use `Output/runs` when overriding the default layout.
 
-group_data_cleanup.py (optional) - clean grouped parquet files when index cleanup is needed, especially when aruba_erm.time is stored as the index and needs to be a regular column. Current timestamp handling is format-dependent and should not be treated as the final timezone contract.
+## Inputs
 
-The grouping and cleanup scripts are currently separate. Eventually they should be combined into a single script or process that can detect vendor-specific fields and choose the right grouping and cleanup behavior.
+- `.pcapng` or `.pcap` captures under `CAPTURES_FOLDER`. New captures should
+  use pcapng.
+- `Sample_APs.csv`: unique AP hostname, classroom mapping, and optional model.
+- `Sample_classrooms.csv`: classroom metadata.
+- `Sample_schedule.csv`: class location, schedule, course, enrollment, and
+  capacity.
 
-samples.py - process sample files from CSV to dataframe/parquet listed below. Uses config.env for date range, sample_aps.csv, sample_classrooms.csv, and 
-sample_schedule.csv input files. These should be UTF-8 encoded, sections in the same class should be combined, Day of week uses M T W R F.
-    sample_aps.parquet - saved dataframe file with information about all sampled APs
-    sample_classrooms.parquet - saved dataframe file with information about sampled classroom locations
-    sample_classes.parquet - saved dataframe file with information about sampled class periods. Sections in the same location must be combined.
+The three CSVs default to `SAMPLE_FOLDER`. They are read directly; no manual
+CSV-to-Parquet preparation step is required. Schedule rows sharing the same
+classroom/start/end are combined into one physical session and their enrolled
+counts are summed.
 
-analyze_data.py - further processes and begins to analyze data within scope in the sample files
-    grouped input must include aruba_erm.time as a timezone-aware datetime dtype; varied beacon timestamp strings, naive datetimes, and broader schedule time parsing need a separately approved post-refactor normalization project
-    deduplicated in-scope rows must have non-null wlan.qbss.cu; the stage fails with AP, class-time, percentage, and example-row details rather than silently converting missing CU to zero
-    saves plots for each class session in Output/plots/
-    separate parquet files for each AP are saved as class_beacons files, these contain only data within the sample scope
-    all_class_beacons.parquet - combined all beacon data within the scope of class sessions
-    radio_summary.parquet - summary information for each radio/session
-    analyze_data_log - detailed information for each radio/session
+The reviewed capture boundary supports:
 
-analyze_all_class_beacons.py - performs aggregate analysis on the all_class_beacons as a single dataset, required for analyze_class_sessions
-    all_class_beacons_processed.parquet - includes location and room station count
-    analyze_all_class_beacons_log - output and analysis results
-    Output/all_class_beacons/ - includes plot files saved as png
+- Aruba ERM types 0, 3, and 6;
+- native 802.11/radiotap captures;
+- Aruba and Extreme AP-name information elements;
+- 2.4, 5, and 6 GHz band/channel classification when the required evidence is
+  present; and
+- Wireshark/TShark 4.6.6 on the verified Windows workflow.
 
-analyze_radio_summary.py - analyze the class_summary data that includes one row per radio per class session
-    radio_summary/ - includes plots
-    analyze_radio_summary_log - text output
+Beacons without a configured AP hostname are outside project scope and are
+discarded early. AP-name support for additional vendors remains future work.
 
-analyze_class_sessions.py - analyze each class session as a single row. Current high-CU duration and streak metrics combine all beacons in the location and mark a bin high when any beacon exceeds the threshold; they are not calculated independently per radio.
+## Outputs
 
-### Documentation
+Each successful execution creates:
 
-- `docs/current_pipeline.md` documents the behavior and assumptions of the current pipeline.
-- `docs/bug_backlog.md` tracks confirmed bugs, fragilities, and behavior risks.
-- `docs/module_refactor_roadmap.md` records the completed behavior-preserving module refactor.
-- `docs/post_refactor_design.md` tracks analysis and architecture changes deferred until after that refactor.
+```text
+Output/runs/<project>/<run-id>/
+```
 
+The five durable logical artifacts are:
 
-### Folders
-Data - input and working files
-    /captures - put .pcapng files here
-    /processed_data - .pcapng files are converted to parquet files and saved here
-    /grouped_data - parquet files are saved per AP in this location
-    /sampled - AP beacon files are saved here after processing to remove duplicates and only representing the sampled scope
-Output - the output of processing including graphs, logs etc. these folders will be created dynamically if they don't already exist
-    /plots - plotted graphs for radio/class sessions
-    /all_class_beacons - output from analyze_all_class_beacons
-    /radio_summary - output from analyze_radio_summary    
-Sample - files defining the sampled courses, locations, and APs CSV files are converted to parquet files with samples.py
-old - optional archived obsolete/reference files that are not imported or executed by the normal pipeline or test suite.
+- `project_identity_map.parquet`;
+- `selected_observations/`;
+- `radio_class_summary.parquet`;
+- `classroom_class_summary.parquet`; and
+- `manifest.json`.
 
+Compact CSV exports are under `exports/csv/`. The bounded
+`reports/cu_coverage_streak/` package contains a run summary, methodology/file
+guide, review CSVs, and project-level plots. Parquet remains authoritative.
 
+Artifacts are built in an owned hidden staging directory and published only
+after the complete run succeeds. A failed or interrupted run does not publish
+partial results. Ctrl+C cancels the run; rerunning starts a new run rather than
+resuming or overwriting.
 
+## Analysis semantics
+
+- Class intervals and bins are half-open; terminal partial bins retain their
+  actual duration.
+- Preferred observation time is Aruba ERM time, otherwise frame epoch time.
+- Reliable per-BSSID/session TSF assists ordering, duplicate reconciliation,
+  and bin placement. Missing, frozen, reversing, or incompatible TSF falls
+  back to observation time.
+- Selection keeps the first observed beacon per BSSID/bin after source
+  precedence and deterministic ties.
+- Missing CU never means zero. Valid CU, beacon-with-missing-CU, and no-beacon
+  time remain separate.
+- High CU begins at raw QBSS CU 128; very high begins at 192.
+- Streaks are calculated per stable radio before classroom maximums are taken.
+
+The accepted decisions are under [`docs/decisions`](docs/decisions), and the
+current implementation is described in
+[`docs/current_pipeline.md`](docs/current_pipeline.md).
+
+## Performance
+
+Capture extraction is bounded and concurrent. One worker is the conservative
+fallback; four is the current measured recommendation. A full 80-capture,
+49.37-GiB project has shown substantial run-to-run timing variation, so no
+formal runtime guarantee is currently claimed.
+
+## Tests
+
+The primary calculation oracle is the dedicated corrected fixture under
+`tests/fixtures/corrected_semantics`, with its golden contract in
+`tests/golden/corrected_semantics_v1.json`.
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Tests marked `requires_external_tools` need local captures and TShark. The
+frozen comparison in `tests/golden/legacy_corrected_comparison_v1.json`
+documents intentional differences from the former calculation using the same
+small input, but legacy code is not executed in the supported test suite.
+
+## Historical reproduction
+
+The last refactored revision supporting the original published workflow and
+golden fingerprint is Git commit
+`4a20d1c8f6164fdb81fc75f2cf80b9fba3f1c5fb`. Check out that commit separately
+if historical reproduction is required. The current repository does not ship
+or maintain the former multi-script workflow.

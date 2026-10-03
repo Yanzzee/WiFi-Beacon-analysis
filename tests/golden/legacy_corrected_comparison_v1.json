@@ -1,0 +1,49 @@
+{
+  "comparison_id": "beacon.comparison/legacy-to-corrected/v1",
+  "purpose": "Frozen explanatory comparison only; the legacy calculation is not a supported test oracle.",
+  "shared_input": {
+    "path": "tests/fixtures/corrected_semantics/expected/selected_observations.csv",
+    "sha256": "139d1ba8341487377d748672e354c7046e089ddcaf8b88dc9b8f80e513b201cb",
+    "class_session_id": "C1",
+    "classroom": "ROOM1",
+    "class_start": "2026-01-15T10:00:00Z",
+    "class_end": "2026-01-15T10:00:08.500Z",
+    "analysis_bin_seconds": 1.024
+  },
+  "legacy_snapshot": {
+    "status": "frozen_reference_not_executed",
+    "recovery_commit": "4a20d1c8f6164fdb81fc75f2cf80b9fba3f1c5fb",
+    "source": "retained class-session calculation executed once before legacy cleanup",
+    "input_interpretation": "The same 15 selected rows were treated as one location-wide beacon stream. Station totals were summed per fixture bin only to satisfy the historical room_scount input.",
+    "metrics": {
+      "number_beacons": 15,
+      "number_radios": 3,
+      "average_cu_raw_across_beacon_rows": 140.25,
+      "median_cu_raw_across_beacon_rows": 178.5,
+      "high_duration_seconds_location_any_radio": 5.12,
+      "very_high_duration_seconds_location_any_radio": 4.096,
+      "high_max_streak_seconds_location_any_radio": 2.048,
+      "very_high_max_streak_seconds_location_any_radio": 2.048,
+      "terminal_partial_interval_included": false
+    }
+  },
+  "corrected_snapshot": {
+    "status": "authoritative_and_tested",
+    "schema_id": "beacon.schema/analysis-results/v1",
+    "metric_id": "beacon.metric/corrected-cu/v1",
+    "radio_count_total": 3,
+    "high_possible_connected_max_seconds": 3.072,
+    "high_actual_observed_max_seconds": 2.356,
+    "very_high_possible_connected_max_seconds": 2.048,
+    "very_high_actual_observed_max_seconds": 2.048,
+    "terminal_partial_interval_included": true,
+    "classroom_average_cu": null
+  },
+  "intentional_differences": [
+    "The historical class calculation mixed every radio in the classroom; corrected streaks are calculated per stable radio before taking the classroom maximum.",
+    "The corrected result reports actual-observed and possible-connected streaks separately.",
+    "The corrected result preserves the 0.308-second terminal partial interval; the historical date-range loop omitted it.",
+    "The historical average weighted beacon rows and mixed radios; the corrected artifacts report per-radio duration-weighted valid-CU averages and intentionally omit a combined classroom CU average.",
+    "Missing CU and no-beacon time remain distinct in the corrected result rather than being treated as measured zero."
+  ]
+}

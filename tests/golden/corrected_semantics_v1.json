@@ -1,0 +1,240 @@
+{
+  "golden_id": "beacon.golden/corrected-semantics/v1",
+  "schema_id": "beacon.schema/analysis-results/v1",
+  "metric_id": "beacon.metric/corrected-cu/v1",
+  "comparison": {
+    "mode": "logical_content",
+    "compare_parquet_file_bytes": false,
+    "compare_plot_bytes": false,
+    "float_policy": "isclose",
+    "relative_tolerance": 1e-12,
+    "absolute_tolerance": 1e-12
+  },
+  "integrated_fixture": {
+    "fixture_id": "CF05_10",
+    "run_id": "oracle-corrected-v1",
+    "expected_files": {
+      "manifest": "tests/fixtures/corrected_semantics/expected/manifest.json",
+      "project_identity_map": "tests/fixtures/corrected_semantics/expected/project_identity_map.csv",
+      "selected_observations": "tests/fixtures/corrected_semantics/expected/selected_observations.csv",
+      "radio_class_summary": "tests/fixtures/corrected_semantics/expected/radio_class_summary.csv",
+      "classroom_class_summary": "tests/fixtures/corrected_semantics/expected/classroom_class_summary.csv"
+    },
+    "expected_row_counts": {
+      "project_identity_map": 4,
+      "selected_observations": 15,
+      "radio_class_summary": 3,
+      "classroom_class_summary": 1
+    },
+    "selected_input_rows": [
+      "I01",
+      "I02",
+      "I03",
+      "I05",
+      "I06",
+      "I07",
+      "I08",
+      "I09",
+      "I10",
+      "I11",
+      "I12",
+      "I13",
+      "I14",
+      "I15",
+      "I16"
+    ],
+    "discarded_duplicate_views": ["I04"],
+    "invariants": {
+      "selected_key": ["class_session_id", "bssid", "bin_number"],
+      "selected_keys_unique": true,
+      "missing_beacon_rows_synthesized": 0,
+      "missing_cu_remains_null": true,
+      "duration_partition_exact": true,
+      "identity_references_resolve": true,
+      "one_run_schema_metric_triplet": true,
+      "legacy_artifacts": 0
+    }
+  },
+  "focused_cases": {
+    "CF01": {
+      "observation_time": {
+        "T1": ["2026-01-15T10:00:00.180000000Z", "aruba_erm"],
+        "T2": ["2026-01-15T10:00:00.200000000Z", "frame_time_epoch"],
+        "T3": ["2026-01-15T10:00:00.300000000Z", "frame_time_epoch"],
+        "T5": ["2026-01-15T10:00:00.500000000Z", "aruba_erm"]
+      },
+      "excluded": {
+        "T4": "source_timestamp_unavailable"
+      },
+      "invalid_source_provenance": {
+        "T3": "aruba_erm_time_malformed"
+      }
+    },
+    "CF02": {
+      "A": {
+        "tsf_status": "usable_advancing",
+        "origin": "2026-01-15T09:59:59.100000000Z",
+        "retained_tsf_order": ["D2", "D5", "D4"],
+        "discarded_duplicate_views": ["D1"],
+        "derived_time_and_bin": {
+          "D2": ["2026-01-15T10:00:00.990000000Z", 0],
+          "D5": ["2026-01-15T10:00:01.100000000Z", 1],
+          "D4": ["2026-01-15T10:00:01.304800000Z", 1]
+        },
+        "skipped_nominal_intervals_before": {
+          "D4": 1
+        },
+        "synthesized_rows": 0
+      },
+      "B": {
+        "timing_method": "observation_time_fallback",
+        "tsf_status": "insufficient_progression",
+        "diagnostic": "tsf_unusable_insufficient_progression",
+        "retained_order": ["D3"]
+      },
+      "C": {
+        "timing_method": "observation_time_fallback",
+        "tsf_status": "frozen",
+        "diagnostic": "tsf_unusable_frozen",
+        "retained_order": ["D6", "D7"]
+      },
+      "D": {
+        "timing_method": "observation_time_fallback",
+        "tsf_status": "reversing",
+        "diagnostic": "tsf_unusable_reversing",
+        "retained_order": ["D8", "D9"]
+      },
+      "E": {
+        "timing_method": "observation_time_fallback",
+        "tsf_status": "time_mismatch",
+        "diagnostic": "tsf_unusable_time_mismatch",
+        "retained_order": ["D10", "D11"]
+      },
+      "F": {
+        "excluded": {
+          "D12": "outside_class_observation_time"
+        }
+      },
+      "G": {
+        "tsf_status": "usable_advancing",
+        "origin": "2026-01-15T09:59:58.976000000Z",
+        "excluded": {
+          "D13": "tsf_time_outside_class"
+        },
+        "derived_time_and_bin": {
+          "D14": ["2026-01-15T10:00:01.000000000Z", 0]
+        }
+      }
+    },
+    "CF03": {
+      "class_interval": "left_closed_right_open",
+      "bins": [
+        [0, "2026-01-15T10:00:00.000000000Z", "2026-01-15T10:00:01.024000000Z", 1024000, "complete"],
+        [1, "2026-01-15T10:00:01.024000000Z", "2026-01-15T10:00:02.048000000Z", 1024000, "complete"],
+        [2, "2026-01-15T10:00:02.048000000Z", "2026-01-15T10:00:02.560000000Z", 512000, "partial"]
+      ],
+      "row_membership": {
+        "E1": null,
+        "E2": ["C-edge", 0],
+        "E3": ["C-edge", 0],
+        "E4": ["C-edge", 1],
+        "E5": ["C-edge", 2],
+        "E6": ["C-edge", 2],
+        "E7": ["C-edge-next", 0]
+      },
+      "short_class": {
+        "class_session_id": "C-short",
+        "bin_count": 1,
+        "bin_duration_us": 400000,
+        "width_status": "partial"
+      }
+    },
+    "CF04": {
+      "rolling_minimum_spacing_gate": false,
+      "selected_rows": ["X1", "X3", "Y1"],
+      "not_selected_later_in_same_bin": ["X2", "X4", "Y2"]
+    },
+    "CF05": {
+      "radio_bin_states": {
+        "R5:0": "observed_high",
+        "R5:2": "beacon_missing_cu",
+        "R5:3": "no_beacon",
+        "R5:5": "observed_non_high"
+      }
+    },
+    "CF06": {
+      "radio_group_id": "R5",
+      "member_bssids": ["A5", "B5"],
+      "preferred_bssid": "A5",
+      "fallback_bins": {
+        "4": "B5",
+        "6": "B5"
+      },
+      "preferred_changed": false,
+      "station_count_rollup": {
+        "bin_number": 0,
+        "member_bssid_values": {
+          "A5": 10,
+          "B5": 5
+        },
+        "radio_total": 15,
+        "cu_preference_filters_station_count": false,
+        "classroom_ssid_totals": {
+          "eduroam": 21,
+          "guest": 5
+        },
+        "classroom_band_totals": {
+          "2.4": 3,
+          "5": 15,
+          "6": 8
+        }
+      }
+    },
+    "CF07": {
+      "radio_group_id": "R5",
+      "class_duration_us": 8500000,
+      "valid_cu_duration_us": 6452000,
+      "missing_cu_duration_us": 1024000,
+      "no_beacon_duration_us": 1024000,
+      "cu_coverage": 0.75905882352941179,
+      "average_cu_raw": 155.43459392436455,
+      "average_cu_ratio": 0.60954742715437082
+    },
+    "CF08": {
+      "threshold_edges": {
+        "127": [false, false],
+        "128": [true, false],
+        "191": [true, false],
+        "192": [true, true]
+      },
+      "tuple_order": ["high", "very_high"]
+    },
+    "CF09": {
+      "same_channel_distinct_radio_case": {
+        "class_session_id": "C-same-channel",
+        "classroom": "ROOM2",
+        "band": "5",
+        "channel": 36,
+        "radio_group_ids": ["R5A", "R5B"],
+        "radio_count_5_ghz": 2,
+        "radio_count_total": 2
+      },
+      "classroom_streaks_are_single_radio_maxima": true,
+      "responsible_tie_sets_are_complete": true
+    },
+    "CF10": {
+      "required_artifacts": [
+        "manifest",
+        "project_identity_map",
+        "selected_observations",
+        "radio_class_summary",
+        "classroom_class_summary"
+      ],
+      "selected_observation_partition": ["class_date"],
+      "responsible_radio_representation": "list_string",
+      "concise_stage_log_required": true,
+      "detailed_log_optional": true,
+      "legacy_result_set": false
+    }
+  }
+}

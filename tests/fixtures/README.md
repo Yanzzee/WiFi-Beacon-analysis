@@ -1,68 +1,12 @@
-# Analysis Fixture Dataset
+# Test Fixtures
 
-The analysis-forward regression test starts after capture processing and
-grouping. Do not place raw captures here, and do not include anything that
-requires `tshark` or Linux wireless tools.
+`corrected_semantics/` contains the small, repository-owned oracle for the
+supported calculation. Its CSV inputs cover timestamp precedence, TSF
+ordering/duplicates/fallback, fixed bins and terminal partial intervals,
+first-observed selection, CU missingness states, radio membership/fallback,
+coverage, both streak interpretations, and the five-artifact contract.
 
-The separate original-input tests in `tests/test_pipeline_golden.py` use
-`Data/captures` plus the CSV files in `Sample` (or explicitly configured source
-directories), build these fixture-shaped inputs in a temporary workspace, and
-compare semantic fingerprints at this boundary. The full-capture checkpoint is
-scoped to sampled AP/class-session windows, so irrelevant differences in
-off-hours capture coverage do not prevent an otherwise identical analysis
-golden result.
-
-Short pre-analysis tests use the local `Data/captures_test`,
-`Data/processed_data_test/original`, and `Data/grouped_data_test` folders. These
-large local inputs remain outside this tracked fixture; see
-`tests/golden/README.md` for their exact roles and retention requirements.
-
-By default, the tests look for a fixture dataset at:
-
-```text
-tests/fixtures/dataset/
-```
-
-You can also point pytest at a different fixture root:
-
-```powershell
-$env:BEACON_ANALYSIS_FIXTURE_DIR = "C:\path\to\fixture"
-pytest tests/test_analysis_forward.py
-```
-
-or:
-
-```powershell
-pytest tests/test_analysis_forward.py --analysis-fixture-dir C:\path\to\fixture
-```
-
-## Required Layout
-
-```text
-dataset/
-  config.env                         # optional; repo config.env is used if absent
-  Sample/
-    sample_aps.parquet
-    sample_classrooms.parquet
-    sample_classes.parquet
-  Data/
-    grouped_data/
-      <AP-or-BSSID>.parquet
-      ...
-```
-
-The grouped parquet filenames must match the AP hostnames used by `Sample/sample_aps.parquet` unless the current pipeline logic has been deliberately updated. `analyze_data.py` loads grouped AP data with:
-
-```text
-Data/grouped_data/<Hostname>.parquet
-```
-
-## What Not To Include
-
-- Raw `.pcapng` captures, including legacy `.pcap` filenames that contain pcapng data.
-- `Data/processed_data`.
-- Existing `Data/sampled` outputs.
-- Existing `Output` files.
-- Any files that require `process_pcapng.py`, `tshark`, or Linux wireless tools.
-
-The test harness copies this fixture dataset into a temporary workspace before each run, then runs the analysis scripts there.
+Optional real-capture tests use owner-provided files under
+`Data/captures_test/` and are marked `requires_external_tools`. These files are
+evidence for decoder/adapter/band behavior; they are not the calculation
+oracle and are not required for the ordinary unit suite.
