@@ -1,0 +1,2 @@
+report_metric_id,report_schema_id,project_name,run_id,ap_id,ap_name,ap_model,classroom,six_ghz_enabled_explicit,six_ghz_enabled,six_ghz_enablement_source,observed_2_4_ghz_radio_count,observed_5_ghz_radio_count,observed_6_ghz_radio_count,has_observed_data,enabled_6_ghz_not_observed
+beacon.metric/band-comparison/v1,beacon.schema/band-comparison-reports/v1,2026-HBLL,20261116T184042802936Z-9e329a5c,P-HBLL-3710-AP-01-3714B,P-HBLL-3710-AP-01-3714B,635,HBLL-3710,,True,project_observed_bands,0,1,1,True,False

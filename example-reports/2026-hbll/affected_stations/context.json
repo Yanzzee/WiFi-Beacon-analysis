@@ -1,0 +1,26 @@
+{
+  "run_id": "20261116T184042802936Z-9e329a5c",
+  "project_name": "2026-HBLL",
+  "report_metric_id": "beacon.metric/potentially-affected-stations/v1",
+  "report_schema_id": "beacon.schema/affected-station-reports/v1",
+  "display_timezone": "America/Denver",
+  "manifest": "../../manifest.json",
+  "source": "../radio_class_detail/radio_bin_detail.parquet",
+  "high_minimum_raw": 128,
+  "very_high_minimum_raw": 192,
+  "station_time_unit": "association-microseconds",
+  "peak_policy": "complete_pairs_all_session_active_radios",
+  "cu_filled": false,
+  "stale_station_counts_included": true,
+  "station_time_cu_bounds": {
+    "metric_id": "beacon.metric/cu-missing-bin-bounds/v1",
+    "denominator": "available_station_time_us",
+    "unknown_weight": "available_station_time_us - paired_station_time_us",
+    "missing_cu_scenarios_percent": [
+      0,
+      100
+    ],
+    "unknown_station_counts_bounded": false,
+    "observed_fields_unchanged": true
+  }
+}
