@@ -1,0 +1,70 @@
+Corrected bounded radio/bin detail methodology
+
+Grain and authority
+- One row represents one physical radio in one class-session bin.
+- selected_observations/ remains the authoritative beacon evidence.
+- This manifest-registered Parquet file is a bounded derived view.
+
+CU selection
+- Configured primary SSID: eduroam.
+- When available, valid CU from the primary SSID supplies the bin.
+- Otherwise, the earliest valid same-radio member BSSID supplies
+  one fallback value. Multiple SSIDs never create duplicate rows.
+- missing_cu means member beacons exist but none has valid CU.
+- no_beacon means no member BSSID has a selected beacon in the bin.
+- CU describes channel conditions, sampled separately for each radio.
+
+Admission capacity (ADR-0013)
+- Admission capacity describes the radio's advertised QoS medium allowance,
+  not general channel utilization or a sum across radios/classrooms.
+- A valid capacity from the unchanged CU source is preferred; otherwise
+  use the stable primary-SSID/first-valid capacity source, then fallback.
+- Capacity has separate source lineage and independent availability.
+- Valid raw range is 0..31250; percent is raw / 31250 * 100.
+  Zero remains zero; missing, invalid, and no-beacon remain distinct.
+- No stale extension, clamping, averaging of disagreements, or 100-CU inference.
+- Disagreement and invalid-candidate diagnostics accompany selected values.
+- Tables, distributions and relationships: ../admission_capacity/.
+
+Station count
+- station_count is the accepted complete-only ADR-0010 radio/bin
+  total, including permitted 30-second stale assistance.
+- Unavailable radio totals remain null; measured zero remains zero.
+
+CU and station-count relationship
+- Correlations pair CU and station count only within the same
+  physical radio/bin. Unknown CU and unavailable station totals
+  are excluded; no value is imputed.
+- Stale-assisted station values participate and their pair count is
+  reported separately.
+- Pearson and tie-aware Spearman coefficients are descriptive.
+  No p-values or independence claims are made because adjacent
+  bins from one radio/session are repeated observations.
+- Overall and per-band hexbin plots show valid-pair density.
+- Hexbin density uses a 40 by 30 display grid to reduce striping from discrete station counts; source pairs and correlations are unchanged.
+
+Plots
+- Radio/class plots enabled for this run: true.
+- Plot display timezone: America/Denver.
+- Solid blue lines and light-blue fill are measured CU. Unknown CU
+  remains blank. A dashed blue line between surrounding measurements
+  is visual interpolation and is not data or an imputed metric value.
+- Orange station count uses the secondary axis; hollow markers denote
+  stale-assisted station totals.
+- A dashed orange bridge spans unavailable station bins bounded by
+  available measured or stale-assisted counts. It is visual only and
+  does not fill null values or participate in calculations.
+- The upper-left box shows schedule subject, seats, combined enrollment,
+  configured room AP count, AP model, building-room, and radio band.
+  Missing metadata is labeled Unknown.
+- The station axis is 0-100 unless an observed count exceeds 100;
+  larger maxima expand the axis upward to the next multiple of 10.
+
+Files
+- radio_bin_detail.parquet: combined CU, admission capacity and radio station-count view.
+- cu_station_correlation.csv: overall and per-band pair coverage and
+  descriptive correlations.
+- cu_station_hexbin.png: overall valid-pair density.
+- cu_station_hexbin_by_band.png: per-band valid-pair density.
+- radio_class_plot_index.csv: present only when plots are enabled.
+- methodology.txt: this file.

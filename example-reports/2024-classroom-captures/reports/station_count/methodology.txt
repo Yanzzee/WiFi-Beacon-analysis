@@ -1,0 +1,54 @@
+Corrected station-count report methodology
+
+Scope
+- Totals include only configured APs and sampled BSSIDs, SSIDs,
+  radios, and bands represented in the analyzed class-session data.
+- A BSSID seen elsewhere in the project but absent for the complete
+  session is not session-active and is excluded for that session.
+
+Stale assistance
+- Missing station count uses the same BSSID's previous valid value for
+  at most 30 seconds.
+- Leading missing bins may use the first later valid value for at most
+  30 seconds. Interior gaps never use a future value.
+- Values never cross a physical class-session boundary.
+
+Rollups
+- Radio, SSID/classroom, band/classroom, and all-classroom totals
+  sum supplemented BSSID values directly.
+- A total is null when any expected session-active BSSID remains
+  unavailable. Partial numeric totals are not published.
+- stale_assisted is true when any contributing BSSID value was
+  extended.
+- The primary distribution uses one complete all-band/all-SSID
+  classroom total per bin. Per-band panels use one complete
+  band/classroom total per bin. Unavailable bins are excluded.
+- Stale-assisted values participate and are shown as an outline
+  overlay on each station-count histogram.
+- Station-count histograms use one-client buckets.
+
+Enrollment
+- Peak client count is the maximum available classroom/bin total,
+  including stale-assisted bins.
+- Enrollment combines all sections in the physical session.
+- Zero or missing enrollment produces no ratio.
+- The ratio label is peak client count per enrolled.
+- Run-wide overall, SSID, and band averages use the Original-
+  compatible enrollment-weighted ratio of sums: eligible peak
+  counts summed and divided by their corresponding enrollment
+  sum. Sessions do not receive equal weight.
+- The maximum remains sensitive to genuine or erroneous single-bin
+  peaks; this limitation is accepted for the current statistic.
+
+Files
+- station_bin_rollups.parquet: derived bin totals at radio, SSID, band, and
+  classroom grain; selected_observations/ remains authoritative.
+- station_class_report.csv: class-session peaks and availability
+  counts for every rollup entity.
+- station_aggregate_report.csv: enrollment-weighted overall, SSID,
+  and band peak-client-count-per-enrolled results with component
+  sums and eligible-session counts.
+- classroom_bin_station_histogram.png: all-band classroom/bin station
+  distribution.
+- classroom_bin_station_histogram_by_band.png: per-band classroom/bin distributions.
+- methodology.txt: this file.

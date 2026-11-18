@@ -1,0 +1,3 @@
+run_id,schema_id,metric_id,population_type,population_id,total_radio_bin_rows,valid_cu_rows,available_station_rows,valid_pair_rows,valid_pair_coverage,stale_assisted_pair_rows,radio_count,class_session_count,pearson_correlation,spearman_correlation
+20261117T071615420763Z-2b8c8d02,beacon.schema/analysis-results/v1,beacon.metric/corrected-radio-bin/v1,overall,all,7056553,5793857,6949196,5793801,0.8210525734023396,150691,83,1063,0.26458000959970673,0.4378889257422589
+20261117T071615420763Z-2b8c8d02,beacon.schema/analysis-results/v1,beacon.metric/corrected-radio-bin/v1,band,5,7056553,5793857,6949196,5793801,0.8210525734023396,150691,83,1063,0.26458000959970673,0.4378889257422589

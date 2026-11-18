@@ -1,0 +1,22 @@
+ADR-0013 radio admission-capacity reporting
+Source: ../radio_class_detail/radio_bin_detail.parquet; selected_observations/ is authoritative.
+CU describes channel conditions; admission capacity describes a radio's advertised QoS admission allowance.
+No admission capacities are summed across BSSIDs, radios, bands or classrooms.
+One unchanged CU-source beacon is preferred; otherwise a stable primary-SSID/first-valid admission source, then earliest valid member fallback.
+Availability is independent of CU. Separate source BSSID/SSID/method/time identifies the selected BSSID/session/bin row.
+Raw units: 32 microseconds per second; percent = raw / 31250 * 100.
+Valid range: 0..31250 inclusive. Zero remains zero, not missing. Invalid raw uint16 values remain in selected observations.
+missing_capacity, invalid_capacity and no_beacon remain distinct; no stale extension, clamping or interpolation.
+Valid member disagreements retain the deterministic selected value and are diagnosed, not averaged.
+Constant-zero/constant populations are flagged; constant correlations are null.
+Histograms use 1-percentage-point display bins centered on integer percentages; raw values are not rounded.
+The exact CDF retains every discrete advertised value.
+Every eligible radio/bin contributes once, not once per beacon/BSSID or weighted by enrollment.
+mean_percent is the mean of valid radio/bin readings, not a duration-weighted class average.
+Same-radio/same-bin valid pairs only; stale-assisted station totals participate and are counted.
+CU/capacity pairs may use different beacons in the same bin; those pairs are counted explicitly.
+Pearson and tie-aware Spearman are descriptive only: no p-values, independence claims or regression.
+Coverage denominators are all expected sampled radio/bins, including unknown bins.
+Hexbins use a 40x30 display grid. Fixed grids and marginal frequencies are retained between session parts.
+A second narrow derived-Parquet read computes exact centered/rank correlations and display counts; no capture re-decode.
+Not a client limit, throughput estimate, 100-CU calculation, or guarantee that a request will be admitted.

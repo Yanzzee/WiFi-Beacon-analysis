@@ -1,0 +1,53 @@
+Beacon cadence and capture quality — exploratory v1
+Uses session-admitted observations BEFORE representative bin selection.
+Default nominal interval is 100 TU (102400 us); BEACON_INTERVAL_TU / --beacon-interval-tu
+overrides only this diagnostic expectation, not accepted CU/TSF/station calculations.
+Advertised interval mismatches are counted, never silently used to replace the expectation.
+ERM uses preferred observation time and 10 nominal intervals per class-start-anchored slot.
+At most one effective observation per BSSID/ERM slot; extras are metric-only effective
+duplicates, NOT proof that packet views are duplicates, and remain in canonical processing.
+Native slots use capture observation timestamps, never TSF-derived wall time.
+Native TSF is assessed independently of ERM for diagnostics and conservative
+duplicate recognition only. Checks compare local clock increments and total
+offset variation against one advertised beacon interval (100 TU if absent).
+Duplicate candidates require matching retained beacon fields, distinct source
+files and capture times within 102.4 ms. Conflicting/ambiguous views remain.
+TSF never moves a measurement or excludes it from its observed class window.
+Clock-jump counts, step errors, offset range and anomalous capture/frame/time/TSF
+lineage are retained in beacon_cadence_sessions.csv; anomalies produce warnings.
+Families pool capture files/receivers; source_captures records lineage. These are NOT
+independent receiver paths. ERM own-transmit versus neighbour-receive role is unknown.
+No exporter-to-AP mapping or validated TX/RX indication is currently available.
+Rates and expected-slot fractions use the entire class window, not inferred listening time.
+Missing capture files, off-channel visits and class edges may contribute empty slots:
+they are NOT confirmed RF losses. Only session-observed BSSIDs enter expected membership.
+The bounded window view uses 100 nominal intervals (10.24 s at default), with exact
+terminal slot/window counts. Member availability counts all active family BSSIDs;
+any-beacon availability unions their slots without summing SSID beacon rates.
+CU and station covariates are duration-weighted existing pooled same-radio/bin measurements.
+Current and previous-window CU means retain their observed values. Companion
+*_lower_bound and *_upper_bound fields use 0/100% CU for missing time and the
+actual window duration; cu_bounds_metric_id identifies the bounds calculation.
+Exact raw-CU/duration sums and previous_window_duration_us support audit and
+later refresh. The preceding window's own range/duration is lagged, including
+before a partial terminal window. The first window has no preceding in-class
+range. If measurement context components are absent, bounds stay unavailable;
+known all-missing context instead has a 0-100% range. These are not confidence
+intervals, and the pooled context is not an independent per-capture-path CU
+measurement. Predictor buckets, eligibility and correlations remain observed.
+CU is never interpolated, extended, or replaced using another AP. Accepted complete radio
+station counts retain their existing 30-second assistance and stale duration diagnostics.
+Associations compare current member-empty-slot fraction with the immediately PRECEDING
+window's available CU/station mean. No lagged CU filling, significance tests, Spearman,
+causal interpretation, inferred reliability threshold, or model correction is supplied.
+Pearson gives each paired radio/family/window equal weight and is null for constants.
+Covariate bands are descriptive display bins, not discovered thresholds; band fractions
+are empty/possible member slots. Plots pool cohorts only for display; CSVs separate
+family, model, band and observed AP 5/6-GHz radio-group counts. Observed radio groups
+describe the sampled project identity map, NOT a complete hardware inventory.
+Unpaired-window counts remain visible. Missingness may depend on the unobserved CU;
+observed-covariate associations cannot establish reliable operation below 50% or 75%.
+Cross-capture frame reconciliation, known listening exposure, periodic-loss correction,
+simultaneous ERM/native validation and CU estimation remain deferred.
+Trace back through class_session_id/radio_group_id and source_captures to manifest-hashed
+raw captures; current contextual covariates derive from reports/radio_class_detail/radio_bin_detail.parquet.
