@@ -5,13 +5,21 @@ sessions. It selects one representative beacon per BSSID and analysis bin,
 resolves BSSIDs to radios/APs/classrooms, and reports channel utilization,
 coverage, missingness, and high-utilization streaks.
 
-Alpha 0.1 remains the published release. The current checkout contains the
-[Alpha 0.2 reporting candidate](docs/alpha-0.2-release-notes.md); candidate
-preparation does not mean it has been tagged or published.
+Alpha 0.2 is the current release. See the
+[Alpha 0.2 release notes](docs/alpha-0.2-release-notes.md).
 
 See the [documentation guide](docs/README.md) for current references, accepted
 decisions and dated validation records. The [reporting and publication guide](docs/reporting_and_publication.md)
 describes the current web report, saved-run refresh and public-hosting plan.
+
+## Example reports
+
+[Browse the example reports](https://yanzzee.github.io/WiFi-Beacon-analysis/example-reports/)
+for the 2024, 2025 and 2026 classroom captures and native captures in the 2026 HBLL project.
+
+Summary measurements are retained. Large Parquet files and most individual
+radio/class-session plots are omitted; substituted examples are labelled and
+watermarked by band. The two 2026 reports share the verified HBLL plots.
 
 ## Supported workflow
 
