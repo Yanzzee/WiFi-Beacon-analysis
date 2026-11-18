@@ -1,0 +1,2119 @@
+{
+  "format": "beacon.publication/static-examples/v1",
+  "projects": [
+    "2024-classroom-captures",
+    "2025-classroom-captures",
+    "2026-classroom-captures",
+    "2026-hbll"
+  ],
+  "example_sources": {
+    "5": {
+      "page": "examples\\radio-5-ghz.html",
+      "source_run": "20261116T184042802936Z-9e329a5c",
+      "class_session_id": "HBLL-3710|2026-11-11T18:00:00Z|2026-11-11T19:15:00Z",
+      "radio_group_id": "P-HBLL-3710-AP-01-3714B/radio/2"
+    },
+    "6": {
+      "page": "examples\\radio-6-ghz.html",
+      "source_run": "20261116T184042802936Z-9e329a5c",
+      "class_session_id": "HBLL-3710|2026-11-09T17:00:00Z|2026-11-09T17:50:00Z",
+      "radio_group_id": "P-HBLL-3710-AP-01-3714B/radio/1"
+    }
+  },
+  "shared_hbll_verification": {
+    "whole_project_hbll_rows": 172870,
+    "hbll_project_rows": 172870,
+    "compared_columns": 35,
+    "equal_including_row_order": true
+  },
+  "plot_counts": {
+    "2024-classroom-captures": {
+      "example_5_ghz": 1811
+    },
+    "2025-classroom-captures": {
+      "actual": 52,
+      "example_5_ghz": 577,
+      "example_6_ghz": 62
+    },
+    "2026-classroom-captures": {
+      "example_5_ghz": 512,
+      "shared_actual_hbll": 46,
+      "example_6_ghz": 240
+    },
+    "2026-hbll": {
+      "actual": 46
+    }
+  },
+  "files": [
+    {
+      "path": ".gitattributes",
+      "bytes": 79,
+      "sha256": "b8ef5a50e68f859528e09c77f24f8b59752f445a72e77113689c70f172360dd9"
+    },
+    {
+      "path": ".nojekyll",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "2024-classroom-captures/exports/csv/classroom_class_summary.csv",
+      "bytes": 458130,
+      "sha256": "bb54f480967f2c8dc2c801896a63326f3cccb75a41f5087f03e60291bfd6f958"
+    },
+    {
+      "path": "2024-classroom-captures/exports/csv/project_identity_map.csv",
+      "bytes": 49708,
+      "sha256": "91080fd9e2b4eb83e7fd24e7545129d9e51d1bbe6d5154228413c53b6d3a0c87"
+    },
+    {
+      "path": "2024-classroom-captures/exports/csv/radio_class_summary.csv",
+      "bytes": 2052991,
+      "sha256": "3ca8efda45d6d611dadac3a2a770b36701e8bf8f61be9ee82cbb1f9d0a83d4ed"
+    },
+    {
+      "path": "2024-classroom-captures/manifest.json",
+      "bytes": 1419,
+      "sha256": "c006dd6879ad086b060f654e430d782b1a60dfddc00b37718eab52a8fa9aca4c"
+    },
+    {
+      "path": "2024-classroom-captures/omitted-data.html",
+      "bytes": 1406,
+      "sha256": "1148319cbd6d8bbd683337826a501f6a7dd8331aa04b67fe8ef4d77b2308f989"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/admission_capacity_cdf.webp",
+      "bytes": 12312,
+      "sha256": "29a1da376b9bf11e6d7a0fca066d672e97d29b59ee5fe9b510a8849c80371f32"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/admission_capacity_cdf_by_band.webp",
+      "bytes": 10898,
+      "sha256": "7c579d7be7332d5e2143d57b4b20ea8031c1564eab94482a04bb5f84ea8cf659"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/admission_capacity_correlation.csv",
+      "bytes": 1259,
+      "sha256": "02532631c41943432db8731b5c35495e77b3a059304ec2daa70229671723fb43"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/admission_capacity_cu_hexbin.webp",
+      "bytes": 245534,
+      "sha256": "32ec346f7271dacd89dd00fff939d12c5b89b00be594a8c029db8bd8501fa84f"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/admission_capacity_cu_hexbin_by_band.webp",
+      "bytes": 205202,
+      "sha256": "fa584f14674ddcbef93baf65995eeb05a4d77b93afb38d6db80c4d835b906378"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/admission_capacity_histogram.webp",
+      "bytes": 11546,
+      "sha256": "9aa0ed7b622cc6a3b6f328f63303136905844f2b6ca8f4c29079c0b1714df810"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/admission_capacity_histogram_by_band.webp",
+      "bytes": 10382,
+      "sha256": "c0456e2fd1ae2b43d6e39d5159b6c4c8f49e930c354fc01fcc80a49ef7f11346"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/admission_capacity_station_hexbin.webp",
+      "bytes": 241490,
+      "sha256": "fcf28747874f6dee33195cdfe0044e984a79d7a48ad61975d006c6b0b981dab9"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/admission_capacity_station_hexbin_by_band.webp",
+      "bytes": 188854,
+      "sha256": "96aa3375f324a8af4b8b7835f37fb2e7e731558ea7838818d19f8f6118761a7d"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/admission_capacity_summary.csv",
+      "bytes": 762,
+      "sha256": "77ec5df9e414cb8e5d4a1fda75c059c7c714d7e03c8c1d0d2fb59b56d2b8df33"
+    },
+    {
+      "path": "2024-classroom-captures/reports/admission_capacity/methodology.txt",
+      "bytes": 2143,
+      "sha256": "194c7805f84c98fa6b2952b9e58be5961b0243907a47438a2d830878d68f98be"
+    },
+    {
+      "path": "2024-classroom-captures/reports/affected_stations/context.json",
+      "bytes": 998,
+      "sha256": "4e97c67699d9f763ef8c76eff28287a8daf2d2b991ce49bec2973ac77529d873"
+    },
+    {
+      "path": "2024-classroom-captures/reports/affected_stations/entity_session_exposure.csv",
+      "bytes": 6366221,
+      "sha256": "0b80de88ab869ddfffc6443b1d0c35d17a270b259ba753193e2e0c5efbb42b83"
+    },
+    {
+      "path": "2024-classroom-captures/reports/affected_stations/methodology.txt",
+      "bytes": 3849,
+      "sha256": "1aa58b8a823c33b8d2df4b39eb7ccc6fd35d992b39af022975ff47df8f9f20d5"
+    },
+    {
+      "path": "2024-classroom-captures/reports/affected_stations/population_exposure.csv",
+      "bytes": 7247,
+      "sha256": "7935fcb16222614f8cffa2f72113d21abd0763b26654414a15881cc1b28ef0f1"
+    },
+    {
+      "path": "2024-classroom-captures/reports/affected_stations/station_time_exposure.webp",
+      "bytes": 16376,
+      "sha256": "7e050fcee65850872f71bc73c24bec756ae284bd6aaea95e2a66fd451173362f"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/ap_infrastructure.csv",
+      "bytes": 14290,
+      "sha256": "3059a9b1a6a40f76830ed0cdc69848f415de7775840ea419d93a13c668f51b92"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/classroom_band_summary.csv",
+      "bytes": 46498,
+      "sha256": "1dae99f38b0522a37c2b5d1ea5cda2f2bd0b61529c83cd535d03d975d8a73f45"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/classroom_infrastructure.csv",
+      "bytes": 8928,
+      "sha256": "f36433728cb466de0e538b5f1e29954a2a722b427d786536ff4d7d168fd56807"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/cohort_cu_station_density.webp",
+      "bytes": 29256,
+      "sha256": "87363505937b79eda6d0fa54ec77fb666fdfb0c08645c8d9aec9e865e67e9850"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/cohort_metrics.webp",
+      "bytes": 25512,
+      "sha256": "96acd34ac8c5d6d91e15569f074cfe28520cd609a1ffd167e9801b58c61dde31"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/comparison_context.json",
+      "bytes": 622991,
+      "sha256": "cf3feb5c96e9b9c5a217e5142805445fc6b227d30a9c58ecee070ea4a44f390a"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/cu_cdf_bounds.csv",
+      "bytes": 8023,
+      "sha256": "bd8a20fee22091dc42061c7addcd80b3296582e7111b7f3c225ebe79791983f5"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/cu_cohort_cdf.webp",
+      "bytes": 41708,
+      "sha256": "f47560c98b1bb02be033eb43978ddebb3a9e80cdb2095dcf26ee6515fb08a5ee"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/cu_distribution.csv",
+      "bytes": 186613,
+      "sha256": "a8842c95eec781767e3ef11c644be7712014db27575db761893806769add619d"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/deployment_summary.csv",
+      "bytes": 540,
+      "sha256": "04407d80ecce0d420633efdf21678f952ab002628f061c16cda81fe33c792bc5"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/matched_ap_cu.webp",
+      "bytes": 28560,
+      "sha256": "9ca5fed78c2e29fb8c02e58ab1ffdd5328cbdbe13a3ffaffc29840bddaa261ed"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/matched_ap_radio_sessions.csv",
+      "bytes": 659,
+      "sha256": "d0e19e35818685b5441967d36a72835999a529aa8b3d55fe072872ecc03aa3f7"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/methodology.txt",
+      "bytes": 10219,
+      "sha256": "6d578624a34a5ecbfe11b610081c76c20fce550e2fb2d7131382337a7729a555"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/model_population_summary.csv",
+      "bytes": 9403,
+      "sha256": "70ff91846beb0a665ac9f81cd76439605013a415b7918ba4eb7ebd235806ee4f"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/population_summary.csv",
+      "bytes": 9117,
+      "sha256": "5e7c885fb05d0b4982dc53882a8116358912462903714e821c3bf79a2002b06e"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/radio_class_comparison.csv",
+      "bytes": 1605155,
+      "sha256": "69bd955a3b345a872acb3f380a4dfb1f47b7eafc27c3a20167aa90cd082cd567"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/station_adoption.webp",
+      "bytes": 24660,
+      "sha256": "2fdd0fbddb38bd6ef740b18e698b90e660a0dac2291a01f0095fdae4398bf1a3"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/station_adoption_sessions.csv",
+      "bytes": 1171862,
+      "sha256": "89749c3edb834eb66cc0e0b3df9126d1f54b0c01458d63cfddbc9f851c87ce0a"
+    },
+    {
+      "path": "2024-classroom-captures/reports/band_comparison/station_adoption_summary.csv",
+      "bytes": 30538,
+      "sha256": "77cde354411bdd2e6d8559e4b585966f31f70cdd46ce17ed9a6c37b3ef8ade2a"
+    },
+    {
+      "path": "2024-classroom-captures/reports/beacon_quality/beacon_cadence_sessions.csv",
+      "bytes": 2120472,
+      "sha256": "77147f56395e70840081d2b01ff9f52be61933f5a37bcefb3e63d3b27deeeef5"
+    },
+    {
+      "path": "2024-classroom-captures/reports/beacon_quality/beacon_quality_associations.csv",
+      "bytes": 943,
+      "sha256": "e22f6c3f637cfece2c3665365071ea34ab6c656e84f33a25ccf85e446fc97d4f"
+    },
+    {
+      "path": "2024-classroom-captures/reports/beacon_quality/beacon_quality_covariate_bands.csv",
+      "bytes": 1963,
+      "sha256": "18d5ef686456b76e099053870a6ad72e276b72b8e38ff1b7a773e1414f0c6cdc"
+    },
+    {
+      "path": "2024-classroom-captures/reports/beacon_quality/beacon_slot_gap_cdf.webp",
+      "bytes": 10978,
+      "sha256": "42487b3c4baa5aa2de651822a6352cf78aefb468664edf11527b080329551b6a"
+    },
+    {
+      "path": "2024-classroom-captures/reports/beacon_quality/beacon_slot_gap_counts.csv",
+      "bytes": 5183,
+      "sha256": "8d7230f0dcec12ffb19748a2c350c58c7802d6b6b87e10f8202a898d280cab84"
+    },
+    {
+      "path": "2024-classroom-captures/reports/beacon_quality/cu_capture_slot_availability.webp",
+      "bytes": 15312,
+      "sha256": "1ce7bdbf2997e8b8e4fcd4fadcc847035c7f9fe39d09c3b80402f6b7d500a446"
+    },
+    {
+      "path": "2024-classroom-captures/reports/beacon_quality/methodology.txt",
+      "bytes": 4447,
+      "sha256": "50a581d35014b62343b3c1c00a5a3923ddf41b0ebac25a257b14aba6c6d3fc06"
+    },
+    {
+      "path": "2024-classroom-captures/reports/beacon_quality/station_capture_slot_availability.webp",
+      "bytes": 18122,
+      "sha256": "9a5d080eea2c3f04f05862831fca4408b9d7a169d5f67c17b36b73451b87c450"
+    },
+    {
+      "path": "2024-classroom-captures/reports/class_sessions/class_session_report.csv",
+      "bytes": 619079,
+      "sha256": "fb65fb5dc909a5bd8c1496c0cfb2431c282d209137c54364008fce6562fca588"
+    },
+    {
+      "path": "2024-classroom-captures/reports/class_sessions/enrollment_vs_peak_client_count.webp",
+      "bytes": 33066,
+      "sha256": "b5bb3666fb61fee7a3707f5658586fab39ade9b84d6082e7cca41387687cfc89"
+    },
+    {
+      "path": "2024-classroom-captures/reports/class_sessions/methodology.txt",
+      "bytes": 1290,
+      "sha256": "78dabb2a1d4e52fdb7e2524ffd55f3048e99fd1490e7d5e1bec4053a2ad099bc"
+    },
+    {
+      "path": "2024-classroom-captures/reports/class_sessions/peak_client_count_per_enrolled_histogram.webp",
+      "bytes": 8602,
+      "sha256": "34ecac0a7b1e55c95b8409f0ed3c2774b22ef0a0f83d50d613247876b7174132"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/band_population_report.csv",
+      "bytes": 1230,
+      "sha256": "6b32a1d0c05a56da9d0be4236591041b7e07148de6686b2b35dff05c9c203260"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/classroom_class_report.csv",
+      "bytes": 564241,
+      "sha256": "1468343b8295b98e2d1347bc6957cddad4b9d9459234a394620dda2710c883ff"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/cu_cdf_bounds.csv",
+      "bytes": 1193,
+      "sha256": "bb5615fa01d1431bd3df002ea68e75d4d49a0bc62d77ab1cab43400ce5201bb6"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/methodology.txt",
+      "bytes": 7981,
+      "sha256": "e44d2f33c61c6a170df7a5a3c50546e453b7c064533e1e0e4562808f9d631b80"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/plots/classroom_streak_distributions.webp",
+      "bytes": 18824,
+      "sha256": "97798dd6ad80ffdacdafe1d9c98797e5c1587beb8c9853c8814f282a13697f6d"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/plots/radio_average_cu_distribution.webp",
+      "bytes": 27850,
+      "sha256": "098c03ed35458f69014e6662e754c22893efa1c8aec87268dfb26fd42e40eb70"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_cdf.webp",
+      "bytes": 45570,
+      "sha256": "b65bd73b99b02953603c37c8ed6c9a47e80164d52c817a7910af890c6e62b642"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_cdf_by_band.webp",
+      "bytes": 38124,
+      "sha256": "299280dbc4c6e85c1b247812b767ee1abb2b1aa12b0558f79891d9163ebcd1fe"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_histogram.webp",
+      "bytes": 13914,
+      "sha256": "ca372e015e98faedb7756ed0d68d2af33b889f62557ebf6d30529bb7f654d44a"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_histogram_by_band.webp",
+      "bytes": 11542,
+      "sha256": "326acbdd87065cd8ea1d97a57cc17a242690a5ea2b5ba90a528018099590e12d"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/plots/radio_coverage_and_missingness.webp",
+      "bytes": 12478,
+      "sha256": "fd8cc963bf425b975427f4c98db48537e5233c3c3fc6c096e1d78033f5884e45"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/plots/radio_cu_vs_coverage.webp",
+      "bytes": 72536,
+      "sha256": "9902d32de751fd46165c5a4dcca27f3c30ce754aace9725601f302824b2c91f0"
+    },
+    {
+      "path": "2024-classroom-captures/reports/cu_coverage_streak/radio_class_report.csv",
+      "bytes": 1095354,
+      "sha256": "87ca22626fceb6720e996fb98cbf5da341527000c7717e608228e32946eec84a"
+    },
+    {
+      "path": "2024-classroom-captures/reports/index.html",
+      "bytes": 553331,
+      "sha256": "84ac4e1ea48445e0274a8792af2d193a1a7fa7a0b403f1ddb1675dfdaacb85d2"
+    },
+    {
+      "path": "2024-classroom-captures/reports/radio_class_detail/cu_station_correlation.csv",
+      "bytes": 684,
+      "sha256": "7e01a73717ed08e05d1c6a4b7b1be0057329264b2ad1d7a49346d8ba4efe866d"
+    },
+    {
+      "path": "2024-classroom-captures/reports/radio_class_detail/cu_station_hexbin.webp",
+      "bytes": 207324,
+      "sha256": "30f7ac5da00abdcea60755dca7d832474b370e792ca46e8ef4484925187a518f"
+    },
+    {
+      "path": "2024-classroom-captures/reports/radio_class_detail/cu_station_hexbin_by_band.webp",
+      "bytes": 169120,
+      "sha256": "38320d0a97275831ab3044c3e2bb68c01119df18d75247e663aefff80b156a94"
+    },
+    {
+      "path": "2024-classroom-captures/reports/radio_class_detail/methodology.txt",
+      "bytes": 3663,
+      "sha256": "188714dda6c949575dd1232d6fcf32e500e179f4f8bc5d931358137955fec5d2"
+    },
+    {
+      "path": "2024-classroom-captures/reports/radio_class_detail/radio_class_plot_index.csv",
+      "bytes": 350758,
+      "sha256": "b78073723aa23f3793774f1037c91d2d704aba8b5f8ba8f89c5817723c28e7fb"
+    },
+    {
+      "path": "2024-classroom-captures/reports/run_summary.txt",
+      "bytes": 4499,
+      "sha256": "3f05f8df7f5251a0b7df7655b4cb016ec19d01312af526e7d5142ff64630e668"
+    },
+    {
+      "path": "2024-classroom-captures/reports/station_count/classroom_bin_station_histogram.webp",
+      "bytes": 13454,
+      "sha256": "b3156089a1ddc0cfadfc8a1244f4050e4c263041b6d136e4e91d4e43f7f34aa0"
+    },
+    {
+      "path": "2024-classroom-captures/reports/station_count/classroom_bin_station_histogram_by_band.webp",
+      "bytes": 14376,
+      "sha256": "37525580c7b35282f28abb8d82f64be1e2ae2bcfb526175993bbfbbe155d8cc6"
+    },
+    {
+      "path": "2024-classroom-captures/reports/station_count/methodology.txt",
+      "bytes": 2516,
+      "sha256": "4a445f5f88663dc56307bbfccb818e1eb381bd689215fbc342be095020807537"
+    },
+    {
+      "path": "2024-classroom-captures/reports/station_count/station_aggregate_report.csv",
+      "bytes": 1324,
+      "sha256": "18bf9dd6f4b420c216409db66a92e3ac3eb9c2945681b261d1a7a7987a8e2c52"
+    },
+    {
+      "path": "2024-classroom-captures/reports/station_count/station_class_report.csv",
+      "bytes": 1755277,
+      "sha256": "1707b8902a46fea23234de8f57376c99635346bbb17df679e5e7e1794cb17468"
+    },
+    {
+      "path": "2025-classroom-captures/exports/csv/classroom_class_summary.csv",
+      "bytes": 161749,
+      "sha256": "a91470c67076c0b3ca528d71e46c5b0c3e2e09199d0cc74ad0bd2e64e65be606"
+    },
+    {
+      "path": "2025-classroom-captures/exports/csv/project_identity_map.csv",
+      "bytes": 26294,
+      "sha256": "81e62d51007860108d9f34b8f5b20858965c9ad52feb8a96988af61cba2cc89c"
+    },
+    {
+      "path": "2025-classroom-captures/exports/csv/radio_class_summary.csv",
+      "bytes": 787462,
+      "sha256": "843d10effd09f216962ba61031adfe2ab070d03eccfe59b7cc58d7ff9535f8dd"
+    },
+    {
+      "path": "2025-classroom-captures/manifest.json",
+      "bytes": 1463,
+      "sha256": "1673027df5db6bdebacd69ab5f60d3eb08c2917c0fe6391243a530dcab928c18"
+    },
+    {
+      "path": "2025-classroom-captures/omitted-data.html",
+      "bytes": 1406,
+      "sha256": "a7438063fb5cb4286347f0d457e9d89327752683fe77ce65ecd448d9a3b66497"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/admission_capacity_cdf.webp",
+      "bytes": 12202,
+      "sha256": "9bd58ae15e86b67de75fa9ebf598ae77fbe3d8c5cf03e1c36c69f01f1bd32b91"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/admission_capacity_cdf_by_band.webp",
+      "bytes": 13524,
+      "sha256": "4ab4371b8a5d27dafda1504cccba9be4ff292a160bb041d4443ac2c6bbbe4694"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/admission_capacity_correlation.csv",
+      "bytes": 1702,
+      "sha256": "56587f42585e2e7bb549dc8c2f2f88b738acce40e356b35b6dbf88d7a2cf4b08"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/admission_capacity_cu_hexbin.webp",
+      "bytes": 253278,
+      "sha256": "72b46f27cb64e250b9046cb9117391f7c7c51f83a9e2b3e8f6675629ec4140b2"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/admission_capacity_cu_hexbin_by_band.webp",
+      "bytes": 282854,
+      "sha256": "3eeddf4bcba50caf62db1c51431856f4b5371148654de48159bec9e259d69238"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/admission_capacity_histogram.webp",
+      "bytes": 11334,
+      "sha256": "5683acd27c8a8d80ccc0cfc3092f1e4c16f5c1fa5f4d920e7d2d7358941c40c6"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/admission_capacity_histogram_by_band.webp",
+      "bytes": 12646,
+      "sha256": "60d81fbaa494f147911e95a6702aac3e10616c984fe3f1a1c69d2fbd67cb99ab"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/admission_capacity_station_hexbin.webp",
+      "bytes": 252408,
+      "sha256": "7f073fd307e786f36ef7e447972b317905b1857113c30a20c299fb1f98a7f773"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/admission_capacity_station_hexbin_by_band.webp",
+      "bytes": 250424,
+      "sha256": "8f9920908adbe21afb0a1125eca3957e4269be80f6c32d38e0bebe6ac164b290"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/admission_capacity_summary.csv",
+      "bytes": 960,
+      "sha256": "120e8917009f86c2302427877dd16be74147393fd9596f241373b54abc72c216"
+    },
+    {
+      "path": "2025-classroom-captures/reports/admission_capacity/methodology.txt",
+      "bytes": 2143,
+      "sha256": "194c7805f84c98fa6b2952b9e58be5961b0243907a47438a2d830878d68f98be"
+    },
+    {
+      "path": "2025-classroom-captures/reports/affected_stations/context.json",
+      "bytes": 998,
+      "sha256": "7f52fd0d5de44fc0a938a94a29746e8eaac07b2ebc671661e7821fb9aedb6c86"
+    },
+    {
+      "path": "2025-classroom-captures/reports/affected_stations/entity_session_exposure.csv",
+      "bytes": 2450083,
+      "sha256": "6c2ba3a28962f4580123a3792ec5e6086e76b1ec2f3ecfeb909c7192b81987ab"
+    },
+    {
+      "path": "2025-classroom-captures/reports/affected_stations/methodology.txt",
+      "bytes": 3849,
+      "sha256": "1aa58b8a823c33b8d2df4b39eb7ccc6fd35d992b39af022975ff47df8f9f20d5"
+    },
+    {
+      "path": "2025-classroom-captures/reports/affected_stations/population_exposure.csv",
+      "bytes": 9248,
+      "sha256": "9178d9379f3e583edff29b988346d915d98a5327d6171346a153ce0535b73e13"
+    },
+    {
+      "path": "2025-classroom-captures/reports/affected_stations/station_time_exposure.webp",
+      "bytes": 17664,
+      "sha256": "dba261df93b0513ea4c2b722b958ac55be4af00ac2e819ecd1d3157426f9b58c"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/ap_infrastructure.csv",
+      "bytes": 5187,
+      "sha256": "494ae57d44c85c3209ac3ffec18d62b9b8fdbc3414be913137882b530ac87f49"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/classroom_band_summary.csv",
+      "bytes": 20736,
+      "sha256": "918813492dba2189f17c2d440239c866c4edfa75f26ff0ac93e3fe577b901e13"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/classroom_infrastructure.csv",
+      "bytes": 3356,
+      "sha256": "da020401e563a0593399b5ba4a0e50ca067432603d6e61f8f6d96b6424bf15e0"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/cohort_cu_station_density.webp",
+      "bytes": 30238,
+      "sha256": "818a86ba562e9c128b2ab750d88e85a90149e0310858e166773372939fe14fe0"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/cohort_metrics.webp",
+      "bytes": 27986,
+      "sha256": "ba558def3b04973e0bf097dde062a46e40364d467877c288d8f3c224f41a2bb5"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/comparison_context.json",
+      "bytes": 727869,
+      "sha256": "1544c8f8dbcc6bb7fc14fb35748439729be043a6f26ad973e2bb9b0f162956ce"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/cu_cdf_bounds.csv",
+      "bytes": 8750,
+      "sha256": "b231d2e4f5e580d022890ed8c4656fab4847eb35c19a1e83f48a0cdbc941102d"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/cu_cohort_cdf.webp",
+      "bytes": 73824,
+      "sha256": "6d17f283e59d721f2d3ca6a5f55e0513dff0ba817cab7060941c2301e437ee66"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/cu_distribution.csv",
+      "bytes": 377906,
+      "sha256": "1ac1491069734ccf58d83e460581bb95cf541cbe8e4a91fa914bd1cd738fc1b8"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/deployment_summary.csv",
+      "bytes": 569,
+      "sha256": "779d6dca6e4f3d8de477ee133e49073744d44d1e0e26c7acbef13e36307d9061"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/matched_ap_cu.webp",
+      "bytes": 36984,
+      "sha256": "d1c7b1ae07b3dbff44d497c50880d84ca0df9e611bcabdb7022e0f5569a0e9cf"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/matched_ap_radio_sessions.csv",
+      "bytes": 48540,
+      "sha256": "176aac20963ff69a196ca76d9f348052637d2b558209c55c9eddfe4f93d5d889"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/methodology.txt",
+      "bytes": 10219,
+      "sha256": "6d578624a34a5ecbfe11b610081c76c20fce550e2fb2d7131382337a7729a555"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/model_population_summary.csv",
+      "bytes": 15595,
+      "sha256": "a61edf1f64ea932d34218cca1173beeb8998b4491361aa3c4964a62ccfff0d50"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/population_summary.csv",
+      "bytes": 12120,
+      "sha256": "aa0357f8040b8da1648a4da72e103b6c8a5b50b7338d0d0f80cd2bc55db3c5d6"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/radio_class_comparison.csv",
+      "bytes": 606048,
+      "sha256": "bdbe60522e7d446ebb3ea5ba1f8febd3f64bfbfbe7a7fa285af0e8b889e8e627"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/station_adoption.webp",
+      "bytes": 23384,
+      "sha256": "7578efc8090e3ca48b1ff7d1300d912e2bb7c46b00985e82fdb3da6ef4d2cfb1"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/station_adoption_sessions.csv",
+      "bytes": 428529,
+      "sha256": "1f821d938de7c1cce975eb5e14081c42c05b5e8f66161d964c0d97776645151e"
+    },
+    {
+      "path": "2025-classroom-captures/reports/band_comparison/station_adoption_summary.csv",
+      "bytes": 12630,
+      "sha256": "59368c7b028227236e324e43f7e3e86f152a1146b19f43f299eca5c30323d999"
+    },
+    {
+      "path": "2025-classroom-captures/reports/beacon_quality/beacon_cadence_sessions.csv",
+      "bytes": 1156256,
+      "sha256": "82ae26c01570c659d429bb9ea9d73b35a64bdeb6f4dc353ac42d47855132f7c2"
+    },
+    {
+      "path": "2025-classroom-captures/reports/beacon_quality/beacon_quality_associations.csv",
+      "bytes": 1642,
+      "sha256": "2a9854e3ba49a2f76b422ea710b7f0cefd4d7a04d747dfd774d2eae6c5ec4727"
+    },
+    {
+      "path": "2025-classroom-captures/reports/beacon_quality/beacon_quality_covariate_bands.csv",
+      "bytes": 3602,
+      "sha256": "40839db101aaf8f82115c2a32fcccb283e1173562f0f9ac86d3c61e02c26b728"
+    },
+    {
+      "path": "2025-classroom-captures/reports/beacon_quality/beacon_slot_gap_cdf.webp",
+      "bytes": 10896,
+      "sha256": "72ecb31281841ebef36f9d1ae7b3eda64b964043f668afe1adc9ec45ca5678f4"
+    },
+    {
+      "path": "2025-classroom-captures/reports/beacon_quality/beacon_slot_gap_counts.csv",
+      "bytes": 2606,
+      "sha256": "f8f4328b81aab1fe0fda29357f427924f45fc465083aec17d35af98ef55910e4"
+    },
+    {
+      "path": "2025-classroom-captures/reports/beacon_quality/cu_capture_slot_availability.webp",
+      "bytes": 15322,
+      "sha256": "38f4d69669ae921908d0f99cd1d11bb3601c3fa08d3c58d5d1e42178f6263003"
+    },
+    {
+      "path": "2025-classroom-captures/reports/beacon_quality/methodology.txt",
+      "bytes": 4447,
+      "sha256": "50a581d35014b62343b3c1c00a5a3923ddf41b0ebac25a257b14aba6c6d3fc06"
+    },
+    {
+      "path": "2025-classroom-captures/reports/beacon_quality/station_capture_slot_availability.webp",
+      "bytes": 18060,
+      "sha256": "4a56e8afee799d0bafe4497d1797b677025303e901f1ec0bd92581e25fe87c20"
+    },
+    {
+      "path": "2025-classroom-captures/reports/class_sessions/class_session_report.csv",
+      "bytes": 219179,
+      "sha256": "2540de777de5f99c5425903eab28565453743963e6d6f2d789771946901b21ad"
+    },
+    {
+      "path": "2025-classroom-captures/reports/class_sessions/enrollment_vs_peak_client_count.webp",
+      "bytes": 26820,
+      "sha256": "4880348a2f7f6426b1500d8e31fc140ccebd39b2dfafadd0f32c3acb5679867a"
+    },
+    {
+      "path": "2025-classroom-captures/reports/class_sessions/methodology.txt",
+      "bytes": 1290,
+      "sha256": "78dabb2a1d4e52fdb7e2524ffd55f3048e99fd1490e7d5e1bec4053a2ad099bc"
+    },
+    {
+      "path": "2025-classroom-captures/reports/class_sessions/peak_client_count_per_enrolled_histogram.webp",
+      "bytes": 8022,
+      "sha256": "a21bb98ae9c9fc9ed73f2c2855b6568dec29f6789743525b504b7f411fc9a59e"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/band_population_report.csv",
+      "bytes": 1492,
+      "sha256": "a406a54bdeac219c49abfd5f47e14577734939abc1f9815e6deb20a687c73c87"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/classroom_class_report.csv",
+      "bytes": 199616,
+      "sha256": "30f80bee1e0b6525c9f95f8f98c78635032438789f7856bd7d5f524fa55f052c"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/cu_cdf_bounds.csv",
+      "bytes": 1312,
+      "sha256": "e214fe8042f32966032f4a9193fec2f6c086e42cc81a08be0f29863ccede933a"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/methodology.txt",
+      "bytes": 7981,
+      "sha256": "e44d2f33c61c6a170df7a5a3c50546e453b7c064533e1e0e4562808f9d631b80"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/plots/classroom_streak_distributions.webp",
+      "bytes": 17658,
+      "sha256": "d10d075decf5bdc8f34b43c9bd23f5a63454278576cc23ac07f266b54a86d33d"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/plots/radio_average_cu_distribution.webp",
+      "bytes": 30164,
+      "sha256": "3d409ca2defc986f7a2013e32a6e30c6f0e8f38263a325090cf7c786cdaf7c1c"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_cdf.webp",
+      "bytes": 44856,
+      "sha256": "6d8eb36c2aaaf50786f080b13d26150981293073474ec9524138b18b5965118a"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_cdf_by_band.webp",
+      "bytes": 61652,
+      "sha256": "711082aa2b6c949a153baccae54ab4e6acc8219f0ce9e84c055c3b8c50dfd944"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_histogram.webp",
+      "bytes": 13652,
+      "sha256": "eed39761de15b43bf386c5d94eda825d5efdc8c045acb7fe23ef835d69d8a105"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_histogram_by_band.webp",
+      "bytes": 15260,
+      "sha256": "d1ade061e6d495f810adbcd6a59b1ec838a3da3da7dbe156f2256574e7ed9d42"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/plots/radio_coverage_and_missingness.webp",
+      "bytes": 11302,
+      "sha256": "e8f129117a3aaef4af1d5cede12d2a8ac8775ca59c219a00ec810f029025e0fc"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/plots/radio_cu_vs_coverage.webp",
+      "bytes": 50666,
+      "sha256": "6e8d70d9b94c26650e7bea12f902b1a6d3569983aa6126dbdf36e3cb2cd27159"
+    },
+    {
+      "path": "2025-classroom-captures/reports/cu_coverage_streak/radio_class_report.csv",
+      "bytes": 432534,
+      "sha256": "a1e600466cf5b6fe16a6f2b2ffa4550ef65bf04ab186c6862e56aaef3a25c370"
+    },
+    {
+      "path": "2025-classroom-captures/reports/index.html",
+      "bytes": 255003,
+      "sha256": "23447111bc7b6b810d8b477276dabc17e8d99bf0cc57ba79b4d8bbb403b7ecf9"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/cu_station_correlation.csv",
+      "bytes": 883,
+      "sha256": "8b7dab99921d9e7601dac632b1b28ab13982c95d9f0df20a7236b6485781673c"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/cu_station_hexbin.webp",
+      "bytes": 222140,
+      "sha256": "8030c9b6952f18eb0e7a5b7b1b9481937682d59ebc546c4e88ddb57ad853b756"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/cu_station_hexbin_by_band.webp",
+      "bytes": 240264,
+      "sha256": "96903ee307bed6d1f9bdd1e6b7513f4e3778ea787a508df1e0bb1fef5ae1c3a6"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/methodology.txt",
+      "bytes": 3663,
+      "sha256": "188714dda6c949575dd1232d6fcf32e500e179f4f8bc5d931358137955fec5d2"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00028-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 134142,
+      "sha256": "02804e18bfb24eff66d2da441ae69b0ead21c17314c9a8e76c7ad2e572f9aac6"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00029-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 275720,
+      "sha256": "83cd9b6105def6e3d80798f75f79c721573cbd2b4d8ded23aae96bad1f06db35"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00030-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 142864,
+      "sha256": "4ba809bdee65dce079ab5c5dff2fbeeed9516ec38b70b9454e04435ce73020dd"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00031-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 278032,
+      "sha256": "7516afd272d0ef4dce2ac4e3d8788e4670d4b4e45ec7cab7c9003a7c1a9c9019"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00032-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 210946,
+      "sha256": "e593c9d595cb1d401a608d8fd00cda3337c7c4a92388a32b3d06c523ee2eaee4"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00033-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 271606,
+      "sha256": "632bb750a6a47b0cdf652b8fd15e22714ea1c09d2c3424c167fe942a908949d1"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00034-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 193090,
+      "sha256": "72e7c4dfb5fc098a8862cfac1b1c04eb7d83ac8e61efba0349e4173bf4b2a838"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00035-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 397090,
+      "sha256": "9783508a43e1119339bd477e85a1863785154c5f1959042c1baa69ca3eedb11d"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00036-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 158736,
+      "sha256": "5088f57b9ca4ec1bc0df1e2ad570cf96785026c4fb041ce76b77d1f1fa106e6d"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00037-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 276788,
+      "sha256": "6ea2e2ce6e1bc44608b6de78629bb3811c99e83d0cc7b023c277438b1e696bd2"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00038-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 114390,
+      "sha256": "f6c6bd695ee59e18944338f29b93ef3870c6d585eef04c08923377a2f336f15d"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00039-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 173850,
+      "sha256": "7d9e5dfc46022a6d3a0c2fae238e72881db8cc1116aa571603dcf745500cad55"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00040-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 132196,
+      "sha256": "5df06c72b7d0d8baa34840761c9b7ba051ee388f2e07dca14d19f06ca5de44dd"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00041-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 324338,
+      "sha256": "3376d2b93f8e22586a3aaaf55b51e43831a5cef3cb450dc27d5734e2354ad647"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00042-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 176806,
+      "sha256": "da4ec914e8e6b34c13f55da33ac190642c3a6554087358116520dcf8407bf31d"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00043-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 353088,
+      "sha256": "b78909f7780712a7bb7fdbec99a5bb43280ac951a427f0bb62fcf80d840a92ff"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00044-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 147730,
+      "sha256": "040a4a4f3a2bf91b8e0353fef9fdc0bc7e473b854e91a26d9dbfc9b0874fd75c"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00045-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 307386,
+      "sha256": "9ad38599d4ba5dce3c84ce337e8a9532e9ef2d054f4e4f90851c7167631565de"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00046-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 148538,
+      "sha256": "dd52b7f6ebbec554ad076877b30f33226ef48ddae932bb3154c51553f5f7c556"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00047-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 379646,
+      "sha256": "e27ef671abc5cc3568ed7aaf928de96831c68d7c7ced0e65dc33d468b860ab13"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00048-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 182632,
+      "sha256": "8e6e32532ab1f3a3e1039e9620b46f134b5ee53f57c814f0aa2d5ae050c3c826"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00049-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 290034,
+      "sha256": "f5063480a3c24d09cce669d277a72e6a3af39006cbff8748c8d51bed3b54221e"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00050-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 172762,
+      "sha256": "badf494926499981b3acc23f0312ea407677a1f5ab246d788aceaf87a0987c23"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00051-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 375504,
+      "sha256": "df6ca224131e40d66aabc49cd1f0569afdeb4835f18ed12bd47b6444da15e3c6"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00052-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 128106,
+      "sha256": "f8faecd16e3b96769cab02fba8c20e598b011d8b8fd477ec49d30ec9c17f872a"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00053-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 345072,
+      "sha256": "d628dba40e88ed48850dc829da128afb44e1e8bdad363bc4df5321904a1dfb1b"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00054-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 138542,
+      "sha256": "c776f3cca24c34c996051f539730ccb7f394f0ebd307fea312c7694206b45093"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00055-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 261936,
+      "sha256": "d3a19975ea3f27cc6e5ae15c1c3a0d7d9ba753dcfde71e3840c8f0e40671d6a1"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00056-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 202520,
+      "sha256": "342377932792580ea72e58af06e519651dc9e6f45d32756bc6af41893f14ce3e"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00057-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 324022,
+      "sha256": "1057d42c11f70135d9248990dfb723e499b26257ca6ea718d93d133b6b371780"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00058-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 192504,
+      "sha256": "f6093b88e7f77006e1c560b4f96cfcc8cf9d1721f48efdfe3b6315a840cb6fbf"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00059-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 415192,
+      "sha256": "85863a42c77e8f9ff06296aae8feaa7bc1f2e27f7740a20cb8737d4a07cf4c2b"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00060-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 128380,
+      "sha256": "b11a421a4905f3dda827a5e2d63dbcfd1505570c83516918978266bea6eeccde"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00061-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 208138,
+      "sha256": "789dd51e266874d22203615011af9a496c8e06d4dddbbf06b906587f909d30eb"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00062-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 94150,
+      "sha256": "d355e9837e98529e16261a536020f8aea6ea3844771a40d4a1c6f93ab89c7cc5"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00063-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 154402,
+      "sha256": "a0a987e440a5c9f8bf3af820fb6b8795ad7cc64cd1cfa821b2282bf5abcda526"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00064-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 129666,
+      "sha256": "1c16f3885725c5d1160babeb5106cfb68906ce9c352ddd73591a96fb0dde315b"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00065-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 333982,
+      "sha256": "2564fe089c656aeb25f3efffa84abaaa80e6328b6c8a3cf129127bb338da958b"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00066-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 167028,
+      "sha256": "a71367752f41e90314caf0bc57f8505307aaad464d06f5b511f34dfdcbd7032c"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00067-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 342286,
+      "sha256": "c0386daf2f744c8868fe7f27702e4b28ac7e9ff955969980feb04681f461da2b"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00068-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 181378,
+      "sha256": "1c855db50b7a3f227c00a7c23ad347f4f3844cb39d5a3079d08ea801ea8c551e"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00069-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 333110,
+      "sha256": "54f461e116f457819c295215f573116569ba8c57fa098495f8d9f283c7937417"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00070-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 149196,
+      "sha256": "9af669a22cb1d3495638b68fd8da5c15da7d34d678497c19ddd49d8c2c199305"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00071-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 398582,
+      "sha256": "ed3f417cbcb4611cfcb87ed3dd87989c88b573ba27a2d67307610a4520cdef3b"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00072-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 155366,
+      "sha256": "68cc9fb86c03eb6d5ec9988dfa268078d067d8367dbc2efb0a33119b0492078e"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00073-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 248482,
+      "sha256": "def6dde1ee544a8d28001cc96af8f7d56be15d065feda8b777283392bfecbe5d"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00074-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 84920,
+      "sha256": "da1920dada9402e01ba89c0d2bc3cd71d0fd4d784e533c5c66d332c75771d575"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00075-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 88738,
+      "sha256": "f0aafb2e5ca96d2fa29bb115c25f701a83f915ae86a567a8e11e910ad8a4d49f"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00076-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 142084,
+      "sha256": "c7d28a8aaba75cb87a0279a15bf1478079f6e8c5831d5960ad3531696882d4a1"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00077-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 177470,
+      "sha256": "92932270df61ab4bbe2f018873b8fea704e2c94cbb76069190d8c8ad42721c2d"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00078-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 97684,
+      "sha256": "42f9579d1f6f37f7a7dce727baa170b8fff1be79dbebad18512fdb63671cbbe4"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/plots/00079-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 156926,
+      "sha256": "3f89ca163246c492600ded238e157d71bb730d94f918189402921e73a8985433"
+    },
+    {
+      "path": "2025-classroom-captures/reports/radio_class_detail/radio_class_plot_index.csv",
+      "bytes": 135346,
+      "sha256": "ddb74d7485d54635f7a1c0c2bd974ea8b52a36483d29d365b00ef4f3c0d06e87"
+    },
+    {
+      "path": "2025-classroom-captures/reports/run_summary.txt",
+      "bytes": 4720,
+      "sha256": "a83d83876b0a7b701cbb2bc544d0c114866658073f54cb65ce5fe296536fdd2c"
+    },
+    {
+      "path": "2025-classroom-captures/reports/station_count/classroom_bin_station_histogram.webp",
+      "bytes": 13798,
+      "sha256": "175643845cd02f576de8e5f4585ad4b10d482e9bad742837432f99a9a98e6f10"
+    },
+    {
+      "path": "2025-classroom-captures/reports/station_count/classroom_bin_station_histogram_by_band.webp",
+      "bytes": 19266,
+      "sha256": "86bc2da32142e20018bd535286183b32e4cfcf5745901ecd1db58351d2f834e5"
+    },
+    {
+      "path": "2025-classroom-captures/reports/station_count/methodology.txt",
+      "bytes": 2516,
+      "sha256": "4a445f5f88663dc56307bbfccb818e1eb381bd689215fbc342be095020807537"
+    },
+    {
+      "path": "2025-classroom-captures/reports/station_count/station_aggregate_report.csv",
+      "bytes": 1713,
+      "sha256": "5b3308f2b54cdd18621ea6110260672b9a37f348895368a3584ae5f874a1ad37"
+    },
+    {
+      "path": "2025-classroom-captures/reports/station_count/station_class_report.csv",
+      "bytes": 764280,
+      "sha256": "85b1c6d330d52e66272731cf2da89d1d4ab291f82489630fea8094a646abc558"
+    },
+    {
+      "path": "2026-classroom-captures/exports/csv/classroom_class_summary.csv",
+      "bytes": 156234,
+      "sha256": "30f938ffd947d097b07b501847aee1704a6fac1f503aab0c8f439d35175bce80"
+    },
+    {
+      "path": "2026-classroom-captures/exports/csv/project_identity_map.csv",
+      "bytes": 27741,
+      "sha256": "2eedc77a16699229c339e42a142059a4142db8da9e28a283d586893a31fec5d6"
+    },
+    {
+      "path": "2026-classroom-captures/exports/csv/radio_class_summary.csv",
+      "bytes": 894161,
+      "sha256": "dac155c37f111a309453eb7ef8b0e8a4e3ee3d45217ab7b55fb4b5c80b693f76"
+    },
+    {
+      "path": "2026-classroom-captures/manifest.json",
+      "bytes": 1476,
+      "sha256": "0ea2141e6e3e6190eba28107aa40c180f162c25c71483a4aa51be06e802881c2"
+    },
+    {
+      "path": "2026-classroom-captures/omitted-data.html",
+      "bytes": 1406,
+      "sha256": "9b882554b5ae5f9f5a76ff4a74f026d6300d6b86022d16b4251cce711c851561"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/admission_capacity_cdf.webp",
+      "bytes": 12128,
+      "sha256": "3a094ec7cab423165c7c4a73fff5551e501ed50a1663c50750eaab5551912273"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/admission_capacity_cdf_by_band.webp",
+      "bytes": 13654,
+      "sha256": "2e4bab4e5cfa5f9ae086acf5abd36411406009c09c79239c62a5f0507ec8e967"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/admission_capacity_correlation.csv",
+      "bytes": 1712,
+      "sha256": "e98a44dda9c4d048515c02f723d91fee500163bc0940c2ef55fe0d2a67ac49ff"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/admission_capacity_cu_hexbin.webp",
+      "bytes": 264850,
+      "sha256": "1489db61897b49e0d1fee9ee31a303a6f2c9fe89b3a3727f935219d77deefacb"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/admission_capacity_cu_hexbin_by_band.webp",
+      "bytes": 383660,
+      "sha256": "2b0632e2e419ea28dccf494a357536fedebc671985c26f43175bf401a0e3eabe"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/admission_capacity_histogram.webp",
+      "bytes": 11436,
+      "sha256": "9d3fed701dbc1cbcf2c763dd7667e957d651ef4374094135a0a5aea105993ac9"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/admission_capacity_histogram_by_band.webp",
+      "bytes": 12504,
+      "sha256": "06c560aaf338f6ac297e455597b79e4ae01c67151966ce32b49b8a5ff0fc3861"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/admission_capacity_station_hexbin.webp",
+      "bytes": 260122,
+      "sha256": "3d839a21376c1030ff2d9b692343241d248b7573cbfcbdfc0080b341b182356c"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/admission_capacity_station_hexbin_by_band.webp",
+      "bytes": 334148,
+      "sha256": "ed2c502d9312e034a3218e8222d9147bdea04dd7d088b4436386c333c0fbe1be"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/admission_capacity_summary.csv",
+      "bytes": 958,
+      "sha256": "26380a8f5d1804349e964261ab77cf475d76f0a9377b28fabfc739b1bd546b4b"
+    },
+    {
+      "path": "2026-classroom-captures/reports/admission_capacity/methodology.txt",
+      "bytes": 2143,
+      "sha256": "194c7805f84c98fa6b2952b9e58be5961b0243907a47438a2d830878d68f98be"
+    },
+    {
+      "path": "2026-classroom-captures/reports/affected_stations/context.json",
+      "bytes": 998,
+      "sha256": "19b833e710248c5a581e31f0a70dda09f2f58772d61bfcc0c460c58450e2d535"
+    },
+    {
+      "path": "2026-classroom-captures/reports/affected_stations/entity_session_exposure.csv",
+      "bytes": 2738133,
+      "sha256": "f0bda5d2fb1215a38bd7658e960f72efa2a478ad58c2a61123f96937729c7fe6"
+    },
+    {
+      "path": "2026-classroom-captures/reports/affected_stations/methodology.txt",
+      "bytes": 3849,
+      "sha256": "1aa58b8a823c33b8d2df4b39eb7ccc6fd35d992b39af022975ff47df8f9f20d5"
+    },
+    {
+      "path": "2026-classroom-captures/reports/affected_stations/population_exposure.csv",
+      "bytes": 9303,
+      "sha256": "6a7c7920a45382387cd59213093f39e10a21d19eafdb7bcf3a4a8720140af452"
+    },
+    {
+      "path": "2026-classroom-captures/reports/affected_stations/station_time_exposure.webp",
+      "bytes": 17946,
+      "sha256": "05203c0a18d462808389e782749526d89b3a145f2b348d284207d36b19f58282"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/ap_infrastructure.csv",
+      "bytes": 5187,
+      "sha256": "ecad434c2d72f2e77f0a5e9e49b7a8f1ee39babaeebc55c8c4a9c2cb35bac983"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/classroom_band_summary.csv",
+      "bytes": 26219,
+      "sha256": "72d54fb093e22f87f50d0e7509ca4c2a180f28c4835221b5571a664a292a6111"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/classroom_infrastructure.csv",
+      "bytes": 3363,
+      "sha256": "d9a26deb332851fa995144ddb95ea644314cc39b9be881187fc9a99632325ba7"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/cohort_cu_station_density.webp",
+      "bytes": 30350,
+      "sha256": "95a999112e804e0d167829d7c02552eef4bf187b2ce5675a2229a77a650edd93"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/cohort_metrics.webp",
+      "bytes": 27302,
+      "sha256": "4f2e07a13915fc4884985be1d0a02af4c832e262117de660c34926ff99ba11c5"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/comparison_context.json",
+      "bytes": 801475,
+      "sha256": "8500afc3610e675850996a2a2f7da13e1c9bcb252f8efc82c22fb3598743234a"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/cu_cdf_bounds.csv",
+      "bytes": 8759,
+      "sha256": "3b15bc7382962255713e5db5b6ed8576bc7c5c1cb193483b09727f00ed5f9d74"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/cu_cohort_cdf.webp",
+      "bytes": 75356,
+      "sha256": "4a0a69318e6d08f0e2d93ecaab421140b776efa7ee479a360d008d4b8b30b1fe"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/cu_distribution.csv",
+      "bytes": 413509,
+      "sha256": "8cdc23f26c5b0c4e63ea5eaf209bedb9d1f723c64cc46242dc9a554530292060"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/deployment_summary.csv",
+      "bytes": 572,
+      "sha256": "beb51fccc0b54ea03708ae8c19d1eb12a2aac0b32d8278c62de95097ea35a926"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/matched_ap_cu.webp",
+      "bytes": 45752,
+      "sha256": "c6941b9f566cef62964a382a9536ae47eaf4b6fd0c1aafc303fcbe16b97e53dc"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/matched_ap_radio_sessions.csv",
+      "bytes": 143843,
+      "sha256": "6ac41eef88234058175d5286778d36a7f418fdaa81094b58a537cb712e8f3b0f"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/methodology.txt",
+      "bytes": 10219,
+      "sha256": "6d578624a34a5ecbfe11b610081c76c20fce550e2fb2d7131382337a7729a555"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/model_population_summary.csv",
+      "bytes": 15585,
+      "sha256": "4b261bb16256bf8ebc941455d361a686345a08a54e8a1788811db458fb95646a"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/population_summary.csv",
+      "bytes": 12176,
+      "sha256": "3bb27c944c6b88ae97c32d9236e55ba3c71b2cdcd008d0811a9a7d99190ccde4"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/radio_class_comparison.csv",
+      "bytes": 693629,
+      "sha256": "b7041f6883813c317c6c4ddefe97034c05d3132113172a70ed5643b7213120a1"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/station_adoption.webp",
+      "bytes": 24216,
+      "sha256": "699ca9e38bbaf623bd5b7d445757d4ccd75bec1da03e667e4aba9e1ef912a108"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/station_adoption_sessions.csv",
+      "bytes": 432127,
+      "sha256": "3b95cbabefe49666f70d9decb4bc8dd065b110343951234a26f7a76178e3bc9e"
+    },
+    {
+      "path": "2026-classroom-captures/reports/band_comparison/station_adoption_summary.csv",
+      "bytes": 13350,
+      "sha256": "f54de66f8300d0efe0bafe600f3d9f5c3a4e1c9f54342f7221db98401b795efa"
+    },
+    {
+      "path": "2026-classroom-captures/reports/beacon_quality/beacon_cadence_sessions.csv",
+      "bytes": 1172042,
+      "sha256": "38732e6c88cfe999b2c3901115d7e827b29f6530d2519498a6f395612a4ee28a"
+    },
+    {
+      "path": "2026-classroom-captures/reports/beacon_quality/beacon_quality_associations.csv",
+      "bytes": 2343,
+      "sha256": "691ccd3c4c5c36d34989cbddc58d1c9bdfa44b59a8ef9074c8594939cfc6c0ab"
+    },
+    {
+      "path": "2026-classroom-captures/reports/beacon_quality/beacon_quality_covariate_bands.csv",
+      "bytes": 5304,
+      "sha256": "cde76c40944ff4f10b5dc93991878ac17bd67d16f4998716cc233362601e2adc"
+    },
+    {
+      "path": "2026-classroom-captures/reports/beacon_quality/beacon_slot_gap_cdf.webp",
+      "bytes": 11360,
+      "sha256": "cc9e07a76c910d34ead76bafec6c3d3c861269e19b42051b4225660b18e1d261"
+    },
+    {
+      "path": "2026-classroom-captures/reports/beacon_quality/beacon_slot_gap_counts.csv",
+      "bytes": 1230,
+      "sha256": "6ac60fe9438dacee4d5b522d84280630a659d594cf8fadf81892936e5a9841dc"
+    },
+    {
+      "path": "2026-classroom-captures/reports/beacon_quality/cu_capture_slot_availability.webp",
+      "bytes": 15608,
+      "sha256": "8bd01f0350f2720fcd8bbb0f329adc13cd71bff4383e25cea0407b7ef65370cd"
+    },
+    {
+      "path": "2026-classroom-captures/reports/beacon_quality/methodology.txt",
+      "bytes": 4447,
+      "sha256": "50a581d35014b62343b3c1c00a5a3923ddf41b0ebac25a257b14aba6c6d3fc06"
+    },
+    {
+      "path": "2026-classroom-captures/reports/beacon_quality/station_capture_slot_availability.webp",
+      "bytes": 18150,
+      "sha256": "30c164c740a4a000bd0d5cff1128a987dcb92a8e5cd247d0f9bfb7c9e356899f"
+    },
+    {
+      "path": "2026-classroom-captures/reports/class_sessions/class_session_report.csv",
+      "bytes": 209912,
+      "sha256": "9663d8f0c01c523203fd1cb6839cc328f03cb934a8dbbc5f4d2ccd264cb2f60f"
+    },
+    {
+      "path": "2026-classroom-captures/reports/class_sessions/enrollment_vs_peak_client_count.webp",
+      "bytes": 27346,
+      "sha256": "fcc1188adaa0255461d40d2446402ef2889c4d9616540d2ce03b88141b8317eb"
+    },
+    {
+      "path": "2026-classroom-captures/reports/class_sessions/methodology.txt",
+      "bytes": 1290,
+      "sha256": "78dabb2a1d4e52fdb7e2524ffd55f3048e99fd1490e7d5e1bec4053a2ad099bc"
+    },
+    {
+      "path": "2026-classroom-captures/reports/class_sessions/peak_client_count_per_enrolled_histogram.webp",
+      "bytes": 7730,
+      "sha256": "45de403e929471bb4b71447aaf64e59dbc74cd26d20faf424d826313ca49ab9b"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/band_population_report.csv",
+      "bytes": 1508,
+      "sha256": "db8edc709c1cc01d4ff9519c072644e30b3763ba04723c56d3f372dbdd7d9528"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/classroom_class_report.csv",
+      "bytes": 190746,
+      "sha256": "dbb895029e119548ba22bfe11abbb94b1d2bf6f9a7bf08f7df4e43fea1f60a14"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/cu_cdf_bounds.csv",
+      "bytes": 1315,
+      "sha256": "1ff260f694221e3c8e5f64b5fa83dfaeb5db5d47fd275f6a98927ca695892138"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/methodology.txt",
+      "bytes": 7981,
+      "sha256": "e44d2f33c61c6a170df7a5a3c50546e453b7c064533e1e0e4562808f9d631b80"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/plots/classroom_streak_distributions.webp",
+      "bytes": 16518,
+      "sha256": "78545b9c45577445281f08c0a73a5a6ae9d62b612755fb56e55b5c6bc755d742"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/plots/radio_average_cu_distribution.webp",
+      "bytes": 35714,
+      "sha256": "f1b875d39bdd88bf8248e322852a58d46377f1862f04efb4a28066203c62dc72"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_cdf.webp",
+      "bytes": 43810,
+      "sha256": "40fe5b0f31e98c398d6836728f312a93edf0707dfc221658f86afb7ebbf78c11"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_cdf_by_band.webp",
+      "bytes": 64232,
+      "sha256": "3f87c38eea21b6d6b4cf1a4cfcd2770756cada3c85cadf01c3e51feacbb6cc54"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_histogram.webp",
+      "bytes": 13616,
+      "sha256": "25324dce408d1bbded060eb5f018e744c44b3f51074f4abf6669f63ad2a798c4"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/plots/radio_bin_cu_histogram_by_band.webp",
+      "bytes": 15200,
+      "sha256": "720ab1d0cb4258ea2ec9326d2ec7510cb0a971d09e8e0bd23600b41dea4f795f"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/plots/radio_coverage_and_missingness.webp",
+      "bytes": 11442,
+      "sha256": "b22b250544f25305f931c81b576dfee116edf7bf3bcb685596fb5313aa678a5e"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/plots/radio_cu_vs_coverage.webp",
+      "bytes": 54096,
+      "sha256": "9c2c98fc69cb1ea5a37d12cc5742436596d36512cdb9b5f13cd2339806475352"
+    },
+    {
+      "path": "2026-classroom-captures/reports/cu_coverage_streak/radio_class_report.csv",
+      "bytes": 489892,
+      "sha256": "a18bf42f7ed4733281e1ede1933e9dde66fc0b868c59434656feaa7a11438266"
+    },
+    {
+      "path": "2026-classroom-captures/reports/index.html",
+      "bytes": 266892,
+      "sha256": "52045b9583a68b4aac8aac7260675e3570f89aa0ec3ee587548a84a6d46ba181"
+    },
+    {
+      "path": "2026-classroom-captures/reports/radio_class_detail/cu_station_correlation.csv",
+      "bytes": 888,
+      "sha256": "824a7f87c72f39216c2e3c55b9ab64121076757a17913ad98567360212b21ce6"
+    },
+    {
+      "path": "2026-classroom-captures/reports/radio_class_detail/cu_station_hexbin.webp",
+      "bytes": 233066,
+      "sha256": "2374ec2aa4dfb3072ba1d7750e80eefbd34d0868cf881f2ae3d5eb7903cbab14"
+    },
+    {
+      "path": "2026-classroom-captures/reports/radio_class_detail/cu_station_hexbin_by_band.webp",
+      "bytes": 327796,
+      "sha256": "d15b7c7a2790526c35dbd430f3351bced2eb1ae9696a367473353ce45851c78d"
+    },
+    {
+      "path": "2026-classroom-captures/reports/radio_class_detail/methodology.txt",
+      "bytes": 3663,
+      "sha256": "188714dda6c949575dd1232d6fcf32e500e179f4f8bc5d931358137955fec5d2"
+    },
+    {
+      "path": "2026-classroom-captures/reports/radio_class_detail/radio_class_plot_index.csv",
+      "bytes": 158989,
+      "sha256": "5349cff5fc7fc25fb59ff05d0fe73a5efce97ef4491737b76d7efd7a1b80e715"
+    },
+    {
+      "path": "2026-classroom-captures/reports/run_summary.txt",
+      "bytes": 6311,
+      "sha256": "da9cf59d61bfe214d5b78774e880761d0fa8788a6f8d3112c39d08d8123bcd15"
+    },
+    {
+      "path": "2026-classroom-captures/reports/station_count/classroom_bin_station_histogram.webp",
+      "bytes": 14556,
+      "sha256": "e5fe9923dd617602dd11c91a181e75eab42bd04f54fe4f69390652ec49198d29"
+    },
+    {
+      "path": "2026-classroom-captures/reports/station_count/classroom_bin_station_histogram_by_band.webp",
+      "bytes": 19482,
+      "sha256": "473dbd7a2adb70aa166b27c3c9130e1d447f888189cd0a7faf620e748d48e2ba"
+    },
+    {
+      "path": "2026-classroom-captures/reports/station_count/methodology.txt",
+      "bytes": 2516,
+      "sha256": "4a445f5f88663dc56307bbfccb818e1eb381bd689215fbc342be095020807537"
+    },
+    {
+      "path": "2026-classroom-captures/reports/station_count/station_aggregate_report.csv",
+      "bytes": 1695,
+      "sha256": "7ed796143730cf8c68b32a425e2979f237c4e0a818049e1e839ad297786957af"
+    },
+    {
+      "path": "2026-classroom-captures/reports/station_count/station_class_report.csv",
+      "bytes": 802323,
+      "sha256": "5b3bf2c6167794a86b39ca6770cceed72891c9dd53e834de532fbc492120d6b1"
+    },
+    {
+      "path": "2026-hbll/exports/csv/classroom_class_summary.csv",
+      "bytes": 10303,
+      "sha256": "37fd0ccd4bbe0097e85df9d6f67c955abe3fce6e537c9cdb850985742933e954"
+    },
+    {
+      "path": "2026-hbll/exports/csv/project_identity_map.csv",
+      "bytes": 1405,
+      "sha256": "9be6e3b3cc13b7613f383a727118650b10e0e1536ef951d4c530fa708f4228c6"
+    },
+    {
+      "path": "2026-hbll/exports/csv/radio_class_summary.csv",
+      "bytes": 52320,
+      "sha256": "c98332abb8d528d62629a9d5f53b367559da4eccfc2101acbfecbb9df7c97e27"
+    },
+    {
+      "path": "2026-hbll/manifest.json",
+      "bytes": 1399,
+      "sha256": "73e974306ada87f86d895d846adad0f04498c67fd668e227df2d249a3a707664"
+    },
+    {
+      "path": "2026-hbll/omitted-data.html",
+      "bytes": 1392,
+      "sha256": "23af93095c6dcc0dcc6234aadc7912990c0d9f92adea14dc5b669c450badea49"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/admission_capacity_cdf.webp",
+      "bytes": 12476,
+      "sha256": "0f5ccd83fb20fcbcfa1bd2ce12f0e55240c96a7f93b84358fb2e5f95272702a6"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/admission_capacity_cdf_by_band.webp",
+      "bytes": 14306,
+      "sha256": "89cc2798aba3baa9b7c121545cd1a00845efa7c23bc1e4e116a6d9cb8b460f35"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/admission_capacity_correlation.csv",
+      "bytes": 1561,
+      "sha256": "1bb723d22b1281b91d2d8727014f3aa45588a85b90e7405910c5a865e1568463"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/admission_capacity_cu_hexbin.webp",
+      "bytes": 284198,
+      "sha256": "8a836a09011cf9efad7e0ac6030db6f397bc3d28d237a5c06df754038e48ce69"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/admission_capacity_cu_hexbin_by_band.webp",
+      "bytes": 354852,
+      "sha256": "b83c144597f4ecdc11668952b6103485cfaf3a19753f3330b7bb25696e773129"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/admission_capacity_histogram.webp",
+      "bytes": 11528,
+      "sha256": "b54ea91cbc5c35369b10e35004833a48168f016fdc9e1501bf1a3a7b7e9e1208"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/admission_capacity_histogram_by_band.webp",
+      "bytes": 12798,
+      "sha256": "cbd31edc576eda1f1e43457f499f1a3eb44d4d5b380be16fb25dd0fd6d1d9f79"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/admission_capacity_station_hexbin.webp",
+      "bytes": 170238,
+      "sha256": "2e65508f4cfd2609908320799062cccb36ab5195b3eb8df9361fed4bde24180a"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/admission_capacity_station_hexbin_by_band.webp",
+      "bytes": 204448,
+      "sha256": "e0c6a67f4aae05f7b1687968e26de041b2891401c23aab32e91131830d35d103"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/admission_capacity_summary.csv",
+      "bytes": 889,
+      "sha256": "d478d957726f29540a7b5b4aea5aabbb0f5741cf6efc12566f6be1a0035c903a"
+    },
+    {
+      "path": "2026-hbll/reports/admission_capacity/methodology.txt",
+      "bytes": 2143,
+      "sha256": "194c7805f84c98fa6b2952b9e58be5961b0243907a47438a2d830878d68f98be"
+    },
+    {
+      "path": "2026-hbll/reports/affected_stations/context.json",
+      "bytes": 984,
+      "sha256": "325208c410e4a60ce410bef8b78d7690571019bc569293d78bff258898767803"
+    },
+    {
+      "path": "2026-hbll/reports/affected_stations/entity_session_exposure.csv",
+      "bytes": 164893,
+      "sha256": "4d88722b6f30447519753ec884d1183bafc56940342346bec937837af4a7811e"
+    },
+    {
+      "path": "2026-hbll/reports/affected_stations/methodology.txt",
+      "bytes": 3849,
+      "sha256": "1aa58b8a823c33b8d2df4b39eb7ccc6fd35d992b39af022975ff47df8f9f20d5"
+    },
+    {
+      "path": "2026-hbll/reports/affected_stations/population_exposure.csv",
+      "bytes": 7316,
+      "sha256": "21d982844f55065faf7c6c4c479aedbeae654e915493d3f519de52ff41d7c282"
+    },
+    {
+      "path": "2026-hbll/reports/affected_stations/station_time_exposure.webp",
+      "bytes": 17814,
+      "sha256": "68ef8a3f2c4b95d18cb62e52b3b68e12232d3609b627c1adbeebffaf1bf6c5c6"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/ap_infrastructure.csv",
+      "bytes": 506,
+      "sha256": "05904298058605aa98647b55f2692e40df11e87b7aeb562ac3d1199bd5a86e6b"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/classroom_band_summary.csv",
+      "bytes": 3247,
+      "sha256": "f67deed1da52ba2974eb5229f313a4f3a0736c8fdc1cf8b1906bb9da591df3d8"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/classroom_infrastructure.csv",
+      "bytes": 466,
+      "sha256": "471c881983bfbf8904820e5631e5585031dc876300e47b42450a0b08028c75b7"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/cohort_cu_station_density.webp",
+      "bytes": 28244,
+      "sha256": "6e6039999e3e64edd01a12bdf01fdc1890923db70138d20b4d3e67c8765cee09"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/cohort_metrics.webp",
+      "bytes": 27736,
+      "sha256": "d8cea65a6c35b18e06515b6483bd4d76ca94689998641accf1fda4cf8255bf35"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/comparison_context.json",
+      "bytes": 305861,
+      "sha256": "da756035729ce493f2c05bfe738d647d317b3e9b71097c8daeacd550503416cb"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/cu_cdf_bounds.csv",
+      "bytes": 7968,
+      "sha256": "67a47c0e6e9e404d3b7a35cef620dda643f8b974845b9bc681baa3f2ebeb0107"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/cu_cohort_cdf.webp",
+      "bytes": 39020,
+      "sha256": "b7be4fb886bdc72629c23b44dd4ad2cb0b4ef3bd0959371a6d3632f45e31b571"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/cu_distribution.csv",
+      "bytes": 275440,
+      "sha256": "18cfe36bd91562fddf5d56a0a41d9bdb100c4a2a41d928375f95e2173a53c88e"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/deployment_summary.csv",
+      "bytes": 526,
+      "sha256": "1f049a18ac58115b969108c0004cef929e06c28e1de7243a9deb9d53f2262e09"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/matched_ap_cu.webp",
+      "bytes": 26374,
+      "sha256": "6086e77f745a97d27b046adf0f364c9a1c11863c249231ebc1576e82bc0fc129"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/matched_ap_radio_sessions.csv",
+      "bytes": 12863,
+      "sha256": "688f7653eae1e0b7cc29b3e1534236d8b80f1f1c90447400fd42bce49f282289"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/methodology.txt",
+      "bytes": 10219,
+      "sha256": "6d578624a34a5ecbfe11b610081c76c20fce550e2fb2d7131382337a7729a555"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/model_population_summary.csv",
+      "bytes": 6840,
+      "sha256": "83dc7d135dd2d3a2abd1c4cde2f79303c4cdc3b3588f4d16daaaf99d8d9fecac"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/population_summary.csv",
+      "bytes": 9319,
+      "sha256": "9c4cc60eae65535d22992af37789fe97ee810db5c132dba7c91d772f717c501e"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/radio_class_comparison.csv",
+      "bytes": 38781,
+      "sha256": "7b6325e1bc256fbd2e7265f7e5af494dfde0766fad639ccba8c4ef2f5bf2e768"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/station_adoption.webp",
+      "bytes": 22464,
+      "sha256": "06d923e84c8dde22d33c2de96a690987f7363665eeff3faaf4ea6628a4d96e00"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/station_adoption_sessions.csv",
+      "bytes": 26867,
+      "sha256": "a5bfe8840880362bf653300eab75bf1113eb088673fadbec925fee75014217c8"
+    },
+    {
+      "path": "2026-hbll/reports/band_comparison/station_adoption_summary.csv",
+      "bytes": 2236,
+      "sha256": "0f3fe809878be30f6476ed8ddbec24c568a65d578f5eb371abfd193d7cb69c5d"
+    },
+    {
+      "path": "2026-hbll/reports/beacon_quality/beacon_cadence_sessions.csv",
+      "bytes": 115024,
+      "sha256": "bea38f803f4896f8445e0b9dc6131202008134aae4132e6ed86c93cd512ba187"
+    },
+    {
+      "path": "2026-hbll/reports/beacon_quality/beacon_quality_associations.csv",
+      "bytes": 1624,
+      "sha256": "d69d15c38fe96b20644e7c17928583ecda2750136c10cfa56f67d60bf374258c"
+    },
+    {
+      "path": "2026-hbll/reports/beacon_quality/beacon_quality_covariate_bands.csv",
+      "bytes": 3475,
+      "sha256": "c2f160fd7f7c8c109d9871f169543185cb191661bcf0d9554d5d85f23c7769d2"
+    },
+    {
+      "path": "2026-hbll/reports/beacon_quality/beacon_slot_gap_cdf.webp",
+      "bytes": 11358,
+      "sha256": "f747550eb53d4544e69c7dcfa3463a88e6e5cba02a368f327d30033442f37264"
+    },
+    {
+      "path": "2026-hbll/reports/beacon_quality/beacon_slot_gap_counts.csv",
+      "bytes": 836,
+      "sha256": "62a85721aaa800f67353f828cbde47591d2c37a26bb86d0086092b1e93feb111"
+    },
+    {
+      "path": "2026-hbll/reports/beacon_quality/cu_capture_slot_availability.webp",
+      "bytes": 15326,
+      "sha256": "ee6bf51272565769e1f66ea28065565ddec623a8564dae0cd6f86143849f3493"
+    },
+    {
+      "path": "2026-hbll/reports/beacon_quality/methodology.txt",
+      "bytes": 4447,
+      "sha256": "50a581d35014b62343b3c1c00a5a3923ddf41b0ebac25a257b14aba6c6d3fc06"
+    },
+    {
+      "path": "2026-hbll/reports/beacon_quality/station_capture_slot_availability.webp",
+      "bytes": 17470,
+      "sha256": "e23de51ab8b6eff85cfe19b71c54a3ceaa9d8a4d37a6efcb04c009b661dfde04"
+    },
+    {
+      "path": "2026-hbll/reports/class_sessions/class_session_report.csv",
+      "bytes": 13555,
+      "sha256": "ba3b60cfb4b1418fc7105610955f270602a882d46c6dfedb6374306d8f7a8f0b"
+    },
+    {
+      "path": "2026-hbll/reports/class_sessions/enrollment_vs_peak_client_count.webp",
+      "bytes": 10406,
+      "sha256": "c3bfec8b36b3428fe47cb1317083e6900cd88351daf49b5d45c31e28878d9f1a"
+    },
+    {
+      "path": "2026-hbll/reports/class_sessions/methodology.txt",
+      "bytes": 1290,
+      "sha256": "78dabb2a1d4e52fdb7e2524ffd55f3048e99fd1490e7d5e1bec4053a2ad099bc"
+    },
+    {
+      "path": "2026-hbll/reports/class_sessions/peak_client_count_per_enrolled_histogram.webp",
+      "bytes": 8308,
+      "sha256": "44ac2cbee7630ee79e5cd818c3842f67e5486992b2f2c4edbb1b40884f32e8cf"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/band_population_report.csv",
+      "bytes": 1455,
+      "sha256": "9771a61e21053c905065cbd928f09f120096eb3137f2a3b3e1d2ebf7a28dab7f"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/classroom_class_report.csv",
+      "bytes": 12056,
+      "sha256": "92a2e8990bdb6cb8a856fa7dc40bef9e23dacbd9839d608d143c4340ae00571b"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/cu_cdf_bounds.csv",
+      "bytes": 1298,
+      "sha256": "d56ba295e8a656d77533edd5d8d90be90ffabeb991f9a53aa0506ebcded98dd0"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/methodology.txt",
+      "bytes": 7981,
+      "sha256": "e44d2f33c61c6a170df7a5a3c50546e453b7c064533e1e0e4562808f9d631b80"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/plots/classroom_streak_distributions.webp",
+      "bytes": 15650,
+      "sha256": "0f74a627a5cbd176f304556fe278a9b448cf43ebd4e2cb8ab267ab5b1e71c825"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/plots/radio_average_cu_distribution.webp",
+      "bytes": 16218,
+      "sha256": "df50d9fe6fcd1a037727ca00a56044e0665e12ee0e2ee9e92500c486ac47d21c"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/plots/radio_bin_cu_cdf.webp",
+      "bytes": 24090,
+      "sha256": "daf19f3892d3a7a143ffb59361a9d8f9b4fd26edec1109171905b16db18cab70"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/plots/radio_bin_cu_cdf_by_band.webp",
+      "bytes": 34876,
+      "sha256": "7cdfd2e3f965a03b195aec7ca04c12f31e320d83c670bb2c5375589852b5eb8d"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/plots/radio_bin_cu_histogram.webp",
+      "bytes": 14048,
+      "sha256": "d8d660710d6b461594d84abc5594a57cfe34ed7af2344fd38e7741a838a6a3cb"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/plots/radio_bin_cu_histogram_by_band.webp",
+      "bytes": 15856,
+      "sha256": "a98e7c9fa58db48416453cbbaf9346dd45117a36b2a7568ace66af3cf262f6db"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/plots/radio_coverage_and_missingness.webp",
+      "bytes": 10162,
+      "sha256": "a9fe6bc4d00a844ef1cf1ef9d6991c98a67b5dcd4902e9e45b6fc000e8ea7df9"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/plots/radio_cu_vs_coverage.webp",
+      "bytes": 19550,
+      "sha256": "51a5b7dcd4b322718a3b84eab40511ad5aff9455abe10363161238b0abe7cd6b"
+    },
+    {
+      "path": "2026-hbll/reports/cu_coverage_streak/radio_class_report.csv",
+      "bytes": 27995,
+      "sha256": "9d03e9c6ab1e247ceea2500db42d91568443f6cf1c77c7ab96b26f1d10408bd7"
+    },
+    {
+      "path": "2026-hbll/reports/index.html",
+      "bytes": 91296,
+      "sha256": "18407c7af83f9194b539c5de7800078f0a73b5fbefea5cfd60cbd2cc69ed2e83"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/cu_station_correlation.csv",
+      "bytes": 811,
+      "sha256": "738fe62bfb8daee395d4783d74726eda7cccafb688e000165ebaf13de47b79b9"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/cu_station_hexbin.webp",
+      "bytes": 176238,
+      "sha256": "9e036dd0b9adf27c64070eae7663885951549d306c6fd7cc5eeca02333f83558"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/cu_station_hexbin_by_band.webp",
+      "bytes": 215646,
+      "sha256": "19d08ae9e0dd81b30b0d339013924deaf8bb1aafdbff6be2673dd81cf68ae430"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/methodology.txt",
+      "bytes": 3663,
+      "sha256": "188714dda6c949575dd1232d6fcf32e500e179f4f8bc5d931358137955fec5d2"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00000-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 201698,
+      "sha256": "02c38d6e4ad204a22e66a19280b064358ee75e4b90b673678653d27a56454ab8"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00001-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 349658,
+      "sha256": "7ba665b6ab075b49ffdcc8411934f24a1550b4a947ea359817c692aabdd2b9c2"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00002-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 245124,
+      "sha256": "28bb28ff6e1e6eae2496e89781227f3d4dff89701b71de4c25f33974e0fdc74f"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00003-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 343936,
+      "sha256": "a8e50521d05d18e10a0e43bc4ce027dfb736f4d5ade9efd1f7f55b8fda0afff1"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00004-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 157952,
+      "sha256": "37114496d89c1a2698a210b7c87e65e21f2f24f69bc1d61da093148fc1067d5f"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00005-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 370662,
+      "sha256": "d4a149bb599f269732a439c218c62557e6e5eab890ce164481f468ff83ccf678"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00006-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 220936,
+      "sha256": "672cafd702d1e25b5a40d43635a18bd0bef6a9f0b3686ee0a3ce7f1061416fb7"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00007-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 365476,
+      "sha256": "be8f1fe0d4c7c1d08a4c933c05268e3f4624b5d1de221c0347ba26714f86cb38"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00008-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 230294,
+      "sha256": "b87547985bcf6b17eb2959bb733571373118643829115d922a0fa6a1589d91b5"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00009-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 456784,
+      "sha256": "55944f0ad26dfeadcfb34d53a5077dc8a11367b0e7807054f37d99d10b620fe7"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00010-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 238938,
+      "sha256": "318f614b3ccb4e0c6fe7a95aa63f16be82863a47e168295b97ba55839d02d11c"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00011-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 375856,
+      "sha256": "2a6c4ec8c36c1f2e0f5971378c9b45172b532dd868e61d335d8fda648a4c92e1"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00012-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 159812,
+      "sha256": "f1fd822c5c48af86d1ec1a0bc7a3297140c2f61ca0b93093645384ea06afc031"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00013-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 384224,
+      "sha256": "943dfc161cc6a292dff949f2092a5ef84ec6c9f252930818da7cbe8d66feeb34"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00014-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 127024,
+      "sha256": "376134fa2a8947bfe025e77a7be6ec5e53327363d68f30ac8f0919b7379b57ba"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00015-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 318148,
+      "sha256": "4a26ad389141addaaa7405cd2e5db200b4c149987251632d8c63141b8d461ac7"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00016-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 152456,
+      "sha256": "fab6c67715a2a81a06e6b1d955af2e7c82112ccb3f7831215d8e683f9047fe26"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00017-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 304888,
+      "sha256": "109ca6bcbb26e81922d914336dfdabe80551c076802957ee45348fa240e6053d"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00018-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 149184,
+      "sha256": "cfc4b35b67dbe1b38a5de5b6a2f02424e2c83708c4a70fcef084d9412c26cfe2"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00019-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 206832,
+      "sha256": "ca9aeb4412236069feefdd50b7c2f4e23db1b6b4174f1abaf303f72bbe364fdd"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00020-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 131656,
+      "sha256": "65e48fbf3a176806bc4613f7a9f5e33074b66b8b07fea197f3cc38bc8d88f10d"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00021-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 184324,
+      "sha256": "1db5ad26bc55fbcc3a35523ac117dbca112c70c72f0ed1f1a474c2ba76641946"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00022-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 133962,
+      "sha256": "6784e8a608ba55088baa228dae9f7c344db31a2e1c895a4c43c55c6ff7ad9dd2"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00023-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 295592,
+      "sha256": "de77a21f70ee28ac69ea8aa6e9d6722744e8a91368f56ae0263aba299b092070"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00024-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 201560,
+      "sha256": "5c065bb9f9be7a5902fe77734addb7507e1f74d5ef50e589c7865fb36cc238bb"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00025-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 455214,
+      "sha256": "fc919d3cbe2eec97c9eec7fad0adb3ec10d6a3f44cbdccf9a90863285e30d85d"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00026-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 233672,
+      "sha256": "5826ed831d33436752c559193b5377e8c1ddf0829704946bbbaf24460a79bb7b"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00027-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 327406,
+      "sha256": "22b8472821f4fea71ecf9b8e1e6db1893741fdf7750f27d46433144e64832ad6"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00028-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 185416,
+      "sha256": "33339f08b43ba48801eec9d8ce973dbcf925ba30d9901c02248a3d7a4b3d99b1"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00029-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 338722,
+      "sha256": "c0b1901ed3a632e5d860ae79441b1ad199021a9a4afff72f4ceae7d3d91729f0"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00030-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 198642,
+      "sha256": "83b4217f3d91e97797b66fadaaa6c671664b7e0b0d3298bdb5b2f035d120be08"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00031-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 413878,
+      "sha256": "b103d3b52c7a8b1c23bde29803bb7d47a4bf39e5f2e7da9c83651851eeed6e96"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00032-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 214946,
+      "sha256": "d35408cac5600a22ea2373aa80480ff0ec7ac891771cbcb178b4ae1f342e9ea3"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00033-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 352116,
+      "sha256": "3abaaf877877de8d5b2bbd61a5db0b93e65825457b53c2e32ef2ddc2bd198d97"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00034-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 206838,
+      "sha256": "39ce2635659b69cf1833159bb959dfd82cbfb8f50f71f5d53dab635e5a0dc4eb"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00035-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 428764,
+      "sha256": "c3f921c3ab4c848e4ba44cb4a63138f2976fcb431725cf9dc4894343b097a481"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00036-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 182708,
+      "sha256": "72f4f238cba9589dc5ae7c052837de5d1fd3faf6d9fb4c9af91b70cf677fbdc4"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00037-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 345094,
+      "sha256": "9b143c2c7b8251251c69db33a63e79c1e3b535f30538a62fc6269cc78ba28b50"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00038-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 150928,
+      "sha256": "8948fbd393e04dd2a0bdd3c2c38c1763c94dd6e116144e547b3b69de68a9d0c0"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00039-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 278506,
+      "sha256": "bdcf453a3023586a73d3fd03929cb3d9b3899cd7501609f06054f88af41f7019"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00040-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 213188,
+      "sha256": "e89a2c187f7b2b81c8409f7935a63cd89de9a03d5c9f00f8469f556d05d7f4f1"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00041-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 252806,
+      "sha256": "34f75b8cf6a54d4b93aac7c26ddb71923bbdce7d7e4a63102c02f7a9f1c7450d"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00042-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 154974,
+      "sha256": "c57d7c45b2843cc8a803c754bb2329e4f59da8974039fd779802e460bfce6300"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00043-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 253080,
+      "sha256": "24baf5b6c774ad32853928c337ac287b743f3881b924f83909819f71f792863e"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00044-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-1.webp",
+      "bytes": 171322,
+      "sha256": "a136e770a8ce187f27179b75b912d6c5d5cd0f43b9d18cd24dae4668e2941d68"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/plots/00045-HBLL-3710-P-HBLL-3710-AP-01-3714B-radio-2.webp",
+      "bytes": 362770,
+      "sha256": "54185862dd6ac9c1dd9deb844e660f8e4bd8ec017c18c72576f79d252a6caefe"
+    },
+    {
+      "path": "2026-hbll/reports/radio_class_detail/radio_class_plot_index.csv",
+      "bytes": 10114,
+      "sha256": "a32012c2709a982262c0d949ab40fa76f80b2ead75878d3eb25083b934b53e16"
+    },
+    {
+      "path": "2026-hbll/reports/run_summary.txt",
+      "bytes": 4258,
+      "sha256": "ce00c750b4d98b7179def0328fc3c238690c701d29aeb843ca8a230597719e0d"
+    },
+    {
+      "path": "2026-hbll/reports/station_count/classroom_bin_station_histogram.webp",
+      "bytes": 10384,
+      "sha256": "9892cba88e5b2a99f964f76a11645f5ee95f3222c1edf59653e6b55b7322215c"
+    },
+    {
+      "path": "2026-hbll/reports/station_count/classroom_bin_station_histogram_by_band.webp",
+      "bytes": 14632,
+      "sha256": "aa1cc58e35aa85ab4786424f7083973262f94493cb9ae589f96ac81880514bae"
+    },
+    {
+      "path": "2026-hbll/reports/station_count/methodology.txt",
+      "bytes": 2516,
+      "sha256": "4a445f5f88663dc56307bbfccb818e1eb381bd689215fbc342be095020807537"
+    },
+    {
+      "path": "2026-hbll/reports/station_count/station_aggregate_report.csv",
+      "bytes": 1312,
+      "sha256": "b427525ce24573a8ce168822c11e68704b6928f4bf4a8ccc011d7b3a02227277"
+    },
+    {
+      "path": "2026-hbll/reports/station_count/station_class_report.csv",
+      "bytes": 52471,
+      "sha256": "312f9cb66b2f4323ffb9a44c866fbf093adfe5f8316b05080ae82007dbe7fb89"
+    },
+    {
+      "path": "examples/radio-5-ghz.html",
+      "bytes": 1228,
+      "sha256": "5443373acce56fb2b0ad0b3ae6733b25a9f39b4d53233962bcd25cfd37c9a9ec"
+    },
+    {
+      "path": "examples/radio-5-ghz.webp",
+      "bytes": 343974,
+      "sha256": "040427861e6ed301d7f510e3402d4666a498a3fcb055822f2eb3b07af1591096"
+    },
+    {
+      "path": "examples/radio-6-ghz.html",
+      "bytes": 1228,
+      "sha256": "af74419163fecf4aec6200e84ec47d42f63e98cb34e4e2a497f73c4d35c39bfe"
+    },
+    {
+      "path": "examples/radio-6-ghz.webp",
+      "bytes": 266028,
+      "sha256": "1f6522febddd16d51d6162634e9a21c9c2133dd070272f1e4b417df6fe43e20e"
+    },
+    {
+      "path": "index.html",
+      "bytes": 2216,
+      "sha256": "8ee92bfa23900acc83e899ceeef78e6cb9523aa0bcea09ce7b05731b19973822"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1257,
+      "sha256": "a7fbf70564bf476ed21568d71e6ef012f7ed8ea65b7dd6387d41eff22a9e8c3d"
+    }
+  ]
+}
