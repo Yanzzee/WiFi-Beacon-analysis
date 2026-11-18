@@ -55,14 +55,15 @@ This ADR deliberately does not decide:
   duration, or default-mode transition; those remain ADR-0006 follow-up and
   PR-0024/PR-0055/PR-0078 work.
 
-## Context and current behavior
+## Historical context before the accepted refactor
 
-[current_pipeline.md](../current_pipeline.md#9-analyze-class-sessions) is the
-runtime source of truth. The current pipeline first filters one AP to an
-inclusive class interval and then thins observations independently by
+The current runtime is described in
+[current_pipeline.md](../current_pipeline.md#timing-binning-and-selection).
+The pre-refactor pipeline described in this context first filtered one AP to an
+inclusive class interval and then thinned observations independently by
 `wlan.ta`, which the current Aruba path treats as BSSID.
 
-For each BSSID, `beacon_filtering.filter_by_time` sorts by timestamp, retains
+For each BSSID, the former `beacon_filtering.filter_by_time` sorted by timestamp, retained
 the first observation, and then greedily retains the first later observation
 whose timestamp is at least `0.95 * BEACON_RATE` after the last retained
 observation. With `BEACON_RATE=1.024 s`, the eligibility gate is:

@@ -14,7 +14,7 @@ from tshark_field_planner import TsharkExtractionPlan
 
 
 RESULT_SCHEMA_ID = "beacon.schema/analysis-results/v1"
-CORRECTED_METRIC_ID = "beacon.metric/corrected-cu/v1"
+CORRECTED_METRIC_ID = "beacon.metric/corrected-cu/v2"
 MANIFEST_FILENAME = "manifest.json"
 
 _SAFE_RUN_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")

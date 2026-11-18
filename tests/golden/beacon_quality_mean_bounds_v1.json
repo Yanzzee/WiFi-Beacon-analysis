@@ -1,0 +1,26 @@
+{
+  "bounds_metric_id": "beacon.metric/cu-missing-bin-bounds/v1",
+  "stage": "current_and_previous_window_mean_exports",
+  "logical_tables": {
+    "beacon_cadence_sessions.csv": {
+      "rows": 2,
+      "sha256": "4aa3a7ce0313de4c9cdb54ef2a32565e9abd6a6d31cc4a6151ac64729ab64566"
+    },
+    "beacon_quality_windows.parquet": {
+      "rows": 6,
+      "sha256": "b43c490ae78425bba50ee963fe3e42db8124753d694de35c83f85c0f2361bf54"
+    },
+    "beacon_quality_associations.csv": {
+      "rows": 4,
+      "sha256": "1b51fa391a795791b399c6f2f75225fe5929ad99f3fcc424ca9e663590117d98"
+    },
+    "beacon_quality_covariate_bands.csv": {
+      "rows": 22,
+      "sha256": "7ecd10dd6cc2f6295402e86cf18429ab40112532f216e720323b22f3d8ae57f1"
+    },
+    "beacon_slot_gap_counts.csv": {
+      "rows": 4,
+      "sha256": "bb255ed39f36d9b91c217658deaf80c891e821bd3f158362796f062ef62779e2"
+    }
+  }
+}

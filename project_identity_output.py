@@ -210,7 +210,7 @@ def write_project_identity_map(
 ) -> Path:
     """Write ``{output_root}/{run_id}/project_identity_map.parquet`` safely.
 
-    ``output_root`` is the configured project root below ``Output/runs``.
+    ``output_root`` is the configured project root below ``output/runs``.
     Existing artifacts are not overwritten; run lifecycle remains the future
     corrected-runner's responsibility.
     """

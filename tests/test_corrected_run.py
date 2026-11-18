@@ -63,7 +63,7 @@ def _selected(*, bssid: str = "aa:bb:cc:dd:ee:01") -> pd.DataFrame:
             "unusable_tsf_reason": [
                 "tsf_unusable_insufficient_progression"
             ],
-            "source_capture": ["Data/capture.pcapng"],
+            "source_capture": ["data/capture.pcapng"],
             "source_frame": ["1"],
             "duplicate_views_collapsed": [0],
             "skipped_intervals_before": [pd.NA],
@@ -96,9 +96,9 @@ def _inputs_and_plan(tmp_path: Path):
     schedule.write_text("class,start,end\nC1,15:00,16:00\n", encoding="utf-8")
     mapping.write_text("Hostname,Building-Room\nAP-01,ROOM1\n", encoding="utf-8")
     inputs = [
-        rl.AnalysisInput("capture", capture, "Data/capture.pcapng"),
-        rl.AnalysisInput("class_schedule", schedule, "Data/classes.csv"),
-        rl.AnalysisInput("ap_classroom_map", mapping, "Data/mapping.csv"),
+        rl.AnalysisInput("capture", capture, "data/capture.pcapng"),
+        rl.AnalysisInput("class_schedule", schedule, "data/classes.csv"),
+        rl.AnalysisInput("ap_classroom_map", mapping, "data/mapping.csv"),
     ]
     capture_digest = rl.sha256_file(capture)
     plan = TsharkExtractionPlan(
@@ -109,7 +109,7 @@ def _inputs_and_plan(tmp_path: Path):
         adapter_versions=(("beacon.adapter/extreme-native", 3),),
     )
     capture_plan = rm.build_capture_plan_record(
-        source_path="Data/capture.pcapng",
+        source_path="data/capture.pcapng",
         source_bytes=capture.stat().st_size,
         source_sha256=capture_digest,
         capture_profile=plan.capture_profile,
@@ -136,7 +136,7 @@ def _clock():
 def _begin(tmp_path: Path) -> cr.CorrectedRun:
     inputs, capture_plan = _inputs_and_plan(tmp_path)
     return cr.begin_corrected_run(
-        output_root=tmp_path / "Output" / "runs",
+        output_root=tmp_path / "output" / "runs",
         project_name="Fall 2026",
         analysis_inputs=inputs,
         requested_start="2026-09-23T15:00:00Z",
@@ -201,12 +201,16 @@ def test_runner_writes_summaries_then_publishes_all_four_tables(tmp_path: Path):
     assert not run.workspace.staging_directory.exists()
     manifest = rm.load_run_manifest(final / "manifest.json")
     assert set(manifest["artifacts"]) == cr.REQUIRED_TABLE_ARTIFACTS
+    overview = (final / "reports/index.html").read_text(encoding="utf-8")
+    assert f'Recorded input files</dt><dd>{len(manifest["input_set"]["files"])}</dd>' in overview
+    assert f'Recorded processing stages</dt><dd>{len(manifest["stages"])}</dd>' in overview
     assert [stage["name"] for stage in manifest["stages"]] == [
         "write_project_identity_map",
         "write_selected_observations",
         "write_corrected_summaries",
         "write_compact_csv_exports",
         "write_corrected_cu_report_package",
+        "write_run_report_overview",
     ]
     assert manifest["actual_selected_observation_range"] == {
         "start": "2026-09-23T15:00:00.100000Z",
@@ -227,9 +231,14 @@ def test_runner_writes_summaries_then_publishes_all_four_tables(tmp_path: Path):
         "radio_class_report.csv",
         "classroom_class_report.csv",
         "band_population_report.csv",
-        "run_summary.txt",
+        "cu_cdf_bounds.csv",
         "methodology.txt",
         "plots",
+    }
+    assert {path.name for path in (final / "reports").iterdir()} == {
+        "cu_coverage_streak",
+        "run_summary.txt",
+        "index.html",
     }
     assert {path.name for path in (report_root / "plots").iterdir()} == {
         "radio_average_cu_distribution.png",
@@ -259,7 +268,7 @@ def test_runner_writes_summaries_then_publishes_all_four_tables(tmp_path: Path):
         "beacon.schema/analysis-results/v1"
     ).all()
     assert band_population["metric_id"].eq(
-        "beacon.metric/corrected-cu/v1"
+        "beacon.metric/corrected-cu/v2"
     ).all()
     assert band_population.loc["all_5_ghz", "radio_count"] == 1
     assert band_population.loc[
@@ -274,11 +283,14 @@ def test_runner_writes_summaries_then_publishes_all_four_tables(tmp_path: Path):
             "valid_cu_radio_time_coverage_percent",
         ]
     )
-    run_summary = (report_root / "run_summary.txt").read_text(encoding="utf-8")
+    run_summary = (final / "reports" / "run_summary.txt").read_text(
+        encoding="utf-8"
+    )
     assert "Corrected beacon-analysis run summary" in run_summary
     assert "Radio/class rows: 1" in run_summary
     assert "Shared-room physical sessions merged: 0" in run_summary
     methodology = (report_root / "methodology.txt").read_text(encoding="utf-8")
+    assert "../run_summary.txt" in methodology
     for filename in (
         "run_summary.txt",
         "radio_class_report.csv",
@@ -292,13 +304,18 @@ def test_runner_writes_summaries_then_publishes_all_four_tables(tmp_path: Path):
     csv_identity = pd.read_csv(csv_root / "project_identity_map.csv")
     assert csv_identity["observed_channels"].tolist() == ["[36]"]
     assert csv_identity["mapping_diagnostics"].tolist() == ["[]"]
+    review = pd.read_csv(csv_root / "radio_class_summary.csv").iloc[0]
+    assert review.average_cu_raw == review.average_cu_raw_lower_bound == review.average_cu_raw_upper_bound == 128
+    assert review.average_cu_ratio_lower_bound == pytest.approx(128 / 255)
+    canonical_columns = pq.read_schema(final / "radio_class_summary.parquet").names
+    assert "average_cu_raw_lower_bound" not in canonical_columns
     assert manifest["artifacts"]["project_identity_map"][
         "derived_exports"
     ] == [
         {
             "format": "csv",
             "path": (
-                f"Output/runs/{run.workspace.project_slug}/"
+                f"output/runs/{run.workspace.project_slug}/"
                 f"{run.workspace.run_id}/exports/csv/project_identity_map.csv"
             ),
             "rows": 1,
@@ -307,6 +324,16 @@ def test_runner_writes_summaries_then_publishes_all_four_tables(tmp_path: Path):
     radio_exports = manifest["artifacts"]["radio_class_summary"][
         "derived_exports"
     ]
+    cdf_export = next(item for item in radio_exports if item.get("role") == "corrected_cu_cdf_bounds")
+    cdf_values = pd.read_csv(final / "reports/cu_coverage_streak/cu_cdf_bounds.csv")
+    assert cdf_export["rows"] == len(cdf_values)
+    assert cdf_values.expected_weight.notna().all()
+    assert cdf_values.cdf_observed_percent.equals(cdf_values.cdf_lower_bound_percent)
+    assert cdf_values.cdf_observed_percent.equals(cdf_values.cdf_upper_bound_percent)
+    overview = next(item for item in radio_exports if item.get("role") == "corrected_run_report_overview")
+    assert overview["format"] == "html"
+    assert overview["report_schema_id"] == "beacon.schema/run-report-overview/v1"
+    assert (final / "reports/index.html").is_file()
     assert any(
         export.get("role") == "corrected_cu_band_population_report"
         and export["rows"] == 3
@@ -411,7 +438,8 @@ def test_csv_export_failure_prevents_publication_and_cleans(
     assert events == ["run_started", "run_failed"]
 
 
-def test_report_failure_prevents_publication_and_cleans(tmp_path: Path, monkeypatch):
+@pytest.mark.parametrize("writer", ["write_corrected_cu_report_package", "write_run_overview"])
+def test_report_failure_prevents_publication_and_cleans(tmp_path: Path, monkeypatch, writer):
     run = _begin(tmp_path)
     cr.write_core_corrected_artifacts(
         run,
@@ -426,7 +454,7 @@ def test_report_failure_prevents_publication_and_cleans(tmp_path: Path, monkeypa
     )
     monkeypatch.setattr(
         cr,
-        "write_corrected_cu_report_package",
+        writer,
         lambda _directory, **_kwargs: (_ for _ in ()).throw(
             OSError("synthetic report failure")
         ),

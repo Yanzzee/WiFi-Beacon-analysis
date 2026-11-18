@@ -236,7 +236,7 @@ def test_owner_type6_capture_replays_current_aruba_identity(
     tmp_path: Path,
     monkeypatch,
 ):
-    capture = Path("Data/captures_test") / (
+    capture = Path("data/captures_test") / (
         "Aruba_ERM_Capture_635_radiotap_2026-09-14.pcapng"
     )
     if not capture.exists():

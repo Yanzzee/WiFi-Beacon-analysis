@@ -24,7 +24,7 @@ import pyarrow.parquet as pq
 
 
 RESULT_SCHEMA_ID = "beacon.schema/analysis-results/v1"
-CORRECTED_METRIC_ID = "beacon.metric/corrected-cu/v1"
+CORRECTED_METRIC_ID = "beacon.metric/corrected-cu/v2"
 SELECTED_OBSERVATIONS_DIRECTORY = "selected_observations"
 
 _SAFE_RUN_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
@@ -275,6 +275,9 @@ def _build_selected_observation_artifact(
                 )
             if unusable_tsf_reason is not None:
                 raise ValueError("tsf_derived rows cannot have an unusable TSF reason")
+        elif timing_method == "observation_time":
+            if tsf_origin is not None or tsf_derived_time is not None:
+                raise ValueError("observation-time rows cannot have mapped TSF times")
         elif timing_method == "observation_time_fallback":
             if tsf_origin is not None or tsf_derived_time is not None:
                 raise ValueError(

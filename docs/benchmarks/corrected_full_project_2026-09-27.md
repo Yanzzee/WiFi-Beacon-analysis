@@ -1,6 +1,6 @@
 # Corrected full-project acceptance run — 2026-09-27
 
-This is the first complete corrected run over the owner `Data/captures`
+This is the first complete corrected run over the owner `data/captures`
 corpus. It is operational evidence for the current sequential implementation,
 not a general performance guarantee.
 

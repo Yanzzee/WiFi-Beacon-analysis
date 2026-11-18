@@ -1,5 +1,12 @@
 # Corrected Semantics Fixture and Oracle Specification
 
+> The mapped-TSF expectations below describe historical metric v1. The owner
+> superseded that timing policy with [ADR-0019](decisions/0019-observation-time-and-native-tsf-diagnostics.md).
+> V2 uses observation time for bins and slots, preserves the v1 fixture files
+> as historical evidence, and tests the new policy and native TSF anomalies
+> separately. The integrated fixture's CU/station measurement values remain
+> valid; its old mapped-clock metadata is not a v2 expectation.
+
 - Status: Accepted; machine-readable fixture data and corrected golden created
 - Date drafted: 2026-09-09
 - Scope: Documentation, synthetic fixture data, and expected results only
@@ -442,7 +449,7 @@ Small focused test modules should read the human-readable tables directly.
 The corrected golden compares stable Parquet/JSON/CSV semantic content, not
 PNG bytes or Parquet file bytes.
 
-## Remaining implementation work
+## Implementation history and current boundary
 
 PR-0024's physical choices are closed. The project owner accepted the metric
 and schema IDs, run-scoped paths, `class_date` selected-observation
@@ -486,6 +493,10 @@ writing are implemented. The two summary-table writers reproduce these
 accepted logical oracles, including the additive UTC class boundaries, and are
 connected to the publication gate. The first bounded corrected report package
 is also derived inside that gate. Capture-to-run orchestration and the public
-acceptance command are implemented; owner report review and active-analysis
+acceptance command are implemented; final owner report review remains separate.
 The fixture is connected to the supported end-to-end workflow. No historical
 golden pipeline is retained or needed.
+
+The later Alpha 0.2 reporting/navigation changes are documented in
+[reporting and publication](reporting_and_publication.md). They do not change
+this authoritative calculation fixture or require an Original replay.

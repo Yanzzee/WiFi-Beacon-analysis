@@ -1,5 +1,10 @@
 # ADR-0008: Observation-timestamp authority and fallback
 
+> The TSF-anchor relationship below is superseded by
+> [ADR-0019](0019-observation-time-and-native-tsf-diagnostics.md). Observation-time
+> precedence remains; observation time now also controls ordering, bins and
+> capture slots, while native TSF is diagnostic and duplicate evidence only.
+
 - Status: Accepted; simplified by owner revision
 - Date proposed: 2026-09-01
 - Initial acceptance: 2026-09-02

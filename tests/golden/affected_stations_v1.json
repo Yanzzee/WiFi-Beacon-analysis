@@ -1,0 +1,16 @@
+{
+  "logical_tables": {
+    "entity_session_exposure.csv": {
+      "rows": 12,
+      "sha256": "5c14c4e14b0013907365a7e7ec4aa2484bae034528a822029a24ec95a214aec2"
+    },
+    "population_exposure.csv": {
+      "rows": 16,
+      "sha256": "b35de60d1ed15411d2122c7ee32045abc7b5799fdef68259ca37f96cc224623d"
+    },
+    "classroom_peak_distribution.csv": {
+      "rows": 6,
+      "sha256": "3110f9cec641a3ab46fe5bd55ad09a4b9b56125b657ad54c9ce01cdc45398704"
+    }
+  }
+}

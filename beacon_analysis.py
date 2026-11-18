@@ -1,4 +1,4 @@
-"""One-command entry point for the corrected beacon analysis workflow."""
+"""Command-line entry point for corrected analysis and saved-run reporting."""
 
 from __future__ import annotations
 
@@ -21,6 +21,7 @@ from corrected_capture_run import (
     run_corrected_capture_project,
 )
 from corrected_input_adapter import load_raw_sample_project_inputs
+from corrected_report_refresh import DEFAULT_REPORT_ROOT, refresh_run_report
 
 
 @dataclass(frozen=True)
@@ -42,6 +43,9 @@ class PreparedRun:
     timezone: ResolvedSetting
     tshark: ResolvedSetting
     capture_workers: ResolvedSetting
+    cu_primary_ssid: ResolvedSetting
+    radio_class_plots: ResolvedSetting
+    beacon_interval_tu: ResolvedSetting
     capture_paths: tuple[Path, ...]
     configured_ap_count: int
     class_session_count: int
@@ -50,7 +54,7 @@ class PreparedRun:
 
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run corrected beacon analysis from captures and sample CSVs."
+        description="Analyze beacon captures or refresh an HTML report from a completed run."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
     run = subparsers.add_parser(
@@ -78,10 +82,22 @@ def _parser() -> argparse.ArgumentParser:
         help="concurrent bounded capture stages (1-16; default: 1)",
     )
     run.add_argument(
+        "--cu-primary-ssid",
+        help="preferred SSID for one CU source per physical radio/bin",
+    )
+    run.add_argument(
+        "--radio-class-plots",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="render every radio/class CU and station-count plot (default: off)",
+    )
+    run.add_argument(
         "--env-file",
         default="config.env",
         help="dotenv configuration file (default: config.env)",
     )
+    run.add_argument("--beacon-interval-tu", type=int,
+                     help="expected interval for exploratory capture quality only (default: 100 TU)")
     run.add_argument(
         "--yes",
         action="store_true",
@@ -92,6 +108,13 @@ def _parser() -> argparse.ArgumentParser:
         action="store_true",
         help="never prompt; fail when a required setting is missing",
     )
+    report = subparsers.add_parser(
+        "report", help="rebuild the HTML overview using a completed run's saved tables and graphics",
+    )
+    report.add_argument("--from-run", required=True, type=Path,
+                        help="completed run folder containing manifest.json and reports/")
+    report.add_argument("--output-root", type=Path, default=DEFAULT_REPORT_ROOT,
+                        help="root for new report bundles (default: repository output/reports)")
     return parser
 
 
@@ -246,6 +269,52 @@ def _resolve_capture_workers(
     return ResolvedSetting("1", "default")
 
 
+def _resolve_optional_setting(
+    *,
+    flag_value: object,
+    env_key: str,
+    config: Mapping[str, str],
+    env_file: Path,
+    default: str,
+) -> ResolvedSetting:
+    if value := _nonempty(flag_value):
+        return ResolvedSetting(value, "command line")
+    if value := _nonempty(_STARTUP_ENV.get(env_key)):
+        return ResolvedSetting(value, f"environment variable {env_key}")
+    if value := _nonempty(config.get(env_key)):
+        return ResolvedSetting(value, f"{env_file} ({env_key})")
+    return ResolvedSetting(default, "default")
+
+
+def _resolve_boolean_setting(
+    *,
+    flag_value: bool | None,
+    env_key: str,
+    config: Mapping[str, str],
+    env_file: Path,
+    default: bool,
+) -> ResolvedSetting:
+    if flag_value is not None:
+        return ResolvedSetting(str(flag_value).lower(), "command line")
+    candidates = (
+        (_STARTUP_ENV.get(env_key), f"environment variable {env_key}"),
+        (config.get(env_key), f"{env_file} ({env_key})"),
+    )
+    for raw, source in candidates:
+        value = _nonempty(raw)
+        if value is None:
+            continue
+        normalized = value.casefold()
+        if normalized in {"1", "true", "yes", "on"}:
+            return ResolvedSetting("true", source)
+        if normalized in {"0", "false", "no", "off"}:
+            return ResolvedSetting("false", source)
+        raise ValueError(
+            f"{env_key} must be true/false, yes/no, on/off, or 1/0"
+        )
+    return ResolvedSetting(str(default).lower(), "default")
+
+
 def prepare_run(args: argparse.Namespace) -> PreparedRun:
     """Resolve, validate, and summarize one run before user confirmation."""
 
@@ -318,6 +387,31 @@ def prepare_run(args: argparse.Namespace) -> PreparedRun:
         tshark_setting = ResolvedSetting(value, f"{env_file} (TSHARK_PATH)")
     tshark = _resolve_tshark(tshark_setting)
     capture_workers = _resolve_capture_workers(args, config, env_file)
+    cu_primary_ssid = _resolve_optional_setting(
+        flag_value=args.cu_primary_ssid,
+        env_key="CU_PRIMARY_SSID",
+        config=config,
+        env_file=env_file,
+        default="eduroam",
+    )
+    radio_class_plots = _resolve_boolean_setting(
+        flag_value=args.radio_class_plots,
+        env_key="RADIO_CLASS_PLOTS",
+        config=config,
+        env_file=env_file,
+        default=False,
+    )
+    beacon_interval_tu = _resolve_optional_setting(
+        flag_value=args.beacon_interval_tu, env_key="BEACON_INTERVAL_TU",
+        config=config, env_file=env_file, default="100",
+    )
+    try:
+        interval_tu = int(beacon_interval_tu.value)
+    except ValueError as exc:
+        raise ValueError("BEACON_INTERVAL_TU must be an integer from 1 to 65535") from exc
+    if not 1 <= interval_tu <= 65535:
+        raise ValueError("BEACON_INTERVAL_TU must be an integer from 1 to 65535")
+    beacon_interval_tu = ResolvedSetting(str(interval_tu), beacon_interval_tu.source)
 
     captures_path = _absolute_path(captures.value)
     if not captures_path.is_dir():
@@ -357,6 +451,9 @@ def prepare_run(args: argparse.Namespace) -> PreparedRun:
         timezone=timezone,
         tshark=tshark,
         capture_workers=capture_workers,
+        cu_primary_ssid=cu_primary_ssid,
+        radio_class_plots=radio_class_plots,
+        beacon_interval_tu=beacon_interval_tu,
         capture_paths=discovered,
         configured_ap_count=len(inputs.configured_aps),
         class_session_count=len(inputs.class_sessions),
@@ -381,6 +478,9 @@ def _display_plan(plan: PreparedRun) -> None:
         ("Timezone", plan.timezone),
         ("TShark", plan.tshark),
         ("Capture workers", plan.capture_workers),
+        ("Primary CU SSID", plan.cu_primary_ssid),
+        ("Radio/class plots", plan.radio_class_plots),
+        ("Diagnostic beacon interval (TU)", plan.beacon_interval_tu),
     )
     for label, setting in rows:
         print(f"  {label}: {setting.value} [{setting.source}]")
@@ -419,6 +519,9 @@ def _execute(plan: PreparedRun) -> Path:
         schedule_end_date=plan.end_date.value,
         output_root=plan.output_root.value,
         capture_workers=int(plan.capture_workers.value),
+        cu_primary_ssid=plan.cu_primary_ssid.value,
+        radio_class_plots=plan.radio_class_plots.value == "true",
+        cadence_beacon_interval_tu=int(plan.beacon_interval_tu.value),
         repository=Path(__file__).resolve().parent,
     )
 
@@ -443,6 +546,19 @@ def _run_command(args: argparse.Namespace) -> int:
         print(f"Run failed: {exc}", file=sys.stderr)
         return 1
     print(f"Published corrected run: {final}")
+    print(f"Open run overview: {final / 'reports' / 'index.html'}")
+    return 0
+
+
+def _report_command(args: argparse.Namespace) -> int:
+    try:
+        final = refresh_run_report(args.from_run, output_root=args.output_root)
+    except (OSError, TypeError, ValueError, RuntimeError) as exc:
+        print(f"Report refresh failed: {exc}", file=sys.stderr)
+        return 1
+    print("Rebuilt the report from saved results; refreshed supported comparison figures and reused other graphics.")
+    print(f"Report output: {final}")
+    print(f"Open report: {final / 'reports' / 'index.html'}")
     return 0
 
 
@@ -451,9 +567,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         if args.command == "run":
             return _run_command(args)
+        if args.command == "report":
+            return _report_command(args)
         raise AssertionError(f"unhandled command: {args.command}")
     except KeyboardInterrupt:
-        print("\nRun interrupted.", file=sys.stderr)
+        operation = "Report refresh" if args.command == "report" else "Run"
+        print(f"\n{operation} interrupted.", file=sys.stderr)
         return 130
 
 

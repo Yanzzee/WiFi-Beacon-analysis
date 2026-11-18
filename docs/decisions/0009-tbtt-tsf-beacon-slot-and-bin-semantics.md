@@ -1,5 +1,10 @@
 # ADR-0009: Per-BSSID TSF-derived beacon time and bin semantics
 
+> Superseded for timing, TSF trust and duplicate handling by
+> [ADR-0019](0019-observation-time-and-native-tsf-diagnostics.md), accepted
+> 2026-11-15. New analyses always use observation time; the text below records
+> the historical TSF-derived design.
+
 - Status: Accepted; revised by owner
 - Date proposed: 2026-08-27
 - Initial acceptance: 2026-08-27

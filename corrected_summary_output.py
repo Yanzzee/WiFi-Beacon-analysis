@@ -19,9 +19,15 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
+from corrected_admission_selection import (
+    ADMISSION_BIN_COLUMNS, admission_raw, empty_admission,
+    preferred_admission_source, resolve_admission,
+)
+
 
 RESULT_SCHEMA_ID = "beacon.schema/analysis-results/v1"
-CORRECTED_METRIC_ID = "beacon.metric/corrected-cu/v1"
+CORRECTED_METRIC_ID = "beacon.metric/corrected-cu/v2"
+RADIO_BIN_METRIC_ID = "beacon.metric/corrected-radio-bin/v1"
 RADIO_CLASS_SUMMARY_FILENAME = "radio_class_summary.parquet"
 CLASSROOM_CLASS_SUMMARY_FILENAME = "classroom_class_summary.parquet"
 
@@ -55,6 +61,32 @@ _REQUIRED_SELECTED_COLUMNS = {
     "source_frame",
     "qbss_cu_raw",
 }
+
+RADIO_BIN_CU_COLUMNS = (
+    "run_id",
+    "schema_id",
+    "metric_id",
+    "class_session_id",
+    "classroom",
+    "radio_group_id",
+    "ap_id",
+    "band",
+    "channel",
+    "bin_number",
+    "bin_start",
+    "bin_end",
+    "bin_duration_us",
+    "width_status",
+    "cu_state",
+    "qbss_cu_raw",
+    "source_ssid",
+    "source_bssid",
+    "source_selection_method",
+    "source_observation_time",
+    "observed_member_bssid_count",
+    "valid_cu_candidate_count",
+    *ADMISSION_BIN_COLUMNS,
+)
 
 RADIO_CLASS_SUMMARY_ARROW_SCHEMA = pa.schema(
     [
@@ -134,6 +166,7 @@ CLASSROOM_CLASS_SUMMARY_ARROW_SCHEMA = pa.schema(
 class CorrectedSummaryTables:
     radio_class: pd.DataFrame
     classroom_class: pd.DataFrame
+    radio_bin_cu: pd.DataFrame | None = None
 
 
 @dataclass(frozen=True)
@@ -282,9 +315,13 @@ def _normalize_bins(class_bins: pd.DataFrame) -> pd.DataFrame:
                 "bin_start": start,
                 "bin_end": end,
                 "bin_duration_us": duration,
+                "width_status": _optional_text(record.get("width_status")),
             }
         )
-    result = pd.DataFrame(rows, columns=sorted(_REQUIRED_BIN_COLUMNS))
+    result = pd.DataFrame(
+        rows,
+        columns=[*sorted(_REQUIRED_BIN_COLUMNS), "width_status"],
+    )
     if result.empty:
         return result
     key = ["class_session_id", "classroom", "bin_number"]
@@ -300,6 +337,11 @@ def _normalize_bins(class_bins: pd.DataFrame) -> pd.DataFrame:
         ends = ordered["bin_end"].tolist()
         if starts[1:] != ends[:-1]:
             raise ValueError("class bins must be contiguous")
+        maximum_duration = int(ordered["bin_duration_us"].max())
+        missing_width = ordered["width_status"].isna()
+        result.loc[ordered.index[missing_width], "width_status"] = ordered.loc[
+            missing_width, "bin_duration_us"
+        ].map(lambda value: "complete" if value == maximum_duration else "partial")
     return result.sort_values(key, kind="stable").reset_index(drop=True)
 
 
@@ -327,11 +369,20 @@ def _normalize_identity(identity_map: pd.DataFrame) -> pd.DataFrame:
                 ),
                 "classroom": _required_text(record["classroom"], name="classroom"),
                 "band": _band_text(record["band"]),
+                "ap_id": _optional_text(record.get("ap_id")),
                 "channels": _identity_channel_values(record),
             }
         )
     result = pd.DataFrame(
-        rows, columns=["bssid", "radio_group_id", "classroom", "band", "channels"]
+        rows,
+        columns=[
+            "bssid",
+            "radio_group_id",
+            "classroom",
+            "band",
+            "ap_id",
+            "channels",
+        ],
     )
     if result["bssid"].duplicated().any():
         raise ValueError("identity map requires one row per BSSID")
@@ -371,6 +422,7 @@ def _normalize_selected(selected: pd.DataFrame) -> pd.DataFrame:
                     maximum=2**63 - 1,
                 ),
                 "bssid": _required_text(record["bssid"], name="bssid"),
+                "ssid": _optional_text(record.get("ssid")),
                 "radio_group_id": _required_text(
                     record["radio_group_id"], name="radio_group_id"
                 ),
@@ -388,6 +440,7 @@ def _normalize_selected(selected: pd.DataFrame) -> pd.DataFrame:
                 "source_frame_number": source_frame_number,
                 "source_rank": _source_rank(record.get("source_rank")),
                 "qbss_cu_raw": _valid_cu(record["qbss_cu_raw"]),
+                "qbss_admission_capacity": admission_raw(record.get("qbss_admission_capacity")),
                 "input_order": index,
                 "channel": _valid_channel(record.get("channel")),
             }
@@ -397,6 +450,7 @@ def _normalize_selected(selected: pd.DataFrame) -> pd.DataFrame:
         "classroom",
         "bin_number",
         "bssid",
+        "ssid",
         "radio_group_id",
         "observation_time",
         "observation_time_source",
@@ -405,6 +459,7 @@ def _normalize_selected(selected: pd.DataFrame) -> pd.DataFrame:
         "source_frame_number",
         "source_rank",
         "qbss_cu_raw",
+        "qbss_admission_capacity",
         "input_order",
         "channel",
         "source_order",
@@ -493,6 +548,17 @@ def _single_or_none(values: Iterable[int]) -> int | None:
     return unique[0] if len(unique) == 1 else None
 
 
+def _single_text(values: Iterable[Any]) -> str | None:
+    unique = sorted(
+        {
+            text
+            for value in values
+            if (text := _optional_text(value)) is not None
+        }
+    )
+    return unique[0] if len(unique) == 1 else None
+
+
 def _radio_row(
     *,
     run_id: str,
@@ -503,6 +569,8 @@ def _radio_row(
     bins: pd.DataFrame,
     identity: pd.DataFrame,
     observations: pd.DataFrame,
+    radio_bin_rows: list[dict[str, Any]],
+    primary_ssid: str | None,
 ) -> dict[str, Any]:
     radio_group_id = str(identity.iloc[0]["radio_group_id"])
     member_bssids = sorted(identity["bssid"].tolist())
@@ -516,7 +584,24 @@ def _radio_row(
         )
     )
     next_observation_group = next(observation_groups, None)
-    preferred_bssid = None
+    valid_observations = ordered_observations.loc[
+        ordered_observations["qbss_cu_raw"].notna()
+    ]
+    primary_valid = (
+        valid_observations.loc[valid_observations["ssid"].eq(primary_ssid)]
+        if primary_ssid is not None
+        else valid_observations.iloc[0:0]
+    )
+    if not primary_valid.empty:
+        preferred_bssid = str(primary_valid.iloc[0]["bssid"])
+        preferred_method = "primary_ssid"
+    elif not valid_observations.empty:
+        preferred_bssid = str(valid_observations.iloc[0]["bssid"])
+        preferred_method = "first_valid_session_bssid"
+    else:
+        preferred_bssid = None
+        preferred_method = None
+    admission_preferred = preferred_admission_source(ordered_observations, primary_ssid)
     states: list[tuple[str, int | None, int]] = []
     weighted_total = 0
     valid_cu_raw_counts = [0] * 256
@@ -536,22 +621,49 @@ def _radio_row(
         ):
             states.append(("no_beacon", None, duration))
             no_beacon_duration += duration
+            radio_bin_rows.append(
+                {
+                    "run_id": run_id,
+                    "schema_id": schema_id,
+                    "metric_id": RADIO_BIN_METRIC_ID,
+                    "class_session_id": session_id,
+                    "classroom": classroom,
+                    "radio_group_id": radio_group_id,
+                    "ap_id": _single_text(identity["ap_id"]),
+                    "band": identity.iloc[0]["band"],
+                    "channel": _single_or_none(observed_channels),
+                    "bin_number": bin_number,
+                    "bin_start": bin_row.bin_start,
+                    "bin_end": bin_row.bin_end,
+                    "bin_duration_us": duration,
+                    "width_status": bin_row.width_status,
+                    "cu_state": "no_beacon",
+                    "qbss_cu_raw": None,
+                    "source_ssid": None,
+                    "source_bssid": None,
+                    "source_selection_method": None,
+                    "source_observation_time": None,
+                    "observed_member_bssid_count": 0,
+                    "valid_cu_candidate_count": 0,
+                    **empty_admission("no_beacon"),
+                }
+            )
             continue
 
         first_usable = None
         preferred_usable = None
-        for candidate in next_observation_group[1]:
+        observed_count = 0
+        valid_count = 0
+        candidates = list(next_observation_group[1])
+        for candidate in candidates:
+            observed_count += 1
             if candidate.channel is not None and not pd.isna(candidate.channel):
                 observed_channels.add(int(candidate.channel))
             if candidate.qbss_cu_raw is None or pd.isna(candidate.qbss_cu_raw):
                 continue
+            valid_count += 1
             if first_usable is None:
                 first_usable = candidate
-                if preferred_bssid is None:
-                    # Because the entire radio/session was ordered once, this
-                    # is the same earliest valid observation used by the
-                    # previous implementation to establish preference.
-                    preferred_bssid = str(candidate.bssid)
             if (
                 preferred_usable is None
                 and str(candidate.bssid) == preferred_bssid
@@ -559,16 +671,80 @@ def _radio_row(
                 preferred_usable = candidate
         next_observation_group = next(observation_groups, None)
 
+        chosen = preferred_usable or first_usable
+        admission = resolve_admission(candidates, chosen, admission_preferred)
+
         if first_usable is None:
             states.append(("missing_cu", None, duration))
             missing_duration += duration
+            radio_bin_rows.append(
+                {
+                    "run_id": run_id,
+                    "schema_id": schema_id,
+                    "metric_id": RADIO_BIN_METRIC_ID,
+                    "class_session_id": session_id,
+                    "classroom": classroom,
+                    "radio_group_id": radio_group_id,
+                    "ap_id": _single_text(identity["ap_id"]),
+                    "band": identity.iloc[0]["band"],
+                    "channel": _single_or_none(observed_channels),
+                    "bin_number": bin_number,
+                    "bin_start": bin_row.bin_start,
+                    "bin_end": bin_row.bin_end,
+                    "bin_duration_us": duration,
+                    "width_status": bin_row.width_status,
+                    "cu_state": "missing_cu",
+                    "qbss_cu_raw": None,
+                    "source_ssid": None,
+                    "source_bssid": None,
+                    "source_selection_method": None,
+                    "source_observation_time": None,
+                    "observed_member_bssid_count": observed_count,
+                    "valid_cu_candidate_count": 0,
+                    **admission,
+                }
+            )
             continue
-        chosen = preferred_usable or first_usable
         cu_raw = int(chosen.qbss_cu_raw)
         states.append(("valid", cu_raw, duration))
         valid_duration += duration
         weighted_total += cu_raw * duration
         valid_cu_raw_counts[cu_raw] += 1
+        radio_bin_rows.append(
+            {
+                "run_id": run_id,
+                "schema_id": schema_id,
+                "metric_id": RADIO_BIN_METRIC_ID,
+                "class_session_id": session_id,
+                "classroom": classroom,
+                "radio_group_id": radio_group_id,
+                "ap_id": _single_text(identity["ap_id"]),
+                "band": identity.iloc[0]["band"],
+                "channel": (
+                    int(chosen.channel)
+                    if chosen.channel is not None and not pd.isna(chosen.channel)
+                    else _single_or_none(observed_channels)
+                ),
+                "bin_number": bin_number,
+                "bin_start": bin_row.bin_start,
+                "bin_end": bin_row.bin_end,
+                "bin_duration_us": duration,
+                "width_status": bin_row.width_status,
+                "cu_state": "valid",
+                "qbss_cu_raw": cu_raw,
+                "source_ssid": chosen.ssid,
+                "source_bssid": str(chosen.bssid),
+                "source_selection_method": (
+                    preferred_method
+                    if preferred_usable is not None
+                    else "fallback_member_bssid"
+                ),
+                "source_observation_time": chosen.observation_time,
+                "observed_member_bssid_count": observed_count,
+                "valid_cu_candidate_count": valid_count,
+                **admission,
+            }
+        )
 
     if next_observation_group is not None:
         raise AssertionError("radio observations were not consumed by class bins")
@@ -647,11 +823,13 @@ def build_corrected_summaries(
     run_id: str,
     schema_id: str = RESULT_SCHEMA_ID,
     metric_id: str = CORRECTED_METRIC_ID,
+    primary_ssid: str | None = None,
 ) -> CorrectedSummaryTables:
     """Calculate the two accepted ADR-0004 logical summary tables."""
 
     if not _SAFE_RUN_ID.fullmatch(str(run_id)):
         raise ValueError("run_id must be one safe path segment")
+    primary_ssid = _optional_text(primary_ssid)
     bins = _normalize_bins(class_bins)
     identity = _normalize_identity(identity_map)
     selected = _normalize_selected(selected_observations)
@@ -684,6 +862,7 @@ def build_corrected_summaries(
 
     radio_rows: list[dict[str, Any]] = []
     classroom_rows: list[dict[str, Any]] = []
+    radio_bin_rows: list[dict[str, Any]] = []
     for (session_id, classroom), session_bins in bins.groupby(
         ["class_session_id", "classroom"], sort=True
     ):
@@ -709,6 +888,8 @@ def build_corrected_summaries(
                 bins=session_bins,
                 identity=radio_identity,
                 observations=observations,
+                radio_bin_rows=radio_bin_rows,
+                primary_ssid=primary_ssid,
             )
             radio_rows.append(row)
             session_radio_rows.append(row)
@@ -761,6 +942,7 @@ def build_corrected_summaries(
         classroom_class=pd.DataFrame(
             classroom_rows, columns=CLASSROOM_CLASS_SUMMARY_ARROW_SCHEMA.names
         ),
+        radio_bin_cu=pd.DataFrame(radio_bin_rows, columns=RADIO_BIN_CU_COLUMNS),
     )
 
 

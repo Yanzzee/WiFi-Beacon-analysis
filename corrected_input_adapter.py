@@ -9,6 +9,7 @@ from typing import Any
 import pandas as pd
 
 from sample_processing import build_sample_tables
+from band_comparison_inputs import validate_enablement_column
 
 
 CURRENT_AP_PROFILE = "current_sample_aps"
@@ -30,6 +31,7 @@ class CorrectedProjectInputs:
     class_schedule_profile: str
     class_session_id_method: str
     shared_room_session_merges: tuple["SharedRoomSessionMerge", ...] = ()
+    location_scope: tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -104,6 +106,34 @@ def _bin_width(value: Any, *, default_bin_width_us: int) -> int:
     return width
 
 
+def _optional_nonnegative_integer(value: Any, *, name: str) -> int | None:
+    if (
+        value is None
+        or value is pd.NA
+        or pd.isna(value)
+        or str(value).strip() == ""
+    ):
+        return None
+    if isinstance(value, bool):
+        raise ValueError(f"{name} must be a non-negative integer")
+    try:
+        result = int(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError(f"{name} must be a non-negative integer") from exc
+    if isinstance(value, float) and not value.is_integer():
+        raise ValueError(f"{name} must be a non-negative integer")
+    if result < 0:
+        raise ValueError(f"{name} must be a non-negative integer")
+    return result
+
+
+def _optional_text(value: Any) -> str | None:
+    if value is None or value is pd.NA or pd.isna(value):
+        return None
+    text = str(value).strip()
+    return text or None
+
+
 def _collapse_shared_room_sessions(
     frame: pd.DataFrame,
 ) -> tuple[pd.DataFrame, tuple[SharedRoomSessionMerge, ...]]:
@@ -113,6 +143,18 @@ def _collapse_shared_room_sessions(
     if not set(physical_key).issubset(frame.columns):
         return frame, ()
 
+    frame = frame.copy()
+    if "course" not in frame:
+        frame["course"] = pd.NA
+    if "capacity" not in frame:
+        frame["capacity"] = pd.NA
+    frame["source_section_count"] = 1
+    frame["course_labels"] = frame.get(
+        "course", pd.Series(index=frame.index, dtype="object")
+    ).map(lambda value: _optional_text(value))
+    frame["capacity_status"] = frame.get(
+        "capacity", pd.Series(index=frame.index, dtype="object")
+    ).map(lambda value: "missing" if _optional_text(value) is None else "available")
     collapsed_rows: list[pd.Series] = []
     merges: list[SharedRoomSessionMerge] = []
     for _key, group in frame.groupby(
@@ -121,16 +163,34 @@ def _collapse_shared_room_sessions(
         dropna=False,
     ):
         row = group.iloc[0].copy()
+        row["source_section_count"] = len(group)
+        courses = tuple(
+            dict.fromkeys(
+                text
+                for value in group["course"].tolist()
+                if (text := _optional_text(value)) is not None
+            )
+        )
+        row["course_labels"] = " | ".join(courses) or None
+        capacities = sorted(
+            {
+                float(value)
+                for value in pd.to_numeric(group["capacity"], errors="coerce")
+                if not pd.isna(value)
+            }
+        )
+        if len(capacities) > 1:
+            row["capacity"] = None
+            row["capacity_status"] = "conflict"
+        elif len(capacities) == 1:
+            row["capacity"] = capacities[0]
+            row["capacity_status"] = "available"
+        else:
+            row["capacity"] = None
+            row["capacity_status"] = "missing"
         if len(group) > 1:
             enrolled = pd.to_numeric(group["enrolled"], errors="raise")
             enrolled_total = int(enrolled.sum())
-            courses = tuple(
-                dict.fromkeys(
-                    str(value).strip()
-                    for value in group["course"].tolist()
-                    if str(value).strip()
-                )
-            )
             row["enrolled"] = enrolled_total
             row["course"] = " + ".join(courses)
             start = _utc_timestamp(
@@ -176,7 +236,7 @@ def adapt_ap_mapping(frame: pd.DataFrame) -> tuple[pd.DataFrame, str]:
         if {"Building", "Room"}.intersection(result.columns)
         else NORMALIZED_AP_PROFILE
     )
-    return result, profile
+    return validate_enablement_column(result), profile
 
 
 def adapt_class_sessions(
@@ -253,6 +313,29 @@ def adapt_class_sessions(
                     record.get("bin_width_us"),
                     default_bin_width_us=default_bin_width_us,
                 ),
+                "course": _optional_text(record.get("course")),
+                "enrolled": _optional_nonnegative_integer(
+                    record.get("enrolled"),
+                    name=f"class schedule row {position} enrolled",
+                ),
+                "capacity": _optional_nonnegative_integer(
+                    record.get("capacity"),
+                    name=f"class schedule row {position} capacity",
+                ),
+                "source_section_count": _optional_nonnegative_integer(
+                    record.get("source_section_count", 1),
+                    name=f"class schedule row {position} source_section_count",
+                ) or 1,
+                "course_labels": _optional_text(
+                    record.get("course_labels", record.get("course"))
+                ),
+                "capacity_status": _optional_text(
+                    record.get("capacity_status")
+                ) or (
+                    "missing"
+                    if _optional_text(record.get("capacity")) is None
+                    else "available"
+                ),
             }
         )
 
@@ -264,6 +347,12 @@ def adapt_class_sessions(
             "class_start",
             "class_end",
             "bin_width_us",
+            "course",
+            "enrolled",
+            "capacity",
+            "source_section_count",
+            "course_labels",
+            "capacity_status",
         ],
     )
     if result.empty:
@@ -332,7 +421,7 @@ def load_raw_sample_project_inputs(
     end_date: str,
     default_bin_width_us: int,
 ) -> CorrectedProjectInputs:
-    """Load the three user CSVs and expand schedule sessions in memory."""
+    """Load the three CSVs using Sample_classrooms.Location as project scope."""
 
     paths = {
         "ap_mapping_path": Path(ap_mapping_path),
@@ -367,4 +456,5 @@ def load_raw_sample_project_inputs(
         class_schedule_profile=RAW_SAMPLE_SCHEDULE_PROFILE,
         class_session_id_method=session_id_method,
         shared_room_session_merges=shared_room_merges,
+        location_scope=tuple(sorted(tables.sample_classrooms["Location"].unique())),
     )

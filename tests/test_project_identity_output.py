@@ -88,12 +88,12 @@ def test_identity_writer_uses_list_types_and_run_scoped_path(tmp_path: Path):
 
     path = write_project_identity_map(
         identity,
-        output_root=tmp_path / "Output" / "runs",
+        output_root=tmp_path / "output" / "runs",
         run_id="test-run",
     )
 
     assert path == (
-        tmp_path / "Output" / "runs" / "test-run"
+        tmp_path / "output" / "runs" / "test-run"
         / "project_identity_map.parquet"
     )
     table = pq.read_table(path)

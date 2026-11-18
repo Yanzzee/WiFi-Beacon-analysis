@@ -379,7 +379,7 @@ def run_boundary_once(
     temporary = tempfile.TemporaryDirectory() if own_temporary else None
     root = Path(temporary.name) if temporary is not None else Path(workspace_root)
     inputs, capture_plan = _analysis_inputs(root / "inputs", workload)
-    output_root = root / "Output" / "runs"
+    output_root = root / "output" / "runs"
 
     gc.collect()
     process = psutil.Process() if psutil is not None else None

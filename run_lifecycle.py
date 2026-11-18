@@ -469,7 +469,7 @@ def publish_run(workspace: RunWorkspace) -> Path:
     if not isinstance(artifacts, Mapping) or not artifacts:
         raise RunLifecycleError("manifest must reference at least one artifact")
     logical_prefix = (
-        f"Output/runs/{workspace.project_slug}/{workspace.run_id}/"
+        f"output/runs/{workspace.project_slug}/{workspace.run_id}/"
     )
     for name, artifact in artifacts.items():
         artifact_path = str(artifact["path"]).replace("\\", "/").rstrip("/")

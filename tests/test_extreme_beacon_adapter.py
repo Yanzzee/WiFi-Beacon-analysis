@@ -155,7 +155,7 @@ def test_reviewed_registry_contains_aruba_and_extreme_adapters():
     ]
 
 
-def test_configured_extreme_selection_uses_tsf_and_frame_time_fallback():
+def test_configured_extreme_selection_keeps_frame_time_and_unverified_views():
     result = select_configured_extreme_class_observations(
         _extreme_rows(),
         _configured_aps(),
@@ -166,18 +166,16 @@ def test_configured_extreme_selection_uses_tsf_and_frame_time_fallback():
         bin_width_us=102_400,
     )
 
-    assert result.selection.timing.loc[0, "timing_method"] == "tsf_derived"
+    assert result.selection.timing.loc[0, "timing_method"] == "observation_time"
     assert result.selection.observations["observation_time_source"].eq(
         "frame_time_epoch"
     ).all()
     assert result.selection.observations["payload_id"].tolist() == [
+        "early-origin",
         "duplicate-winner",
         "next",
     ]
-    assert result.selection.excluded.loc[0, "payload_id"] == "early-origin"
-    assert result.selection.excluded.loc[0, "exclusion_reason"] == (
-        "duplicate_view"
-    )
+    assert result.selection.excluded.empty
     assert result.radio_resolution_counts.resolved_bssids == 1
     assert result.radio_identity_map.loc[0, "band"] == "5"
 
@@ -232,7 +230,7 @@ def test_owner_extreme_capture_reaches_shared_scope_and_adapter(
     monkeypatch,
 ):
     capture = Path(
-        "Data/captures_test/"
+        "data/captures_test/"
         "Beacons_LVES_fr5220_00004_20260905195309.pcapng"
     )
     if not capture.exists():
@@ -275,11 +273,11 @@ def test_owner_extreme_cross_band_captures_resolve_two_radios_for_common_ap(
 ):
     captures = [
         Path(
-            "Data/captures_test/"
+            "data/captures_test/"
             "Beacons_LVES_fr5220_00004_20260905195309.pcapng"
         ),
         Path(
-            "Data/captures_test/"
+            "data/captures_test/"
             "Beacons_LVES-6GHz_fr6355_00001_20260917094712.pcapng"
         ),
     ]

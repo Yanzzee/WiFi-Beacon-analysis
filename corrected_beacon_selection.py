@@ -2,9 +2,8 @@
 
 This module implements the accepted PR-0021/PR-0022 timing boundary without
 wiring it into the legacy analysis scripts. Observation time admits rows to a
-half-open class. Reliable per-BSSID/session TSF then supplies ordering,
-duplicate recognition, and bin placement; otherwise the complete BSSID/session
-falls back to observation time.
+half-open class and controls ordering and bin placement. Native TSF is used
+only for diagnostics and conservative recognition of duplicate capture views.
 """
 
 from __future__ import annotations
@@ -17,6 +16,21 @@ import pandas as pd
 
 TU_US = 1_024
 DEFAULT_BEACON_INTERVAL_TU = 100
+TIMING_POLICY_ID = "beacon.timing/observation-time/v1"
+MAX_DUPLICATE_SEPARATION_US = 102_400
+TSF_DIAGNOSTIC_FIELDS = (
+    "tsf_clock_jump_count", "tsf_max_step_error_us", "tsf_offset_range_us",
+    "tsf_anomaly_source_capture", "tsf_anomaly_source_frame",
+    "tsf_anomaly_observation_time", "tsf_anomaly_value_us",
+)
+
+
+def capture_families(frame: pd.DataFrame) -> pd.Series:
+    profiles = frame.get("capture_profile", pd.Series("", index=frame.index)).astype("string").fillna("")
+    family = pd.Series("unknown", index=frame.index, dtype="string")
+    family.loc[profiles.eq("native_80211")] = "native"
+    family.loc[profiles.str.startswith("aruba_erm")] = "erm"
+    return family
 
 
 @dataclass(frozen=True)
@@ -94,6 +108,7 @@ def preferred_observation_times(observations: pd.DataFrame) -> pd.Series:
     if not isinstance(observations, pd.DataFrame):
         raise TypeError("observations must be a pandas DataFrame")
     aruba_time = _parse_time_column(observations, "aruba_erm_time")
+    aruba_time = aruba_time.mask(capture_families(observations).eq("native"))
     frame_time = _parse_time_column(observations, "frame_time_epoch")
     return aruba_time.where(aruba_time.notna(), frame_time)
 
@@ -203,19 +218,20 @@ def _interval_us_for_group(
     return default_beacon_interval_tu * TU_US
 
 
-def _classify_tsf(
+def _diagnose_native_tsf(
     group: pd.DataFrame,
     *,
-    class_duration_us: int,
     default_beacon_interval_tu: int,
-) -> str:
+) -> dict[str, Any]:
+    result = dict.fromkeys(TSF_DIAGNOSTIC_FIELDS)
+    result["tsf_clock_jump_count"] = 0
     tsf = group["tsf_us"]
     if tsf.isna().any():
-        return "missing"
+        return {**result, "tsf_status": "missing"}
     if len(group) < 2:
-        return "insufficient_progression"
+        return {**result, "tsf_status": "insufficient_progression"}
     if tsf.nunique() == 1:
-        return "frozen"
+        return {**result, "tsf_status": "frozen"}
 
     interval_us = _interval_us_for_group(group, default_beacon_interval_tu)
     observed_order = group.sort_values(
@@ -226,24 +242,31 @@ def _classify_tsf(
         kind="stable",
     )
     values = [int(value) for value in observed_order["tsf_us"]]
-    # A beacon may be delivered one nominal interval out of order. A larger
-    # inversion is treated as a clearly reversing stream and safely falls back.
-    if any(
-        current - previous < -interval_us
-        for previous, current in zip(values, values[1:])
-    ):
-        return "reversing"
-
-    tsf_span_us = max(values) - min(values)
-    observation_span_us = (
-        int(group["observation_time"].max().value)
-        - int(group["observation_time"].min().value)
-    ) // 1_000
-    # This is only a coarse wrong-hour/day sanity check. Drift fitting and
-    # smaller clock differences are intentionally outside the accepted design.
-    if abs(tsf_span_us - observation_span_us) > class_duration_us:
-        return "time_mismatch"
-    return "usable_advancing"
+    observed_us = (observed_order["observation_time"].astype("int64") // 1_000).tolist()
+    # Relative integer differences avoid absolute TSF epoch mapping and uint64
+    # subtraction overflow. One beacon interval is a conservative trust bound,
+    # not a capture-clock correction or a claim about timestamp accuracy.
+    residual = [(value - values[0]) - (observed - observed_us[0])
+                for value, observed in zip(values, observed_us)]
+    errors = [abs(current - previous) for previous, current in zip(residual, residual[1:])]
+    result.update(tsf_clock_jump_count=sum(error > interval_us for error in errors),
+                  tsf_max_step_error_us=max(errors), tsf_offset_range_us=max(residual) - min(residual))
+    if any(current - previous < -interval_us for previous, current in zip(values, values[1:])):
+        status = "reversing"
+    elif result["tsf_clock_jump_count"]:
+        status = "discontinuous"
+    elif result["tsf_offset_range_us"] > interval_us:
+        status = "time_mismatch"
+    else:
+        status = "usable_advancing"
+    if status != "usable_advancing":
+        position = errors.index(max(errors)) + 1
+        row = observed_order.iloc[position]
+        result.update(tsf_anomaly_source_capture=row.get("source_capture"),
+                      tsf_anomaly_source_frame=str(row.get("source_frame", "")),
+                      tsf_anomaly_observation_time=row.observation_time,
+                      tsf_anomaly_value_us=str(int(row.tsf_us)))
+    return {**result, "tsf_status": status}
 
 
 def _unusable_reason(status: str) -> str:
@@ -254,84 +277,40 @@ def _deduplicate_usable_tsf(
     group: pd.DataFrame,
     exclusions: list[pd.DataFrame],
 ) -> pd.DataFrame:
-    ranked = group.sort_values(
-        _source_precedence_columns(include_observation_time=True),
-        kind="stable",
-    ).copy()
-    ranked["_duplicate_rank"] = ranked.groupby(
-        "tsf_us", sort=False
-    ).cumcount()
-    group_size = ranked.groupby("tsf_us", sort=False)["tsf_us"].transform(
-        "size"
-    )
-    ranked["duplicate_views_collapsed"] = group_size - 1
-
-    winners = ranked.loc[ranked["_duplicate_rank"] == 0].copy()
-    losers = ranked.loc[ranked["_duplicate_rank"] > 0].copy()
-    if not losers.empty:
-        winner_by_tsf = winners.set_index("tsf_us")
-        if "source_capture" in winners:
-            losers["duplicate_of_source_capture"] = losers["tsf_us"].map(
-                winner_by_tsf["source_capture"]
-            )
-        if "source_frame" in winners:
-            losers["duplicate_of_source_frame"] = losers["tsf_us"].map(
-                winner_by_tsf["source_frame"]
-            )
+    candidates = group.loc[group.tsf_us.duplicated(keep=False)]
+    content = [field for field in ("ssid", "qbss_cu_raw", "qbss_station_count",
+                                   "qbss_admission_capacity", "payload_id") if field in group]
+    evidence = [field for field in content if field != "ssid"]
+    if candidates.empty or "source_capture" not in group or not evidence:
+        return group
+    kept = group.copy()
+    dropped = []
+    for _, views in candidates.groupby("tsf_us", sort=False):
+        # Do not collapse repeated timestamps within a capture or conflicting
+        # payloads. Matching retained fields corroborate a trusted native TSF.
+        if (views.source_capture.isna().any() or views.source_capture.nunique() != len(views)
+                or len(views[content].drop_duplicates()) != 1
+                or not views[evidence].notna().any().any()
+                or (views.observation_time.max() - views.observation_time.min()).value > MAX_DUPLICATE_SEPARATION_US * 1000):
+            continue
+        ranked = views.sort_values(_source_precedence_columns(include_observation_time=True), kind="stable")
+        winner = ranked.iloc[0]
+        kept.loc[ranked.index[0], "duplicate_views_collapsed"] = len(ranked) - 1
+        losers = ranked.iloc[1:].copy()
+        losers["duplicate_of_source_capture"] = winner.source_capture
+        losers["duplicate_of_source_frame"] = winner.get("source_frame")
         _append_exclusion(exclusions, losers, "duplicate_view")
-    return winners
-
-
-def _derive_tsf_origin(group: pd.DataFrame) -> pd.Timestamp:
-    """Return the earliest preferred-source observation-time/TSF origin."""
-
-    source_priority = group["_observation_source_sort"].min()
-    origin_pool = group.loc[
-        group["_observation_source_sort"] == source_priority
-    ]
-    origin_ns = min(
-        int(row.observation_time.value) - (int(row.tsf_us) * 1_000)
-        for row in origin_pool.itertuples()
-    )
-    return pd.Timestamp(origin_ns, tz="UTC")
-
-
-def _add_tsf_timing(
-    group: pd.DataFrame,
-    *,
-    class_start: pd.Timestamp,
-    class_end: pd.Timestamp,
-    origin: pd.Timestamp,
-    exclusions: list[pd.DataFrame],
-) -> tuple[pd.DataFrame, pd.Timestamp]:
-    origin_ns = int(origin.value)
-
-    timed = group.copy()
-    timed["tsf_origin"] = origin
-    timed["tsf_derived_time"] = pd.to_datetime(
-        origin_ns + timed["tsf_us"].astype("int64") * 1_000,
-        utc=True,
-    )
-    outside = (timed["tsf_derived_time"] < class_start) | (
-        timed["tsf_derived_time"] >= class_end
-    )
-    _append_exclusion(
-        exclusions,
-        timed.loc[outside],
-        "tsf_time_outside_class",
-    )
-    return timed.loc[~outside].copy(), origin
+        dropped.extend(losers.index)
+    return kept.drop(index=dropped)
 
 
 def _add_sequence_diagnostics(
     group: pd.DataFrame,
     *,
-    timing_method: str,
+    tsf_usable: bool,
     default_beacon_interval_tu: int,
 ) -> pd.DataFrame:
-    coordinate = (
-        "tsf_us" if timing_method == "tsf_derived" else "observation_time"
-    )
+    coordinate = "observation_time"
     ordered = group.sort_values(
         [coordinate, *_source_precedence_columns(include_observation_time=False)],
         kind="stable",
@@ -341,7 +320,7 @@ def _add_sequence_diagnostics(
         [pd.NA] * len(ordered), dtype="Int64"
     )
 
-    if timing_method == "tsf_derived" and len(ordered) > 1:
+    if tsf_usable and len(ordered) > 1:
         interval_us = _interval_us_for_group(
             ordered, default_beacon_interval_tu
         )
@@ -430,8 +409,10 @@ def select_bssid_session_observations(
         raise ValueError("observations must include bssid")
 
     frame = observations.copy(deep=True)
+    frame["_capture_family"] = capture_families(frame)
     frame["observation_time"] = pd.NaT
     aruba_time = _parse_time_column(frame, "aruba_erm_time")
+    aruba_time = aruba_time.mask(frame["_capture_family"].eq("native"))
     frame_time = _parse_time_column(frame, "frame_time_epoch")
     aruba_raw_present = (
         frame.get("aruba_erm_time", pd.Series("", index=frame.index))
@@ -455,7 +436,7 @@ def select_bssid_session_observations(
         pd.NA, index=frame.index, dtype="string"
     )
     frame.loc[
-        aruba_raw_present & aruba_time.isna(),
+        aruba_raw_present & aruba_time.isna() & frame["_capture_family"].ne("native"),
         "observation_time_diagnostic",
     ] = "aruba_erm_time_malformed"
     frame["tsf_us"] = pd.Series(
@@ -493,45 +474,29 @@ def select_bssid_session_observations(
     admitted = has_time.loc[~outside_observation].copy()
     admitted["class_session_id"] = class_session_id
 
-    class_duration_us = (end.value - start.value) // 1_000
     retained_groups: list[pd.DataFrame] = []
     timing_rows: list[dict[str, Any]] = []
-    for bssid, group in admitted.groupby("bssid", sort=False, dropna=False):
-        status = _classify_tsf(
-            group,
-            class_duration_us=int(class_duration_us),
-            default_beacon_interval_tu=default_beacon_interval_tu,
-        )
+    for (bssid, family), group in admitted.groupby(["bssid", "_capture_family"], sort=False, dropna=False):
+        diagnostic = (_diagnose_native_tsf(group, default_beacon_interval_tu=default_beacon_interval_tu)
+                      if family == "native" else {"tsf_status": "not_used_for_erm" if family == "erm" else "unknown_capture_profile"})
+        status = diagnostic["tsf_status"]
         usable = status == "usable_advancing"
-        timing_method = (
-            "tsf_derived" if usable else "observation_time_fallback"
-        )
+        timing_method = "observation_time"
         reason = pd.NA if usable else _unusable_reason(status)
 
         current = group.copy()
-        origin: Any = pd.NaT
         if usable:
-            origin = _derive_tsf_origin(current)
             current = _deduplicate_usable_tsf(current, exclusions)
-            current, origin = _add_tsf_timing(
-                current,
-                class_start=start,
-                class_end=end,
-                origin=origin,
-                exclusions=exclusions,
-            )
-            current["placement_time"] = current["tsf_derived_time"]
-        else:
-            current["tsf_origin"] = pd.NaT
-            current["tsf_derived_time"] = pd.NaT
-            current["placement_time"] = current["observation_time"]
+        current["tsf_origin"] = pd.NaT
+        current["tsf_derived_time"] = pd.NaT
+        current["placement_time"] = current["observation_time"]
 
         current["timing_method"] = timing_method
         current["tsf_status"] = status
         current["unusable_tsf_reason"] = reason
         current = _add_sequence_diagnostics(
             current,
-            timing_method=timing_method,
+            tsf_usable=usable,
             default_beacon_interval_tu=default_beacon_interval_tu,
         )
         retained_groups.append(current)
@@ -539,10 +504,12 @@ def select_bssid_session_observations(
             {
                 "class_session_id": class_session_id,
                 "bssid": bssid,
+                "capture_family": family,
                 "timing_method": timing_method,
                 "tsf_status": status,
                 "unusable_tsf_reason": reason,
-                "tsf_origin": origin,
+                "tsf_origin": pd.NaT,
+                **diagnostic,
             }
         )
 

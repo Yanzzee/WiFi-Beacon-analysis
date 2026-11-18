@@ -13,11 +13,12 @@
 - Supersedes: None
 - Superseded by: None
 
-> Current implementation status (2026-10-02): this decision is implemented
+> Current implementation status (2026-10-03): this decision is implemented
 > by the supported `beacon_analysis.py run` workflow. References below to
 > migration, later activation, or removed scripts describe the evidence and
 > alternatives available when the decision was made, not a second supported
-> runtime.
+> runtime. The 2026-10-03 project-timezone amendment records the subsequent
+> owner-approved move from a fixed UTC-07 offset to `America/Denver`.
 
 ## Scope and decision state
 
@@ -223,9 +224,10 @@ Accepted within this timestamp-representation scope:
 7. **Schedule interpretation.** Schedule dates and local times require an
    explicitly configured or dataset-defined named timezone. Existing
    configured schedule behavior remains available during behavior-preserving
-   rollout. This ADR does not authorize changing `Etc/GMT+7` to
-   `America/Denver`, or another zone policy, when represented instants or class
-   inclusion would change.
+   rollout. The project owner subsequently approved `America/Denver` for this
+   project's schedule timezone on 2026-10-03 after compatibility evidence
+   showed that it preserves every represented instant in the November 2025
+   sample while supplying the correct daylight-saving rules for other dates.
 8. **Display behavior.** Convert only at reporting, labeling, filename, and
    plotting boundaries, and make the effective display timezone identifiable.
    Initial implementation must preserve current plot titles, labels,
@@ -247,10 +249,10 @@ Accepted within this timestamp-representation scope:
 | Role | Accepted contract | Current mapping and migration concern |
 |---|---|---|
 | Source timezone or offset | Evidence attached to the source token, decoded field, capture metadata, adapter, or file manifest. Preserve both a named zone and observed offset when both exist | Current Aruba tokens can carry `-0700`; cleanup later replaces that presentation with `America/Denver` and does not retain the token separately |
-| Canonical storage timezone | UTC only for valid normalized instants | Current tracked grouped storage uses `America/Denver`; analysis outputs use `Etc/GMT+7` |
-| Schedule interpretation timezone | The named IANA zone whose civil rules apply to naive schedule dates/times, selected from explicit trusted evidence | Current code uses `TIMEZONE=Etc/GMT+7`, a fixed offset. Whether a named location zone replaces it requires owner approval and compatibility evidence |
-| Dataset/location timezone | Named IANA metadata for the physical location or dataset, potentially different by location | No explicit field or manifest exists. A global configuration value currently stands in for it |
-| Report and plot display timezone | Explicit report configuration or location choice applied after canonical filtering and calculation | `PLOT_TIMEZONE` currently affects grouped persistence and plot tick labels; title and filename formatting still use `TIMEZONE` |
+| Canonical storage timezone | UTC only for valid normalized instants | The corrected supported path normalizes observations and schedules to UTC. Retained Original-release and tracked fixture files can still carry their legacy timezone labels |
+| Schedule interpretation timezone | The named IANA zone whose civil rules apply to naive schedule dates/times, selected from explicit trusted evidence | The project configuration now uses `TIMEZONE=America/Denver`; localization is evaluated for each schedule date, then converted to canonical UTC |
+| Dataset/location timezone | Named IANA metadata for the physical location or dataset, potentially different by location | The global `TIMEZONE` setting is the explicit project/location evidence. A future multi-location dataset will require narrower-scoped metadata |
+| Report and plot display timezone | Explicit report configuration or location choice applied after canonical filtering and calculation | Corrected reports convert canonical timestamps back to the resolved schedule timezone. The radio/bin manifest records the effective display timezone |
 
 Display timezone is presentation policy, not storage semantics. A report can be
 rendered in Denver time, UTC, or another requested zone without rewriting the
@@ -455,7 +457,8 @@ The following are not authorized by this decision:
 - rewriting tracked fixtures or existing grouped/output Parquets;
 - changing current public filenames or schemas;
 - changing the active metric version;
-- changing `TIMEZONE` or `PLOT_TIMEZONE` configuration values;
+- changing `TIMEZONE` or `PLOT_TIMEZONE` configuration values without a
+  separately approved project/location policy and compatibility evidence;
 - making grouped Aruba Parquet a permanent supported input;
 - claiming native or another vendor adapter is supported; or
 - filling missing provenance for legacy data.
@@ -608,6 +611,17 @@ On 2026-08-03, the project owner accepted the eleven decisions in this ADR's
 Decision section. The approval completed the timestamp-representation
 contract. It is now implemented; interval and missing-data semantics remain
 governed by their separate ADRs.
+
+On 2026-10-03, the project owner approved transparent daylight-saving-aware
+schedule and report behavior for this project. `TIMEZONE` is therefore
+`America/Denver`, not the former fixed `Etc/GMT+7`. The retained November 2025
+schedule provides compatibility evidence: all 373 normalized class-session
+identifiers and UTC endpoints are identical under both settings because those
+dates use UTC-07. Focused winter/summer tests additionally prove that the same
+09:00 civil class begins at 16:00 UTC in January (MST) and 15:00 UTC in July
+(MDT). This is a project-location policy amendment; it does not infer a zone
+from the executing computer or remove the need to configure a named zone for
+another project's location.
 
 The following remain evidence or implementation questions outside the
 accepted scope:

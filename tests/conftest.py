@@ -14,7 +14,7 @@ def pytest_addoption(parser):
         default=None,
         help=(
             "Short raw capture fixture directory. Defaults to "
-            "BEACON_ANALYSIS_SHORT_CAPTURES_DIR or Data/captures_test."
+            "BEACON_ANALYSIS_SHORT_CAPTURES_DIR or data/captures_test."
         ),
     )
     group.addoption(
@@ -24,7 +24,7 @@ def pytest_addoption(parser):
         help=(
             "Known-good short processed Parquet directory. Defaults to "
             "BEACON_ANALYSIS_SHORT_PROCESSED_DIR or "
-            "Data/processed_data_test/original."
+            "data/processed_data_test/original."
         ),
     )
 
@@ -49,7 +49,7 @@ def repo_root() -> Path:
 def short_captures_dir(pytestconfig, repo_root: Path) -> Path:
     configured = pytestconfig.getoption("--short-captures-dir")
     env_value = os.environ.get("BEACON_ANALYSIS_SHORT_CAPTURES_DIR")
-    return Path(configured or env_value or repo_root / "Data" / "captures_test")
+    return Path(configured or env_value or repo_root / "data" / "captures_test")
 
 
 @pytest.fixture(scope="session")
@@ -59,5 +59,5 @@ def short_processed_dir(pytestconfig, repo_root: Path) -> Path:
     return Path(
         configured
         or env_value
-        or repo_root / "Data" / "processed_data_test" / "original"
+        or repo_root / "data" / "processed_data_test" / "original"
     )

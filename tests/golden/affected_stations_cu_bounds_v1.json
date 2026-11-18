@@ -1,0 +1,18 @@
+{
+  "bounds_metric_id": "beacon.metric/cu-missing-bin-bounds/v1",
+  "scope": "Stage 4 station-time ranges conditional on available station counts; old fields checked against affected_stations_v1.json",
+  "logical_tables": {
+    "entity_session_exposure.csv": {
+      "rows": 12,
+      "sha256": "89d53f73c9d8a9f36191ea26312ce93e4a8f882e9cd93ddd99c3e5af36f435d1"
+    },
+    "population_exposure.csv": {
+      "rows": 16,
+      "sha256": "3cd46bcf596dd2f17720768ee368322349a8260834dfac57dcdfc9b8f00c8579"
+    },
+    "classroom_peak_distribution.csv": {
+      "rows": 6,
+      "sha256": "3110f9cec641a3ab46fe5bd55ad09a4b9b56125b657ad54c9ce01cdc45398704"
+    }
+  }
+}

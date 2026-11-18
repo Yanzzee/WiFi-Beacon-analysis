@@ -16,7 +16,7 @@ reproducible harness is `benchmark_capture_workers.py`.
 ## Workload
 
 - Three owner production Aruba ERM type-0 captures copied under
-  `Data/captures_test`, totaling 1,291,458,744 bytes (about 1.20 GiB).
+  `data/captures_test`, totaling 1,291,458,744 bytes (about 1.20 GiB).
 - Complete raw-CSV-to-publication corrected pipeline.
 - 2,870,617 supported beacon rows, 265,766 configured-project rows, and
   184,281 class-window rows.

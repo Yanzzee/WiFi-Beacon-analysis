@@ -18,8 +18,8 @@ def _input_set(tmp_path: Path, *, content: bytes = b"capture") -> rl.InputSetPro
     schedule.write_text("class,start,end\nC1,10:00,11:00\n", encoding="utf-8")
     return rl.hash_analysis_inputs(
         [
-            rl.AnalysisInput("capture", capture, "Data/capture.pcapng"),
-            rl.AnalysisInput("class_schedule", schedule, "Data/classes.csv"),
+            rl.AnalysisInput("capture", capture, "data/capture.pcapng"),
+            rl.AnalysisInput("class_schedule", schedule, "data/classes.csv"),
         ]
     )
 
@@ -49,7 +49,7 @@ def _write_publishable_manifest(workspace: rl.RunWorkspace) -> Path:
     artifact = workspace.staging_directory / "project_identity_map.parquet"
     artifact.write_bytes(b"parquet-placeholder")
     logical_path = (
-        f"Output/runs/{workspace.project_slug}/{workspace.run_id}/"
+        f"output/runs/{workspace.project_slug}/{workspace.run_id}/"
         "project_identity_map.parquet"
     )
     manifest = rm.build_run_manifest(
@@ -84,7 +84,7 @@ def _write_publishable_manifest(workspace: rl.RunWorkspace) -> Path:
             "project_identity_map": {"path": logical_path, "rows": 1}
         },
         detailed_log=(
-            f"Output/runs/{workspace.project_slug}/_logs/"
+            f"output/runs/{workspace.project_slug}/_logs/"
             f"{workspace.run_id}.jsonl"
         ),
     )
@@ -109,10 +109,10 @@ def test_input_hash_is_order_independent_and_content_sensitive(tmp_path: Path):
     reversed_inputs = rl.hash_analysis_inputs(
         [
             rl.AnalysisInput(
-                "class_schedule", tmp_path / "classes.csv", "Data/classes.csv"
+                "class_schedule", tmp_path / "classes.csv", "data/classes.csv"
             ),
             rl.AnalysisInput(
-                "capture", tmp_path / "capture.pcapng", "Data/capture.pcapng"
+                "capture", tmp_path / "capture.pcapng", "data/capture.pcapng"
             ),
         ]
     )
@@ -135,7 +135,7 @@ def test_run_id_uses_utc_microseconds_and_input_hash_prefix(tmp_path: Path):
 def test_run_is_staged_logged_and_published_atomically(tmp_path: Path):
     inputs = _input_set(tmp_path)
     workspace = rl.begin_run(
-        output_root=tmp_path / "Output" / "runs",
+        output_root=tmp_path / "output" / "runs",
         project_name="Fall 2026",
         input_set=inputs,
         started_at=datetime(2026, 9, 23, 18, 45, 30, tzinfo=timezone.utc),

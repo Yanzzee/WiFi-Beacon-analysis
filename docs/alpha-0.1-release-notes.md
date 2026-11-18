@@ -1,8 +1,6 @@
 # Alpha 0.1
 
-Proposed Git tag: `v0.1.0-alpha.1`
-
-Release type: GitHub pre-release
+Release type: Published public alpha release
 
 Alpha 0.1 is the first public preview of the corrected Beacon Analysis
 workflow. It replaces the former multi-script process with one supported
@@ -38,7 +36,7 @@ should not be assumed to match that historical release.
 Each successful run publishes beneath:
 
 ```text
-Output/runs/<project>/<run-id>/
+output/runs/<project>/<run-id>/
 ```
 
 The five durable logical artifacts are:

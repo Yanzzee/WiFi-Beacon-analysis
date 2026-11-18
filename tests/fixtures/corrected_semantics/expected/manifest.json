@@ -98,20 +98,20 @@
   "detailed_log": null,
   "artifacts": {
     "project_identity_map": {
-      "path": "Output/runs/oracle-corrected/oracle-corrected-v1/project_identity_map.parquet",
+      "path": "output/runs/oracle-corrected/oracle-corrected-v1/project_identity_map.parquet",
       "rows": 4
     },
     "selected_observations": {
-      "path": "Output/runs/oracle-corrected/oracle-corrected-v1/selected_observations/",
+      "path": "output/runs/oracle-corrected/oracle-corrected-v1/selected_observations/",
       "partition_by": ["class_date"],
       "rows": 15
     },
     "radio_class_summary": {
-      "path": "Output/runs/oracle-corrected/oracle-corrected-v1/radio_class_summary.parquet",
+      "path": "output/runs/oracle-corrected/oracle-corrected-v1/radio_class_summary.parquet",
       "rows": 3
     },
     "classroom_class_summary": {
-      "path": "Output/runs/oracle-corrected/oracle-corrected-v1/classroom_class_summary.parquet",
+      "path": "output/runs/oracle-corrected/oracle-corrected-v1/classroom_class_summary.parquet",
       "rows": 1
     }
   },

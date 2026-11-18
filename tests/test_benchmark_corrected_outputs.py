@@ -45,6 +45,7 @@ def test_tiny_boundary_publishes_all_five_logical_artifacts(tmp_path: Path):
         "write_corrected_summaries",
         "write_compact_csv_exports",
         "write_corrected_cu_report_package",
+        "write_run_report_overview",
     ]
     assert result["measurement"]["published_run_bytes"] > 0
     assert set(result["measurement"]["stage_wall_seconds"]) == {
@@ -53,6 +54,7 @@ def test_tiny_boundary_publishes_all_five_logical_artifacts(tmp_path: Path):
         "write_corrected_summaries",
         "write_compact_csv_exports",
         "write_corrected_cu_report_package",
+        "write_run_report_overview",
     }
     assert result["input_shape"]["radio_class_rows"] == 2
     assert result["input_shape"]["classroom_class_rows"] == 1

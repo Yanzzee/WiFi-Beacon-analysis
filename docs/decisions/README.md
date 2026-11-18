@@ -17,18 +17,23 @@ hierarchy, operational radio grouping, static BSSID ownership, unattended
 fallback, and value grain. ADR-0004 is Accepted for missing-CU/no-beacon,
 coverage, average, and streak semantics. ADR-0007 remains an uncreated
 reservation. Revised ADR-0008 is Accepted for observation-time precedence and
-class admission: valid Aruba ERM time, otherwise valid frame time. Revised
-ADR-0009 is Accepted for reliable per-BSSID/session `min(O-F)` anchoring and
-TSF-derived bin placement, ordering, duplicate recognition, and skipped-
-interval diagnostics, with whole-BSSID/session observation-time fallback.
-ADR-0005 remains authoritative for class-start bin geometry. These decisions
-are implemented by the supported `beacon_analysis.py run` workflow.
+class admission: valid Aruba ERM time, otherwise valid frame time. ADR-0019
+supersedes ADR-0009's TSF-derived placement: observation time now controls
+ordering, bins and capture slots. Native TSF supplies independent clock
+diagnostics and conservative duplicate recognition only.
+ADR-0010 is Accepted for station-count scope, 30-second forward/leading-
+backward extension, complete-only radio/SSID/band/classroom totals, bounded
+derived placement, and peak-client-count-per-enrolled semantics. ADR-0005
+remains authoritative for class-start bin geometry. ADR-0001 through ADR-0006
+and ADR-0008 through ADR-0010 are implemented by the supported
+`beacon_analysis.py run` workflow.
 
 The 2026-09-03 owner direction for ADR-0006 rejects a permanent parallel
-legacy calculation/output path. Commit
-`4a20d1c8f6164fdb81fc75f2cf80b9fba3f1c5fb` retains the historical refactored
-workflow; future comparisons should normally rerun the new metric definition
-on older captures. The current and planned artifact inventory is maintained in
+legacy calculation/output path. The public
+[Original release](https://github.com/Yanzzee/WiFi-Beacon-analysis/releases/tag/Original)
+retains the historical refactored workflow; future comparisons should normally
+rerun the new metric definition on older captures. The current and planned
+artifact inventory is maintained in
 [`output_inventory.md`](../output_inventory.md).
 
 On 2026-09-04 the owner approved PR-0024's five durable logical artifacts:
@@ -149,8 +154,8 @@ Use exactly one of: none, behavior-preserving, intentional change.
 
 ## Decision register
 
-ADR-0001 through ADR-0006, ADR-0008, and ADR-0009 are linked records. The
-other filenames remain reservations only:
+ADR-0001 through ADR-0006 and ADR-0008 through ADR-0018 are linked records.
+The other filenames remain reservations only:
 
 | ID | Proposed filename | Decision scope | Current state |
 |---|---|---|---|
@@ -161,24 +166,65 @@ other filenames remain reservations only:
 | ADR-0005 | [`0005-class-interval-boundary-semantics.md`](0005-class-interval-boundary-semantics.md) | Class start/end inclusion, class-start bin anchoring, fixed-bin per-BSSID first-observation selection without a rolling gate, and trailing partial intervals | Accepted 2026-08-26; implemented |
 | ADR-0006 | [`0006-output-and-metric-versioning.md`](0006-output-and-metric-versioning.md) | Schema/metric version separation, manifest identity, validators, and five durable corrected artifacts | Accepted 2026-07-31; implemented |
 | ADR-0007 | `0007-interface-technology-choice.md` | Local/hosted and web/desktop/other interface choice, deployment, data boundary, and operational constraints | Not created; unresolved |
-| ADR-0008 | [`0008-aruba-capture-timestamp-authority-and-fallback.md`](0008-aruba-capture-timestamp-authority-and-fallback.md) | Observation-time precedence and class admission; observation time also anchors reliable TSF and is the whole-BSSID/session fallback | Accepted 2026-09-02; TSF-anchor relationship revised 2026-09-09 |
-| ADR-0009 | [`0009-tbtt-tsf-beacon-slot-and-bin-semantics.md`](0009-tbtt-tsf-beacon-slot-and-bin-semantics.md) | Per-BSSID/session `min(O-F)` anchoring, reliable TSF-derived bin placement/order/duplicates/gaps, and observation-time fallback | Accepted 2026-08-27; TSF-derived binning revised 2026-09-09 |
+| ADR-0008 | [`0008-aruba-capture-timestamp-authority-and-fallback.md`](0008-aruba-capture-timestamp-authority-and-fallback.md) | Observation-time precedence and class admission | Accepted 2026-09-02; TSF-anchor relationship superseded by ADR-0019 |
+| ADR-0009 | [`0009-tbtt-tsf-beacon-slot-and-bin-semantics.md`](0009-tbtt-tsf-beacon-slot-and-bin-semantics.md) | Historical per-BSSID/session TSF-derived placement and fallback | Timing, trust and duplicate rules superseded by ADR-0019 |
+| ADR-0010 | [`0010-station-count-rollup-and-staleness-semantics.md`](0010-station-count-rollup-and-staleness-semantics.md) | Session-active BSSID scope, 30-second station-count extension, complete-only rollups, bounded derived placement, and enrollment comparison | Accepted 2026-10-03; implemented |
+| ADR-0011 | [`0011-bounded-radio-bin-reporting-source.md`](0011-bounded-radio-bin-reporting-source.md) | Bounded radio/bin CU and station source, preferred-SSID/fallback selection, lineage, and opt-in radio/class plots | Accepted 2026-10-03; implemented |
+| ADR-0012 | [`0012-class-session-and-cu-station-reporting.md`](0012-class-session-and-cu-station-reporting.md) | Station distributions, descriptive CU/station relationships and physical class-session context | Accepted 2026-10-04; implemented |
+| ADR-0013 | [`0013-radio-admission-capacity-reporting.md`](0013-radio-admission-capacity-reporting.md) | Independent radio/bin QoS admission-capacity selection, validity, lineage, bounded distributions and relationships | Accepted 2026-10-08; implemented |
+| ADR-0014 | [`0014-exploratory-beacon-cadence-and-capture-quality.md`](0014-exploratory-beacon-cadence-and-capture-quality.md) | Native/ERM capture-slot diagnostics, nominal cadence, exposure limits, lagged CU/station associations, and deferred calibration | Accepted 2026-10-12; implemented |
+| ADR-0015 | [`0015-band-comparison-and-longitudinal-reporting.md`](0015-band-comparison-and-longitudinal-reporting.md) | Explicit/default 6 GHz enablement, overall/AP/classroom band comparisons, actual station use, matched CU and manual longitudinal exports | Accepted 2026-10-12; implemented |
+| ADR-0016 | [`0016-potentially-affected-station-reporting.md`](0016-potentially-affected-station-reporting.md) | Paired station-time exposure, complete-bin concurrent peaks, coverage and project/band/cohort summaries | Accepted 2026-10-16; implemented |
+| ADR-0017 | [`0017-offline-run-report-overview.md`](0017-offline-run-report-overview.md) | Offline HTML run entry point, existing metric displays, session navigation, validated local links and unchanged file organization | Accepted 2026-10-16; implemented |
+| ADR-0018 | [`0018-web-report-context-and-explanations.md`](0018-web-report-context-and-explanations.md) | Project context, broad-to-detail report hierarchy, enrollment/correlation displays, full-width figure explanations and pooled class-session radio CU | Accepted 2026-10-16; implemented |
+| ADR-0019 | [`0019-observation-time-and-native-tsf-diagnostics.md`](0019-observation-time-and-native-tsf-diagnostics.md) | Observation-time bins/slots, native-only TSF diagnostics and conservative duplicate recognition | Accepted 2026-11-15; implemented |
+| ADR-0020 | [`0020-conservative-cu-missing-bin-bounds.md`](0020-conservative-cu-missing-bin-bounds.md) | Conservative missing-bin bounds alongside observed CU means/CDFs and availability-conditioned station-time exposure | Accepted 2026-11-16; all five implementation stages complete |
 
-ADR-0001 through ADR-0006, ADR-0008, and ADR-0009 are implemented for the
-supported workflow. ADR-0003 requires no hardware registry or device matrix.
+ADR-0001 through ADR-0006 and ADR-0008 through ADR-0020 are implemented for
+the supported workflow. ADR-0003 requires no hardware registry or device matrix.
 ADR-0004 keeps missing values distinct from
 zero, valid-CU time coverage, separate missing-CU/no-beacon durations, a
 possible-connected comparison streak, an actual observed streak that ends on
 unknown bins, and per-radio calculation before the classroom maximum. Revised
 ADR-0008 uses valid Aruba time, otherwise valid frame time, for class admission
-and as the fallback timing coordinate. Revised ADR-0009 uses the earliest
-valid `O-F` candidate within each reliable BSSID/session to derive TSF time for
-bin placement, sequence order, duplicate recognition, and skipped-interval
-diagnostics. It retains no cross-BSSID pool, drift model, clock segmentation,
-or whole-class fallback. The
+and, under ADR-0019, for ordering, bin placement and cadence slots. Native
+packets use frame capture time. ADR-0019 replaces ADR-0009's absolute TSF
+mapping with native-only clock diagnostics and corroborated duplicate checks.
+It retains no cross-BSSID pool, drift model or clock segmentation. The
 [2026-09-01/02 retained-capture characterization](../adr0009_retained_capture_characterization.md)
-supports this simplified contract; no numeric clock profile remains for
-review. The current remaining work is maintained in
+documents the historical TSF contract. The current remaining work is maintained in
 [`post_refactor_roadmap.md`](../post_refactor_roadmap.md).
 ADR-0007 should wait until the unified runner and interface boundary are
 sufficiently defined.
+
+ADR-0010 keeps only session-active BSSIDs in expected membership, extends
+missing values forward or at the leading edge for at most 30 seconds, emits no
+partial numeric total, and uses the maximum available classroom/bin total for
+the web headline Peak stations per enrolled (stored client-named fields remain unchanged).
+
+ADR-0011 persists the same one-value-per-radio/bin CU interpretation used by
+the summaries, joins the accepted radio station total, and keeps detailed
+radio/class plots opt-in with unknown CU shaded and visually interpolated only.
+
+ADR-0013 adds independently selected radio admission capacity with separate
+lineage, zero/missing/invalid states, no stale extension or cross-radio sums,
+and bounded distributions and descriptive CU/station relationships. CU describes
+channel conditions; admission capacity describes the radio's QoS allowance.
+
+ADR-0014 adds bounded exploratory native/ERM capture-quality reporting from
+pre-selection observations. Unknown listening exposure is not RF loss;
+previous-window associations do not imply causation, safe CU thresholds, or
+model-specific corrections.
+
+ADR-0015 treats detailed 5/6 GHz comparison as a central report family. Its
+overall and cohort exports preserve weighting, sample topology, coverage and
+component sums for manual year-over-year review. Actual station use is distinct
+from device capability; CU relative to station count is not attributed airtime.
+
+The 2026-11-13 presentation state is recorded in ADR-0017/0018 and
+[reporting and publication](../reporting_and_publication.md): compact wrapping
+navigation with an inline active-section script, saved-run report refresh,
+cohort/model/classroom-band tables, prose weighting/cadence explanations, and
+station-time exposure under CU. Classroom peak-exposure files remain generated
+but are omitted from the web page and its inventories. Public Pages export is
+planned separately and does not resolve the broader ADR-0007 interface choice.

@@ -10,6 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime, timezone
 import json
+from numbers import Real
 from pathlib import Path
 import shutil
 from typing import Any, Callable, Mapping
@@ -20,12 +21,26 @@ from matplotlib.figure import Figure
 import numpy as np
 import pandas as pd
 
+from corrected_cu_bounds import (
+    CU_BOUNDS_METRIC_COLUMN, CU_BOUNDS_METRIC_ID,
+    add_radio_summary_cu_bounds, cu_mean_bounds_fields, cu_cdf_summary_rows,
+)
+from corrected_cu_plot_bounds import draw_cdf_bounds, draw_histogram_bounds
+
+from corrected_station_reports import (
+    AGGREGATE_REPORT_FILENAME as STATION_AGGREGATE_REPORT_FILENAME,
+    REPORT_DIRECTORY as STATION_REPORT_DIRECTORY,
+    STATION_AGGREGATE_REPORT_COLUMNS,
+)
+
 
 REPORT_DIRECTORY = Path("reports") / "cu_coverage_streak"
 RADIO_REPORT_FILENAME = "radio_class_report.csv"
 CLASSROOM_REPORT_FILENAME = "classroom_class_report.csv"
 BAND_POPULATION_REPORT_FILENAME = "band_population_report.csv"
+CDF_BOUNDS_REPORT_FILENAME = "cu_cdf_bounds.csv"
 RUN_SUMMARY_FILENAME = "run_summary.txt"
+RUN_SUMMARY_PATH = Path("reports") / RUN_SUMMARY_FILENAME
 METHODOLOGY_FILENAME = "methodology.txt"
 PLOT_FILENAMES = (
     "radio_average_cu_distribution.png",
@@ -80,6 +95,7 @@ class WrittenCorrectedCuReportPackage:
     classroom_class_rows: int
     band_population_rows: int
     files: tuple[Path, ...]
+    cdf_bounds_rows: int = 0
 
 
 def _require_columns(frame: pd.DataFrame, required: set[str], label: str) -> None:
@@ -218,6 +234,7 @@ def build_corrected_cu_report_tables(
     identity_map: pd.DataFrame,
     *,
     display_timezone: str | None = None,
+    radio_bin_counts: pd.DataFrame | None = None,
 ) -> CorrectedCuReportTables:
     """Build presentation tables without changing corrected metric semantics."""
 
@@ -229,7 +246,7 @@ def build_corrected_cu_report_tables(
         ZoneInfo(display_timezone)
 
     radio_metadata = _radio_metadata(identity_map)
-    radios = radio_summary.copy()
+    radios = add_radio_summary_cu_bounds(radio_summary)
     missing_radios = sorted(
         set(radios["radio_group_id"].astype(str)).difference(
             radio_metadata.index
@@ -298,6 +315,30 @@ def build_corrected_cu_report_tables(
         }
     )
 
+    for name in ("lower", "upper"):
+        radio_report[f"average_cu_percent_{name}_bound"] = radios[f"average_cu_ratio_{name}_bound"] * 100
+    radio_report[CU_BOUNDS_METRIC_COLUMN] = CU_BOUNDS_METRIC_ID
+    radio_report["expected_radio_bin_count"] = pd.Series(pd.NA, index=radios.index, dtype="Int64")
+    if radio_bin_counts is not None:
+        _require_columns(radio_bin_counts, {"class_session_id", "radio_group_id", "radio_bin_rows"}, "radio/bin counts")
+        if radio_bin_counts.duplicated(["class_session_id", "radio_group_id"]).any():
+            raise ValueError("duplicate radio/session bin counts")
+        lookup = radio_bin_counts.set_index(["class_session_id", "radio_group_id"]).radio_bin_rows
+        expected = []
+        for row in radios.itertuples(index=False):
+            key = (row.class_session_id, row.radio_group_id)
+            if key not in lookup.index:
+                raise ValueError("missing expected radio/session bin count")
+            value = lookup.loc[key]
+            if (pd.isna(value) or isinstance(value, (bool, np.bool_))
+                    or not isinstance(value, Real) or not np.isfinite(value)
+                    or int(value) != value or value <= 0
+                    or value < sum(int(v) for v in row.valid_cu_raw_counts)):
+                raise ValueError("invalid expected radio/session bin count")
+            expected.append(int(value))
+        radio_report["expected_radio_bin_count"] = pd.Series(expected, index=radios.index, dtype="Int64")
+    radios["expected_radio_bin_count"] = radio_report["expected_radio_bin_count"]
+
     coverage = radios.assign(
         _coverage_percent=_percent(radios["cu_coverage"]),
         _has_valid=pd.to_numeric(radios["valid_cu_duration_us"], errors="raise").gt(0),
@@ -320,10 +361,23 @@ def build_corrected_cu_report_tables(
     classroom_keys = pd.MultiIndex.from_frame(
         classrooms[["class_session_id", "classroom"]]
     )
-    missing_keys = classroom_keys.difference(coverage_rollup.index)
-    if len(missing_keys):
+    missing_rows = ~classroom_keys.isin(coverage_rollup.index)
+    zero_radios = pd.to_numeric(classrooms["radio_count_total"], errors="raise").eq(0).to_numpy()
+    # A scheduled classroom can have no project-observed radios. Its counts
+    # are zero, but coverage and streak measurements remain unavailable.
+    # Missing rows for a classroom that does have radios are still an error.
+    if np.any(missing_rows & ~zero_radios):
         raise ValueError("classroom summaries have no matching radio summaries")
-    rollup = coverage_rollup.loc[classroom_keys].reset_index(drop=True)
+    if "classroom" in identity_map:
+        observed_rooms = identity_map.loc[
+            identity_map["radio_group_id"].notna(), "classroom"
+        ]
+        if np.any(missing_rows & classrooms["classroom"].isin(observed_rooms).to_numpy()):
+            raise ValueError("classroom summaries have no matching radio summaries")
+    rollup = coverage_rollup.reindex(classroom_keys).reset_index(drop=True)
+    count_columns = ["_radio_rows", "radios_with_valid_cu_count", "radios_without_valid_cu_count"]
+    rollup.loc[missing_rows, count_columns] = 0
+    rollup[count_columns] = rollup[count_columns].astype("int64")
     if not np.array_equal(
         rollup["_radio_rows"].to_numpy(),
         classrooms["radio_count_total"].to_numpy(),
@@ -430,13 +484,13 @@ def build_corrected_cu_report_tables(
         ),
         (
             "5_ghz_on_6_ghz_ap",
-            "5 GHz radios on APs with 6 GHz",
+            "5 GHz radios on APs with observed 6 GHz",
             population_source["_band"].eq("5")
             & population_source["_ap_has_6_ghz"],
         ),
         (
             "6_ghz_on_6_ghz_ap",
-            "6 GHz radios on APs with 6 GHz",
+            "6 GHz radios on APs with observed 6 GHz",
             population_source["_band"].eq("6")
             & population_source["_ap_has_6_ghz"],
         ),
@@ -503,6 +557,8 @@ def build_corrected_cu_report_tables(
                     if valid_duration_us
                     else None
                 ),
+                **cu_mean_bounds_fields(weighted_cu, valid_duration_us, class_duration_us,
+                                       prefix="average_cu_percent"),
                 "high_cu_percent_of_valid_time": (
                     high_duration_us / valid_duration_us * 100.0
                     if valid_duration_us
@@ -516,6 +572,8 @@ def build_corrected_cu_report_tables(
                 "valid_radio_bin_values": int(
                     members["_valid_bin_values"].sum()
                 ),
+                "expected_radio_bin_values": (sum(int(value) for value in members.expected_radio_bin_count)
+                                               if members.expected_radio_bin_count.notna().all() else None),
             }
         )
     band_population = pd.DataFrame(population_rows)
@@ -547,7 +605,7 @@ def _write_csv(frame: pd.DataFrame, path: Path) -> None:
 
 
 def _new_figure(*, width: float = 9.0, height: float = 5.0) -> Figure:
-    figure = Figure(figsize=(width, height), layout="constrained")
+    figure = Figure(figsize=(width * 2.0, height * 2.0), layout="constrained")
     FigureCanvasAgg(figure)
     return figure
 
@@ -572,9 +630,9 @@ def _histogram_interval_us(bin_widths_us: tuple[int, ...]) -> int:
 
 
 def _average_cu_edges_percent() -> np.ndarray:
-    """Return 64 fixed buckets, each spanning four raw CU units."""
+    """Return 128 fixed buckets, each spanning two raw CU units."""
 
-    return np.arange(0, 257, 4, dtype=float) * (100.0 / 255.0)
+    return np.arange(0, 257, 2, dtype=float) * (100.0 / 255.0)
 
 
 def _time_histogram_edges(
@@ -601,29 +659,26 @@ def _cdf_below_raw_threshold(
     return float(counts[:raw_threshold].sum() / total)
 
 
-def _annotate_cdf_thresholds(axis: Any, counts: np.ndarray) -> None:
+def _annotate_cdf_thresholds(axis: Any, counts: np.ndarray, total_weight=None) -> None:
     """Mark the cumulative shares at the 50% and 75% CU boundaries."""
 
-    for x_value, raw_threshold, color in (
-        (50.0, 128, "#777777"),
-        (75.0, 192, "#333333"),
-    ):
+    rows = cu_cdf_summary_rows(counts, total_weight, scope="", population="", weighting="")
+    for row, color in zip(rows, ("#777777", "#333333")):
+        x_value, raw_threshold = row["cu_threshold_percent"], row["cu_raw_exclusive_threshold"]
         cumulative = _cdf_below_raw_threshold(counts, raw_threshold)
-        if cumulative is None:
+        if cumulative is None and row["cdf_lower_bound_percent"] is None:
             continue
         # Keep high cumulative values below their marker so their labels do
         # not collide with the axes title. Lower values remain above it.
-        vertical_offset = -7 if cumulative >= 0.9 else 7
-        axis.scatter(
-            [x_value],
-            [cumulative],
-            color=color,
-            s=24,
-            zorder=4,
-        )
+        vertical_offset = -7 if cumulative is not None and cumulative >= 0.9 else 7
+        if cumulative is not None:
+            axis.scatter([x_value], [cumulative], color=color, s=24, zorder=4)
+        observed = f"Observed {cumulative * 100:.1f}%" if cumulative is not None else "Observed unavailable"
+        interval = (f"Min {row['cdf_lower_bound_percent']:.1f}% / max {row['cdf_upper_bound_percent']:.1f}%"
+                    if row["cdf_lower_bound_percent"] is not None else "Bounds unavailable")
         axis.annotate(
-            f"{cumulative * 100.0:.1f}%",
-            xy=(x_value, cumulative),
+            observed + "\n" + interval,
+            xy=(x_value, cumulative if cumulative is not None else .5),
             xytext=(6, vertical_offset),
             textcoords="offset points",
             color=color,
@@ -632,15 +687,8 @@ def _annotate_cdf_thresholds(axis: Any, counts: np.ndarray) -> None:
         )
 
 
-def _save_plots(
-    tables: CorrectedCuReportTables,
-    directory: Path,
-    *,
-    bin_widths_us: tuple[int, ...],
-) -> None:
-    directory.mkdir()
-    radio = tables.radio_class
-    classroom = tables.classroom_class
+def build_radio_class_mean_cu_histogram(radio: pd.DataFrame) -> Figure:
+    """Render saved radio/class-session means with the existing histogram bins."""
     colors = {
         "2.4": "#4c78a8",
         "5": "#f58518",
@@ -651,6 +699,7 @@ def _save_plots(
     figure = _new_figure()
     axis = figure.subplots()
     plotted = False
+    ranged = False
     null_average_count = int(
         pd.to_numeric(radio["average_cu_percent"], errors="coerce").isna().sum()
     )
@@ -669,25 +718,139 @@ def _save_plots(
                 color=colors[band],
             )
             plotted = True
+        lower, upper = "average_cu_percent_lower_bound", "average_cu_percent_upper_bound"
+        if {lower, upper}.issubset(radio.columns):
+            has_range = draw_histogram_bounds(axis, radio.loc[mask, lower], radio.loc[mask, upper],
+                                              _average_cu_edges_percent(), color=colors[band])
+            ranged |= has_range
+            if has_range and values.empty:
+                axis.plot([], [], color=colors[band], label=f"{band} GHz (no observed means)")
+            plotted |= has_range
     if plotted:
         axis.set(
-            title=(
-                "Average channel utilization by radio/class "
-                f"({null_average_count} null omitted)"
+            title="Radio/class-session mean CU histogram" + (
+                f"\n{null_average_count} observed means unavailable" if null_average_count else ""
             ),
-            xlabel="Average CU (%) - four raw CU units per bucket",
-            ylabel="Radio/class rows",
+            xlabel="Mean CU (%) - bin width approximately 0.78 percentage points",
+            ylabel="Radio/class-sessions",
             xlim=(0, 100),
         )
         axis.legend()
+        if ranged:
+            axis.text(.02, .98, "Solid: observed means. Shading: min/max possible counts per bin.\n"
+                      "Bucket maxima need not occur together.", transform=axis.transAxes, va="top", fontsize=9,
+                      bbox={"facecolor": "white", "edgecolor": "none", "alpha": .85})
     else:
         _empty_axis(
             axis,
-            "Average channel utilization by radio/class "
-            f"({null_average_count} null omitted)",
+            "Radio/class-session mean CU histogram (no usable means)",
         )
-    figure.savefig(directory / PLOT_FILENAMES[0], dpi=140)
+    return figure
 
+
+def build_radio_coverage_histograms(radio: pd.DataFrame) -> Figure:
+    """Compare radio/class-session availability distributions on one count scale."""
+    figure = _new_figure(width=12.0, height=4.2)
+    axes = figure.subplots(1, 3, sharey=True)
+    shares = (("cu_coverage_percent", "Valid CU coverage"),
+              ("missing_cu_seconds", "Beacon present, CU missing"), ("no_beacon_seconds", "No beacon"))
+    class_seconds = pd.to_numeric(radio["class_duration_seconds"], errors="coerce")
+    for axis, (column, title) in zip(axes, shares):
+        values = pd.to_numeric(radio[column], errors="coerce")
+        if column != "cu_coverage_percent":
+            values = values.div(class_seconds).mul(100.0)
+        values = values.dropna()
+        if values.empty:
+            _empty_axis(axis, title)
+        else:
+            axis.hist(values, bins=np.linspace(0, 100, 41), color="#4c78a8", edgecolor="none", linewidth=0)
+            axis.set(title=title, xlabel="Share of class (%)", ylabel="Radio/class rows", xlim=(0, 100))
+    return figure
+
+
+def expected_radio_bin_totals(radio):
+    """Read exact saved counts; an unknown count never becomes zero coverage."""
+    def total(frame):
+        if "expected_radio_bin_count" not in frame or frame.expected_radio_bin_count.isna().any():
+            return None if len(frame) else 0
+        return sum(int(value) for value in frame.expected_radio_bin_count)
+    grouped = radio.assign(_bounds_band=radio.band.map(_band_text)).groupby("_bounds_band", sort=False)
+    return total(radio), {band: total(group) for band, group in grouped}
+
+
+def build_radio_bin_cu_cdf(counts, expected_count=None):
+    counts = np.asarray(counts, dtype=np.int64)
+    total = sum(int(value) for value in counts)
+    figure = _new_figure(width=10, height=5.5)
+    axis = figure.subplots()
+    if total:
+        axis.step(np.arange(256) * (100 / 255), np.cumsum(counts, dtype=np.float64) / total,
+                  where="post", color="#f58518", linewidth=2, label="Observed")
+    bounded = draw_cdf_bounds(axis, counts, expected_count, color="#f58518")
+    if total or bounded:
+        axis.axvline(50, color="#777777", linestyle="--", linewidth=1)
+        axis.axvline(75, color="#333333", linestyle="--", linewidth=1)
+        _annotate_cdf_thresholds(axis, counts, expected_count)
+        axis.set(title="CDF of selected radio/bin channel utilization", xlabel="Channel utilization (%)",
+                 ylabel="Cumulative fraction", xlim=(0, 100), ylim=(0, 1.01))
+        axis.grid(alpha=.3)
+        axis.legend(loc="lower right", fontsize="small")
+        if not total:
+            axis.text(.02, .98, "No observed CU; missing-bin range only", transform=axis.transAxes, va="top")
+    else:
+        _empty_axis(axis, "CDF of selected radio/bin channel utilization")
+    return figure
+
+
+def cu_cdf_report_table(tables):
+    total, band_totals = expected_radio_bin_totals(tables.radio_class)
+    rows = cu_cdf_summary_rows(tables.valid_cu_raw_counts, total, scope="overall", population="all", weighting="radio_bins")
+    for band, counts in sorted(tables.band_valid_cu_raw_counts.items()):
+        rows.extend(cu_cdf_summary_rows(counts, band_totals.get(band, 0), scope="band", population=band, weighting="radio_bins"))
+    return pd.DataFrame(rows)
+
+
+def build_radio_bin_cu_by_band(band_counts, *, kind="histogram", expected_counts=None) -> Figure:
+    """Keep count weighting; CDFs also show known, entirely missing populations."""
+    if kind not in {"histogram", "cdf"}:
+        raise ValueError("CU band plot kind must be histogram or cdf")
+    expected_counts = expected_counts or {}
+    bands = [band for band in ("2.4", "5", "6") if np.asarray(band_counts.get(band, [])).sum() > 0
+             or (kind == "cdf" and (expected_counts.get(band) or 0) > 0)]
+    figure = _new_figure(width=5.0 * max(1, len(bands)), height=4.8)
+    axes = np.atleast_1d(figure.subplots(1, max(1, len(bands)), sharey=True))
+    values = np.arange(256) * (100.0 / 255.0)
+    colors = {"2.4": "#4c78a8", "5": "#f58518", "6": "#54a24b"}
+    for axis, band in zip(axes, bands):
+        counts = np.asarray(band_counts.get(band, np.zeros(256, dtype=np.int64)), dtype=np.int64)
+        total = int(counts.sum())
+        if kind == "histogram":
+            axis.bar(values, counts, width=100.0 / 255.0, color=colors[band], linewidth=0)
+            axis.set_ylabel("Selected radio/bin values")
+        else:
+            if total:
+                axis.step(values, np.cumsum(counts, dtype=np.float64) / total, where="post", color=colors[band], linewidth=2, label="Observed")
+            draw_cdf_bounds(axis, counts, expected_counts.get(band), color=colors[band])
+            axis.axvline(50.0, color="#777777", linestyle="--", linewidth=1)
+            axis.axvline(75.0, color="#333333", linestyle="--", linewidth=1)
+            _annotate_cdf_thresholds(axis, counts, expected_counts.get(band))
+            axis.set(ylabel="Cumulative share", ylim=(0, 1.01))
+            axis.grid(alpha=0.3)
+            axis.legend(loc="lower right", fontsize="small")
+        count_label = "observed values" if kind == "cdf" else "values"
+        axis.set(title=f"{band} GHz ({total:,} {count_label})", xlabel="Channel utilization (%)", xlim=(0, 100))
+    if not bands:
+        _empty_axis(axes[0], "No valid CU for sampled bands")
+    unknown = int(np.asarray(band_counts.get("unknown", [])).sum())
+    title = "Channel utilization histograms by band" if kind == "histogram" else "CDF of channel utilization by band"
+    if unknown:
+        title += f" ({unknown:,} unknown-band values omitted)"
+    figure.suptitle(title, fontsize=12)
+    return figure
+
+
+def build_radio_mean_cu_vs_coverage(radio):
+    null_average_count = int(pd.to_numeric(radio["average_cu_percent"], errors="coerce").isna().sum())
     ordered_bands = [
         band
         for band in ("2.4", "5", "6", "unknown")
@@ -733,51 +896,36 @@ def _save_plots(
             axis.set(
                 title=f"{band_label} radio/class rows",
                 xlabel="Valid-CU coverage (%)",
-                ylabel="Average CU (%)",
+                ylabel="Observed mean CU (%)",
                 xlim=(0, 100),
                 ylim=(0, 100),
             )
-            axis.legend(fontsize="small")
+            if plotted:
+                axis.legend(fontsize="small")
         else:
             _empty_axis(axis, f"{band_label} radio/class rows")
     figure.suptitle(
-        "Average CU vs valid-CU coverage\n"
+        "Observed mean CU vs valid-CU coverage\n"
         "by AP model and radio configuration "
         f"({null_average_count} null omitted)",
         fontsize=12,
     )
-    figure.savefig(directory / PLOT_FILENAMES[1], dpi=140)
+    return figure
 
-    figure = _new_figure(width=12.0, height=4.2)
-    axes = figure.subplots(1, 3)
-    shares = (
-        ("cu_coverage_percent", "Valid CU coverage"),
-        ("missing_cu_seconds", "Beacon present, CU missing"),
-        ("no_beacon_seconds", "No beacon"),
-    )
-    class_seconds = pd.to_numeric(radio["class_duration_seconds"], errors="coerce")
-    for axis, (column, title) in zip(axes, shares):
-        values = pd.to_numeric(radio[column], errors="coerce")
-        if column != "cu_coverage_percent":
-            values = values.div(class_seconds).mul(100.0)
-        values = values.dropna()
-        if values.empty:
-            _empty_axis(axis, title)
-        else:
-            axis.hist(
-                values,
-                bins=np.linspace(0, 100, 21),
-                color="#4c78a8",
-                edgecolor="none",
-                linewidth=0,
-            )
-            axis.set(
-                title=title,
-                xlabel="Share of class (%)",
-                ylabel="Radio/class rows",
-                xlim=(0, 100),
-            )
-    figure.savefig(directory / PLOT_FILENAMES[2], dpi=140)
+
+def _save_plots(
+    tables: CorrectedCuReportTables,
+    directory: Path,
+    *,
+    bin_widths_us: tuple[int, ...],
+) -> None:
+    directory.mkdir()
+    radio, classroom = tables.radio_class, tables.classroom_class
+    expected_total, expected_bands = expected_radio_bin_totals(radio)
+    build_radio_class_mean_cu_histogram(radio).savefig(directory / PLOT_FILENAMES[0], dpi=140)
+    build_radio_mean_cu_vs_coverage(radio).savefig(directory / PLOT_FILENAMES[1], dpi=140)
+
+    build_radio_coverage_histograms(radio).savefig(directory / PLOT_FILENAMES[2], dpi=140)
 
     raw_counts = tables.valid_cu_raw_counts
     raw_values = np.arange(256, dtype=float)
@@ -807,38 +955,7 @@ def _save_plots(
         _empty_axis(axis, "Channel utilization for selected radio/bin values")
     figure.savefig(directory / PLOT_FILENAMES[3], dpi=140)
 
-    figure = _new_figure(width=10.0, height=5.5)
-    axis = figure.subplots()
-    if total_values:
-        cdf = np.cumsum(raw_counts, dtype=np.float64) / total_values
-        axis.step(cu_percent, cdf, where="post", color="#f58518", linewidth=2)
-        axis.axvline(
-            50.0,
-            color="#777777",
-            linestyle="--",
-            linewidth=1,
-            label="50% CU (high begins at raw 128)",
-        )
-        axis.axvline(
-            75.0,
-            color="#333333",
-            linestyle="--",
-            linewidth=1,
-            label="75% CU (very high begins at raw 192)",
-        )
-        _annotate_cdf_thresholds(axis, raw_counts)
-        axis.set(
-            title="CDF of selected radio/bin channel utilization",
-            xlabel="Channel utilization (%)",
-            ylabel="Cumulative share of valid radio/bin values",
-            xlim=(0, 100),
-            ylim=(0, 1.01),
-        )
-        axis.grid(alpha=0.3)
-        axis.legend()
-    else:
-        _empty_axis(axis, "CDF of selected radio/bin channel utilization")
-    figure.savefig(directory / PLOT_FILENAMES[4], dpi=140)
+    build_radio_bin_cu_cdf(raw_counts, expected_total).savefig(directory / PLOT_FILENAMES[4], dpi=140)
 
     figure = _new_figure(width=11.0, height=4.5)
     axes = figure.subplots(1, 2, sharex=True, sharey=True)
@@ -906,95 +1023,8 @@ def _save_plots(
             axis.set_xlim(float(common_bins[0]), float(common_bins[-1]))
     figure.savefig(directory / PLOT_FILENAMES[5], dpi=140)
 
-    plotted_bands = ["2.4", "5", "6"]
-    unknown_count = int(
-        tables.band_valid_cu_raw_counts.get(
-            "unknown", np.zeros(256, dtype=np.int64)
-        ).sum()
-    )
-    figure = _new_figure(width=15.0, height=4.8)
-    axes = figure.subplots(1, 3)
-    for axis, band in zip(axes, plotted_bands):
-        counts = tables.band_valid_cu_raw_counts.get(
-            band, np.zeros(256, dtype=np.int64)
-        )
-        total = int(counts.sum())
-        if not total:
-            _empty_axis(axis, f"{band} GHz (no valid values)")
-            continue
-        axis.bar(
-            cu_percent,
-            counts,
-            width=(100.0 / 255.0),
-            color=colors[band],
-            linewidth=0,
-        )
-        axis.set(
-            title=f"{band} GHz ({total:,} values)",
-            xlabel="Channel utilization (%)",
-            ylabel="Selected radio/bin values",
-            xlim=(0, 100),
-        )
-    figure.suptitle(
-        "Channel utilization by band - one valid value per radio/bin"
-        + (
-            f" ({unknown_count:,} unknown-band values omitted)"
-            if unknown_count
-            else ""
-        ),
-        fontsize=12,
-    )
-    figure.savefig(directory / PLOT_FILENAMES[6], dpi=140)
-
-    figure = _new_figure(width=15.0, height=4.8)
-    axes = figure.subplots(1, 3)
-    for axis, band in zip(axes, plotted_bands):
-        counts = tables.band_valid_cu_raw_counts.get(
-            band, np.zeros(256, dtype=np.int64)
-        )
-        total = int(counts.sum())
-        if not total:
-            _empty_axis(axis, f"{band} GHz (no valid values)")
-            continue
-        cdf = np.cumsum(counts, dtype=np.float64) / total
-        axis.step(
-            cu_percent,
-            cdf,
-            where="post",
-            color=colors[band],
-            linewidth=2,
-        )
-        axis.axvline(
-            50.0,
-            color="#777777",
-            linestyle="--",
-            linewidth=1,
-        )
-        axis.axvline(
-            75.0,
-            color="#333333",
-            linestyle="--",
-            linewidth=1,
-        )
-        _annotate_cdf_thresholds(axis, counts)
-        axis.set(
-            title=f"{band} GHz ({total:,} values)",
-            xlabel="Channel utilization (%)",
-            ylabel="Cumulative share",
-            xlim=(0, 100),
-            ylim=(0, 1.01),
-        )
-        axis.grid(alpha=0.3)
-    figure.suptitle(
-        "CDF of channel utilization by band"
-        + (
-            f" ({unknown_count:,} unknown-band values omitted)"
-            if unknown_count
-            else ""
-        ),
-        fontsize=12,
-    )
-    figure.savefig(directory / PLOT_FILENAMES[7], dpi=140)
+    build_radio_bin_cu_by_band(tables.band_valid_cu_raw_counts).savefig(directory / PLOT_FILENAMES[6], dpi=140)
+    build_radio_bin_cu_by_band(tables.band_valid_cu_raw_counts, kind="cdf", expected_counts=expected_bands).savefig(directory / PLOT_FILENAMES[7], dpi=140)
 
 
 def _summary_value(value: object) -> str:
@@ -1018,6 +1048,168 @@ def _elapsed_text(started_at: object, generated_at: datetime) -> str:
     return f"{hours:d}:{minutes:02d}:{seconds:02d}"
 
 
+def _station_enrollment_summary_lines(root: Path) -> list[str]:
+    report_path = (
+        root / STATION_REPORT_DIRECTORY / STATION_AGGREGATE_REPORT_FILENAME
+    )
+    if not report_path.is_file():
+        return []
+
+    report = pd.read_csv(report_path)
+    _require_columns(
+        report,
+        set(STATION_AGGREGATE_REPORT_COLUMNS),
+        "station aggregate report",
+    )
+    lines = [
+        "Enrollment-weighted peak client count per enrolled",
+        "- Method: sum of eligible class-session peaks divided by the "
+        "corresponding enrollment sum.",
+    ]
+    for row in report.itertuples(index=False):
+        population_type = str(row.population_type)
+        population_id = str(row.population_id)
+        if population_type == "overall":
+            label = "Overall"
+        elif population_type == "ssid":
+            label = f"SSID {population_id}"
+        elif population_type == "band":
+            band = _band_text(population_id)
+            label = f"Band {band} GHz" if band != "unknown" else "Band unknown"
+        else:
+            label = f"{population_type} {population_id}"
+
+        ratio = row.average_peak_client_count_per_enrolled
+        ratio_text = "unavailable" if pd.isna(ratio) else f"{float(ratio):.3f}"
+        lines.append(
+            f"- {label}: {ratio_text} "
+            f"(eligible sessions {int(row.eligible_session_count):,}; "
+            f"peak sum {int(row.peak_client_count_sum):,}; "
+            f"enrollment sum {int(row.combined_enrollment_sum):,}; "
+            "stale-assisted peaks "
+            f"{int(row.stale_assisted_peak_session_count):,})"
+        )
+    return lines
+
+
+def _cu_station_summary_lines(root: Path) -> list[str]:
+    path = (
+        root
+        / "reports"
+        / "radio_class_detail"
+        / "cu_station_correlation.csv"
+    )
+    if not path.is_file():
+        return []
+    report = pd.read_csv(path)
+    required = {
+        "population_type",
+        "population_id",
+        "total_radio_bin_rows",
+        "valid_pair_rows",
+        "valid_pair_coverage",
+        "stale_assisted_pair_rows",
+        "pearson_correlation",
+        "spearman_correlation",
+    }
+    if not required.issubset(report.columns):
+        return []
+    lines = ["Radio/bin CU and station-count relationship"]
+    for row in report.itertuples(index=False):
+        if str(row.population_type) == "overall":
+            label = "Overall"
+        elif str(row.population_type) == "band":
+            band = _band_text(row.population_id)
+            label = f"Band {band} GHz" if band != "unknown" else "Band unknown"
+        else:
+            continue
+        pearson = (
+            "unavailable"
+            if pd.isna(row.pearson_correlation)
+            else f"{float(row.pearson_correlation):.3f}"
+        )
+        spearman = (
+            "unavailable"
+            if pd.isna(row.spearman_correlation)
+            else f"{float(row.spearman_correlation):.3f}"
+        )
+        coverage = (
+            "unavailable"
+            if pd.isna(row.valid_pair_coverage)
+            else f"{float(row.valid_pair_coverage):.1%}"
+        )
+        lines.append(
+            f"- {label}: Pearson {pearson}; Spearman {spearman}; "
+            f"valid pairs {int(row.valid_pair_rows):,}/"
+            f"{int(row.total_radio_bin_rows):,} ({coverage}); "
+            f"stale-assisted pairs {int(row.stale_assisted_pair_rows):,}"
+        )
+    return lines
+
+
+def _bounded_summary(row, field, suffix="%"):
+    def number(value):
+        return "unavailable" if value is None or pd.isna(value) or not np.isfinite(float(value)) else f"{float(value):.2f}{suffix}"
+    observed = number(row.get(field))
+    lower, upper = (number(row.get(f"{field}_{bound}_bound")) for bound in ("lower", "upper"))
+    interval = "bounds unavailable" if "unavailable" in (lower, upper) else f"min {lower}; max {upper}"
+    return f"observed {observed}; {interval}"
+
+
+def _affected_station_summary_lines(root: Path) -> list[str]:
+    path = root / "reports/affected_stations/population_exposure.csv"
+    if not path.exists():
+        return []
+    frame = pd.read_csv(path, float_precision="round_trip")
+    row = frame.loc[frame.population_scope.eq("overall") & frame.population_id.eq("all")].iloc[0]
+    def percent(value):
+        return "unavailable" if pd.isna(value) else f"{value:.2f}%"
+    return ["Potentially affected station associations (not proven impairment or unique clients)",
+            f"- Station-time with high CU: {_bounded_summary(row, 'high_exposure_percent')}; very high: {_bounded_summary(row, 'very_high_exposure_percent')} (included in high)",
+            "- Observed percentages use paired CU/station-time; bounds use all available station-time. Unknown station counts are outside these bounds.",
+            f"- CU/station pair coverage, pooled radio time: {percent(row.pair_coverage_percent)}; stale-assisted paired time: {percent(row.stale_pair_percent)}",
+            "- Session peaks require complete same-bin radio totals; see coverage and distributions in reports/affected_stations/",
+            "- Numeric results: reports/affected_stations/population_exposure.csv and entity_session_exposure.csv"]
+
+
+def _band_comparison_summary_lines(root: Path) -> list[str]:
+    report = root / "reports" / "band_comparison"
+    if not (report / "population_summary.csv").exists():
+        return []
+    if not all((report / name).is_file() for name in ("deployment_summary.csv", "station_adoption_summary.csv")):
+        return []
+    population = pd.read_csv(report / "population_summary.csv", float_precision="round_trip")
+    deployment = pd.read_csv(report / "deployment_summary.csv", float_precision="round_trip").iloc[0]
+    adoption = pd.read_csv(report / "station_adoption_summary.csv", float_precision="round_trip")
+    overall = population.loc[population.population_scope.eq("overall")].iloc[0]
+    station = adoption.loc[adoption.population_scope.eq("overall")].iloc[0]
+    def number(value, suffix=""):
+        return "unavailable" if pd.isna(value) else f"{float(value):.2f}{suffix}"
+    cohort_lines = []
+    for population_id, label in (("5_on_without_6", "5 GHz on APs without 6 GHz"),
+                                 ("5_on_with_6", "5 GHz on APs with 6 GHz"),
+                                 ("6_on_with_6", "6 GHz on APs with 6 GHz")):
+        selected = population.loc[population.population_scope.eq("ap_cohort") & population.population_id.eq(population_id)]
+        if len(selected):
+            row = selected.iloc[0]
+            cohort_lines.append(f"- {label}: mean CU {_bounded_summary(row, 'mean_cu_percent')}; "
+                                f"mean stations/radio {number(row.mean_radio_station_count)}; CU coverage {number(row.cu_coverage_percent, '%')}")
+    return [
+        "Band comparison and longitudinal metrics",
+        f"- 6 GHz enabled APs in configured sample: {int(deployment.six_ghz_enabled_ap_count)}/{int(deployment.configured_ap_count)} "
+        f"({number(deployment.six_ghz_enabled_ap_percent, '%')}); enabled but unobserved: {int(deployment.enabled_6_ghz_not_observed_ap_count)}",
+        f"- Overall mean CU: {_bounded_summary(overall, 'mean_cu_percent')}; CU coverage: {number(overall.cu_coverage_percent, '%')}",
+        "- CU mean bounds assign missing radio time 0%/100% CU; they are not confidence intervals or filled measurements.",
+        f"- Overall mean stations/radio, available time: {number(overall.mean_radio_station_count)}",
+        *cohort_lines,
+        f"- Overall CU relative to associated station count: {number(overall.cu_relative_to_associated_station_count)} percentage points/station",
+        f"- 6 GHz station association-time share: {number(station['5_6_six_station_share_percent'], '%')} of 5+6 GHz; "
+        f"{number(station['all_bands_six_station_share_percent'], '%')} of all sampled bands",
+        "- Detailed populations, component sums, coverage and manual year-over-year context: reports/band_comparison/",
+        "- Calculated overall/band/cohort metrics: reports/band_comparison/population_summary.csv",
+    ]
+
+
 def _run_summary(
     *,
     root: Path,
@@ -1032,6 +1224,9 @@ def _run_summary(
     bounded = configuration.get("bounded_working_set", {})
     if not isinstance(bounded, Mapping):
         bounded = {}
+    radio_bin_configuration = configuration.get("cu_radio_bin", {})
+    if not isinstance(radio_bin_configuration, Mapping):
+        radio_bin_configuration = {}
     scope = configuration.get("project_scope_counts", {})
     if not isinstance(scope, Mapping):
         scope = {}
@@ -1094,9 +1289,15 @@ def _run_summary(
             f"{course_text}; enrolled total "
             f"{_summary_value(record.get('enrolled_total'))}"
         )
+    station_enrollment_lines = _station_enrollment_summary_lines(root)
+    cu_station_lines = _cu_station_summary_lines(root)
+    band_comparison_lines = _band_comparison_summary_lines(root)
+    affected_station_lines = _affected_station_summary_lines(root)
     return "\n".join(
         [
             "Corrected beacon-analysis run summary",
+            "",
+            "Start here: reports/index.html (offline run overview)",
             "",
             f"Project: {_summary_value(run_metadata.get('project_name'))}",
             f"Run ID: {run_id}",
@@ -1121,7 +1322,25 @@ def _run_summary(
             + _summary_value(bounded.get("class_window_rows")),
             "- Selected observations: "
             + _summary_value(bounded.get("selected_rows")),
+            "- Station rollup rows: "
+            + _summary_value(bounded.get("station_rollup_rows")),
+            "- Radio/bin detail rows: "
+            + _summary_value(bounded.get("radio_bin_detail_rows")),
+            "- Largest per-session radio/bin detail part: "
+            + _summary_value(
+                bounded.get("maximum_session_radio_bin_detail_rows")
+            ),
+            "- Largest per-session station rollup part: "
+            + _summary_value(
+                bounded.get("maximum_session_station_rollup_rows")
+            ),
             f"- Selected-observation date partitions: {selected_parts:,}",
+            "- Radio/class detail plots: "
+            + (
+                "enabled"
+                if radio_bin_configuration.get("radio_class_plots") is True
+                else "disabled"
+            ),
             "",
             *normalization_lines,
             "",
@@ -1135,6 +1354,14 @@ def _run_summary(
             f"- 6 GHz radios: {radio_counts['6']:,}",
             f"- Unknown-band radios: {radio_counts['unknown']:,}",
             "",
+            *station_enrollment_lines,
+            *([""] if station_enrollment_lines else []),
+            *cu_station_lines,
+            *([""] if cu_station_lines else []),
+            *band_comparison_lines,
+            *([""] if band_comparison_lines else []),
+            *affected_station_lines,
+            *([""] if affected_station_lines else []),
             "Summary outputs",
             f"- Radio/class rows: {len(tables.radio_class):,}",
             f"- Classroom/class rows: {len(tables.classroom_class):,}",
@@ -1144,8 +1371,8 @@ def _run_summary(
             f"- Stage warnings: {warning_count:,}",
             f"- Stage errors: {error_count:,}",
             "",
-            "See methodology.txt for metric definitions and a description of "
-            "every authoritative and derived output file.",
+            "See each report family's methodology.txt for metric definitions "
+            "and descriptions of its derived output files.",
             "",
         ]
     )
@@ -1155,10 +1382,44 @@ def _methodology(
     tables: CorrectedCuReportTables,
     display_timezone: str | None,
     bin_widths_us: tuple[int, ...],
+    *,
+    station_report_present: bool = False,
+    radio_bin_report_present: bool = False,
 ) -> str:
     radio = tables.radio_class
     schema_ids = sorted(set(radio["schema_id"].astype(str)))
     metric_ids = sorted(set(radio["metric_id"].astype(str)))
+    station_guide = (
+        [
+            "- ../station_count/station_bin_rollups.parquet: derived ADR-0010 "
+            "radio, SSID, band, and classroom/bin station totals.",
+            "- ../station_count/station_class_report.csv: per-session station "
+            "availability, peaks, enrollment, and peak-client-count ratio.",
+            "- ../station_count/station_aggregate_report.csv: enrollment-"
+            "weighted overall, SSID, and band peak-client-count-per-enrolled "
+            "results.",
+            "- ../station_count/classroom_bin_station_histogram*.png: complete "
+            "classroom/bin all-band and per-band distributions.",
+            "- ../station_count/methodology.txt: station membership, stale-"
+            "assistance, completeness, and enrollment rules.",
+        ]
+        if station_report_present
+        else []
+    )
+    radio_bin_guide = (
+        [
+            "- ../radio_class_detail/radio_bin_detail.parquet: one corrected "
+            "CU state/value and the accepted station total per physical "
+            "radio/class-session/bin.",
+            "- ../radio_class_detail/cu_station_correlation.csv and "
+            "cu_station_hexbin*.png: same-radio/same-bin valid-pair coverage, "
+            "descriptive correlations, and density plots.",
+            "- ../radio_class_detail/methodology.txt: CU source selection, "
+            "lineage, station join, and optional plot interpretation.",
+        ]
+        if radio_bin_report_present
+        else []
+    )
     return "\n".join(
         [
             "Corrected CU, coverage, and streak report package",
@@ -1186,14 +1447,40 @@ def _methodology(
             "Terminal partial-bin durations are preserved.",
             "Average CU excludes missing-CU and no-beacon bins. "
             "No combined classroom CU average is reported.",
+            f"Ordinary mean bounds metric: {CU_BOUNDS_METRIC_ID}. Existing mean "
+            "columns remain observed. Companion *_lower_bound and *_upper_bound "
+            "columns assign missing-CU and no-beacon time 0% and 100% CU, "
+            "respectively, using total expected radio duration. A nonempty "
+            "all-missing population has bounds 0-100%; an absent population "
+            "has unavailable bounds. These are missing-bin scenarios, not "
+            "confidence intervals or filled measurements. The bounds do not "
+            "cover missed variation within otherwise observed bins. HTML/text "
+            "displays keep the observed point value alongside minimum/maximum "
+            "scenarios. Historical refresh derives only supported companions "
+            "from saved components and leaves unsupported bounds unavailable.",
+            "CU CDFs keep their observed lines and show minimum/maximum curves "
+            "with a shaded range. For cumulative valid weight A, total expected "
+            "weight T and missing weight M, the range is A/T to (A+M)/T below "
+            "100% CU; at 100% both endpoints are one. These CDFs give each "
+            "radio/bin equal weight. Expected counts come from the comparison "
+            "radio/session table, or ceiling(class duration / bin width) only "
+            "when one explicit width applies to every session. Mixed widths "
+            "without per-radio counts leave bounds unavailable. Absent bands "
+            "are omitted; present bands with all CU missing show only a range.",
             "Each point in the CU-versus-coverage plot is one radio/class "
             "row. Panels separate bands; color identifies AP model and the "
-            "observed count of same-band radios on that AP.",
+            "observed count of same-band radios on that AP. This scatter "
+            "shows observed means only; bounds remain in the numeric tables.",
             "AP model is optional source metadata. Same-band radio count is "
             "derived from the project identity map, not inferred from model. "
             "Neither field changes CU, coverage, or weighting.",
             "Classroom streak maxima name every radio tied for the maximum.",
-            "Average-CU histograms use four raw CU units per bucket.",
+            "Average-CU histograms use two raw CU units per bucket.",
+            "Mean-histogram shading bounds each bucket's possible count: the "
+            "minimum counts intervals wholly in that bucket; the maximum "
+            "counts all intersecting intervals. Bucket maxima need not be "
+            "jointly attainable. Observed histogram counts remain unchanged.",
+            "Coverage and missingness histograms use 2.5-percentage-point buckets.",
             "The all-value CU histogram and CDF use one valid selected value "
             "per radio/analysis bin, with one bucket per raw CU value.",
             "Band histogram and CDF panels use that same radio/bin population "
@@ -1202,6 +1489,9 @@ def _methodology(
             "5 GHz radios on APs with a resolved 6 GHz radio, and the 6 GHz "
             "radios on those APs. The all-5 population therefore overlaps "
             "the paired-AP 5 GHz subset by design.",
+            "Here ap_has_6_ghz means observed 6 GHz in the identity map. "
+            "Enablement-aware AP/classroom comparisons, including explicit "
+            "6GHz_Enabled input declarations, are in ../band_comparison/.",
             "Population coverage is summed valid-CU radio time divided by "
             "summed class radio time. Population average CU is duration-"
             "weighted across valid CU time. Empty populations remain explicit "
@@ -1212,7 +1502,7 @@ def _methodology(
             "interval.",
             "",
             "Output file guide",
-            "- run_summary.txt: concise processing, input-normalization, "
+            "- ../run_summary.txt: concise processing, input-normalization, "
             "identity, band, row-count, stage, warning, and error results "
             "for this run.",
             "- methodology.txt: metric definitions, interpretation rules, and "
@@ -1226,8 +1516,12 @@ def _methodology(
             "- band_population_report.csv: all-5-GHz, paired-AP 5-GHz, and "
             "6-GHz population counts, coverage, average CU, and high/very-high "
             "time shares.",
+            "- cu_cdf_bounds.csv: observed/minimum/maximum cumulative percentages "
+            "at the existing raw CU <128 and <192 cutoffs (50%/75% markers), "
+            "with exact valid/expected bin counts. The similarly named file "
+            "in ../band_comparison/ uses radio-duration weights instead.",
             "- plots/radio_average_cu_distribution.png: radio/class average-CU "
-            "distribution using four raw CU values per bucket.",
+            "distribution using two raw CU values per bucket.",
             "- plots/radio_cu_vs_coverage.png: radio/class average CU versus "
             "valid-CU coverage, separated by band and review cohort.",
             "- plots/radio_coverage_and_missingness.png: distributions of "
@@ -1253,6 +1547,8 @@ def _methodology(
             "classroom-session radio counts and maximum streak metrics.",
             "- ../../exports/csv/: compact CSV copies of the identity and two "
             "summary Parquet tables for review.",
+            *station_guide,
+            *radio_bin_guide,
             "- ../../manifest.json: input hashes, code provenance, effective "
             "configuration, schemas, stages, and artifact references.",
             "- ../../../_logs/<run_id>.jsonl: project-level lifecycle events, "
@@ -1274,8 +1570,11 @@ def write_corrected_cu_report_package(
 
     root = Path(run_directory)
     destination = root / REPORT_DIRECTORY
+    summary_path = root / RUN_SUMMARY_PATH
     if destination.exists():
         raise FileExistsError(f"report directory already exists: {destination}")
+    if summary_path.exists():
+        raise FileExistsError(f"run summary already exists: {summary_path}")
     sources = {
         "radio": root / "radio_class_summary.parquet",
         "classroom": root / "classroom_class_summary.parquet",
@@ -1288,11 +1587,25 @@ def write_corrected_cu_report_package(
     destination.mkdir(parents=True)
     try:
         identity = pd.read_parquet(sources["identity"])
+        radio_summary = pd.read_parquet(sources["radio"])
+        counts_path = root / "reports/band_comparison/radio_class_comparison.csv"
+        radio_bin_counts = None
+        if counts_path.is_file():
+            radio_bin_counts = pd.read_csv(counts_path, usecols=["class_session_id", "radio_group_id", "radio_bin_rows"],
+                                           dtype={"class_session_id": "string", "radio_group_id": "string"})
+        elif len(set(bin_widths_us)) == 1:
+            # One explicitly configured width determines every expected count,
+            # including terminal partial bins. Never choose among mixed widths.
+            width = _histogram_interval_us(bin_widths_us)
+            radio_bin_counts = radio_summary[["class_session_id", "radio_group_id"]].copy()
+            radio_bin_counts["radio_bin_rows"] = [(int(duration) + width - 1) // width
+                                                  for duration in radio_summary.class_duration_us]
         tables = build_corrected_cu_report_tables(
-            pd.read_parquet(sources["radio"]),
+            radio_summary,
             pd.read_parquet(sources["classroom"]),
             identity,
             display_timezone=display_timezone,
+            radio_bin_counts=radio_bin_counts,
         )
         _write_csv(tables.radio_class, destination / RADIO_REPORT_FILENAME)
         _write_csv(tables.classroom_class, destination / CLASSROOM_REPORT_FILENAME)
@@ -1300,8 +1613,22 @@ def write_corrected_cu_report_package(
             tables.band_population,
             destination / BAND_POPULATION_REPORT_FILENAME,
         )
+        cdf_table = cu_cdf_report_table(tables)
+        _write_csv(cdf_table, destination / CDF_BOUNDS_REPORT_FILENAME)
         (destination / METHODOLOGY_FILENAME).write_text(
-            _methodology(tables, display_timezone, bin_widths_us), encoding="utf-8", newline="\n"
+            _methodology(
+                tables,
+                display_timezone,
+                bin_widths_us,
+                station_report_present=(
+                    root / "reports" / "station_count"
+                ).is_dir(),
+                radio_bin_report_present=(
+                    root / "reports" / "radio_class_detail"
+                ).is_dir(),
+            ),
+            encoding="utf-8",
+            newline="\n",
         )
         _save_plots(
             tables,
@@ -1311,7 +1638,7 @@ def write_corrected_cu_report_package(
         generated_at = (clock or (lambda: datetime.now(timezone.utc)))()
         if generated_at.tzinfo is None:
             raise ValueError("report clock must return a timezone-aware value")
-        (destination / RUN_SUMMARY_FILENAME).write_text(
+        summary_path.write_text(
             _run_summary(
                 root=root,
                 tables=tables,
@@ -1323,6 +1650,7 @@ def write_corrected_cu_report_package(
             newline="\n",
         )
     except BaseException:
+        summary_path.unlink(missing_ok=True)
         shutil.rmtree(destination, ignore_errors=True)
         parent = destination.parent
         if parent.exists() and not any(parent.iterdir()):
@@ -1333,7 +1661,8 @@ def write_corrected_cu_report_package(
         destination / RADIO_REPORT_FILENAME,
         destination / CLASSROOM_REPORT_FILENAME,
         destination / BAND_POPULATION_REPORT_FILENAME,
-        destination / RUN_SUMMARY_FILENAME,
+        destination / CDF_BOUNDS_REPORT_FILENAME,
+        summary_path,
         destination / METHODOLOGY_FILENAME,
         *(destination / "plots" / name for name in PLOT_FILENAMES),
     )
@@ -1343,4 +1672,5 @@ def write_corrected_cu_report_package(
         classroom_class_rows=len(tables.classroom_class),
         band_population_rows=len(tables.band_population),
         files=files,
+        cdf_bounds_rows=len(cdf_table),
     )

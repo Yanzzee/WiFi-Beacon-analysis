@@ -714,9 +714,11 @@ oracle and current-Aruba evidence. It does not maintain or run a production
 legacy grouping path.
 
 The generated mapping remains a reviewable output rather than a setup input.
-Commit `4a20d1c8f6164fdb81fc75f2cf80b9fba3f1c5fb` remains the historical workflow
-reference when its original results must be reproduced; long-term comparisons
-should otherwise rerun the current metric definition over older captures.
+The public
+[Original release](https://github.com/Yanzzee/WiFi-Beacon-analysis/releases/tag/Original)
+remains the historical workflow reference when its original results must be
+reproduced; long-term comparisons should otherwise rerun the current metric
+definition over older captures.
 
 ## Required tests and acceptance evidence
 
@@ -848,3 +850,9 @@ These follow-ups do not reopen the accepted project hierarchy:
    continuation through observation time, and representative/tie selection.
 6. ADR-0002/ADR-0006 follow-up work must place the accepted IDs, methods,
    diagnostics, selected-record lineage, and metric version in durable outputs.
+
+### Station-count follow-up resolution — 2026-10-03
+
+ADR-0010 resolves item 4's station-count missing-member, partial-total,
+staleness, and initial placement questions. Admission-capacity
+missing/conflicting resolution remains open.

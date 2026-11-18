@@ -88,18 +88,26 @@ mean that every member supplies the radio's CU value in every bin.
 For cadence consistency:
 
 1. ADR-0009 first produces at most one selected observation per BSSID/bin.
-2. The first member BSSID that supplies valid CU in class order becomes the
-   preferred CU source for that radio/class session.
-3. Use the preferred BSSID's valid CU whenever it is available in a bin.
-4. If that BSSID is absent or its CU is invalid/missing, use the earliest valid
+2. If a configured primary CU SSID supplies valid CU in the session, its first
+   valid member BSSID becomes the preferred source. The supported workflow
+   defaults this project setting to `eduroam`.
+3. Otherwise, the first member BSSID that supplies valid CU in class order
+   becomes the preferred source for that radio/class session.
+4. Use the preferred BSSID's valid CU whenever it is available in a bin.
+5. If that BSSID is absent or its CU is invalid/missing, use the earliest valid
    CU from another member BSSID in the same bin.
-5. Apply accepted source precedence and deterministic lineage ordering before
+6. Apply accepted source precedence and deterministic lineage ordering before
    choosing among otherwise equivalent observations.
 
 The preferred BSSID remains stable for the session; a temporary substitute
 does not become the new preferred source. This minimizes adjacent samples from
 different beacon phases while allowing another same-radio BSSID to fill a
 missing observation.
+
+The primary-SSID preference and bounded radio/bin persistence were accepted in
+[ADR-0011](0011-bounded-radio-bin-reporting-source.md). Only one CU value is
+emitted per physical radio/bin, so using a fallback SSID never duplicates the
+radio reading.
 
 If selected member-BSSID beacons exist but none has valid CU, the radio/bin is
 `beacon_missing_cu`. If no selected member-BSSID beacon exists, it is
@@ -270,9 +278,10 @@ Focused fixtures must cover:
 - classroom maximum retaining the responsible radio identity.
 
 The possible-connected metric remains available because it is useful in its
-own right. The complete legacy pipeline is retained only at commit
-`4a20d1c8f6164fdb81fc75f2cf80b9fba3f1c5fb`; production does not need to run
-or store it beside the corrected metrics. Activating corrected metrics still
+own right. The complete legacy pipeline is retained only in the public
+[Original release](https://github.com/Yanzzee/WiFi-Beacon-analysis/releases/tag/Original);
+production does not need to run or store it beside the corrected metrics.
+Activating corrected metrics still
 requires ADR-0006/PR-0024 versioning, output placement, and reviewed goldens.
 
 ## Implementation record — 2026-09-24
@@ -327,3 +336,11 @@ This ADR deliberately does not add imputation, probabilistic bounds, dynamic
 cadence estimation, CU agreement checks, or coverage-based suppression.
 Introduce any such behavior only after the project owner confirms the
 practical need at a high level.
+
+## Station-count follow-up addendum — 2026-10-03
+
+ADR-0010 now resolves the station-count follow-up that this ADR left outside
+its CU scope. It accepts session-active BSSID membership, 30-second stale
+assistance, complete-only radio/SSID/band/classroom totals, bounded derived
+placement, and peak client count per enrolled. This does not change the CU
+semantics in this ADR.

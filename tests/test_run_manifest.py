@@ -30,7 +30,7 @@ def _capture_plan() -> dict[str, object]:
     )
     plan = pp.build_tshark_extraction_plan(profile)
     return rm.build_capture_plan_record(
-        source_path="Data/captures_test/example.pcapng",
+        source_path="data/captures_test/example.pcapng",
         source_bytes=1234,
         source_sha256="a" * 64,
         capture_profile=profile.name,
@@ -45,7 +45,7 @@ def _input_set() -> dict[str, object]:
     files = [
         {
             "role": "capture",
-            "path": "Data/captures_test/example.pcapng",
+            "path": "data/captures_test/example.pcapng",
             "bytes": 1234,
             "sha256": "a" * 64,
         }
@@ -89,7 +89,7 @@ def _manifest() -> dict[str, object]:
         ],
         artifacts={
             "project_identity_map": {
-                "path": "Output/runs/test-project/run-20260923/project_identity_map.parquet",
+                "path": "output/runs/test-project/run-20260923/project_identity_map.parquet",
                 "rows": 4,
             }
         },
@@ -200,5 +200,5 @@ def test_existing_corrected_oracle_is_valid_legacy_fixture_manifest():
         "slug": "oracle-corrected",
     }
     assert manifest["schema_id"] == rm.RESULT_SCHEMA_ID
-    assert manifest["metric_id"] == rm.CORRECTED_METRIC_ID
+    assert manifest["metric_id"] == "beacon.metric/corrected-cu/v1"
     assert manifest["legacy_artifacts"] == []

@@ -7,6 +7,6 @@ first-observed selection, CU missingness states, radio membership/fallback,
 coverage, both streak interpretations, and the five-artifact contract.
 
 Optional real-capture tests use owner-provided files under
-`Data/captures_test/` and are marked `requires_external_tools`. These files are
+`data/captures_test/` and are marked `requires_external_tools`. These files are
 evidence for decoder/adapter/band behavior; they are not the calculation
 oracle and are not required for the ordinary unit suite.

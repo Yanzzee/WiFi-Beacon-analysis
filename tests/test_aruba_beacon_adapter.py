@@ -119,7 +119,7 @@ def test_aruba_adapter_fills_direct_capture_lineage_when_not_persisted():
     assert adapted["source_rank"].tolist() == [3, 3, 3]
 
 
-def test_aruba_adapter_feeds_corrected_selector_and_keeps_full_pool_origin():
+def test_aruba_adapter_feeds_observation_time_selector_without_tsf_retiming():
     result = select_aruba_class_observations(
         _aruba_rows(),
         class_session_id="class-1",
@@ -128,20 +128,19 @@ def test_aruba_adapter_feeds_corrected_selector_and_keeps_full_pool_origin():
         bin_width_us=102_400,
     )
 
-    assert result.timing.loc[0, "timing_method"] == "tsf_derived"
-    assert result.timing.loc[0, "tsf_origin"] == pd.Timestamp(
-        "2026-01-15T09:59:59.250000Z"
-    )
+    assert result.timing.loc[0, "timing_method"] == "observation_time"
+    assert pd.isna(result.timing.loc[0, "tsf_origin"])
     assert result.observations["payload_id"].tolist() == [
+        "early-origin",
         "duplicate-winner",
         "next",
     ]
     assert result.observations["placement_time"].tolist() == [
         pd.Timestamp("2026-01-15T10:00:00.250000Z"),
-        pd.Timestamp("2026-01-15T10:00:00.352400Z"),
+        pd.Timestamp("2026-01-15T10:00:00.260000Z"),
+        pd.Timestamp("2026-01-15T10:00:00.370000Z"),
     ]
-    assert result.excluded.loc[0, "payload_id"] == "early-origin"
-    assert result.excluded.loc[0, "exclusion_reason"] == "duplicate_view"
+    assert result.excluded.empty
 
 
 def test_scope_filter_keeps_only_configured_aps_in_the_classroom():
@@ -219,14 +218,17 @@ def test_configured_scope_is_applied_before_corrected_selection():
 
     assert result.scope_counts.outside_project_scope_rows == 1
     assert set(result.selection.observations["payload_id"]) == {
+        "early-origin",
         "duplicate-winner",
         "next",
     }
     assert result.selection.observations["ap_id"].tolist() == [
         "ROOM-AP-01",
         "ROOM-AP-01",
+        "ROOM-AP-01",
     ]
     assert result.selection.observations["classroom"].tolist() == [
+        "ROOM1",
         "ROOM1",
         "ROOM1",
     ]

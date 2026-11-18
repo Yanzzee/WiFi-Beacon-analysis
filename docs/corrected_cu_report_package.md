@@ -4,7 +4,29 @@
 review found the overall output correct so far; the run-summary and plot/readme
 refinements recorded below followed that review.
 
+This document preserves the CU package's calculations and dated implementation
+history. The current human entry point is `reports/index.html`; use
+[reporting and publication](reporting_and_publication.md) for current section
+placement, saved-run refresh and hosting status. The plain-text run summary
+remains `reports/run_summary.txt` and is not the only review entry point.
+
 ## Purpose
+
+Update 2026-11-16: All five stages of
+[conservative missing-bin bounds](decisions/0020-conservative-cu-missing-bin-bounds.md)
+add mean lower/upper fields, numeric CDF summaries, shaded CU CDF envelopes
+and selected mean-figure intervals. Observed mean columns, CDF curves and histogram
+counts are unchanged. The two mean bounds assign all missing CU time 0% or
+100%; they are not confidence intervals or filled readings. The existing CU
+station-time subsection also reports high/very-high exposure bounds, conditional
+on available station counts, with observed bars and min/max whiskers. HTML/text
+displays and supported saved-run backfill are integrated, retaining observed
+values and marking unsupported bounds unavailable. Details are in the
+[implementation inventory](cu_missing_bin_bounds_implementation_plan.md).
+The owner-reviewed presentation separates observed and possible values in HTML
+metrics and tables. Cohort CDFs use separate panels. Matched-radio and
+mean-CU-versus-coverage scatter plots remain observed-only; numeric bounds and
+histogram count shading are retained.
 
 The report package makes the implemented ADR-0004 radio/class and
 classroom/class results easy to inspect. It should answer four practical
@@ -22,12 +44,12 @@ not create a sixth authoritative artifact or change metric definitions.
 ## Implemented run-local layout
 
 ```text
-Output/runs/<project>/<run_id>/
+output/runs/<project>/<run_id>/
+  reports/run_summary.txt
   reports/cu_coverage_streak/
     radio_class_report.csv
     classroom_class_report.csv
     band_population_report.csv
-    run_summary.txt
     methodology.txt
     plots/
       radio_average_cu_distribution.png
@@ -44,13 +66,20 @@ The report directory is generated inside the existing staging/publication
 gate and referenced as a derived export from the radio/class and
 classroom/class manifest records. Parquet remains authoritative.
 
-`run_summary.txt` is the concise first-read report. It records project/run
+`reports/run_summary.txt` is the concise first-read report shared by all
+report families. It records project/run
 identity, elapsed processing time through report generation, capture and worker
 counts, configured/observed AP and radio counts, per-band radio counts, staged
 and selected observation counts, summary-table row counts, and aggregate stage
-warning/error counts. It is generated from the same effective configuration
-and durable tables inside the publication gate rather than copied from terminal
-text.
+warning/error counts. When the station package is present, it also presents
+the enrollment-weighted overall, per-SSID, and per-band peak client count per
+enrolled, with component sums and eligible-session counts. It is generated
+from the same effective configuration and run-local reports inside the
+publication gate rather than copied from terminal text.
+
+The CU-specific tables, plots, and methodology remain under
+`reports/cu_coverage_streak/`. This keeps the run-wide entry point outside a
+single metric family without reorganizing the thematic packages.
 
 ## Required source fields
 
@@ -134,7 +163,7 @@ All plots are project-level summaries so output count remains bounded.
 1. `radio_average_cu_distribution.png`
    - distribution of duration-weighted radio/class average CU;
    - separate or colored by 2.4, 5, 6, and unknown band;
-   - 64 fixed buckets, each spanning four raw CU values;
+   - 128 fixed buckets, each spanning two raw CU values;
    - reports how many null averages were omitted.
 2. `radio_cu_vs_coverage.png`
    - x-axis: radio/class CU coverage percent;
@@ -204,8 +233,8 @@ and accessibility path.
 | Aggregate CU histogram/PDF/CDF | Exact raw-value histogram and CDF at one selected value per stable radio/bin, plus the radio/class average-CU distribution and CU-versus-coverage plot. This intentionally replaces duplicated beacon-row weighting with stable radio/time sampling. |
 | `High_CU_streaks.png` and zoomed variant | One corrected classroom streak distribution with separate thresholds and actual-versus-possible meanings. |
 | Text logs containing CU/streak aggregates | Reviewable radio/class and classroom/class CSV tables with manifest provenance. |
-| Per-radio CU/station time-series plots | Deferred. A correct time-series report needs the transient radio/bin CU state or a reviewed way to reproduce it; the first package will not recalculate that logic independently. |
-| Station/enrollment reports | Deferred to PR-0053 station-count semantics. |
+| Per-radio CU/station time-series plots | Implemented as an indexed opt-in collection from `reports/radio_class_detail/radio_bin_detail.parquet`. Unknown CU is shaded and any dashed interpolation is visual only. |
+| Station/enrollment reports | Implemented under `reports/station_count/` using ADR-0010 semantics. |
 | Beacon-rate reports | Deferred. A future review should compare observation/capture rate by AP model and radio configuration before using it to interpret correlations with CU or station count. It must distinguish transmitter behavior from capture coverage, source loss, class-window coverage, and deduplication. |
 
 Later report families may add useful all-observation, class-session, and
@@ -299,9 +328,9 @@ Fresh `2025-test` run `20261001T205900259971Z-97b6eeb5` published the revised
 package successfully on 2026-10-01. The remaining acceptance action is owner
 review of that report package before release cutover.
 
-The first package should be generated by default once implemented because it
-is small and is the primary human-readable corrected result. Per-class or
-per-radio time-series plots should remain a later opt-in feature.
+The project-level package and bounded radio/bin Parquet source are generated by
+default. Per-radio/class time-series plots remain opt-in through
+`--radio-class-plots` or `RADIO_CLASS_PLOTS=true`.
 
 ## 6 GHz evidence boundary
 

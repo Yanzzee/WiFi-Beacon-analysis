@@ -1,0 +1,4 @@
+# Golden CSV bytes are hashed by tests; keep their line endings platform-stable.
+tests/fixtures/corrected_semantics/expected/*.csv text eol=lf
+# Capture scripts execute under Linux Bash, including Windows checkouts.
+*.sh text eol=lf

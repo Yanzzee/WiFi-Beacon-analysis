@@ -16,28 +16,51 @@ from datetime import datetime
 from functools import partial
 from pathlib import Path
 import shutil
+import sys
 from time import perf_counter
 from typing import Callable, Iterable, Mapping
 
 import pandas as pd
+import pyarrow as pa
+import pyarrow.parquet as pq
 
 from corrected_beacon_selection import (
     DEFAULT_BEACON_INTERVAL_TU,
     build_class_bins,
     preferred_observation_times,
     select_bssid_session_observations,
+    TIMING_POLICY_ID,
 )
 from corrected_input_adapter import (
     load_corrected_project_inputs,
     load_raw_sample_project_inputs,
 )
+from corrected_radio_bin_reports import build_radio_bin_detail
+from corrected_beacon_quality_reports import (
+    BeaconQualityPart, WINDOW_SCHEMA as BEACON_QUALITY_WINDOW_SCHEMA,
+    build_beacon_quality_part, METRIC_ID as BEACON_QUALITY_METRIC_ID,
+)
+from corrected_band_comparison_reports import BandComparisonAccumulator, METRIC_ID as BAND_COMPARISON_METRIC_ID
+from corrected_affected_station_reports import AffectedStationAccumulator, METRIC_ID as AFFECTED_STATION_METRIC_ID
+from corrected_admission_selection import ADMISSION_METRIC_ID, RADIO_DETAIL_SCHEMA_ID
 from corrected_run import (
     CorrectedRun,
     begin_corrected_run,
     complete_corrected_run,
     execute_corrected_stage,
     write_bounded_core_corrected_artifacts,
+    write_corrected_class_session_report_artifacts,
+    write_corrected_beacon_quality_report_artifacts,
+    write_corrected_band_comparison_artifacts,
+    write_corrected_affected_station_artifacts,
+    write_corrected_radio_bin_report_artifacts,
+    write_corrected_station_report_artifacts,
     write_precomputed_corrected_summary_artifacts,
+)
+from corrected_station_reports import (
+    STATION_CLASS_REPORT_COLUMNS,
+    build_station_bin_rollups,
+    build_station_class_report,
 )
 from corrected_summary_output import (
     CLASSROOM_CLASS_SUMMARY_ARROW_SCHEMA,
@@ -57,6 +80,7 @@ from process_pcapng import (
 )
 from project_scope import (
     ProjectScopeCounts,
+    _configured_ap_mapping,
     filter_configured_project_scope,
 )
 from radio_resolver import (
@@ -172,8 +196,18 @@ class _StagedCapturePart:
 @dataclass(frozen=True)
 class _BoundedSelection:
     selected_paths: tuple[Path, ...]
+    station_rollup_paths: tuple[Path, ...]
+    radio_bin_detail_paths: tuple[Path, ...]
+    beacon_quality_paths: tuple[Path, ...]
+    beacon_quality_stream_rows: int
+    beacon_quality_window_rows: int
+    station_class_report: pd.DataFrame
     summaries: CorrectedSummaryTables
     selected_rows: int
+    station_rollup_rows: int
+    radio_bin_detail_rows: int
+    maximum_session_radio_bin_detail_rows: int
+    maximum_session_station_rollup_rows: int
     maximum_session_input_rows: int
     post_duplicate_handling_rows: int
     tsf_duplicate_views_collapsed: int
@@ -312,6 +346,7 @@ def _extract_stage_capture(
     if not isinstance(extraction, CaptureExtractionResult):
         raise TypeError("capture extractor must return CaptureExtractionResult")
     records = extraction.observations.copy(deep=False)
+    records["capture_profile"] = extraction.profile.name
     records[SOURCE_CAPTURE_FIELD] = source_reference
     records[SOURCE_RANK_FIELD] = source_rank
     dispatch_started = perf_counter()
@@ -582,6 +617,38 @@ def _extract_and_stage(
     )
 
 
+def _warn_unobserved_project_scope(
+    run: CorrectedRun,
+    configured_aps: pd.DataFrame,
+    identity_map: pd.DataFrame,
+    class_sessions: pd.DataFrame,
+) -> None:
+    """Warn once extraction establishes which configured APs were observed."""
+    mapping = _configured_ap_mapping(configured_aps)
+    observed = identity_map.loc[identity_map.radio_group_id.notna()]
+    missing_aps = mapping.loc[~mapping.ap_id.isin(observed.ap_id), ["ap_id", "classroom"]]
+    missing_rooms = sorted(set(class_sessions.classroom) - set(observed.classroom))
+    if missing_aps.empty and not missing_rooms:
+        return
+    details = {
+        "configured_aps_without_observations": missing_aps.to_dict("records"),
+        "scheduled_classrooms_without_radios": missing_rooms,
+    }
+    run.effective_configuration["project_observation_warnings"] = details
+    record_run_event(run.workspace, event="project_observation_warning", **details)
+    warning_count = 0
+    if not missing_aps.empty:
+        names = ", ".join(f"{row.ap_id} ({row.classroom})" for row in missing_aps.itertuples())
+        print(f"Warning: configured APs have no matching supported beacon observations: {names}. "
+              "Check AP names and capture coverage.", file=sys.stderr, flush=True)
+        warning_count += 1
+    if missing_rooms:
+        print("Warning: scheduled classrooms have no resolved radios: " + ", ".join(missing_rooms) +
+              ". Their measurements will be reported as unavailable, not zero.", file=sys.stderr, flush=True)
+        warning_count += 1
+    run.stages[-1]["warning_count"] += warning_count
+
+
 def _resolve_identity(staged: _StagedCaptureRows) -> RadioResolutionResult:
     evidence_resolution = resolve_project_radios(staged.identity_evidence)
     unresolved = evidence_resolution.identity_map.loc[
@@ -650,13 +717,30 @@ def _select_staged_sessions(
     working_root: Path,
     *,
     default_beacon_interval_tu: int,
+    primary_ssid: str | None,
+    cadence_beacon_interval_tu: int = 100,
 ) -> _BoundedSelection:
     selected_root = working_root / "selected_sessions"
     selected_root.mkdir()
+    station_root = working_root / "station_sessions"
+    station_root.mkdir()
+    radio_bin_root = working_root / "radio_bin_sessions"
+    radio_bin_root.mkdir()
+    beacon_quality_root = working_root / "beacon_quality_sessions"
+    beacon_quality_root.mkdir()
+    beacon_quality_paths: list[Path] = []
+    beacon_quality_stream_rows = beacon_quality_window_rows = 0
     selected_paths: list[Path] = []
+    station_rollup_paths: list[Path] = []
+    radio_bin_detail_paths: list[Path] = []
+    station_class_parts: list[pd.DataFrame] = []
     radio_parts: list[pd.DataFrame] = []
     classroom_parts: list[pd.DataFrame] = []
     selected_rows = 0
+    station_rollup_rows = 0
+    radio_bin_detail_rows = 0
+    maximum_session_radio_bin_detail_rows = 0
+    maximum_session_station_rollup_rows = 0
     maximum_session_input_rows = 0
     post_duplicate_handling_rows = 0
     tsf_duplicate_views_collapsed = 0
@@ -683,6 +767,21 @@ def _select_staged_sessions(
             bin_width_us=int(session.bin_width_us),
             default_beacon_interval_tu=default_beacon_interval_tu,
         )
+        if not selection.timing.empty:
+            anomalies = selection.timing.loc[
+                selection.timing.capture_family.eq("native")
+                & selection.timing.tsf_status.isin(["discontinuous", "reversing", "time_mismatch"])
+            ]
+            if not anomalies.empty:
+                fields = ["bssid", "tsf_status", "tsf_clock_jump_count", "tsf_max_step_error_us",
+                          "tsf_anomaly_source_capture", "tsf_anomaly_source_frame"]
+                records = anomalies.reindex(columns=fields).astype(object).where(anomalies.reindex(columns=fields).notna(), None).to_dict("records")
+                record_run_event(run.workspace, event="native_tsf_anomaly", class_session_id=session_id, streams=records)
+                print(f"Warning: native TSF anomaly in {session_id}: "
+                      + ", ".join(f"{row.bssid} ({row.tsf_status})" for row in anomalies.itertuples())
+                      + "; observation timestamps retained.", file=sys.stderr, flush=True)
+                config = run.effective_configuration["beacon_quality"]
+                config["tsf_anomaly_stream_count"] = config.get("tsf_anomaly_stream_count", 0) + len(anomalies)
         post_duplicate_handling_rows += len(selection.observations)
         if "duplicate_views_collapsed" in selection.observations:
             tsf_duplicate_views_collapsed += int(
@@ -709,9 +808,62 @@ def _select_staged_sessions(
             identity_map,
             selected_for_summary,
             run_id=run.workspace.run_id,
+            primary_ssid=primary_ssid,
         )
         radio_parts.append(summaries.radio_class)
         classroom_parts.append(summaries.classroom_class)
+        station_rollups = build_station_bin_rollups(
+            bins,
+            selected_for_summary,
+            run_id=run.workspace.run_id,
+        )
+        station_rollup_rows += len(station_rollups)
+        maximum_session_station_rollup_rows = max(
+            maximum_session_station_rollup_rows,
+            len(station_rollups),
+        )
+        station_path = station_root / f"session-{position - 1:05d}.parquet"
+        station_rollups.to_parquet(station_path, index=False)
+        station_rollup_paths.append(station_path)
+        if summaries.radio_bin_cu is None:
+            raise AssertionError("radio/bin CU rows were not produced")
+        radio_bin_detail = build_radio_bin_detail(
+            summaries.radio_bin_cu,
+            station_rollups,
+        )
+        quality = build_beacon_quality_part(
+            observations, identity_map, radio_bin_detail, session,
+            run_id=run.workspace.run_id, expected_interval_tu=cadence_beacon_interval_tu,
+            selection=selection,
+        )
+        quality_path = beacon_quality_root / f"session-{position - 1:05d}"
+        quality.streams.to_csv(quality_path.with_suffix(".streams.csv"), index=False)
+        quality.gaps.to_csv(quality_path.with_suffix(".gaps.csv"), index=False)
+        pq.write_table(pa.Table.from_pandas(quality.windows, schema=BEACON_QUALITY_WINDOW_SCHEMA,
+                                          preserve_index=False), quality_path.with_suffix(".parquet"), compression="zstd")
+        beacon_quality_paths.append(quality_path)
+        beacon_quality_stream_rows += len(quality.streams)
+        beacon_quality_window_rows += len(quality.windows)
+        radio_bin_detail_rows += len(radio_bin_detail)
+        maximum_session_radio_bin_detail_rows = max(
+            maximum_session_radio_bin_detail_rows,
+            len(radio_bin_detail),
+        )
+        radio_bin_path = radio_bin_root / f"session-{position - 1:05d}.parquet"
+        radio_bin_detail.to_parquet(radio_bin_path, index=False)
+        radio_bin_detail_paths.append(radio_bin_path)
+        station_class_parts.append(
+            build_station_class_report(
+                station_rollups,
+                {
+                    "class_session_id": session_id,
+                    "classroom": session.classroom,
+                    "class_start": session.class_start,
+                    "class_end": session.class_end,
+                    "enrolled": session.enrolled,
+                },
+            )
+        )
 
         if not selected.empty:
             selected_path = selected_root / f"session-{position - 1:05d}.parquet"
@@ -726,7 +878,12 @@ def _select_staged_sessions(
         )
 
     shutil.rmtree(working_root / "class_windows", ignore_errors=True)
-    radio_summary = pd.concat(radio_parts, ignore_index=True, sort=False)
+    nonempty_radio_parts = [part for part in radio_parts if not part.empty]
+    radio_summary = (
+        pd.concat(nonempty_radio_parts, ignore_index=True, sort=False)
+        if nonempty_radio_parts
+        else pd.DataFrame(columns=RADIO_CLASS_SUMMARY_ARROW_SCHEMA.names)
+    )
     classroom_summary = pd.concat(
         classroom_parts, ignore_index=True, sort=False
     )
@@ -736,8 +893,17 @@ def _select_staged_sessions(
     classroom_summary = classroom_summary.sort_values(
         ["class_session_id", "classroom"], kind="stable"
     ).reset_index(drop=True)
+    station_class_report = pd.concat(
+        station_class_parts, ignore_index=True, sort=False
+    ).loc[:, list(STATION_CLASS_REPORT_COLUMNS)]
     return _BoundedSelection(
         selected_paths=tuple(selected_paths),
+        station_rollup_paths=tuple(station_rollup_paths),
+        radio_bin_detail_paths=tuple(radio_bin_detail_paths),
+        beacon_quality_paths=tuple(beacon_quality_paths),
+        beacon_quality_stream_rows=beacon_quality_stream_rows,
+        beacon_quality_window_rows=beacon_quality_window_rows,
+        station_class_report=station_class_report,
         summaries=CorrectedSummaryTables(
             radio_class=radio_summary.loc[
                 :, RADIO_CLASS_SUMMARY_ARROW_SCHEMA.names
@@ -747,6 +913,14 @@ def _select_staged_sessions(
             ],
         ),
         selected_rows=selected_rows,
+        station_rollup_rows=station_rollup_rows,
+        radio_bin_detail_rows=radio_bin_detail_rows,
+        maximum_session_radio_bin_detail_rows=(
+            maximum_session_radio_bin_detail_rows
+        ),
+        maximum_session_station_rollup_rows=(
+            maximum_session_station_rollup_rows
+        ),
         maximum_session_input_rows=maximum_session_input_rows,
         post_duplicate_handling_rows=post_duplicate_handling_rows,
         tsf_duplicate_views_collapsed=tsf_duplicate_views_collapsed,
@@ -763,6 +937,41 @@ def _read_selected_parts(paths: Iterable[Path]) -> Iterable[pd.DataFrame]:
             path.unlink(missing_ok=True)
 
 
+def _read_station_parts(paths: Iterable[Path], comparison=None) -> Iterable[pd.DataFrame]:
+    for path in paths:
+        station = pd.read_parquet(path)
+        try:
+            if comparison is not None:
+                comparison.add_station(station)
+            yield station
+        finally:
+            del station
+            path.unlink(missing_ok=True)
+
+
+def _read_radio_bin_parts(paths: Iterable[Path], comparison=None, affected=None) -> Iterable[pd.DataFrame]:
+    for path in paths:
+        detail = pd.read_parquet(path)
+        try:
+            if comparison is not None:
+                comparison.add_detail(detail)
+            if affected is not None:
+                affected.add_detail(detail)
+            yield detail
+        finally:
+            del detail
+            path.unlink(missing_ok=True)
+
+
+def _read_beacon_quality_parts(paths: Iterable[Path]) -> Iterable[BeaconQualityPart]:
+    for path in paths:
+        yield BeaconQualityPart(
+            pd.read_csv(path.with_suffix(".streams.csv"), keep_default_na=False),
+            pd.read_parquet(path.with_suffix(".parquet")),
+            pd.read_csv(path.with_suffix(".gaps.csv")),
+        )
+
+
 def run_corrected_capture_project(
     *,
     project_name: str,
@@ -777,6 +986,9 @@ def run_corrected_capture_project(
     default_bin_width_us: int = DEFAULT_BIN_WIDTH_US,
     default_beacon_interval_tu: int = DEFAULT_BEACON_INTERVAL_TU,
     capture_workers: int = 1,
+    cu_primary_ssid: str | None = "eduroam",
+    radio_class_plots: bool = False,
+    cadence_beacon_interval_tu: int = 100,
     extractor: CaptureExtractor = extract_capture_beacons,
     repository: str | Path | None = None,
     code_provenance: Mapping[str, object] | None = None,
@@ -789,8 +1001,8 @@ def run_corrected_capture_project(
     ``class_schedule_path`` use the existing normalized CSV/Parquet adapter.
     Supplying ``classroom_path`` selects the raw three-CSV adapter and also
     requires ``schedule_timezone``, ``schedule_start_date``, and
-    ``schedule_end_date``. Raw schedules are expanded in memory and do not
-    create intermediate Parquet files.
+    ``schedule_end_date``. Sample_classrooms.Location scopes both AP mappings
+    and schedules before expansion; no intermediate Parquet files are created.
     """
 
     materialized_paths = [Path(path) for path in capture_paths]
@@ -817,6 +1029,12 @@ def run_corrected_capture_project(
         raise ValueError(
             f"capture_workers must be between 1 and {MAX_CAPTURE_WORKERS}"
         )
+    if cu_primary_ssid is not None:
+        cu_primary_ssid = str(cu_primary_ssid).strip() or None
+    if not isinstance(radio_class_plots, bool):
+        raise TypeError("radio_class_plots must be boolean")
+    if isinstance(cadence_beacon_interval_tu, bool) or not isinstance(cadence_beacon_interval_tu, int) or not 1 <= cadence_beacon_interval_tu <= 65535:
+        raise ValueError("cadence_beacon_interval_tu must be an integer from 1 to 65535")
     ranked = [
         (Path(path), rank)
         for path, rank in rank_capture_sources(materialized_paths)
@@ -887,17 +1105,84 @@ def run_corrected_capture_project(
         for descriptor in BEACON_ADAPTER_REGISTRY.descriptors
     ]
     effective_configuration: dict[str, object] = {
+        "beacon_quality": {
+            "metric_id": BEACON_QUALITY_METRIC_ID,
+            "expected_beacon_interval_tu": cadence_beacon_interval_tu,
+            "erm_intervals_per_capture_slot": 10,
+            "intervals_per_quality_window": 100,
+            "erm_timing": "preferred_observation_time_no_tsf",
+            "native_timing": "observation_time_with_independent_tsf_diagnostics",
+            "tsf_anomaly_stream_count": 0,
+            "capture_family_pooling": True,
+            "observation_role": "unknown",
+            "listening_exposure_known": False,
+            "covariates": "previous_window_pooled_same_radio_observed_cu_and_accepted_station_count",
+            "cu_imputation": False,
+            "reliability_threshold_inference": False,
+            "model_loss_correction": False,
+        },
         "default_beacon_interval_tu": default_beacon_interval_tu,
         "nominal_raw_beacon_interval_us": default_beacon_interval_tu * 1_024,
         "useful_metadata_cadence_us": 1_024_000,
         "bin_widths_us": widths,
         "class_admission_time": "preferred_observation_time",
-        "tsf_origin": "per_bssid_session_min_observation_time_minus_tsf",
-        "tsf_failure_scope": "whole_bssid_session_observation_time_fallback",
+        "timing_policy_id": TIMING_POLICY_ID,
+        "bin_placement_time": "preferred_observation_time",
+        "tsf_role": "native_diagnostics_and_corroborated_duplicate_views_only",
+        "tsf_trust_tolerance": "one_advertised_beacon_interval",
+        "tsf_origin": "not_used",
         "representative_selection": "first_observed_per_bssid_bin",
         "rolling_minimum_spacing_gate": False,
         "high_cu_raw_minimum": HIGH_CU_MINIMUM_RAW,
         "very_high_cu_raw_minimum": VERY_HIGH_CU_MINIMUM_RAW,
+        "cu_radio_bin": {
+            "metric_id": "beacon.metric/corrected-radio-bin/v1",
+            "grain": "class_session_radio_bin",
+            "primary_ssid": cu_primary_ssid,
+            "fallback": "earliest_valid_same_radio_member_bssid",
+            "radio_class_plots": radio_class_plots,
+            "display_timezone": schedule_timezone or "UTC",
+            "cu_station_relationship": {
+                "grain": "same_radio_same_bin_valid_pairs",
+                "stale_assisted_station_values": True,
+                "statistics": ["pearson", "spearman"],
+                "inferential_statistics": False,
+            },
+        },
+        "station_count": {
+            "metric_id": "beacon.metric/corrected-station-count/v1",
+            "session_membership": "selected_bssid_observed_in_session",
+            "stale_limit_seconds": 30,
+            "leading_backward_extension": True,
+            "interior_future_fill": False,
+            "partial_numeric_totals": False,
+            "rollups": ["radio", "ssid", "band", "classroom"],
+            "class_statistic": "maximum_available_classroom_bin",
+            "enrollment": "combined_physical_session_sections",
+        },
+        "admission_capacity": {
+            "metric_id": ADMISSION_METRIC_ID,
+            "radio_detail_schema_id": RADIO_DETAIL_SCHEMA_ID,
+            "grain": "class_session_radio_bin",
+            "role": "radio_qos_medium_admission_allowance",
+            "cu_role": "channel_conditions_sampled_per_radio",
+            "usable_raw_range": [0, 31_250],
+            "percent_conversion": "raw / 31250 * 100",
+            "source_preference": "valid_capacity_from_unchanged_cu_source",
+            "fallback": "stable_primary_ssid_or_first_valid_then_earliest_member",
+            "primary_ssid": cu_primary_ssid,
+            "stale_extension": False,
+            "disagreement": "retain_selected_value_with_diagnostic",
+            "cross_radio_sums": False,
+            "stale_assisted_station_pairs": True,
+            "inferential_statistics": False,
+        },
+        "class_session_report": {
+            "grain": "physical_classroom_session",
+            "course_labels": "deterministic_combined_section_list",
+            "capacity_role": "descriptive_context_only",
+            "capacity_conflict": "null_with_conflict_status",
+        },
         "bounded_working_set": {
             "identity": "distinct_project_identity_evidence",
             "class_observations": "hidden_parquet_per_class_session",
@@ -950,6 +1235,11 @@ def run_corrected_capture_project(
                 "schedule_timezone": schedule_timezone,
                 "schedule_start_date": schedule_start_date,
                 "schedule_end_date": schedule_end_date,
+                "location_scope": {
+                    "source": "Sample_classrooms.csv:Location",
+                    "locations": list(project_inputs.location_scope),
+                    "ap_mapping_and_schedule": "only_listed_locations",
+                },
             }
         )
     run = begin_corrected_run(
@@ -971,6 +1261,7 @@ def run_corrected_capture_project(
             "tsf": "uint64_microseconds",
             "duration": "int64_microseconds",
             "qbss_cu_raw": "nullable_uint8",
+            "qbss_station_count": "nullable_uint16",
             "coverage_and_average": "float64_unrounded_ratio",
             "responsible_radio_ids": "list_string",
         },
@@ -1015,6 +1306,7 @@ def run_corrected_capture_project(
             name="resolve_project_identity",
             operation=lambda: _resolve_identity(staged),
         )
+        _warn_unobserved_project_scope(run, configured_aps, resolved.identity_map, sessions)
         run.effective_configuration["adapter_dispatch"] = staged.dispatch_counts
         run.effective_configuration["capture_stage_measurements"] = (
             staged.capture_stage_measurements
@@ -1044,8 +1336,11 @@ def run_corrected_capture_project(
                 sessions,
                 working_root,
                 default_beacon_interval_tu=default_beacon_interval_tu,
+                primary_ssid=cu_primary_ssid,
+                cadence_beacon_interval_tu=cadence_beacon_interval_tu,
             ),
         )
+        run.stages[-1]["warning_count"] += run.effective_configuration["beacon_quality"].get("tsf_anomaly_stream_count", 0)
         run.effective_configuration["bounded_working_set"].update(
             {
                 "identity_evidence_rows": len(staged.identity_evidence),
@@ -1055,6 +1350,14 @@ def run_corrected_capture_project(
                     bounded.maximum_session_input_rows
                 ),
                 "selected_rows": bounded.selected_rows,
+                "station_rollup_rows": bounded.station_rollup_rows,
+                "radio_bin_detail_rows": bounded.radio_bin_detail_rows,
+                "maximum_session_radio_bin_detail_rows": (
+                    bounded.maximum_session_radio_bin_detail_rows
+                ),
+                "maximum_session_station_rollup_rows": (
+                    bounded.maximum_session_station_rollup_rows
+                ),
                 "post_duplicate_handling_rows": (
                     bounded.post_duplicate_handling_rows
                 ),
@@ -1063,6 +1366,32 @@ def run_corrected_capture_project(
                 ),
             }
         )
+        run.effective_configuration["beacon_quality"].update(
+            stream_rows=bounded.beacon_quality_stream_rows,
+            window_rows=bounded.beacon_quality_window_rows,
+        )
+        comparison = BandComparisonAccumulator(
+            configured_aps=configured_aps, identity_map=resolved.identity_map, class_sessions=sessions,
+            run_id=run.workspace.run_id, project_name=project_name, display_timezone=schedule_timezone or "UTC",
+            radio_summary=bounded.summaries.radio_class,
+        )
+        affected = AffectedStationAccumulator(
+            class_sessions=sessions, ap_infrastructure=comparison.ap, classroom_infrastructure=comparison.rooms,
+            run_id=run.workspace.run_id, project_name=project_name, display_timezone=schedule_timezone or "UTC",
+        )
+        run.effective_configuration["affected_stations"] = {
+            "metric_id": AFFECTED_STATION_METRIC_ID, "high_minimum_raw": 128, "very_high_minimum_raw": 192,
+            "weighting": "paired_station_duration_ratio_of_sums", "stale_station_assistance": True,
+            "peak_policy": "complete_pairs_same_bin_session_active_radios", "cu_filled": False,
+        }
+        run.effective_configuration["band_comparison"] = {
+            "metric_id": BAND_COMPARISON_METRIC_ID, "enablement_column": "6GHz_Enabled",
+            "default_enablement": "project_observed_6_ghz", "explicit_false_conflict": "reject",
+            "cu_primary_weighting": "valid_radio_duration", "equal_entity_session_views": True,
+            "adoption": "actual_station_use_ratio_of_station_duration_sums",
+            "cu_relative_station": "same_radio_bin_positive_station_pairs_ratio_of_sums",
+            "cross_project_comparison": "manual", "two_point_four_included_when_sampled": True,
+        }
         write_bounded_core_corrected_artifacts(
             run,
             identity_map=resolved.identity_map,
@@ -1074,6 +1403,37 @@ def run_corrected_capture_project(
             run,
             summaries=bounded.summaries,
         )
+        write_corrected_radio_bin_report_artifacts(
+            run,
+            detail_parts=_read_radio_bin_parts(
+                bounded.radio_bin_detail_paths, comparison=comparison, affected=affected,
+            ),
+            create_plots=radio_class_plots,
+            primary_ssid=cu_primary_ssid,
+            display_timezone=schedule_timezone or "UTC",
+            class_sessions=sessions,
+            configured_aps=configured_aps,
+        )
+        write_corrected_station_report_artifacts(
+            run,
+            rollup_parts=_read_station_parts(
+                bounded.station_rollup_paths, comparison=comparison,
+            ),
+            class_report=bounded.station_class_report,
+        )
+        write_corrected_class_session_report_artifacts(
+            run,
+            class_sessions=sessions,
+            classroom_summary=bounded.summaries.classroom_class,
+            radio_summary=bounded.summaries.radio_class,
+            station_class_report=bounded.station_class_report,
+            display_timezone=schedule_timezone or "UTC",
+        )
+        write_corrected_beacon_quality_report_artifacts(
+            run, parts=_read_beacon_quality_parts(bounded.beacon_quality_paths),
+        )
+        write_corrected_band_comparison_artifacts(run, comparison=comparison)
+        write_corrected_affected_station_artifacts(run, affected=affected)
         shutil.rmtree(working_root)
         return complete_corrected_run(run)
     except KeyboardInterrupt:

@@ -73,11 +73,11 @@ Run from the repository root with the desired captures:
 ```powershell
 .\.venv\Scripts\python.exe benchmark_tshark_extraction.py `
   --repeats 3 `
-  Data\captures_test\Aruba_ERM_Capture_635_type0_2026-09-14.pcapng `
-  Data\captures_test\Aruba_ERM_Capture_635_type3_2026-09-14.pcapng `
-  Data\captures_test\Aruba_ERM_Capture_635_radiotap_2026-09-14.pcapng `
-  Data\captures_test\Beacons_LVES_fr5220_00004_20260905195309.pcapng `
-  Data\captures_test\Beacons_LVES-6GHz_fr6355_00001_20260917094712.pcapng
+  data\captures_test\Aruba_ERM_Capture_635_type0_2026-09-14.pcapng `
+  data\captures_test\Aruba_ERM_Capture_635_type3_2026-09-14.pcapng `
+  data\captures_test\Aruba_ERM_Capture_635_radiotap_2026-09-14.pcapng `
+  data\captures_test\Beacons_LVES_fr5220_00004_20260905195309.pcapng `
+  data\captures_test\Beacons_LVES-6GHz_fr6355_00001_20260917094712.pcapng
 ```
 
 JSON is written to standard output. `--output <path>` may be used for an

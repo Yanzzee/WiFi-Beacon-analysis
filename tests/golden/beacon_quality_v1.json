@@ -1,0 +1,28 @@
+{
+  "metric_id": "beacon.metric/beacon-capture-quality/v1",
+  "report_schema_id": "beacon.schema/beacon-quality-reports/v1",
+  "fingerprint_method": "SHA-256 of pandas orient=split logical JSON, no index, ISO timestamps with date_unit=ns, double_precision=12; CSV empty tokens preserved; no PNG or Parquet byte hashes",
+  "fixture": "test_exploratory_package_matches_logical_golden",
+  "logical_tables": {
+    "beacon_cadence_sessions.csv": {
+      "rows": 2,
+      "sha256": "737a85092b3145da69648c668a6aad14af43289ea60f9dcc10526f3cf31ce97e"
+    },
+    "beacon_quality_windows.parquet": {
+      "rows": 6,
+      "sha256": "01b379159af8480a375a08fa2103ffdfbc45240d140997374100127639d8ab35"
+    },
+    "beacon_quality_associations.csv": {
+      "rows": 4,
+      "sha256": "1b51fa391a795791b399c6f2f75225fe5929ad99f3fcc424ca9e663590117d98"
+    },
+    "beacon_quality_covariate_bands.csv": {
+      "rows": 22,
+      "sha256": "7ecd10dd6cc2f6295402e86cf18429ab40112532f216e720323b22f3d8ae57f1"
+    },
+    "beacon_slot_gap_counts.csv": {
+      "rows": 4,
+      "sha256": "bb255ed39f36d9b91c217658deaf80c891e821bd3f158362796f062ef62779e2"
+    }
+  }
+}

@@ -9,6 +9,8 @@ from typing import Any, Mapping
 import numpy as np
 import pandas as pd
 
+from corrected_cu_bounds import add_radio_summary_cu_bounds
+
 
 COMPACT_CSV_EXPORTS: Mapping[str, tuple[str, str]] = {
     "project_identity_map": (
@@ -59,6 +61,8 @@ def write_compact_csv_exports(run_directory: str | Path) -> dict[str, int]:
                     f"authoritative Parquet table is missing: {source}"
                 )
             frame = pd.read_parquet(source)
+            if artifact == "radio_class_summary":
+                frame = add_radio_summary_cu_bounds(frame)
             for column in frame.columns:
                 if frame[column].dtype == "object":
                     frame[column] = frame[column].map(_csv_value)

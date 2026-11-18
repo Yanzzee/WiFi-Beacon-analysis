@@ -42,7 +42,7 @@ contract.
 ## Retained original-input evidence
 
 The three intentionally untracked T4 captures remain in
-`Data/captures_test`. They are not added to Git. All were written by Dumpcap
+`data/captures_test`. They are not added to Git. All were written by Dumpcap
 `4.6.0` on Windows 11, contain one Ethernet interface captured with
 `udp port 5555`, and declare microsecond timestamp precision.
 
@@ -56,10 +56,24 @@ The beacon display filter selected every captured row. On all 2,994,944 rows,
 `frame.number`, `frame.time_epoch`, `aruba_erm.time`, `wlan.ta`, and
 `wlan.bssid` were populated. No address value is published by this review.
 
-The matching known-good processed Parquets remain in
-`Data/processed_data_test/original`. Their row counts match the captures, and
+The matching known-good processed Parquets used by this characterization were
+stored in `data/processed_data_test/original`. Their row counts match the captures, and
 their `aruba_erm.time` index is Arrow `string`, not a parsed timestamp. The
 known-good tokens and duplicate counts match the fresh TShark export.
+
+At the 2026-10-31 release-readiness check that local untracked reference folder
+was absent. The owner located the retained files at
+`E:/2025_classroom_captures/Data/processed_data`; their metadata row counts match
+the table above. Tests can read them in place with `--short-processed-dir`
+(invoke pytest with the `tests` path so its conftest loads that option).
+This availability update does not revise the timestamp contract or regenerate
+the historical expected values.
+
+The retained references contain NUL-only SSIDs as control-character text;
+current extraction intentionally preserves those non-printable bytes as hex.
+The test harness adapts that historical expected representation in memory only,
+without changing actual output, dropping SSID comparisons or loosening any
+measurement/timestamp check. Printable and other byte strings remain unchanged.
 
 ## Tool and environment evidence
 
@@ -400,8 +414,10 @@ Focused tests must cover:
 - unchanged legacy displayed token, Parquet schema, filenames, and rows; and
 - rejection of unapproved TShark/field/source contracts.
 
-The commands and results are recorded in the
-[capture integration slice](post_refactor_roadmap.md#pr-0020-capture-readiness).
+The source parser remains integrated through the
+[current extraction and normalization flow](current_pipeline.md#extraction-and-normalization).
+The former PR-0020 roadmap section has been retired; source-specific validation
+in this contract remains dated evidence.
 
 ## Evidence limits and deferred work
 

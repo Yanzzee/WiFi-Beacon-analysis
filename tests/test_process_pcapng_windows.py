@@ -142,6 +142,54 @@ def _read_parquet(path: Path) -> pd.DataFrame:
     return pd.read_parquet(path)
 
 
+def _current_reference_ssid_representation(reference: pd.DataFrame) -> pd.DataFrame:
+    """Adapt only historical NUL-only SSIDs to the accepted preserved-hex form.
+
+    Saved references are never rewritten. Do not normalize actual output or
+    use the production decoder here: a decoder regression must still fail.
+    Printable SSIDs, other bytes, missing values and all other fields retain
+    their original expectations.
+    """
+    if "wlan.ssid" not in reference:
+        return reference
+    # Compare each value directly: pandas string uniqueness can collapse
+    # different-length NUL-only strings, leaving some historical rows unchanged.
+    mask = reference["wlan.ssid"].map(
+        lambda value: isinstance(value, str) and bool(value) and not value.strip("\x00")
+    )
+    if not mask.any():
+        return reference
+    result = reference.copy()
+    result.loc[mask, "wlan.ssid"] = result.loc[mask, "wlan.ssid"].map(
+        lambda value: value.encode("utf-8").hex()
+    ).to_numpy()
+    return result
+
+
+@pytest.mark.parametrize("ssid_dtype", [object, "string"])
+def test_reference_ssid_adapter_is_narrow_and_does_not_change_source(ssid_dtype):
+    values = ["eduroam", "\x00\x00", "", None, "0000", "\x01", "text\x00", "\x00" * 18, "\x00" * 15]
+    original = pd.DataFrame({
+        "wlan.ssid": pd.array(values, dtype=ssid_dtype),
+        "wlan.qbss.cu": range(len(values)),
+    }, index=[0, 0, 1, 2, 3, 4, 5, 6, 7])
+    saved = original.copy(deep=True)
+    expected = _current_reference_ssid_representation(original)
+    wanted = original.copy(deep=True)
+    for row, size in [(1, 2), (7, 18), (8, 15)]:
+        wanted.iloc[row, wanted.columns.get_loc("wlan.ssid")] = "00" * size
+    pd.testing.assert_frame_equal(expected, wanted)
+    pd.testing.assert_frame_equal(original, saved)
+    pd.testing.assert_series_equal(expected["wlan.qbss.cu"], original["wlan.qbss.cu"])
+    assert expected.index.equals(original.index)
+    # Actual output containing old NUL text or different bytes must still fail.
+    for wrong_value in ("\x00\x00", "0001"):
+        actual = expected.copy()
+        actual.iloc[1, actual.columns.get_loc("wlan.ssid")] = wrong_value
+        with pytest.raises(AssertionError):
+            pd.testing.assert_frame_equal(actual, expected)
+
+
 def _assert_dataframes_equivalent(left: pd.DataFrame, right: pd.DataFrame) -> None:
     # Compare schema and values; ignore row ordering by sorting on index and columns.
     left_sorted = left.sort_index(axis=0).sort_index(axis=1)
@@ -317,7 +365,7 @@ def test_owner_capture_profile_detection(
     filename: str,
     expected_profile: str,
 ):
-    capture = Path("Data/captures_test") / filename
+    capture = Path("data/captures_test") / filename
     if not capture.exists():
         pytest.skip(f"Owner capture is not available: {capture}")
 
@@ -364,7 +412,7 @@ def test_owner_capture_auto_conversion(
     expected_profile: str,
     aruba_time_expected: bool,
 ):
-    capture = Path("Data/captures_test") / filename
+    capture = Path("data/captures_test") / filename
     if not capture.exists():
         pytest.skip(f"Owner capture is not available: {capture}")
     portable_tshark = Path(
@@ -760,7 +808,7 @@ def test_process_pcapng_windows_matches_known_good(
 
         assert actual_file.exists(), f"Output parquet missing: {actual_file}"
 
-        expected_df = _read_parquet(expected_file)
+        expected_df = _current_reference_ssid_representation(_read_parquet(expected_file))
         actual_df = _read_parquet(actual_file)
         _assert_dataframes_equivalent(actual_df[expected_df.columns], expected_df)
         assert {
@@ -828,7 +876,7 @@ def test_process_pcapng_windows_timestamp_source_contract(
 
         monkeypatch.setattr(pp, "parse_aruba_erm_timestamp", observing_parser)
         actual_path = Path(pp.process_pcapng(input_path, output_dir, erm=True))
-        expected = _read_parquet(expected_path)
+        expected = _current_reference_ssid_representation(_read_parquet(expected_path))
         actual = _read_parquet(actual_path)
 
         assert stats["calls"] == len(expected)

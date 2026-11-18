@@ -33,12 +33,13 @@ Acceptance of this ADR closes the versioning decision dependency only. It does
 not implement PR-0011 or determine readiness without the repository evidence
 review recorded in the roadmap.
 
-## Context and current behavior
+## Historical context before the accepted refactor
 
-The current pipeline has no canonical schema identifier or explicit metric
-version. Current grouped inputs and published analysis outputs use
-Aruba-shaped names and current behavior documented in
-[`current_pipeline.md`](../current_pipeline.md).
+At proposal time, the pre-refactor pipeline had no canonical schema identifier
+or explicit metric version. Its grouped inputs and analysis outputs used
+Aruba-shaped names. The implemented versioned workflow is now documented in
+[`current_pipeline.md`](../current_pipeline.md); this context preserves the
+reason the accepted versioning contract was needed.
 
 The tracked analysis-forward fixture is unversioned and begins after capture
 conversion/grouping. It is valuable regression evidence, but it lacks:
@@ -260,8 +261,10 @@ replaced its regression role.
 The project owner clarified the broader migration goal without changing the
 narrow PR-0011 decision above:
 
-1. Commit `4a20d1c8f6164fdb81fc75f2cf80b9fba3f1c5fb` is the retained reference
-   for the original refactored workflow and published calculations.
+1. The public
+   [Original release](https://github.com/Yanzzee/WiFi-Beacon-analysis/releases/tag/Original)
+   is the retained reference for the original refactored workflow and
+   published calculations.
 2. The production application will not maintain, execute, or persist a
    complete parallel legacy metric pipeline merely for compatibility.
 3. Long-term comparisons should rerun the current metric definition over older
@@ -323,7 +326,7 @@ documentation gate:
 - corrected metric ID: `beacon.metric/corrected-cu/v1`;
 - result schema ID: `beacon.schema/analysis-results/v1`;
 - one `run_id` associates all artifacts, while the manifest is authoritative;
-- artifacts live under `Output/runs/{project_slug}/{run_id}/` as `manifest.json`,
+- artifacts live under `output/runs/{project_slug}/{run_id}/` as `manifest.json`,
   `project_identity_map.parquet`, a `selected_observations/` Parquet dataset
   partitioned by `class_date`, `radio_class_summary.parquet`, and
   `classroom_class_summary.parquet`;
@@ -373,7 +376,7 @@ artifact has an additive fixed 256-value `valid_cu_raw_counts` field populated
 from the already selected radio/bin CU values. The resulting histogram and CDF
 therefore count each radio/time bin once rather than counting duplicate BSSID
 or capture-source views. Time-histogram buckets align to the configured
-analysis-bin interval, and average-CU buckets span four raw CU units. CU CDFs
+analysis-bin interval, and average-CU buckets span two raw CU units. CU CDFs
 label the cumulative share at the 50% and 75% thresholds. Histogram bars use
 their full bucket width, and paired classroom streak distributions share a
 common x/y scale. These files are
@@ -408,7 +411,7 @@ runner:
   its inputs are identical to a previous run;
 - a user-supplied project name is retained prominently and represented by a
   path-safe `project_slug`, so related runs live below
-  `Output/runs/{project_slug}/`;
+  `output/runs/{project_slug}/`;
 - the run directory name uses UTC date/time with microsecond precision plus an
   eight-character prefix of the aggregate input-set SHA-256, for example
   `20260923T184530123456Z-4f9a2c1d`;

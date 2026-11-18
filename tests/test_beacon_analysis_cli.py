@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 import beacon_analysis as cli
 
@@ -11,7 +12,7 @@ def _write_inputs(tmp_path: Path):
     captures = tmp_path / "captures"
     captures.mkdir()
     (captures / "capture.pcapng").write_bytes(b"\x0a\x0d\x0d\x0a")
-    samples = tmp_path / "Sample"
+    samples = tmp_path / "sample"
     samples.mkdir()
     pd.DataFrame(
         {
@@ -60,7 +61,7 @@ def test_run_command_uses_raw_csvs_and_cli_overrides_config(
     env_file.write_text(
         "PROJECT_NAME=Config project\n"
         f"CAPTURES_FOLDER={captures}\n"
-        f"OUTPUT_FOLDER={tmp_path / 'Output'}\n"
+        f"OUTPUT_FOLDER={tmp_path / 'output'}\n"
         f"SAMPLE_FOLDER={samples}\n"
         "START_DATE=2026-09-28\n"
         "END_DATE=2026-09-28\n"
@@ -81,7 +82,7 @@ def test_run_command_uses_raw_csvs_and_cli_overrides_config(
 
     def fake_run(**kwargs):
         received.update(kwargs)
-        return tmp_path / "Output" / "runs" / "published"
+        return tmp_path / "output" / "runs" / "published"
 
     monkeypatch.setattr(cli, "run_corrected_capture_project", fake_run)
 
@@ -102,8 +103,11 @@ def test_run_command_uses_raw_csvs_and_cli_overrides_config(
     assert received["classroom_path"].endswith("Sample_classrooms.csv")
     assert received["class_schedule_path"].endswith("Sample_schedule.csv")
     assert received["schedule_timezone"] == "America/Denver"
-    assert Path(received["output_root"]) == (tmp_path / "Output" / "runs")
+    assert Path(received["output_root"]) == (tmp_path / "output" / "runs")
     assert received["capture_workers"] == 1
+    assert received["cu_primary_ssid"] == "eduroam"
+    assert received["radio_class_plots"] is False
+    assert received["cadence_beacon_interval_tu"] == 100
     assert len(received["capture_paths"]) == 1
     assert not list(samples.glob("*.parquet"))
     output = capsys.readouterr().out
@@ -112,6 +116,7 @@ def test_run_command_uses_raw_csvs_and_cli_overrides_config(
     assert "Expanded class sessions: 1" in output
     assert "Capture workers: 1 [default]" in output
     assert "Published corrected run:" in output
+    assert "Open run overview:" in output
 
 
 def test_non_interactive_mode_fails_before_prompt_when_required_config_missing(
@@ -194,13 +199,15 @@ def test_capture_workers_flag_overrides_env_file(
     env_file.write_text(
         "PROJECT_NAME=Worker test\n"
         f"CAPTURES_FOLDER={captures}\n"
-        f"OUTPUT_FOLDER={tmp_path / 'Output'}\n"
+        f"OUTPUT_FOLDER={tmp_path / 'output'}\n"
         f"SAMPLE_FOLDER={samples}\n"
         "START_DATE=2026-09-28\n"
         "END_DATE=2026-09-28\n"
         "TIMEZONE=America/Denver\n"
         "TSHARK_PATH=fake-tshark\n"
-        "CAPTURE_WORKERS=1\n",
+        "CAPTURE_WORKERS=1\n"
+        "CU_PRIMARY_SSID=guest\n"
+        "RADIO_CLASS_PLOTS=false\n",
         encoding="utf-8",
     )
     monkeypatch.setattr(cli, "_STARTUP_ENV", {})
@@ -223,12 +230,42 @@ def test_capture_workers_flag_overrides_env_file(
             str(env_file),
             "--capture-workers",
             "8",
+            "--cu-primary-ssid",
+            "BYU-WiFi",
+            "--radio-class-plots",
+            "--beacon-interval-tu",
+            "200",
             "--yes",
         ]
     )
 
     assert result == 0
     assert received["capture_workers"] == 8
+    assert received["cu_primary_ssid"] == "BYU-WiFi"
+    assert received["radio_class_plots"] is True
+    assert received["cadence_beacon_interval_tu"] == 200
+
+
+@pytest.mark.parametrize("value", ["0", "65536", "bad"])
+def test_invalid_diagnostic_beacon_interval_fails_preflight(tmp_path, monkeypatch, capsys, value):
+    captures, samples = _write_inputs(tmp_path)
+    env_file = tmp_path / "config.env"
+    env_file.write_text(
+        "PROJECT_NAME=Cadence validation\n"
+        f"CAPTURES_FOLDER={captures}\n"
+        f"OUTPUT_FOLDER={tmp_path / 'output'}\n"
+        f"SAMPLE_FOLDER={samples}\n"
+        "START_DATE=2026-09-28\nEND_DATE=2026-09-28\n"
+        "TIMEZONE=America/Denver\nTSHARK_PATH=fake-tshark\n"
+        f"BEACON_INTERVAL_TU={value}\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(cli, "_STARTUP_ENV", {})
+    monkeypatch.setattr(cli, "_resolve_tshark", lambda setting: setting)
+    result = cli.main(["run", "--env-file", str(env_file), "--yes"])
+    assert result == 2
+    assert "BEACON_INTERVAL_TU" in capsys.readouterr().err
+    assert not (tmp_path / "output").exists()
 
 
 def test_declining_confirmation_does_not_start_analysis(
@@ -241,7 +278,7 @@ def test_declining_confirmation_does_not_start_analysis(
     env_file.write_text(
         "PROJECT_NAME=Review project\n"
         f"CAPTURES_FOLDER={captures}\n"
-        f"OUTPUT_FOLDER={tmp_path / 'Output'}\n"
+        f"OUTPUT_FOLDER={tmp_path / 'output'}\n"
         f"SAMPLE_FOLDER={samples}\n"
         "START_DATE=2026-09-28\n"
         "END_DATE=2026-09-28\n"

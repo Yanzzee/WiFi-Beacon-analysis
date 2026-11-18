@@ -2,15 +2,15 @@
   "captures": [
     {
       "bytes": 460708660,
-      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures_test\\Beacon_Capture_20251110090000_00012.pcapng"
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\data\\captures_test\\Beacon_Capture_20251110090000_00012.pcapng"
     },
     {
       "bytes": 441484000,
-      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures_test\\Beacon_Capture_20251110100000_00013.pcapng"
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\data\\captures_test\\Beacon_Capture_20251110100000_00013.pcapng"
     },
     {
       "bytes": 389266084,
-      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\Data\\captures_test\\Beacon_Capture_20251110110000_00014.pcapng"
+      "path": "C:\\Users\\yanzzee\\Documents\\GitHub\\Beacon-analysis\\data\\captures_test\\Beacon_Capture_20251110110000_00014.pcapng"
     }
   ],
   "environment": {

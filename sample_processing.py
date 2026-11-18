@@ -18,7 +18,7 @@ from timestamp_normalization import (
 )
 
 
-DAY_MAPPING = {"M": 0, "T": 1, "W": 2, "R": 3, "F": 4}
+DAY_MAPPING = {"M": 0, "T": 1, "W": 2, "R": 3, "F": 4, "S": 5, "U": 6}
 SCHEDULE_NORMALIZER_NAME = "sample_processing.schedule"
 SCHEDULE_NORMALIZER_VERSION = "1"
 
@@ -186,6 +186,9 @@ def expand_schedule_rows(
         # Determine which days the class meets and create entries for each
         # valid day
         if days:
+            # Normalize weekend aliases before matching single-letter codes:
+            # Sunday "Su" must not also match Saturday "S".
+            days = days.replace("Sa", "S").replace("Su", "U")
             for day_abbreviation in DAY_MAPPING.keys():
                 if day_abbreviation in days:
                     day_index = DAY_MAPPING[day_abbreviation]
@@ -224,6 +227,33 @@ def expand_schedule_rows(
     return sample_classes_df
 
 
+def _scope_sample_locations(sample_aps, sample_classrooms, sample_schedule):
+    """Use the explicit classroom list before validating or expanding rows."""
+    for frame, label, column in (
+        (sample_classrooms, "Sample_classrooms.csv", "Location"),
+        (sample_aps, "Sample_APs.csv", "Building-Room"),
+        (sample_schedule, "Sample_schedule.csv", "Location"),
+    ):
+        frame.columns = frame.columns.str.strip()
+        if column not in frame:
+            raise ValueError(f"{label} must contain {column}")
+        frame[column] = frame[column].map(
+            lambda value: pd.NA if pd.isna(value) else clean_cell(value)
+        ).astype("string")
+    locations = sample_classrooms["Location"]
+    if locations.empty or locations.isna().any() or locations.eq("").any():
+        raise ValueError("Sample_classrooms.csv must contain at least one location and no blank Location values")
+    scope = set(locations)
+    sample_aps = sample_aps.loc[sample_aps["Building-Room"].isin(scope)].copy()
+    sample_schedule = sample_schedule.loc[sample_schedule["Location"].isin(scope)].copy()
+    missing_mapping = sorted(scope - set(sample_aps["Building-Room"]))
+    if missing_mapping:
+        raise ValueError("Sample_APs.csv has no AP mapping for scoped locations: " + ", ".join(missing_mapping))
+    if sample_schedule.empty:
+        raise ValueError("Sample_schedule.csv has no rows for locations listed in Sample_classrooms.csv")
+    return sample_aps, sample_classrooms, sample_schedule
+
+
 def build_sample_tables(
     sample_aps_df: pd.DataFrame,
     sample_classrooms_df: pd.DataFrame,
@@ -235,7 +265,7 @@ def build_sample_tables(
     reject_malformed_periods: bool = False,
     report_dates: bool = False,
 ) -> ProcessedSampleTables:
-    """Clean and expand the three user sample tables in memory.
+    """Clean and expand rows in the location scope of Sample_classrooms.csv.
 
     ``reject_malformed_periods`` is used by the corrected one-command runner
     so a malformed schedule cannot be silently omitted.  The legacy
@@ -246,6 +276,9 @@ def build_sample_tables(
     sample_aps_df = sample_aps_df.copy(deep=True)
     sample_classrooms_df = sample_classrooms_df.copy(deep=True)
     sample_schedule_df = sample_schedule_df.copy(deep=True)
+    sample_aps_df, sample_classrooms_df, sample_schedule_df = _scope_sample_locations(
+        sample_aps_df, sample_classrooms_df, sample_schedule_df
+    )
 
     sample_classes_df = pd.DataFrame(
         {

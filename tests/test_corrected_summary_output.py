@@ -13,8 +13,12 @@ from corrected_beacon_selection import build_class_bins
 from corrected_cu_reports import (
     _average_cu_edges_percent,
     _cdf_below_raw_threshold,
+    _new_figure,
     _time_histogram_edges,
     build_corrected_cu_report_tables,
+    build_radio_class_mean_cu_histogram,
+    build_radio_bin_cu_by_band,
+    build_radio_coverage_histograms,
 )
 from corrected_summary_output import (
     CLASSROOM_CLASS_SUMMARY_ARROW_SCHEMA,
@@ -172,6 +176,32 @@ def test_corrected_summaries_match_the_accepted_logical_oracles():
     )
 
 
+def test_radio_bin_rows_prefer_configured_ssid_and_keep_explicit_unknowns():
+    bins, identity, selected = _fixture_inputs()
+    summaries = build_corrected_summaries(
+        bins,
+        identity,
+        selected,
+        run_id=RUN_ID,
+        primary_ssid="eduroam",
+    )
+
+    assert summaries.radio_bin_cu is not None
+    detail = summaries.radio_bin_cu.loc[
+        summaries.radio_bin_cu["radio_group_id"].eq("R5")
+    ].set_index("bin_number")
+    assert len(detail) == len(bins)
+    assert detail.loc[0, "source_ssid"] == "eduroam"
+    assert detail.loc[0, "source_bssid"] == "A5"
+    assert detail.loc[0, "source_selection_method"] == "primary_ssid"
+    assert detail.loc[4, "source_ssid"] == "guest"
+    assert detail.loc[4, "source_selection_method"] == "fallback_member_bssid"
+    assert detail.loc[2, "cu_state"] == "missing_cu"
+    assert detail.loc[2, "observed_member_bssid_count"] == 2
+    assert detail.loc[3, "cu_state"] == "no_beacon"
+    assert pd.isna(detail.loc[3, "qbss_cu_raw"])
+
+
 def test_frozen_legacy_comparison_uses_the_corrected_fixture_and_current_result():
     comparison = json.loads(COMPARISON_GOLDEN.read_text(encoding="utf-8"))
     selected_path = EXPECTED_ROOT / "selected_observations.csv"
@@ -251,6 +281,13 @@ def test_no_observations_are_no_beacon_time_and_null_cu_results():
     assert report_classroom["radios_without_valid_cu_count"] == 1
     assert report_classroom["radio_cu_coverage_median_percent"] == 0.0
     assert reports.valid_cu_raw_counts.sum() == 0
+    assert report_radio["average_cu_percent_lower_bound"] == 0
+    assert report_radio["average_cu_percent_upper_bound"] == 100
+    population = reports.band_population
+    present = population.class_radio_hours.gt(0)
+    assert population.loc[present, "average_cu_percent_lower_bound"].eq(0).all()
+    assert population.loc[present, "average_cu_percent_upper_bound"].eq(100).all()
+    assert population.loc[~present, ["average_cu_percent_lower_bound", "average_cu_percent_upper_bound"]].isna().all().all()
 
 
 def test_report_derives_same_band_radio_count_from_identity_not_model():
@@ -292,17 +329,121 @@ def test_report_derives_same_band_radio_count_from_identity_not_model():
     ).all()
 
 
+@pytest.mark.parametrize("all_rooms_unobserved", [False, True])
+def test_report_keeps_zero_radio_classrooms_unavailable(all_rooms_unobserved):
+    bins, identity, selected = _fixture_inputs()
+    empty_bins = bins.copy()
+    empty_bins["class_session_id"], empty_bins["classroom"] = "C0", "NO-RADIOS"
+    if all_rooms_unobserved:
+        bins, identity, selected = empty_bins, identity.iloc[:0], selected.iloc[:0]
+    else:
+        baseline = build_corrected_summaries(bins, identity, selected, run_id=RUN_ID)
+        expected = build_corrected_cu_report_tables(baseline.radio_class, baseline.classroom_class, identity)
+        bins = pd.concat([empty_bins, bins], ignore_index=True)
+    summaries = build_corrected_summaries(bins, identity, selected, run_id=RUN_ID)
+    reports = build_corrected_cu_report_tables(summaries.radio_class, summaries.classroom_class, identity)
+    room = reports.classroom_class.set_index("classroom").loc["NO-RADIOS"]
+    assert room.radio_count_total == 0
+    assert room.radios_with_valid_cu_count == room.radios_without_valid_cu_count == 0
+    for field in ("radio_cu_coverage_min_percent", "radio_cu_coverage_median_percent",
+                  "radio_cu_coverage_max_percent", "high_possible_connected_max_seconds",
+                  "high_actual_observed_max_seconds", "very_high_possible_connected_max_seconds",
+                  "very_high_actual_observed_max_seconds"):
+        assert pd.isna(room[field]), field
+    if not all_rooms_unobserved:
+        pd.testing.assert_frame_equal(
+            reports.classroom_class.loc[reports.classroom_class.classroom.ne("NO-RADIOS")].reset_index(drop=True),
+            expected.classroom_class)
+        pd.testing.assert_frame_equal(reports.radio_class, expected.radio_class)
+        pd.testing.assert_frame_equal(reports.band_population, expected.band_population)
+
+
+@pytest.mark.parametrize("damage", ["missing_rows", "false_zero", "wrong_count"])
+def test_zero_radio_support_does_not_hide_genuine_summary_mismatches(damage):
+    bins, identity, selected = _fixture_inputs()
+    summaries = build_corrected_summaries(bins, identity, selected, run_id=RUN_ID)
+    radio, classroom = summaries.radio_class.copy(), summaries.classroom_class.copy()
+    if damage in {"missing_rows", "false_zero"}:
+        radio = radio.iloc[:0]
+        if damage == "false_zero":
+            classroom["radio_count_total"] = 0
+        message = "classroom summaries have no matching radio summaries"
+    else:
+        classroom["radio_count_total"] += 1
+        message = "classroom radio counts disagree with radio summaries"
+    with pytest.raises(ValueError, match=message):
+        build_corrected_cu_report_tables(radio, classroom, identity)
+
+
 def test_report_histogram_edges_follow_accepted_units():
     average_edges = _average_cu_edges_percent() * (255.0 / 100.0)
-    assert len(average_edges) == 65
+    assert len(average_edges) == 129
     assert average_edges[0] == pytest.approx(0.0)
     assert average_edges[-1] == pytest.approx(256.0)
-    np.testing.assert_allclose(np.diff(average_edges), 4.0)
+    np.testing.assert_allclose(np.diff(average_edges), 2.0)
 
     time_edges = _time_histogram_edges(41.984, interval_us=1_024_000)
     assert time_edges[0] == pytest.approx(0.0)
     assert time_edges[-1] == pytest.approx(43.008)
     np.testing.assert_allclose(np.diff(time_edges), 1.024)
+
+
+def test_report_figures_use_double_width_and_height():
+    np.testing.assert_allclose(_new_figure().get_size_inches(), [18.0, 10.0])
+
+
+def test_radio_class_mean_histogram_keeps_counts_bins_and_clear_units(monkeypatch):
+    from matplotlib.axes import Axes
+
+    saved = Axes.hist
+    results = []
+
+    def record_histogram(self, *args, **kwargs):
+        result = saved(self, *args, **kwargs)
+        results.append(result)
+        return result
+
+    monkeypatch.setattr(Axes, "hist", record_histogram)
+    figure = build_radio_class_mean_cu_histogram(pd.DataFrame({
+        "band": ["5", "5", "6", "6"], "average_cu_percent": [10, 20, 5, np.nan]}))
+    assert len(results) == 2
+    assert [int(result[0].sum()) for result in results] == [2, 1]
+    for _, bins, _ in results:
+        np.testing.assert_allclose(bins, _average_cu_edges_percent())
+    axis = figure.axes[0]
+    assert "Radio/class-session" in axis.get_title() and "histogram" in axis.get_title()
+    assert "0.78 percentage points" in axis.get_xlabel()
+    assert axis.get_ylabel() == "Radio/class-sessions"
+
+
+@pytest.mark.parametrize("valid_bands", [[], ["6"], ["5", "6"], ["2.4", "5", "6"]])
+@pytest.mark.parametrize("kind", ["histogram", "cdf"])
+def test_cu_band_figures_omit_empty_bands_share_scale_and_keep_frequencies(valid_bands, kind):
+    counts = {band: np.zeros(256, dtype=np.int64) for band in ("2.4", "5", "6")}
+    for index, band in enumerate(valid_bands):
+        counts[band][[0, 127, 255]] = [1, 5 + index, 2]
+    figure = build_radio_bin_cu_by_band(counts, kind=kind)
+    assert len(figure.axes) == max(1, len(valid_bands))
+    for axis, band in zip(figure.axes, valid_bands):
+        assert axis.get_title().startswith(band + " GHz")
+        if kind == "histogram":
+            assert sum(patch.get_height() for patch in axis.patches) == int(counts[band].sum())
+        else:
+            np.testing.assert_allclose(axis.lines[0].get_ydata(), np.cumsum(counts[band]) / counts[band].sum())
+    if len(figure.axes) > 1:
+        for axis in figure.axes[1:]:
+            assert figure.axes[0].get_shared_y_axes().joined(figure.axes[0], axis)
+            assert figure.axes[0].get_ylim() == axis.get_ylim()
+
+
+def test_cu_availability_histograms_have_one_radio_session_count_scale():
+    figure = build_radio_coverage_histograms(pd.DataFrame({
+        "cu_coverage_percent": [100, 50, 100], "class_duration_seconds": [10, 10, 10],
+        "missing_cu_seconds": [0, 0, 0], "no_beacon_seconds": [0, 5, 0]}))
+    for axis in figure.axes:
+        assert figure.axes[0].get_shared_y_axes().joined(figure.axes[0], axis)
+        assert figure.axes[0].get_ylim() == axis.get_ylim()
+        assert sum(patch.get_height() for patch in axis.patches) == 3
 
 
 def test_cdf_threshold_values_use_values_strictly_below_each_boundary():

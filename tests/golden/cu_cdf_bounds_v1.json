@@ -1,0 +1,14 @@
+{
+  "bounds_metric_id": "beacon.metric/cu-missing-bin-bounds/v1",
+  "scope": "Stage 3 CDF thresholds: equal radio-bin counts and duration-weighted populations",
+  "logical_tables": {
+    "cu_coverage_streak/cu_cdf_bounds.csv": {
+      "rows": 10,
+      "sha256": "d16606eaf2875dc3de800f7d0223039303b402923c459d299ab30ef7cbb235ab"
+    },
+    "band_comparison/cu_cdf_bounds.csv": {
+      "rows": 32,
+      "sha256": "49f48112148ba6ca2ea92c4cab7e6a675c7eed0a5de0cf77088885878539bbfe"
+    }
+  }
+}

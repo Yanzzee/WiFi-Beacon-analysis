@@ -493,44 +493,32 @@ def _looks_like_hex(s: str) -> bool:
     return len(s) > 0 and len(s) % 2 == 0 and HEX_RE.fullmatch(s) is not None
 
 def _decode_hex_ssid(s: str) -> str:
-    """Decode a hex string to UTF-8; fall back to original on error."""
+    """Decode printable UTF-8 hex without merging invalid byte sequences."""
     s = s.strip()
     try:
-        return bytes.fromhex(s).decode("utf-8", errors="replace")
-    except Exception:
+        decoded = bytes.fromhex(s).decode("utf-8", errors="strict")
+    except (ValueError, UnicodeDecodeError):
         return s
+    return decoded if decoded.isprintable() else s
 
 def normalize_ssid_column(df: pd.DataFrame) -> None:
-    """
-    Inspect wlan.ssid values to see if tshark is outputting hex.
-    If most non-empty values look like hex, decode them. Then
-    cast to pandas string dtype.
+    """Match hex-encoded and readable SSIDs independently of file population.
+
+    Decode each distinct hex value only when it represents printable UTF-8.
+    Readable text, missing markers, and undecodable byte strings are preserved.
+    No file-level sampling decision depends on hidden SSIDs or row ordering.
     """
     if "wlan.ssid" not in df.columns:
         return
 
     s = df["wlan.ssid"].astype("string")
 
-    # Drop NaNs/empties for detection
-    non_empty = s.dropna().str.strip()
-    non_empty = non_empty[non_empty != ""]
-    if non_empty.empty:
-        df["wlan.ssid"] = s
-        return
-
-    sample = non_empty.head(100)
-    hex_count = sum(_looks_like_hex(v) for v in sample)
-    frac_hex = hex_count / len(sample)
-
-    # Heuristic: if majority look like hex, assume tshark is in hex mode
-    if frac_hex > 0.7:
-        decoded = s.map(
-            lambda v: _decode_hex_ssid(v) if v is not None and _looks_like_hex(str(v)) else v
-        )
-        df["wlan.ssid"] = decoded.astype("string")
-    else:
-        # Already human-readable text; just enforce string dtype
-        df["wlan.ssid"] = s.astype("string")
+    # Decode once per unique token, not once per beacon in large captures.
+    normalized = {
+        value: _decode_hex_ssid(value) if _looks_like_hex(value) else value
+        for value in s.dropna().unique()
+    }
+    df["wlan.ssid"] = s.map(normalized).astype("string")
 
 
 def validate_aruba_timestamp_rows(

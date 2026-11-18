@@ -116,19 +116,24 @@ def test_selected_observation_builder_matches_accepted_oracle():
             inplace=True,
         )
         frame.reset_index(drop=True, inplace=True)
-    pd.testing.assert_frame_equal(actual_oracle, expected)
+    historical_timing = {"metric_id", "tsf_origin", "tsf_derived_time", "timing_method",
+                         "tsf_status", "unusable_tsf_reason", "duplicate_views_collapsed"}
+    compare = [column for column in actual_oracle if column not in historical_timing]
+    pd.testing.assert_frame_equal(actual_oracle[compare], expected[compare])
+    assert actual_oracle.timing_method.eq("observation_time").all()
+    assert actual_oracle.tsf_derived_time.isna().all()
 
 
 def test_selected_observation_writer_partitions_and_round_trips(tmp_path: Path):
     selected = _integrated_selection()
     path = write_selected_observations(
         selected,
-        output_root=tmp_path / "Output" / "runs",
+        output_root=tmp_path / "output" / "runs",
         run_id="test-run",
     )
 
     assert path == (
-        tmp_path / "Output" / "runs" / "test-run" / "selected_observations"
+        tmp_path / "output" / "runs" / "test-run" / "selected_observations"
     )
     partition = path / "class_date=2026-01-15" / "part-00000.parquet"
     assert partition.is_file()
@@ -145,7 +150,7 @@ def test_selected_observation_writer_partitions_and_round_trips(tmp_path: Path):
     with pytest.raises(FileExistsError, match="already exists"):
         write_selected_observations(
             selected,
-            output_root=tmp_path / "Output" / "runs",
+            output_root=tmp_path / "output" / "runs",
             run_id="test-run",
         )
 

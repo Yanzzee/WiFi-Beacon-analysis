@@ -8,6 +8,7 @@ import pytest
 
 from corrected_beacon_selection import (
     build_class_bins,
+    preferred_observation_times,
     select_bssid_session_observations,
 )
 
@@ -195,30 +196,28 @@ def test_cf01_observation_time_precedence_and_exclusion():
     )
 
 
-def test_cf02_tsf_anchor_order_duplicates_gaps_and_fallback():
-    result = _select("CF02")
+def test_cf02_native_tsf_is_diagnostic_and_observation_time_controls_bins():
+    observations, _ = _load_inputs("CF02")
+    observations["capture_profile"] = "native_80211"
+    observations["frame_time_epoch"] = observations["aruba_erm_time"]
+    observations["aruba_erm_time"] = ""
+    result = _select("CF02", observations=observations)
     timing = result.timing.set_index("bssid")
 
     assert timing.loc["A", "tsf_status"] == "usable_advancing"
-    assert timing.loc["A", "tsf_origin"] == pd.Timestamp(
-        "2026-01-15T09:59:59.100000000Z"
-    )
+    assert pd.isna(timing.loc["A", "tsf_origin"])
     assert timing.loc["B", "tsf_status"] == "insufficient_progression"
     assert timing.loc["C", "tsf_status"] == "frozen"
     assert timing.loc["D", "tsf_status"] == "reversing"
-    assert timing.loc["E", "tsf_status"] == "time_mismatch"
+    assert timing.loc["E", "tsf_status"] == "discontinuous"
     assert timing.loc["G", "tsf_status"] == "usable_advancing"
 
     a_rows = result.observations.loc[
         result.observations["bssid"] == "A"
     ].sort_values("sequence_order")
     assert a_rows["row_id"].tolist() == ["D2", "D5", "D4"]
-    assert a_rows["bin_number"].tolist() == [0, 1, 1]
-    assert a_rows["tsf_derived_time"].tolist() == [
-        pd.Timestamp("2026-01-15T10:00:00.990000000Z"),
-        pd.Timestamp("2026-01-15T10:00:01.100000000Z"),
-        pd.Timestamp("2026-01-15T10:00:01.304800000Z"),
-    ]
+    assert a_rows["bin_number"].tolist() == [1, 1, 1]
+    assert a_rows["tsf_derived_time"].isna().all()
     assert a_rows.set_index("row_id").loc[
         "D4", "skipped_intervals_before"
     ] == 1
@@ -228,20 +227,18 @@ def test_cf02_tsf_anchor_order_duplicates_gaps_and_fallback():
 
     assert result.selected.loc[
         result.selected["bssid"] == "A", "row_id"
-    ].tolist() == ["D2", "D5"]
+    ].tolist() == ["D2"]
 
     excluded = result.excluded.set_index("row_id")
     assert excluded.loc["D1", "exclusion_reason"] == "duplicate_view"
     assert excluded.loc["D12", "exclusion_reason"] == (
         "outside_class_observation_time"
     )
-    assert excluded.loc["D13", "exclusion_reason"] == (
-        "tsf_time_outside_class"
-    )
+    assert "D13" in set(result.observations.row_id)
 
     for bssid in ["B", "C", "D", "E"]:
         rows = result.observations.loc[result.observations["bssid"] == bssid]
-        assert rows["timing_method"].eq("observation_time_fallback").all()
+        assert rows["timing_method"].eq("observation_time").all()
     assert result.observations.loc[
         result.observations["bssid"] == "C", "row_id"
     ].tolist() == ["D6", "D7"]
@@ -312,7 +309,7 @@ def test_cf04_selects_first_observation_independently_in_each_fixed_bin():
     }
 
 
-def test_integrated_selected_observations_match_corrected_oracle():
+def test_integrated_observation_time_measurements_preserve_historical_oracle_values():
     result = _select("CF05_10")
     expected = pd.read_csv(
         EXPECTED_ROOT / "selected_observations.csv",
@@ -394,10 +391,17 @@ def test_integrated_selected_observations_match_corrected_oracle():
             actual[column] = actual[column].fillna("").astype("string")
             expected[column] = expected[column].fillna("").astype("string")
 
-    pd.testing.assert_frame_equal(actual, expected, check_like=False)
+    # Historical v1 mapped-clock metadata is retained as an old-run reference.
+    # This fixture's selected measurements are unchanged under observation time.
+    historical_timing = {"tsf_origin", "tsf_derived_time", "timing_method", "tsf_status",
+                         "unusable_tsf_reason", "duplicate_views_collapsed"}
+    compare = [column for column in columns if column not in historical_timing]
+    pd.testing.assert_frame_equal(actual[compare], expected[compare], check_like=False)
+    assert actual.timing_method.eq("observation_time").all()
+    assert actual.tsf_origin.isna().all() and actual.tsf_derived_time.isna().all()
 
 
-def test_one_interval_delivery_reordering_uses_tsf_without_mutating_input():
+def test_delivery_reordering_keeps_observation_order_without_mutating_input():
     observations = pd.DataFrame(
         {
             "row_id": ["earlier-tbtt-delayed", "later-tbtt-arrived-first"],
@@ -426,18 +430,18 @@ def test_one_interval_delivery_reordering_uses_tsf_without_mutating_input():
     )
 
     pd.testing.assert_frame_equal(observations, original)
-    assert result.timing.loc[0, "tsf_status"] == "usable_advancing"
+    assert result.timing.loc[0, "tsf_status"] == "unknown_capture_profile"
     ordered = result.observations.sort_values("sequence_order")
     assert ordered["row_id"].tolist() == [
-        "earlier-tbtt-delayed",
         "later-tbtt-arrived-first",
+        "earlier-tbtt-delayed",
     ]
     assert result.selected["row_id"].tolist() == [
         "later-tbtt-arrived-first"
     ]
 
 
-def test_aruba_timestamp_source_precedes_capture_rank_for_duplicate_views():
+def test_mixed_unverified_tsf_does_not_override_the_earliest_observation():
     observations = pd.DataFrame(
         {
             "row_id": ["frame-view", "aruba-view", "next-beacon"],
@@ -469,10 +473,8 @@ def test_aruba_timestamp_source_precedes_capture_rank_for_duplicate_views():
         bin_width_us=1_024_000,
     )
 
-    assert result.selected["row_id"].tolist() == ["aruba-view"]
-    assert result.excluded.set_index("row_id").loc[
-        "frame-view", "exclusion_reason"
-    ] == "duplicate_view"
+    assert result.selected["row_id"].tolist() == ["frame-view"]
+    assert result.excluded.empty
 
 
 def test_rejects_naive_class_boundaries_and_invalid_width():
@@ -493,3 +495,57 @@ def test_rejects_naive_class_boundaries_and_invalid_width():
             class_row["class_end"],
             0,
         )
+
+
+def test_forward_tsf_jump_never_moves_or_excludes_observed_measurements():
+    start = pd.Timestamp("2026-11-09T18:00:00Z")
+    times = [start + pd.Timedelta(seconds=.01 + i * 1.024) for i in range(4)]
+    native = pd.DataFrame({"bssid": ["A"] * 4, "ssid": ["eduroam"] * 4,
+        "capture_profile": ["native_80211"] * 4, "frame_time_epoch": times,
+        "tsf_us": [1000000, 2024000, 1664074390, 1665098390],
+        "source_capture": ["native.pcapng"] * 4, "source_frame": [1, 2, 3, 4],
+        "qbss_cu_raw": [44, 19, 60, 10], "qbss_station_count": [17, 24, 30, 20]})
+    arguments = dict(class_session_id="HBLL", class_start=start,
+                     class_end=start + pd.Timedelta(minutes=75), bin_width_us=1024000)
+    result = select_bssid_session_observations(native, **arguments)
+    assert result.excluded.empty
+    assert result.selected.bin_number.tolist() == [0, 1, 2, 3]
+    assert result.selected.qbss_cu_raw.tolist() == [44, 19, 60, 10]
+    assert result.selected.placement_time.equals(result.selected.observation_time)
+    assert result.selected.tsf_derived_time.isna().all()
+    assert result.timing.tsf_status.tolist() == ["discontinuous"]
+    assert result.timing.tsf_clock_jump_count.tolist() == [1]
+    assert result.timing.tsf_anomaly_source_frame.tolist() == ["3"]
+    erm = native.copy()
+    erm["capture_profile"], erm["tsf_us"], erm["source_capture"] = "aruba_erm_type0", 56, "erm.pcapng"
+    erm["aruba_erm_time"] = pd.to_datetime(erm.frame_time_epoch) + pd.Timedelta(milliseconds=10)
+    mixed = select_bssid_session_observations(pd.concat([native, erm], ignore_index=True), **arguments)
+    pd.testing.assert_frame_equal(result.selected[["bin_number", "qbss_cu_raw", "qbss_station_count"]],
+                                  mixed.selected[["bin_number", "qbss_cu_raw", "qbss_station_count"]])
+    assert mixed.timing.set_index("capture_family").loc["native", "tsf_status"] == "discontinuous"
+    assert mixed.timing.set_index("capture_family").loc["erm", "tsf_status"] == "not_used_for_erm"
+
+
+def test_large_uint64_tsf_is_retained_without_epoch_conversion_or_precision_loss():
+    start = pd.Timestamp("2026-11-09T18:00Z")
+    frame = pd.DataFrame({"bssid": ["A"] * 3, "capture_profile": ["native_80211"] * 3,
+        "frame_time_epoch": [start + pd.Timedelta(seconds=value) for value in (.01, .11, .21)],
+        "tsf_us": pd.array([2**64 - 1048576, 2**64 - 948576, 2**64 - 1], dtype="UInt64"),
+        "source_capture": ["native.pcapng"] * 3, "source_frame": [1, 2, 3]})
+    result = select_bssid_session_observations(frame, class_session_id="large-tsf",
+        class_start=start, class_end=start + pd.Timedelta(seconds=1), bin_width_us=102400)
+    assert result.excluded.empty
+    assert result.observations.tsf_us.tolist() == frame.tsf_us.tolist()
+    assert result.timing.tsf_status.tolist() == ["discontinuous"]
+    assert result.timing.tsf_anomaly_value_us.tolist() == [str(2**64 - 1)]
+
+
+def test_native_profile_uses_capture_time_even_if_an_aruba_column_is_present():
+    frame = pd.DataFrame({"bssid": ["A", "B"], "capture_profile": ["native_80211", "aruba_erm_type0"],
+        "frame_time_epoch": ["2026-11-09T18:00:00.1Z"] * 2,
+        "aruba_erm_time": ["2026-11-09T18:00:01.1Z"] * 2})
+    result = select_bssid_session_observations(frame, class_session_id="profiles",
+        class_start="2026-11-09T18:00Z", class_end="2026-11-09T18:00:02Z", bin_width_us=1024000)
+    assert result.selected.bin_number.tolist() == [0, 1]
+    assert result.selected.observation_time_source.tolist() == ["frame_time_epoch", "aruba_erm"]
+    assert preferred_observation_times(frame).tolist() == result.selected.observation_time.tolist()

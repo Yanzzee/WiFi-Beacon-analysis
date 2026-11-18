@@ -1,0 +1,50 @@
+{
+  "bounds_metric_id": "beacon.metric/cu-missing-bin-bounds/v1",
+  "scope": "Stage 1 ordinary means; existing observed fields also checked against band_comparison_v1.json",
+  "logical_tables": {
+    "ap_infrastructure.csv": {
+      "rows": 4,
+      "sha256": "f3dee0be5bc190e928ac6f5ec7135c65df908928c83dffcf8e1d88abfb54d09b"
+    },
+    "classroom_infrastructure.csv": {
+      "rows": 3,
+      "sha256": "3cdb11d9c3d610fbc7eb2627bb486bbfb576f78fea6fa4e697e53263748fee34"
+    },
+    "deployment_summary.csv": {
+      "rows": 1,
+      "sha256": "cf2d00b36559f9c58b50f686c19a7b72eed14b45e58cd9454315e08e898c6fb5"
+    },
+    "population_summary.csv": {
+      "rows": 16,
+      "sha256": "10618649e44718966992b15bb11922441e8162c25b7223febdcaab73d483b719"
+    },
+    "model_population_summary.csv": {
+      "rows": 18,
+      "sha256": "c107d90fd39adecd8f618b5b22c3496f5fbbe5a1ecd134518355581677aaca33"
+    },
+    "classroom_band_summary.csv": {
+      "rows": 4,
+      "sha256": "f715d0f7a78cd559cd9e0945181085c6d3bdbe1ef742677a52cc5399d630698b"
+    },
+    "radio_class_comparison.csv": {
+      "rows": 6,
+      "sha256": "764d4e40a9d3c71d5b80ccf6c509fd1f323a80ed3e7464ed923ec2ef9d1a193c"
+    },
+    "matched_ap_radio_sessions.csv": {
+      "rows": 2,
+      "sha256": "6104df033ab5e27e772d41617754eca0ca86a17cf57ea8c09e80a5cbb005e16c"
+    },
+    "station_adoption_sessions.csv": {
+      "rows": 7,
+      "sha256": "345684cf472c4eee7633ad94e74c028025da97d4a0f89ae2cd1d2217b0c2da41"
+    },
+    "station_adoption_summary.csv": {
+      "rows": 12,
+      "sha256": "c5e387a46578da6d1b2821cd2e48b2adeb69747d5bb229e40bfdf9383353190a"
+    },
+    "cu_distribution.csv": {
+      "rows": 29,
+      "sha256": "8d0d77441e2e5e66768b88c860a53efa6e8f2045cdbb2ac832e788f4cc6093bc"
+    }
+  }
+}

@@ -12,7 +12,7 @@
   },
   "legacy_snapshot": {
     "status": "frozen_reference_not_executed",
-    "recovery_commit": "4a20d1c8f6164fdb81fc75f2cf80b9fba3f1c5fb",
+    "recovery_release": "https://github.com/Yanzzee/WiFi-Beacon-analysis/releases/tag/Original",
     "source": "retained class-session calculation executed once before legacy cleanup",
     "input_interpretation": "The same 15 selected rows were treated as one location-wide beacon stream. Station totals were summed per fixture bin only to satisfy the historical room_scount input.",
     "metrics": {
