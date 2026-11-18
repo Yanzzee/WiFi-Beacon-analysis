@@ -80,6 +80,7 @@ No inferred beacon loss or missing CU is introduced.
 The Overview wording remains owner-frozen. Refreshing with
 `beacon_analysis.py report --from-run <completed-run>` creates a separate report
 bundle and records source/renderer provenance. It reuses saved data and supported
-plot builders; it does not rewrite the initial full-run report. Public export
-and GitHub Pages deployment are planned, not implemented; see
+plot builders; it does not rewrite the initial full-run report. A curated
+example package was subsequently prepared and the owner confirmed its Pages
+deployment on 2026-11-18. There is no application public-export command; see
 [reporting and publication](../reporting_and_publication.md).

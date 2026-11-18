@@ -24,7 +24,8 @@ There is no format that contains every useful field:
   default for the present analysis.
 - Type 6 (radiotap) supplies frequency metadata, but does not expose
   `aruba_erm.time` in the tested capture. It therefore uses `frame.time_epoch`
-  for class admission and TSF anchoring.
+  for class admission, ordering, binning and capture-slot placement. ERM TSF
+  does not control timing or supply the native-only clock diagnostics.
 - A native over-the-air radiotap capture supplies ordinary 802.11/radiotap
   fields directly and also uses `frame.time_epoch`. AP-name availability then
   depends on a supported vendor IE or a later explicit BSSID mapping.
@@ -66,9 +67,11 @@ channel numbers overlap across bands. Type 0 still provides channel/band
 evidence through the DS and HE operation IEs, even though it has no radio
 header.
 
-Conversion retains the tested source-native channel, rate, signal-percentage,
-frequency, and dBm fields when present. It does not convert ERM signal
-percentage into dBm or otherwise claim those values are directly comparable.
+The table records decoded capture evidence, not the complete list of fields
+requested by the current application. Conversion retains the required channel
+and frequency evidence. Rate, signal-percentage and dBm fields remain available
+in the captures for separate inspection but are not requested by the current
+extraction plan. No ERM signal-percentage-to-dBm conversion is performed.
 
 Capture identity:
 

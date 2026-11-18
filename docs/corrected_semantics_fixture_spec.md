@@ -493,7 +493,8 @@ writing are implemented. The two summary-table writers reproduce these
 accepted logical oracles, including the additive UTC class boundaries, and are
 connected to the publication gate. The first bounded corrected report package
 is also derived inside that gate. Capture-to-run orchestration and the public
-acceptance command are implemented; final owner report review remains separate.
+acceptance command are implemented. Final Alpha 0.2 owner report approval was
+completed on 2026-11-18; the v1 timing history above remains explicitly superseded.
 The fixture is connected to the supported end-to-end workflow. No historical
 golden pipeline is retained or needed.
 

@@ -1,8 +1,11 @@
 # Corrected Golden Contracts
 
-`corrected_semantics_v1.json` is the authoritative corrected metric/schema
-golden. Its dedicated human-readable inputs and expected tables are under
+`corrected_semantics_v1.json` is the retained corrected metric/schema golden
+for the historical v1 timing contract. Its dedicated inputs and expected tables are under
 `tests/fixtures/corrected_semantics/`.
+Current v2 tests preserve its integrated measurement values while explicitly
+testing observation-time placement and native TSF diagnostics under ADR-0019;
+the old mapped-clock metadata is not a current output expectation.
 
 The tests compare logical content, not Parquet or PNG bytes. Floating-point
 values use the tolerances declared in the golden, and timestamp/duration/QBSS

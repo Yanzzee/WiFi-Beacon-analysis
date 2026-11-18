@@ -57,7 +57,7 @@ and Evidence. Station-time with high CU is a CU subsection after classroom
 maximum streaks. Classroom high-CU association peak tables/CDF are omitted from
 the web page and its file inventories; their saved derived outputs remain.
 See [reporting and publication](reporting_and_publication.md) for current display
-weighting, saved-run refresh, and the planned public export boundary.
+weighting, saved-run refresh, and the published example-package boundary.
 
 `beacon_analysis.py report --from-run <completed-run>` creates a separate
 `output/reports/<project>/<source-run-id>/<report-id>/` bundle. It rebuilds HTML

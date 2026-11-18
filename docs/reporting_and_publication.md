@@ -1,7 +1,10 @@
-# Current reports and public publication plan
+# Current reports and public publication
 
-Reconciled: 2026-11-13. Analysis definitions are unchanged. Final owner report
-review and Alpha 0.2 tag/release authorization remain outstanding.
+Reconciled: 2026-11-18. Alpha 0.2 is final and owner-approved. The owner
+confirmed the [public example-report site](https://yanzzee.github.io/WiFi-Beacon-analysis/example-reports/)
+is functional. Analysis definitions are unchanged; tag creation is a separate
+publishing operation. For the branch-specific commands, see
+[release synchronization](release_branch_sync.md).
 
 ## Current web report
 
@@ -178,7 +181,7 @@ For **one 2024-like week plus two 2025-like weeks**, existing images alone sum
 to about **1,122.5 MiB (1.10 GiB)**. Budget approximately **1.5-1.8 GiB** for
 all currently linked files across three equivalent new-format reports; allow
 about **2 GiB** of hosting space for one revision of each. This is a projection,
-not a measurement of the owner's pending runs. Additional large weeks or retained
+not a measurement of the four subsequently completed publication runs. Additional large weeks or retained
 published revisions increase it. Removing linked reporting Parquets would save
 space but requires a public export that repairs/removes their links; even a
 viewing-focused collection with all PNGs is likely around 1.1-1.3 GiB.
@@ -186,28 +189,36 @@ viewing-focused collection with all PNGs is likely around 1.1-1.3 GiB.
 After each new run, record actual radio-plot count/bytes, summary graphics,
 linked CSV/JSON/text, linked Parquets, total unique referenced bytes and largest
 file. Preserve the new run's own manifest rather than inheriting an older estimate.
-Current audit helpers/results are ignored local previews under
+The dated planning audit helpers/results are ignored local previews under
 `output/previews/publication_review_20261113/`.
 
-## Public hosting: local publication candidate prepared
+## Published example reports
 
 Update 2026-11-18: the owner completed and selected `2024-classroom-captures`,
 `2025-classroom-captures`, `2026-classroom-captures` and `2026-hbll`. The
 [publication closeout record](benchmarks/alpha_0_2_publication_closeout_2026-11-18.md)
-records their measured runtime/storage and the prepared **68.78-MiB** static
+records their measured runtime/storage and the original prepared **68.78-MiB** static
 package. It includes repaired WebP links, deliberate data-omission notices,
 clearly labelled watermarked examples per sampled band, and actual shared HBLL
 plots after exact measurement equality checks. Public plot indexes retain
 source paths plus separate publication-path/type columns. The two unlinked
 classroom peak-exposure files are omitted. No statistical definition changes.
 
-The reports-only local `example-reports` branch in
-`Yanzzee/WiFi-Beacon-analysis` contains a catalog and per-project directories;
-each report keeps its `reports/index.html`. A link is prepared in that repo's
-main README. The original analysis runs and owner's copied `Output/runs/`
-folders were not modified. Push, owner browser review, Pages configuration and
-the deployed-site smoke check remain pending. This is a one-time prepared
-publication candidate, not a new application export command.
+The owner subsequently edited the catalog and published the package on the
+`example-reports` branch in `Yanzzee/WiFi-Beacon-analysis`, under the
+`example-reports/` folder. Its `index.html` is the landing page; each project
+keeps its `reports/index.html`. README links point directly to the public site.
+The original analysis runs and owner's copied `Output/runs/` folders were not
+modified by package preparation. The original prepared size/hash inventory
+predates later owner edits and is not a new audit of the deployed site. This
+was a one-time publication preparation; the application has no site-export command.
+
+GitHub Pages uses **Deploy from a branch**, branch **`example-reports`**, folder
+**`/(root)`**. Branch publishing supports root or `/docs`; the nested folder
+therefore appears in the URL as `/WiFi-Beacon-analysis/example-reports/`.
+Keep `.nojekyll` at the branch root. The branch name itself is not a URL prefix.
+Update application documentation with a path-limited restore, not a whole-tree
+replacement of this branch, so the report folder and its relative links survive.
 
 The older storage estimates above describe complete linked report collections.
 The much smaller current package omits most radio/session images and all
@@ -255,4 +266,5 @@ deploy a site or publish a release tag.
 
 The development origin names `Yanzzee/Beacon-analysis`; the owner selected
 `Yanzzee/WiFi-Beacon-analysis` for this publication. Public hosting does not resolve the separate richer UI
-choice, and final owner scope/output and release approval remain outstanding.
+choice. Final owner scope/output approval is complete; future UI or analysis
+expansion remains outside the Alpha 0.2 release.

@@ -1,13 +1,17 @@
 # Alpha 0.2 — Corrected Reporting Expansion
 
-Release type: Release-candidate notes; not tagged or published. Documentation
-reconciled through 2026-11-18; final owner report review continues.
+Release status: Final Alpha 0.2 release, accepted by the owner on 2026-11-18.
+Documentation reconciled through 2026-11-18. Application source and selected
+example reports are public; creating a version tag or GitHub Releases entry is
+a separate publishing step, not an outstanding analysis or report-review gate.
 
 Four fresh v2 project runs and a compact WebP example-report package are now
-audited. A local reports-only publication branch is prepared, with explicit
+audited. The public `example-reports` branch contains a curated package with explicit
 omissions, band-specific watermarked examples and verified shared HBLL plots.
 See the [publication closeout](benchmarks/alpha_0_2_publication_closeout_2026-11-18.md).
-These are local preparation steps, not a release tag or Pages deployment.
+The owner confirmed that the [example report site](https://yanzzee.github.io/WiFi-Beacon-analysis/example-reports/)
+is functional. Detailed Parquet data and most radio/class-session plots are
+deliberately omitted; substituted examples are labelled and watermarked.
 
 Alpha 0.2 expands the corrected analysis into a navigable reporting package
 for network engineers. It preserves the five authoritative artifacts and the
@@ -105,8 +109,12 @@ they are not retrofitted with new reports.
 The dedicated corrected semantic oracle and existing logical report goldens
 remain unchanged. The 2026-10-31 checkpoint passed 392 non-external tests and 16
 real-capture/TShark tests; these are historical counts, not the current total.
-The latest 2026-11-13 focused report/refresh/CLI suite passed 58 tests. Final
-candidate-wide validation is still to be refreshed after owner edits.
+Final 2026-11-18 validation passed **638 regular tests and 16 real-capture/TShark
+tests**, with no failures or skips. The public-package audit checked original
+CSV values, source artifacts, exact-case links and tracked artifact bytes; a
+local repository-prefix HTTP check covered 11 HTML pages and 412 targets.
+The later cleanup changes documentation and ignore rules only. Current evidence
+is in the [publication closeout](benchmarks/alpha_0_2_publication_closeout_2026-11-18.md).
 Historical NUL-only SSID text is adapted to the
 accepted preserved-hex representation in test expectations only; source
 references and production output are unchanged. The final gate is recorded in the
@@ -149,10 +157,11 @@ source-checkout release. The Original-versus-corrected comparison is a one-time
 [informational migration guide](original_to_corrected_migration.md), not a
 recurring Original replay requirement.
 
-Final owner output/scope sign-off and explicit tagging/publication approval
-remain separate from this candidate preparation.
+Final owner output/scope sign-off is complete. No additional analysis gate is
+required for this documentation cleanup; new metric work belongs to Alpha 0.3.
 
-Selected reports on GitHub Pages are planned separately. A curated public
-export/deployment workflow is not implemented. Full-resolution radio plots
-and linked reporting Parquets can exceed a single site's storage budget across
-three week-long runs; see [reporting and publication](reporting_and_publication.md).
+Selected reports are available on GitHub Pages from the `example-reports`
+branch's root, under its `example-reports/` folder. The curated package was
+prepared separately from full analysis runs; the application has no public-site
+export command. Full-resolution plots and reporting Parquets can still exceed
+a single site's storage budget; see [reporting and publication](reporting_and_publication.md).

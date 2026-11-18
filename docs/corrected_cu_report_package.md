@@ -235,7 +235,7 @@ and accessibility path.
 | Text logs containing CU/streak aggregates | Reviewable radio/class and classroom/class CSV tables with manifest provenance. |
 | Per-radio CU/station time-series plots | Implemented as an indexed opt-in collection from `reports/radio_class_detail/radio_bin_detail.parquet`. Unknown CU is shaded and any dashed interpolation is visual only. |
 | Station/enrollment reports | Implemented under `reports/station_count/` using ADR-0010 semantics. |
-| Beacon-rate reports | Deferred. A future review should compare observation/capture rate by AP model and radio configuration before using it to interpret correlations with CU or station count. It must distinguish transmitter behavior from capture coverage, source loss, class-window coverage, and deduplication. |
+| Beacon-rate reports | Later implemented under ADR-0014/0019 in `reports/beacon_quality/`: observation-time native/ERM capture-slot cadence, gaps and descriptive availability relationships. Listening exposure remains unknown; RF-loss inference, AP-model baseline corrections and estimated CU are deferred to Alpha 0.3. |
 
 Later report families may add useful all-observation, class-session, and
 radio-summary views. They must be derived from corrected artifacts and
