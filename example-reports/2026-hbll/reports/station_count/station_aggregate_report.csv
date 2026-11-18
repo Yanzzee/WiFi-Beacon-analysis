@@ -1,0 +1,7 @@
+run_id,schema_id,metric_id,aggregation_method,population_type,population_id,eligible_session_count,peak_client_count_sum,combined_enrollment_sum,stale_assisted_peak_session_count,average_peak_client_count_per_enrolled
+20261116T184042802936Z-9e329a5c,beacon.schema/analysis-results/v1,beacon.metric/corrected-station-count/v1,ratio_of_sums_enrollment_weighted,overall,all,23,1483,898,0,1.6514476614699332
+20261116T184042802936Z-9e329a5c,beacon.schema/analysis-results/v1,beacon.metric/corrected-station-count/v1,ratio_of_sums_enrollment_weighted,ssid,BYU-WiFi,23,146,898,0,0.16258351893095768
+20261116T184042802936Z-9e329a5c,beacon.schema/analysis-results/v1,beacon.metric/corrected-station-count/v1,ratio_of_sums_enrollment_weighted,ssid,byu-devices,23,0,898,0,0.0
+20261116T184042802936Z-9e329a5c,beacon.schema/analysis-results/v1,beacon.metric/corrected-station-count/v1,ratio_of_sums_enrollment_weighted,ssid,eduroam,23,1381,898,0,1.5378619153674833
+20261116T184042802936Z-9e329a5c,beacon.schema/analysis-results/v1,beacon.metric/corrected-station-count/v1,ratio_of_sums_enrollment_weighted,band,5,23,875,898,0,0.9743875278396437
+20261116T184042802936Z-9e329a5c,beacon.schema/analysis-results/v1,beacon.metric/corrected-station-count/v1,ratio_of_sums_enrollment_weighted,band,6,23,679,898,0,0.7561247216035635

@@ -1,0 +1,61 @@
+Corrected CU, coverage, and streak report package
+
+Source artifacts: project_identity_map.parquet, radio_class_summary.parquet, and classroom_class_summary.parquet.
+This package converts units and adds presentation rollups; it does not recalculate packet-level metrics.
+Schema ID: beacon.schema/analysis-results/v1
+Metric ID: beacon.metric/corrected-cu/v2
+Display timezone: America/Denver
+
+High CU means raw QBSS channel utilization >= 128 (>50% of the 0-255 scale).
+Very high CU means raw QBSS channel utilization >= 192 (>75% of the 0-255 scale).
+Coverage is valid-CU bin duration divided by total class duration.
+Missing CU means a beacon was selected but its CU value was absent or invalid; no beacon is tracked separately.
+Actual observed streaks stop at missing-CU or no-beacon bins.
+Possible connected streaks may connect high bins across an empty intervening bin for comparison.
+Missing values remain blank. Measured zero remains zero. Terminal partial-bin durations are preserved.
+Average CU excludes missing-CU and no-beacon bins. No combined classroom CU average is reported.
+Ordinary mean bounds metric: beacon.metric/cu-missing-bin-bounds/v1. Existing mean columns remain observed. Companion *_lower_bound and *_upper_bound columns assign missing-CU and no-beacon time 0% and 100% CU, respectively, using total expected radio duration. A nonempty all-missing population has bounds 0-100%; an absent population has unavailable bounds. These are missing-bin scenarios, not confidence intervals or filled measurements. The bounds do not cover missed variation within otherwise observed bins. HTML/text displays keep the observed point value alongside minimum/maximum scenarios. Historical refresh derives only supported companions from saved components and leaves unsupported bounds unavailable.
+CU CDFs keep their observed lines and show minimum/maximum curves with a shaded range. For cumulative valid weight A, total expected weight T and missing weight M, the range is A/T to (A+M)/T below 100% CU; at 100% both endpoints are one. These CDFs give each radio/bin equal weight. Expected counts come from the comparison radio/session table, or ceiling(class duration / bin width) only when one explicit width applies to every session. Mixed widths without per-radio counts leave bounds unavailable. Absent bands are omitted; present bands with all CU missing show only a range.
+Each point in the CU-versus-coverage plot is one radio/class row. Panels separate bands; color identifies AP model and the observed count of same-band radios on that AP. This scatter shows observed means only; bounds remain in the numeric tables.
+AP model is optional source metadata. Same-band radio count is derived from the project identity map, not inferred from model. Neither field changes CU, coverage, or weighting.
+Classroom streak maxima name every radio tied for the maximum.
+Average-CU histograms use two raw CU units per bucket.
+Mean-histogram shading bounds each bucket's possible count: the minimum counts intervals wholly in that bucket; the maximum counts all intersecting intervals. Bucket maxima need not be jointly attainable. Observed histogram counts remain unchanged.
+Coverage and missingness histograms use 2.5-percentage-point buckets.
+The all-value CU histogram and CDF use one valid selected value per radio/analysis bin, with one bucket per raw CU value.
+Band histogram and CDF panels use that same radio/bin population and separate 2.4, 5, and 6 GHz without reweighting.
+The band-population CSV reports all 5 GHz radios, the subset of 5 GHz radios on APs with a resolved 6 GHz radio, and the 6 GHz radios on those APs. The all-5 population therefore overlaps the paired-AP 5 GHz subset by design.
+Here ap_has_6_ghz means observed 6 GHz in the identity map. Enablement-aware AP/classroom comparisons, including explicit 6GHz_Enabled input declarations, are in ../band_comparison/.
+Population coverage is summed valid-CU radio time divided by summed class radio time. Population average CU is duration-weighted across valid CU time. Empty populations remain explicit with null CU/coverage values.
+Time histograms use 1.024-second buckets aligned to the smallest compatible configured analysis interval.
+
+Output file guide
+- ../run_summary.txt: concise processing, input-normalization, identity, band, row-count, stage, warning, and error results for this run.
+- methodology.txt: metric definitions, interpretation rules, and this output-file guide.
+- radio_class_report.csv: one human-readable row per stable radio/class session, including coverage, CU, missingness, and both streak interpretations.
+- classroom_class_report.csv: one row per physical classroom session with per-band radio counts and classroom maximum streaks plus responsible radio IDs.
+- band_population_report.csv: all-5-GHz, paired-AP 5-GHz, and 6-GHz population counts, coverage, average CU, and high/very-high time shares.
+- cu_cdf_bounds.csv: observed/minimum/maximum cumulative percentages at the existing raw CU <128 and <192 cutoffs (50%/75% markers), with exact valid/expected bin counts. The similarly named file in ../band_comparison/ uses radio-duration weights instead.
+- plots/radio_average_cu_distribution.png: radio/class average-CU distribution using two raw CU values per bucket.
+- plots/radio_cu_vs_coverage.png: radio/class average CU versus valid-CU coverage, separated by band and review cohort.
+- plots/radio_coverage_and_missingness.png: distributions of valid CU, beacon-with-missing-CU, and no-beacon class shares.
+- plots/radio_bin_cu_histogram.png: all valid selected radio/bin CU values, one bucket per raw 0-255 value.
+- plots/radio_bin_cu_cdf.png: CDF of the same radio/bin CU values with cumulative shares labeled at 50% and 75% CU.
+- plots/classroom_streak_distributions.png: classroom maximum actual and possible-connected streak distributions at both CU thresholds on common axes.
+- plots/radio_bin_cu_histogram_by_band.png: the radio/bin CU histogram split into 2.4, 5, and 6 GHz panels.
+- plots/radio_bin_cu_cdf_by_band.png: band-separated CDF panels with cumulative shares labeled at 50% and 75% CU.
+- ../../project_identity_map.parquet: authoritative BSSID to radio to AP to classroom identity and band/channel evidence.
+- ../../selected_observations/: authoritative date-partitioned selected beacon rows, at most one per BSSID/class bin.
+- ../../radio_class_summary.parquet: authoritative ADR-0004 radio/class coverage, CU, missingness, and streak metrics.
+- ../../classroom_class_summary.parquet: authoritative physical classroom-session radio counts and maximum streak metrics.
+- ../../exports/csv/: compact CSV copies of the identity and two summary Parquet tables for review.
+- ../station_count/station_bin_rollups.parquet: derived ADR-0010 radio, SSID, band, and classroom/bin station totals.
+- ../station_count/station_class_report.csv: per-session station availability, peaks, enrollment, and peak-client-count ratio.
+- ../station_count/station_aggregate_report.csv: enrollment-weighted overall, SSID, and band peak-client-count-per-enrolled results.
+- ../station_count/classroom_bin_station_histogram*.png: complete classroom/bin all-band and per-band distributions.
+- ../station_count/methodology.txt: station membership, stale-assistance, completeness, and enrollment rules.
+- ../radio_class_detail/radio_bin_detail.parquet: one corrected CU state/value and the accepted station total per physical radio/class-session/bin.
+- ../radio_class_detail/cu_station_correlation.csv and cu_station_hexbin*.png: same-radio/same-bin valid-pair coverage, descriptive correlations, and density plots.
+- ../radio_class_detail/methodology.txt: CU source selection, lineage, station join, and optional plot interpretation.
+- ../../manifest.json: input hashes, code provenance, effective configuration, schemas, stages, and artifact references.
+- ../../../_logs/<run_id>.jsonl: project-level lifecycle events, including input normalization and publication status.
