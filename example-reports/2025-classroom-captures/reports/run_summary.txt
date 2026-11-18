@@ -1,0 +1,86 @@
+Corrected beacon-analysis run summary
+
+Start here: reports/index.html (offline run overview)
+
+Project: 2025-classroom-captures
+Run ID: 20261116T225557024922Z-74645435
+Status: completed inside the atomic publication gate
+Generated at: 2026-11-17T05:49:45.421114Z
+Elapsed through report generation: 6:53:48
+
+Processing
+- Capture files: 180
+- Capture workers: 8
+- Configured APs: 21
+- Expanded physical class sessions: 373
+- In-scope retained beacon rows: 52,437,224
+- Class-window observations staged: 6,591,241
+- Selected observations: 6,511,028
+- Station rollup rows: 11,336,578
+- Radio/bin detail rows: 2,847,339
+- Largest per-session radio/bin detail part: 38,676
+- Largest per-session station rollup part: 79,688
+- Selected-observation date partitions: 5
+- Radio/class detail plots: enabled
+
+Input normalization
+- Shared-room physical sessions merged: 2
+- Source schedule rows represented by those merges: 4
+- TNRB-W108 2025-11-10T18:00:00Z to 2025-11-10T19:15:00Z: ENT 401 + MSB 341; enrolled total 25
+- TNRB-W108 2025-11-12T18:00:00Z to 2025-11-12T19:15:00Z: ENT 401 + MSB 341; enrolled total 25
+
+Resolved identity
+- BSSIDs: 93
+- APs observed: 21
+- Radios observed: 31
+- Classrooms observed: 18
+- 2.4 GHz radios: 0
+- 5 GHz radios: 27
+- 6 GHz radios: 4
+- Unknown-band radios: 0
+
+Enrollment-weighted peak client count per enrolled
+- Method: sum of eligible class-session peaks divided by the corresponding enrollment sum.
+- Overall: 1.490 (eligible sessions 369; peak sum 22,573; enrollment sum 15,147; stale-assisted peaks 29)
+- SSID BYU-WiFi: 0.151 (eligible sessions 369; peak sum 2,281; enrollment sum 15,147; stale-assisted peaks 11)
+- SSID ITC-VR-Lab: 0.009 (eligible sessions 6; peak sum 1; enrollment sum 116; stale-assisted peaks 0)
+- SSID LSB-DNA: 0.000 (eligible sessions 39; peak sum 0; enrollment sum 4,039; stale-assisted peaks 0)
+- SSID byu-devices: 0.001 (eligible sessions 369; peak sum 9; enrollment sum 15,147; stale-assisted peaks 1)
+- SSID eduroam: 1.376 (eligible sessions 369; peak sum 20,849; enrollment sum 15,147; stale-assisted peaks 22)
+- Band 5 GHz: 1.427 (eligible sessions 369; peak sum 21,609; enrollment sum 15,147; stale-assisted peaks 25)
+- Band 6 GHz: 0.381 (eligible sessions 87; peak sum 1,101; enrollment sum 2,888; stale-assisted peaks 0)
+
+Radio/bin CU and station-count relationship
+- Overall: Pearson 0.432; Spearman 0.594; valid pairs 2,198,024/2,847,339 (77.2%); stale-assisted pairs 102,156
+- Band 5 GHz: Pearson 0.372; Spearman 0.500; valid pairs 1,912,622/2,483,440 (77.0%); stale-assisted pairs 102,156
+- Band 6 GHz: Pearson 0.376; Spearman 0.537; valid pairs 285,402/363,899 (78.4%); stale-assisted pairs 0
+
+Band comparison and longitudinal metrics
+- 6 GHz enabled APs in configured sample: 4/21 (19.05%); enabled but unobserved: 0
+- Overall mean CU: observed 9.82%; min 7.58%; max 30.38%; CU coverage: 77.20%
+- CU mean bounds assign missing radio time 0%/100% CU; they are not confidence intervals or filled measurements.
+- Overall mean stations/radio, available time: 26.22
+- 5 GHz on APs without 6 GHz: mean CU observed 11.23%; min 8.58%; max 32.19%; mean stations/radio 29.26; CU coverage 76.38%
+- 5 GHz on APs with 6 GHz: mean CU observed 9.29%; min 7.50%; max 26.78%; mean stations/radio 26.50; CU coverage 80.72%
+- 6 GHz on APs with 6 GHz: mean CU observed 2.38%; min 1.86%; max 23.43%; mean stations/radio 8.31; CU coverage 78.43%
+- Overall CU relative to associated station count: 0.41 percentage points/station
+- 6 GHz station association-time share: 4.08% of 5+6 GHz; 4.08% of all sampled bands
+- Detailed populations, component sums, coverage and manual year-over-year context: reports/band_comparison/
+- Calculated overall/band/cohort metrics: reports/band_comparison/population_summary.csv
+
+Potentially affected station associations (not proven impairment or unique clients)
+- Station-time with high CU: observed 1.37%; min 0.95%; max 31.06%; very high: observed 0.19%; min 0.13%; max 30.24% (included in high)
+- Observed percentages use paired CU/station-time; bounds use all available station-time. Unknown station counts are outside these bounds.
+- CU/station pair coverage, pooled radio time: 77.20%; stale-assisted paired time: 4.64%
+- Session peaks require complete same-bin radio totals; see coverage and distributions in reports/affected_stations/
+- Numeric results: reports/affected_stations/population_exposure.csv and entity_session_exposure.csv
+
+Summary outputs
+- Radio/class rows: 691
+- Classroom/class rows: 373
+- Band-population rows: 3
+- Completed stages including this report package: 14
+- Stage warnings: 0
+- Stage errors: 0
+
+See each report family's methodology.txt for metric definitions and descriptions of its derived output files.
