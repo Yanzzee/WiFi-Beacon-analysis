@@ -1,0 +1,37 @@
+{
+  "publication_kind": "curated_example_report",
+  "project": "2026-hbll",
+  "source_run_id": "20261116T184042802936Z-9e329a5c",
+  "source_analysis_manifest_sha256": "d5563b4faf4388a87544bca00ea79bccd9b9458a966f785516f9bad240c3b1ed",
+  "metric_id": "beacon.metric/corrected-cu/v2",
+  "timing_policy": "beacon.timing/observation-time/v1",
+  "cadence_metric_id": "beacon.metric/beacon-capture-quality/v2",
+  "source_code_provenance": {
+    "source": "git",
+    "revision": "8c90bbd094b6658eede15842093ebd8005a14563",
+    "dirty": true
+  },
+  "source_observation_range": {
+    "start": "2026-11-09T16:00:00.043454600Z",
+    "end": "2026-11-13T21:49:59.366916Z"
+  },
+  "changes": [
+    "Owner-provided WebP figures",
+    "Detailed Parquet files omitted",
+    "Public links repaired",
+    "Omitted session plots link to clearly marked band-specific examples",
+    "Plot index gains publication companions"
+  ],
+  "plot_counts": {
+    "actual": 46
+  },
+  "omitted_source_artifacts": [
+    "classroom_class_summary.parquet",
+    "project_identity_map.parquet",
+    "radio_class_summary.parquet",
+    "reports/beacon_quality/beacon_quality_windows.parquet",
+    "reports/radio_class_detail/radio_bin_detail.parquet",
+    "reports/station_count/station_bin_rollups.parquet"
+  ],
+  "note": "This inventories a curated public derivative, not the complete analysis run."
+}
