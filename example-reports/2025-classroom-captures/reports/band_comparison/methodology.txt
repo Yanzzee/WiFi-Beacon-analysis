@@ -1,0 +1,137 @@
+Band comparison and longitudinal exports — ADR-0015 v1
+The central question is how 6 GHz deployment and actual use relate to observed
+channel utilization, station load and advertised radio admission capacity.
+CU is sensed channel busy time, not throughput, latency, per-client airtime or
+proof of an infrastructure effect. Station counts describe associations, not
+unique devices/people or devices capable of 6 GHz. No causal inference is supplied.
+
+AP enablement defaults to whether a resolved 6 GHz radio is observed anywhere
+in the project, not whether it appears in an individual session. Optional AP
+input 6GHz_Enabled explicitly overrides this default; false plus observed 6 GHz
+is rejected as contradictory. Explicit true without observed 6 GHz is retained
+as an enabled-but-unobserved warning, never synthesized as a measured zero.
+Radio band always comes from accepted capture evidence, never the AP flag.
+Classroom enablement means at least one configured AP has 6 GHz enabled; mixed
+rooms are flagged. AP and classroom cohorts are separate overlapping views.
+Observed radio counts are sample topology, not proof of complete hardware inventory.
+Both cohort definitions classify the SAME radio/bin measurements; the classroom
+cohort panels are not summed classroom station counts or a classroom CU sensor.
+If every classroom is uniform in AP 6 GHz enablement, these classifications
+coincide. CDF, metric-bar and density graphics then show a single shared view.
+When mixed classrooms exist, both views are shown. CSVs always retain both scopes.
+
+radio_class_comparison.csv preserves every physical radio/session separately.
+population_summary.csv includes overall, each band, AP cohorts and classroom
+cohorts. Overall CU is a pooled mean of observed radio measurements, not a sum
+of channel utilization or a new classroom-wide sensor value. Primary means and
+CDFs use valid radio duration, including actual terminal-bin duration. Missing
+CU and no-beacon are separate and never zero-filled. High/very-high use unchanged
+raw thresholds 128/192; threshold shares use valid time. Equal AP/session and
+classroom/session mean CU views are also supplied to expose weighting effects.
+Ordinary mean_cu_percent columns remain observed. Companion
+mean_cu_percent_lower_bound and mean_cu_percent_upper_bound fields assign
+missing-CU and no-beacon duration 0% and 100% CU over total expected radio
+duration. cu_bounds_metric_id identifies this additive calculation. These are
+missing-bin bounds, not confidence intervals or inferred/fill values. A
+nonempty all-missing population has bounds 0-100%; an absent population has
+unavailable bounds. They do not cover missed variation inside observed bins.
+Equal AP/session and classroom/session bounds average entity/session intervals
+with the same equal weights and eligible groups as their observed means.
+Groups with no valid CU remain excluded from these equal-session statistics;
+their ordinary population bounds remain separately available.
+Zero-station bounds use zero_station_available_duration_us: time with a complete
+available zero station count, including missing CU and accepted stale counts.
+Unknown station counts do not establish zero stations. No zero-station time
+means unavailable bounds; zero-station time with no CU has bounds 0-100%.
+Matched observed means and differences still use common valid bins only.
+Companion paired_window_* bounds apply to possible_duration_us. Common CU
+informs both radios; unpaired time is treated as unknown for both sides in
+this conservative comparison, without inferring or overwriting either value.
+The paired-window difference range is lower_6 - upper_5 to upper_6 - lower_5.
+With no common CU the observed comparison is unavailable, while the ranges
+are 0-100% for each radio and -100 to 100 percentage points for the difference.
+These bounds describe a complete paired-window scenario, not uncertainty in
+the conditional common-valid-only mean. Matched figures retain the observed
+points and histogram counts. The scatter plot shows observed points only;
+histogram shading shows the separate paired-window scenarios for those same
+eligible comparisons. Each histogram bucket's
+minimum counts intervals wholly inside it, and its maximum counts intervals
+intersecting it. Bucket maxima need not occur together. The radio/class-session
+mean histogram uses the same per-bucket rule; cohort mean-CU bars use whiskers.
+CU CDFs retain their observed curves and add minimum/maximum curves and shading,
+with one infrastructure cohort per panel to avoid overlapping ranges.
+For cumulative valid duration A, expected duration T and missing duration M,
+the range below 100% CU is A/T to (A+M)/T; both endpoints reach one at 100%.
+An active population with no usable CU has a range but no observed curve;
+an absent population has neither. cu_cdf_bounds.csv records observed/minimum/
+maximum cumulative percentages at raw CU <128 and <192 (50%/75% markers),
+with exact expected/valid duration weights for every population. This differs
+from ../cu_coverage_streak/cu_cdf_bounds.csv, whose weights count radio/bins.
+No beacon is filled and no other CDF is changed. HTML/text presentations retain
+the observed values alongside minimum/maximum scenarios. Saved-run refresh adds
+supported companions to a separate bundle, records source hashes and leaves
+unsupported bounds unavailable; source runs and manifests remain unchanged.
+model_population_summary.csv preserves model and sampled 5/6 radio-count strata.
+classroom_band_summary.csv supports manual same-space comparisons across years.
+Density plots normalize each cohort by its valid paired radio time and use one
+shared logarithmic color scale. Empty cells are blank; the last station display
+bucket includes all counts >=245. Display bucketing never clips statistical inputs.
+
+Radio station means use available duration; accepted complete radio totals and
+30-second stale assistance are unchanged and their coverage/stale durations are
+reported. CU relative to associated station count is sum(raw_CU*duration)*100/255
+divided by sum(stations*duration), on same-radio/bin valid pairs with stations>0.
+Do not average bin ratios or divide CU by independently measured station peaks.
+Zero-client CU is reported separately. Admission capacity remains an independent
+radio allowance; it is not summed across radios and retains its own valid duration.
+
+matched_ap_radio_sessions.csv compares every 5/6 radio pair on the same AP and
+physical session, using only common valid CU bins. Coverage and signed 6-minus-5
+differences remain explicit. Multiple 5 GHz radios generate multiple pairs;
+these are descriptive, not independent samples or an AP-level causal estimate.
+
+Station adoption uses existing complete band/classroom/bin totals. AP/band/bin
+totals sum accepted active radio rollups, with no partial numerical sums. A band
+outside observed scope (and not declared 6 GHz enabled) contributes structural
+zero only to the adoption denominator. An expected band without a valid total
+stays unknown. Report 6/(5+6) and 6/(2.4+5+6) separately on simultaneous complete
+totals with positive denominator. Shares are ratios of station-duration sums,
+not ratios of independent peaks, mean bin ratios, or counts of unique devices.
+Adoption histograms show use where available: only 6 GHz-enabled APs/classrooms
+participate. Genuine 0% use where enabled remains; non-enabled entities are
+excluded, not relabelled as missing. An enabled classroom includes all its APs,
+including any 5-only APs. AP/session and classroom/session counts remain separate
+even without mixed rooms: a room can have multiple APs. Annotations show exact
+0%, unavailable enabled sessions and excluded non-enabled sessions; the first
+bin also includes positive shares below 2.5%. Missing shares never become zero.
+Detailed adoption tables retain all entities and infrastructure status. The
+overall project share includes all sampled infrastructure in its denominator,
+so it measures combined infrastructure deployment and actual use, not just use
+where enabled. Existing with_6 cohort summaries provide enabled-only shares.
+Overall adoption accumulates classroom rows only, never AP and classroom rows
+together. Radio station means, AP/band peaks and classroom/band peaks are distinct.
+Incomplete session membership is still limited by the accepted sampled-data scope.
+
+2.4 GHz participates when sampled; the main charts emphasize the three 5/6 GHz
+populations. Tables and context retain run/project IDs, units, component sums,
+coverage, AP model, band/channel, schedule/enrollment, and metric/schema versions.
+Original CU/station reports keep their definitions. This additive package is
+built while existing session parts stream; no extra decode or whole-project bin
+table is retained. Detailed radio rows link back by radio/session to the existing
+radio-bin Parquet, then source BSSID/session/bin to selected observations.
+Numeric lookup: population_summary.csv contains the calculated overall/band/
+cohort values and component sums (mean_cu_percent, mean_radio_station_count,
+coverage, high-CU shares, capacity, and CU relative to stations). Model and room
+breakdowns are in model_population_summary.csv and classroom_band_summary.csv;
+individual radio/session values are in radio_class_comparison.csv. Classroom
+band station means/peaks are in station_adoption_sessions.csv with scope=classroom.
+The run-wide reports/run_summary.txt provides concise headline values; metrics
+from other report families remain in their own CSVs and methodology guides.
+
+Year-over-year joins are manual initially: use stable classroom labels and
+review schedule, enrollment, capture method, SSID/sample scope, radio density,
+channel configuration, firmware and deployment changes. AP/radio IDs are project
+scoped, not lifetime hardware IDs. Bandwidth/power not present in inputs remain
+unknown; do not infer them from primary channel. Capture-quality bias is not
+removed by cohort matching. Paired ERM/native calibration and causal models are
+deferred. Existing immutable runs are not rewritten.
