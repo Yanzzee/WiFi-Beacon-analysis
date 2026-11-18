@@ -1,8 +1,10 @@
 # Alpha 0.2 publication-candidate audit
 
 Date: 2026-11-18. The owner selected four completed runs for public examples.
-The report title change below affects presentation only. This record does not
-claim final owner report acceptance, a release tag, a push or Pages deployment.
+The audit below records the original local preparation, before the owner's
+subsequent catalog edits and publication. Final owner acceptance and the live
+site are recorded in the follow-up at the end; original run measurements and
+prepared-package hashes remain dated evidence, not a new deployed-site audit.
 
 ## Completed source runs
 
@@ -129,8 +131,24 @@ passed with no failures or skipped tests**. No new full-project capture analysis
 was started. The four fresh v2 runs satisfy the pending representative full-run
 checkpoint; repeating them is unnecessary for this title/link-only work.
 
-Remaining release actions are final owner acceptance, the final source/version
+At the original local handoff, remaining actions were final owner acceptance, the final source/version
 commit and release notes, promotion of the reviewed Alpha 0.2 application source
 to the public repo's main branch (currently Alpha 0.1), public deployment smoke checks, and explicitly
 authorized Alpha 0.2 tagging/publication. Alpha 0.3 calibration and inferred CU,
 automated year-to-year comparisons and R-squared remain outside this release.
+
+## Final owner acceptance and subsequent publication
+
+On 2026-11-18 the owner accepted the final Alpha 0.2 report and release scope,
+promoted the application snapshot to public main, edited/uploaded the example
+catalog, and confirmed the [public site](https://yanzzee.github.io/WiFi-Beacon-analysis/example-reports/)
+is functional. The published package is under `example-reports/` on the
+`example-reports` branch; Pages publishes that branch's root. The original local
+draft branch/worktree described above is not the current remote branch tip.
+
+The 654-test result remains the final analysis/reporting regression evidence.
+This follow-up reconciles documentation and ignore rules only; it does not
+change calculations, rewrite source runs, claim a newly measured site size or
+assert that a version tag/GitHub Releases entry has been created. Use the
+[path-limited synchronization instructions](../release_branch_sync.md) for the
+cleanup so existing report files are preserved.

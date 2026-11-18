@@ -22,6 +22,15 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
+## TShark executable
+
+Install TShark **4.6.6** for the reviewed Aruba decoder contract; a newer
+installed version is not automatically supported. `TSHARK_PATH` is optional
+when `tshark` 4.6.6 is on `PATH`. Otherwise set the executable explicitly, for
+example `TSHARK_PATH=C:\temp\WiresharkPortable64\App\Wireshark\tshark.exe` in
+`config.env`, or pass `--tshark`. The app does not search installation folders.
+`Get-Command tshark` shows which executable automatic discovery would use.
+
 ## Run regression tests
 
 ```powershell
@@ -41,9 +50,11 @@ For report-only changes, the focused checks are:
 python -m pytest tests/test_corrected_report_overview.py tests/test_corrected_report_refresh.py tests/test_beacon_analysis_cli.py -q -p no:cacheprovider
 ```
 
-These focused checks supplement the final-candidate suite; their pass count is
+These focused checks supplement the full release suite; their pass count is
 not a new complete release-validation result. Current reporting/refresh behavior
 is documented in [reporting and publication](reporting_and_publication.md).
+Final Alpha 0.2 validation passed 638 regular and 16 real-capture tests without
+skips; see the [closeout record](benchmarks/alpha_0_2_publication_closeout_2026-11-18.md).
 
 ## Regenerate pinned requirements
 

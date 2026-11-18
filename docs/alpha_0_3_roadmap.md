@@ -3,8 +3,9 @@
 Created: 2026-11-16.
 
 Status: future analysis plan. These research and implementation stages are
-not implemented or release promises. Alpha 0.2's accepted missing-bin bounds
-are tracked in [their implementation inventory](cu_missing_bin_bounds_implementation_plan.md).
+not implemented or release promises. Alpha 0.2 is final and owner-approved;
+its implemented missing-bin bounds are tracked in
+[their implementation inventory](cu_missing_bin_bounds_implementation_plan.md).
 
 ## Purpose and release boundary
 
@@ -51,10 +52,13 @@ for each metric. Define source/metric versions and denominators before coding.
 
 ## A3-02: Simultaneous ERM/native case study
 
-Start with the owner's `2026-hbll` capture data. The saved combined run checked
-on 2026-11-16 has two shared radios on an AP-635 and uses the older v1 timing
-policy. Use a corrected v2 rerun or a bounded paired re-extraction before
-calibration. The corrected native-only run can support source verification.
+Start with the owner's `2026-hbll` capture data. The original combined run used
+v1 timing and is historical evidence only. A fresh v2 run,
+`20261116T184042802936Z-9e329a5c`, is now complete and is the retained publication
+source, with two shared radios on an AP-635; see the
+[closeout audit](benchmarks/alpha_0_2_publication_closeout_2026-11-18.md).
+Use its source captures for the independent paired comparison or a bounded
+paired re-extraction. The corrected native-only run can support verification.
 
 Current beacon-quality windows separate capture-family availability but use
 pooled CU/station context. They do not supply independent native CU during

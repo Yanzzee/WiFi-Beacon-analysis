@@ -10,7 +10,7 @@ Alpha 0.2 is the current release. See the
 
 See the [documentation guide](docs/README.md) for current references, accepted
 decisions and dated validation records. The [reporting and publication guide](docs/reporting_and_publication.md)
-describes the current web report, saved-run refresh and public-hosting plan.
+describes the current web report, saved-run refresh and published example site.
 
 ## Example reports
 
@@ -20,6 +20,9 @@ for the 2024, 2025 and 2026 classroom captures and native captures in the 2026 H
 Summary measurements are retained. Large Parquet files and most individual
 radio/class-session plots are omitted; substituted examples are labelled and
 watermarked by band. The two 2026 reports share the verified HBLL plots.
+
+Maintainers: [synchronize release documentation](docs/release_branch_sync.md)
+with the public branches while preserving the example-report files.
 
 ## Supported workflow
 
@@ -46,6 +49,10 @@ Important settings are `PROJECT_NAME`, `CAPTURES_FOLDER`, `OUTPUT_FOLDER` or
 `CORRECTED_OUTPUT_ROOT`, `SAMPLE_FOLDER`, `START_DATE`, `END_DATE`, `TIMEZONE`,
 `TSHARK_PATH`, and `CAPTURE_WORKERS`. Run `beacon_analysis.py run --help` for
 the corresponding flags.
+
+`TSHARK_PATH` is optional if the reviewed TShark **4.6.6** executable is on
+`PATH`; otherwise set its full path or pass `--tshark`. A newer system install
+is not automatically compatible with the accepted Aruba decoder contract.
 
 `TIMEZONE` is the named IANA location timezone used to interpret schedule wall
 times and display local report times. Use a DST-aware name such as

@@ -1,8 +1,8 @@
 # Alpha 0.2 original-output inventory and implementation mapping
 
-- Status: Implemented-purpose mapping; final owner release-scope/output review pending
+- Status: Implemented-purpose mapping; final owner release-scope/output approved 2026-11-18
 - Date: 2026-10-03
-- Reconciled: 2026-11-13
+- Reconciled: 2026-11-18
 - Historical source: public `Original` tag, commit
   `4a20d1c8f6164fdb81fc75f2cf80b9fba3f1c5fb`
 - Scope: generated analysis intermediates, tables, logs, and plots from the
@@ -21,8 +21,8 @@ is accepted and implemented under ADR-0014; exposure-qualified inference and
 calibration remain deferred. The accepted families are implemented and the
 2026-10-29 complete-run evidence is recorded in the
 [release-readiness record](benchmarks/alpha_0_2_release_readiness_2026-10-29.md).
-Unaccepted/deferred purposes remain non-claims of the candidate, not newly
-approved calculations. Final owner scope/output acceptance remains separate.
+Unaccepted/deferred purposes remain non-claims of Alpha 0.2, not newly
+approved calculations. Final owner scope/output acceptance is complete.
 ADR-0015 additionally implements detailed overall and 5/6 GHz comparisons as a
 central project purpose, beyond one-for-one Original graph replacement.
 Its `reports/band_comparison/population_summary.csv` provides the central
@@ -86,7 +86,7 @@ not create another logical output.
 
 ## Generated intermediates and durable tables
 
-| Original output | Original purpose or grain | Draft disposition | Corrected source/destination and reason |
+| Original output | Original purpose or grain | Disposition | Corrected source/destination and reason |
 |---|---|---|---|
 | `data/processed_data/<capture>.pcapng.parquet` | One extracted table per capture | `drop` | Extraction is an internal bounded stage. Publish lineage in `selected_observations/` and the manifest, not a duplicate decoded-capture product. |
 | `data/grouped_data/<AP_name-or-BSSID>.parquet` | Cross-capture rows grouped by AP name or BSSID | `drop` | The corrected pipeline resolves identity explicitly and stages data internally. Publishing hostname-named working sets would recreate the legacy pipeline. |
@@ -106,7 +106,7 @@ Some legacy files mixed accepted CU purposes with unresolved station or rate
 purposes. Those files are split by purpose below so an accepted subset cannot
 silently authorize the unresolved subset.
 
-| Original output or portion | Original purpose | Draft disposition | Corrected source/destination and reason |
+| Original output or portion | Original purpose | Disposition | Corrected source/destination and reason |
 |---|---|---|---|
 | `output/radio_summary.csv`: identity, class bounds, radio count, CU, and very-high-CU fields | Review table at inferred radio/AP/class-session grain | `keep` | Use the existing `radio_class_report.csv` and `classroom_class_report.csv`, backed by corrected summaries and identity. Coverage and missingness must accompany CU. |
 | `output/radio_summary.csv`: station-count fields | Per-radio/session high, median, and low station counts | `replace` | The station class report now supplies per-radio/session peaks with availability and stale-assistance counts. Median/low statistics were not restored and require review if still useful. |
@@ -125,7 +125,7 @@ silently authorize the unresolved subset.
 
 ## Plot matrix
 
-| Original plot output | Original purpose | Draft disposition | Corrected source/destination and reason |
+| Original plot output | Original purpose | Disposition | Corrected source/destination and reason |
 |---|---|---|---|
 | `output/plots/<AP>_<class-start>_R<radio>.png` (228 surviving) | Unbounded per-radio/session CU and `total_scount` time series | `replace` | Implemented from the bounded radio/bin view as an indexed opt-in collection. Measured CU is solid with fill; unknown CU is blank with a dashed blue visual bridge. Radio station count is orange, with hollow stale markers and a dashed visual bridge across unavailable gaps. A context box carries room, schedule, AP, and band metadata. Default runs create no such plots. |
 | `all_class_beacons/Channel_use_histogram.png` | Distribution of CU across retained beacon rows | `keep` purpose only | `radio_bin_cu_histogram.png` and its by-band variant already provide the corrected stable-radio/bin population. |
@@ -168,36 +168,36 @@ silently authorize the unresolved subset.
    0..31250 validity, no stale filling or cross-radio sums, and descriptive
    CU/station relationships. Capacity describes the radio's QoS admission
    allowance, while CU describes channel conditions. Full-run evidence is
-   recorded; final owner output sign-off remains.
+   recorded; final owner output sign-off is complete.
 5. **Beacon-rate gate — minimal exploratory package implemented:** ADR-0014
    defines pre-selection native/ERM diagnostics, 100-TU expectation, effective
    ERM cap, class-window denominators, unknown exposure/role, bounded context
    windows and descriptive lagged CU/station associations. Exposure-qualified
    inference, thresholds, paired-capture validation and model correction are
    explicitly deferred. Full-run timing/storage and representative checks are
-   recorded; final owner output sign-off remains.
+   recorded; final owner output sign-off is complete.
 6. **One-time informational comparison — scope accepted 2026-10-08:** use the
    frozen same-input execution and a documented definition/output mapping to
    explain old-project differences. No numerical parity tolerance, recurring
    Original replay, or legacy-function maintenance is required. See
    [`original_to_corrected_migration.md`](original_to_corrected_migration.md).
 
-## Recommended next owner decision
+## Final release acceptance
 
-Review the [candidate release notes](alpha-0.2-release-notes.md), completed
-[full-run/cached validation evidence](benchmarks/alpha_0_2_release_readiness_2026-10-29.md)
-and the actual offline report before final owner release-scope/output approval.
+The owner accepted the [Alpha 0.2 release](alpha-0.2-release-notes.md) and final
+report output on 2026-11-18. Completed full-run, package and regression evidence
+is in the [publication closeout](benchmarks/alpha_0_2_publication_closeout_2026-11-18.md).
 The navigation and explanatory presentation under ADR-0017/0018 are implemented,
 including classroom heading AP/radio/seat context and per-session radio CU.
-The 2026-10-31 record reports 392 non-external and 16 real-capture/TShark passes
-using retained references, not regenerated expectations. Later report/refresh
-checks passed 58 focused tests on 2026-11-13; these do not replace final-candidate
-regression after owner edits. See [current reporting](reporting_and_publication.md).
+Final validation passed 638 regular and 16 real-capture/TShark tests with no
+skips, using retained references rather than regenerated expectations. Earlier
+392/16 and 58-test records retain their original dates and scopes. The curated
+example reports are now public; see [current reporting](reporting_and_publication.md).
 
 Per the 2026-10-29 owner direction, existing R values suffice, loss calibration
-is future work and cross-project comparison is manual. The candidate does not
+is future work and cross-project comparison is manual. Alpha 0.2 does not
 claim unimplemented merged classroom/channel statistics or additional legacy
 aggregate calculations. Any future additions still need explicit definitions.
 The informational Original comparison is complete; no recurring Original
-pipeline is restored. Final sign-off and authorized tagging/publication are
-separate from preparing this mapping or the candidate notes.
+pipeline is restored. Future metric additions still require their own accepted
+definitions; they are not a remaining gate for the approved Alpha 0.2 release.

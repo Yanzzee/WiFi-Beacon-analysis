@@ -85,7 +85,7 @@ The complete keep/replace/drop/defer mapping is in
 | Devices per enrolled and class schedule context | `reports/class_sessions/` plus the enrollment-weighted station aggregate and `reports/run_summary.txt` |
 | Station versus CU | `reports/radio_class_detail/cu_station_correlation.csv` and `cu_station_hexbin*.png` |
 | Admission-capacity diagnostics | ADR-0013 now supplies one advertised radio/bin value, 0..31250 validity and percent conversion, independent source/missingness, and descriptive CU/station relationships; not legacy beacon-row weighting or cross-radio capacity sums |
-| Beacon-rate diagnostics | Deferred; there is no accepted replacement metric to substitute into an old analysis |
+| Beacon-rate diagnostics | `reports/beacon_quality/` contains accepted native/ERM capture-slot cadence, gap and availability relationships under ADR-0014/0019; unknown listening exposure prevents treating empty slots as proven RF loss. Baseline correction and inferred CU remain future work. |
 
 ## Reproducing and rerunning an archived project
 

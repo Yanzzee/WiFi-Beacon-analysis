@@ -11,12 +11,18 @@ case. Focused CF-01 through CF-04, CF-08, and CF-09 assertions live in the
 corrected semantic golden rather than creating additional durable artifact
 types.
 
-Accepted identifiers:
+Identifiers recorded in these retained historical fixtures:
 
 ```text
 beacon.metric/corrected-cu/v1
 beacon.schema/analysis-results/v1
 ```
+
+Current Alpha 0.2 output uses `beacon.metric/corrected-cu/v2` with the same
+analysis schema ID. Observation time controls bin placement under
+[ADR-0019](../../../docs/decisions/0019-observation-time-and-native-tsf-diagnostics.md).
+V2 tests preserve the integrated fixture's measurement values while replacing
+old mapped-TSF metadata. The original CSVs and v1 golden remain historical evidence.
 
 CSV nulls are empty fields. Times are UTC ISO-8601 strings. Durations are
 integer microseconds, TSF is integer microseconds, raw QBSS CU is nullable
