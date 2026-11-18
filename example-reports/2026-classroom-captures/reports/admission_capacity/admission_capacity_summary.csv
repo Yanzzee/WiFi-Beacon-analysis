@@ -1,0 +1,4 @@
+run_id,schema_id,metric_id,population_type,population_id,total_radio_bin_rows,valid_rows,missing_capacity_rows,invalid_capacity_rows,no_beacon_rows,invalid_candidate_rows,invalid_candidate_count,disagreement_rows,different_cu_source_rows,valid_coverage,zero_rows,constant_value_raw,minimum_percent,maximum_percent,mean_percent,warning
+20261116T200102692404Z-99851ea7,beacon.schema/admission-reports/v1,beacon.metric/radio-admission-capacity/v1,overall,all,3172862,2367453,0,0,805409,0,0,114324,0,0.7461569396967155,0,,4.0,100.0,92.29347278851998,
+20261116T200102692404Z-99851ea7,beacon.schema/admission-reports/v1,beacon.metric/radio-admission-capacity/v1,band,5,2150891,1595045,0,0,555846,0,0,114324,0,0.7415740732561529,0,,4.9984,100.0,90.12355571460367,
+20261116T200102692404Z-99851ea7,beacon.schema/admission-reports/v1,beacon.metric/radio-admission-capacity/v1,band,6,1021971,772408,0,0,249563,0,0,0,0,0.7558022683618224,0,,4.0,100.0,96.77441469896738,

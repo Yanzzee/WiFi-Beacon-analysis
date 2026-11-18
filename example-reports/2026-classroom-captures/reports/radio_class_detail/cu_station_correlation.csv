@@ -1,0 +1,4 @@
+run_id,schema_id,metric_id,population_type,population_id,total_radio_bin_rows,valid_cu_rows,available_station_rows,valid_pair_rows,valid_pair_coverage,stale_assisted_pair_rows,radio_count,class_session_count,pearson_correlation,spearman_correlation
+20261116T200102692404Z-99851ea7,beacon.schema/analysis-results/v1,beacon.metric/corrected-radio-bin/v1,overall,all,3172862,2367453,3171616,2367422,0.7461471693379668,112971,38,350,0.38136909536056307,0.5864977690941605
+20261116T200102692404Z-99851ea7,beacon.schema/analysis-results/v1,beacon.metric/corrected-radio-bin/v1,band,5,2150891,1595045,2149918,1595014,0.7415596606243645,112971,26,350,0.31887439325179867,0.5065313524559583
+20261116T200102692404Z-99851ea7,beacon.schema/analysis-results/v1,beacon.metric/corrected-radio-bin/v1,band,6,1021971,772408,1021698,772408,0.7558022683618224,0,12,234,0.3829101780910684,0.6543284007392226

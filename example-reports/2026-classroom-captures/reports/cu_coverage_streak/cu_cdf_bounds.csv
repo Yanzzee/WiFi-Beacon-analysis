@@ -1,0 +1,11 @@
+population_scope,population_id,weighting,cu_threshold_percent,cu_raw_exclusive_threshold,valid_weight,expected_weight,cdf_observed_percent,cdf_lower_bound_percent,cdf_upper_bound_percent,cu_bounds_metric_id
+overall,all,radio_bins,50,128,2367453,3172862,99.10393152472298,73.94708625840013,99.33139228872861,beacon.metric/cu-missing-bin-bounds/v1
+overall,all,radio_bins,75,192,2367453,3172862,99.7134473208127,74.40188069950726,99.78618672983572,beacon.metric/cu-missing-bin-bounds/v1
+band,2.4,radio_bins,50,128,0,0,,,,beacon.metric/cu-missing-bin-bounds/v1
+band,2.4,radio_bins,75,192,0,0,,,,beacon.metric/cu-missing-bin-bounds/v1
+band,5,radio_bins,50,128,1595045,2150891,98.73081950665969,73.21621597747166,99.05880865185637,beacon.metric/cu-missing-bin-bounds/v1
+band,5,radio_bins,75,192,1595045,2150891,99.59110871480115,73.85418414973144,99.69677682411614,beacon.metric/cu-missing-bin-bounds/v1
+band,6,radio_bins,50,128,772408,1021971,99.87441870099741,75.48531220553225,99.90508536935,beacon.metric/cu-missing-bin-bounds/v1
+band,6,radio_bins,75,192,772408,1021971,99.96608010274363,75.55459010089326,99.97436326471103,beacon.metric/cu-missing-bin-bounds/v1
+band,unknown,radio_bins,50,128,0,0,,,,beacon.metric/cu-missing-bin-bounds/v1
+band,unknown,radio_bins,75,192,0,0,,,,beacon.metric/cu-missing-bin-bounds/v1

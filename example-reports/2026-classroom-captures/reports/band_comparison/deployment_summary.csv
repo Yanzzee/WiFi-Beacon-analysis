@@ -1,0 +1,2 @@
+run_id,project_name,report_schema_id,report_metric_id,configured_ap_count,observed_ap_count,six_ghz_enabled_ap_count,six_ghz_enabled_ap_percent,enabled_6_ghz_not_observed_ap_count,configured_classroom_count,six_ghz_enabled_classroom_count,six_ghz_enabled_classroom_percent,mixed_classroom_count,observed_2_4_ghz_radio_count,observed_5_ghz_radio_count,observed_6_ghz_radio_count
+20261116T200102692404Z-99851ea7,2026-classroom-captures,beacon.schema/band-comparison-reports/v1,beacon.metric/band-comparison/v1,21,21,12,57.14285714285714,0,18,11,61.111111111111114,0,0,26,12

@@ -1,0 +1,27 @@
+Corrected class-session report methodology
+
+Grain and schedule context
+- One row represents one physical classroom session.
+- Simultaneous source sections are combined; course labels remain
+  traceable, source_section_count records the number of sections,
+  and combined_enrollment is their accepted sum.
+- room_capacity is descriptive schedule context only. Missing values
+  remain null; conflicting source values are null with status conflict.
+- No room-capacity utilization or QBSS admission-capacity calculation
+  is included.
+- Local labels use America/Denver; UTC endpoints remain present.
+
+CU and station semantics
+- CU coverage and high/very-high streak columns come from the accepted
+  corrected per-radio and classroom summaries.
+- Peak client count is the maximum available complete classroom/bin
+  total, including permitted stale-assisted values.
+- Peak client count per enrolled is null when enrollment is zero or
+  missing. Plots exclude those ineligible sessions.
+- A hollow scatter marker identifies a stale-assisted peak.
+
+Files
+- class_session_report.csv: joined session review table.
+- peak_client_count_per_enrolled_histogram.png: eligible session ratio distribution.
+- enrollment_vs_peak_client_count.png: enrollment versus peak clients.
+- methodology.txt: this file.

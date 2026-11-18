@@ -1,0 +1,39 @@
+{
+  "publication_kind": "curated_example_report",
+  "project": "2026-classroom-captures",
+  "source_run_id": "20261116T200102692404Z-99851ea7",
+  "source_analysis_manifest_sha256": "0cc579715e5b35da3d1470113c66a3b547a958be613d8a2397182e3eee3cd3b9",
+  "metric_id": "beacon.metric/corrected-cu/v2",
+  "timing_policy": "beacon.timing/observation-time/v1",
+  "cadence_metric_id": "beacon.metric/beacon-capture-quality/v2",
+  "source_code_provenance": {
+    "source": "git",
+    "revision": "8c90bbd094b6658eede15842093ebd8005a14563",
+    "dirty": true
+  },
+  "source_observation_range": {
+    "start": "2026-11-09T15:00:00.067918Z",
+    "end": "2026-11-14T01:49:59.950206Z"
+  },
+  "changes": [
+    "Owner-provided WebP figures",
+    "Detailed Parquet files omitted",
+    "Public links repaired",
+    "Omitted session plots link to clearly marked band-specific examples",
+    "Plot index gains publication companions"
+  ],
+  "plot_counts": {
+    "example_5_ghz": 512,
+    "shared_actual_hbll": 46,
+    "example_6_ghz": 240
+  },
+  "omitted_source_artifacts": [
+    "classroom_class_summary.parquet",
+    "project_identity_map.parquet",
+    "radio_class_summary.parquet",
+    "reports/beacon_quality/beacon_quality_windows.parquet",
+    "reports/radio_class_detail/radio_bin_detail.parquet",
+    "reports/station_count/station_bin_rollups.parquet"
+  ],
+  "note": "This inventories a curated public derivative, not the complete analysis run."
+}
