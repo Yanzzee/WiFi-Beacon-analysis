@@ -1,0 +1,7 @@
+run_id,schema_id,metric_id,population_type,population_id,relationship,total_radio_bin_rows,valid_capacity_rows,valid_pair_rows,valid_pair_coverage,stale_assisted_pair_rows,disagreement_pair_rows,different_beacon_pair_rows,radio_count,class_session_count,pearson_correlation,spearman_correlation
+20261116T184042802936Z-9e329a5c,beacon.schema/admission-reports/v1,beacon.metric/radio-admission-capacity/v1,overall,all,capacity_vs_cu,172870,172870,172870,1.0,0,631,0.0,2,23,-0.8131595273960451,-0.8065992585490434
+20261116T184042802936Z-9e329a5c,beacon.schema/admission-reports/v1,beacon.metric/radio-admission-capacity/v1,overall,all,capacity_vs_station,172870,172870,172870,1.0,0,631,,2,23,-0.2932057828238035,-0.4387143316571449
+20261116T184042802936Z-9e329a5c,beacon.schema/admission-reports/v1,beacon.metric/radio-admission-capacity/v1,band,5,capacity_vs_cu,86435,86435,86435,1.0,0,631,0.0,1,23,-0.7912772475020485,-0.7405526723308835
+20261116T184042802936Z-9e329a5c,beacon.schema/admission-reports/v1,beacon.metric/radio-admission-capacity/v1,band,5,capacity_vs_station,86435,86435,86435,1.0,0,631,,1,23,-0.1654651623557466,-0.3650842848613162
+20261116T184042802936Z-9e329a5c,beacon.schema/admission-reports/v1,beacon.metric/radio-admission-capacity/v1,band,6,capacity_vs_cu,86435,86435,86435,1.0,0,0,0.0,1,23,-0.6036368400051288,-0.7079718775342299
+20261116T184042802936Z-9e329a5c,beacon.schema/admission-reports/v1,beacon.metric/radio-admission-capacity/v1,band,6,capacity_vs_station,86435,86435,86435,1.0,0,0,,1,23,-0.1859115277790034,-0.2754155426837598

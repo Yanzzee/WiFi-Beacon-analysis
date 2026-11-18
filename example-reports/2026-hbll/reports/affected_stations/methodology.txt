@@ -1,0 +1,54 @@
+Potentially affected station reporting -- ADR-0016 v1
+Start with population_exposure.csv for overall/band/infrastructure-cohort shares.
+entity_session_exposure.csv provides scope=radio/ap/classroom rows, session and
+source IDs, all-band/band views, local/UTC class bounds, course/enrollment context,
+coverage, exact integer components and peak bin/time provenance. Radio rows
+already identify band. Never sum overlapping scopes or all-band/band views.
+
+Station-time is associated station count times bin duration in microseconds.
+Observed percentages divide category station-time by all paired station-time. High uses
+raw CU >=128 and includes very high (>=192). Below-high, high-only and very-high
+components are disjoint. Zero denominator is unavailable. Accepted stale station
+assistance participates; missing CU is never filled. Missing CU/no-beacon and
+station availability are explicit. Pair coverage uses pooled radio time;
+known_station_time_cu_coverage_percent is limited to available station counts,
+not an estimate of unknown associations. No coverage metric removes capture bias.
+
+ADR-0020 adds conservative missing-bin bounds; all observed fields stay unchanged.
+Let A be available_station_time_us, P be paired_station_time_us, and H the
+observed high/very-high station-time. missing_cu_station_time_us is A-P,
+including both no-beacon bins and beacons without usable CU when station counts
+are available. Companion *_station_time_us_lower_bound/upper_bound fields are
+H and H+(A-P). *_exposure_percent_lower_bound/upper_bound fields are 100*H/A
+and 100*(H+A-P)/A. The existing observed percentage remains 100*H/P.
+All-missing CU with positive available station-time has bounds 0-100% and no
+observed percentage. Zero available station-time has unavailable percentages
+and zero bounded association-time within that empty known-count population.
+Accepted stale station counts participate. Unknown station counts cannot
+contribute to these bounds: they do not bound exposure over all expected
+radio time. Station coverage and known_station_time_cu_coverage_percent remain
+visible. These ranges are not confidence intervals or imputed CU. Both high
+and very-high bounds use the same missing association-time, retaining nesting.
+cu_bounds_metric_id identifies the additive component. The chart retains
+observed bar heights and adds min/max whiskers over available station-time;
+the two denominator populations are stated separately in its legend.
+
+Peaks sum qualifying stations in the SAME bin, then take a maximum over bins
+with usable CU AND station totals for every session-active radio in that view.
+Any unavailable member makes that peak bin unavailable. Complete-bin coverage
+uses entity/session duration, not pooled radio duration. Earliest tied peak is
+retained with its source bin/UTC time and stale-assistance flag. No complete bin
+means null peak, not zero. Absent project/session radios are not invented.
+
+Project exposures pool radio components once, not averages of ratios and never
+radio plus AP plus classroom sums. AP-cohort and classroom-cohort definitions
+follow ADR-0015. classroom_peak_distribution.csv summarizes available physical
+session peaks equally (linear-interpolated median/p90); peaks are not added.
+Stale pair and high/very-high station-time components remain explicit.
+
+Potentially affected associations are not unique devices, people, active clients
+or evidence of impairment. CU describes channel conditions, possibly including
+other BSSs. Missing data and incomplete sample membership limit interpretation.
+Tables trace to radio_class_detail/radio_bin_detail.parquet by session/radio/bin,
+then to selected observations. This derived package adds no authoritative artifact
+and no capture decode; only compact entity/session records survive streaming.
